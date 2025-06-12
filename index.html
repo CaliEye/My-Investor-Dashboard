@@ -1,13 +1,242 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Crypto Dashboard</title>
+  <meta charset="UTF-8">
+  <title>🧭 Crypto Cycle Master Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #181c24;
+      color: #e0e6f0;
+      font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(90deg, #0f2027, #2c5364 70%);
+      padding: 2rem 1rem 1rem 1rem;
+      text-align: center;
+      box-shadow: 0 2px 8px #000a;
+    }
+    h1 {
+      color: #00ffe7;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.2em;
+      text-shadow: 0 0 8px #00ffe7aa;
+    }
+    h2 {
+      color: #ff00cc;
+      margin-top: 2em;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 6px #ff00cc55;
+    }
+    section {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #23283a;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #0008;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1em;
+      background: #181c24;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.7em 1em;
+      text-align: left;
+      border-bottom: 1px solid #2c2f3a;
+    }
+    th {
+      background: #23283a;
+      color: #00ffe7;
+      font-weight: 600;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    a {
+      color: #00ffe7;
+      text-decoration: underline;
+    }
+    .checklist input[type="checkbox"] {
+      accent-color: #ff00cc;
+      margin-right: 0.5em;
+    }
+    .notes, .tracker {
+      background: #1a1e2a;
+      border-radius: 8px;
+      padding: 1em;
+      margin-bottom: 1em;
+      box-shadow: 0 2px 8px #0006;
+    }
+    .sci-fi-glow {
+      box-shadow: 0 0 16px #00ffe7, 0 0 32px #ff00cc44;
+      border: 1px solid #00ffe7;
+    }
+    .btn {
+      background: linear-gradient(90deg, #00ffe7 0%, #ff00cc 100%);
+      color: #181c24;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1em;
+      box-shadow: 0 2px 8px #00ffe744;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: linear-gradient(90deg, #ff00cc 0%, #00ffe7 100%);
+      color: #fff;
+    }
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      margin-top: 1em;
+    }
+    .quick-links a {
+      background: #23283a;
+      border-radius: 6px;
+      padding: 0.5em 1em;
+      color: #00ffe7;
+      text-decoration: none;
+      box-shadow: 0 2px 8px #00ffe744;
+      transition: background 0.2s;
+    }
+    .quick-links a:hover {
+      background: #ff00cc;
+      color: #fff;
+    }
+    @media (max-width: 600px) {
+      section { padding: 1em; }
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.1rem; }
+    }
+  </style>
 </head>
 <body>
-  <h1>My Crypto Dashboard</h1>
-  <h2>Live Prices</h2>
-  <div id="price-table">Loading prices…</div>
+  <header>
+    <h1>🧭 Crypto Cycle Master Dashboard</h1>
+    <div style="color:#e0e6f0; font-size:1.1em;">Your sci-fi command center for cycles, sentiment, macro, and strategy.</div>
+  </header>
+
+  <section class="sci-fi-glow">
+    <h2>Live Prices</h2>
+    <div id="price-table">Loading prices…</div>
+    <button class="btn" onclick="fetchPrices()">Refresh Now</button>
+  </section>
+
+  <section>
+    <h2>🔄 Current Cycle Status</h2>
+    <ul class="checklist">
+      <li><input type="checkbox">Where are we in the 4-Year Bitcoin Cycle? (Year 1–4)</li>
+      <li><input type="checkbox">What day are we in the current 60-day cycle?</li>
+      <li><input type="checkbox">BTC Dominance trend: ↑ early cycle | ↓ altseason</li>
+      <li><input type="checkbox">MVRV Z-score: Overvalued? Undervalued?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧠 Market Sentiment Scan</h2>
+    <ul class="checklist">
+      <li><input type="checkbox">Fear &amp; Greed Index: <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank">Visit</a></li>
+      <li><input type="checkbox">Derivatives premium ↑ or ↓ ?</li>
+      <li><input type="checkbox">4th day outside Bollinger Bands?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📊 Macro Check</h2>
+    <ul class="checklist">
+      <li><input type="checkbox">Fed policy status (QT, rate hikes/cuts)</li>
+      <li><input type="checkbox">CPI/PCE trends</li>
+      <li><input type="checkbox">ISM Manufacturing &gt; 50?</li>
+      <li><input type="checkbox">USD Index (DXY): ↑ or ↓ ?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>💰 Strategic Actions</h2>
+    <ul class="checklist">
+      <li><input type="checkbox">Rebalance long-term accounts?</li>
+      <li><input type="checkbox">Taking profits at key resistance?</li>
+      <li><input type="checkbox">Ready for 30% dip buys?</li>
+      <li><input type="checkbox">Physical gold positioning?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📝 Daily/Weekly Notes & Observations</h2>
+    <div class="notes">
+      <label for="note-date">Today’s Date:</label>
+      <input id="note-date" type="date" style="background:#23283a; color:#e0e6f0; border:1px solid #00ffe7; border-radius:4px; margin-left:0.5em;">
+      <br><br>
+      <label for="market-observations">Key Market Observations:</label><br>
+      <textarea id="market-observations" rows="2" style="width:100%;background:#23283a;color:#e0e6f0;border:1px solid #00ffe7;border-radius:4px;"></textarea>
+      <br><br>
+      <label for="decisions">Decisions/Actions Taken:</label><br>
+      <textarea id="decisions" rows="2" style="width:100%;background:#23283a;color:#e0e6f0;border:1px solid #00ffe7;border-radius:4px;"></textarea>
+      <br><br>
+      <label for="lessons">Lessons Learned:</label><br>
+      <textarea id="lessons" rows="2" style="width:100%;background:#23283a;color:#e0e6f0;border:1px solid #00ffe7;border-radius:4px;"></textarea>
+      <br>
+      <button class="btn" onclick="saveNotes()">Save Notes (local)</button>
+      <span id="save-status" style="margin-left:1em;color:#00ffe7;"></span>
+    </div>
+  </section>
+
+  <section>
+    <h2>✅ Daily/Weekly Checklist</h2>
+    <ul>
+      <li><a href="#">Daily Market Checklist (coming soon)</a></li>
+      <li><a href="#">Weekly Review Template (coming soon)</a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📈 Performance Tracker</h2>
+    <div class="tracker">
+      <label for="portfolio-value">Portfolio Value:</label>
+      <input id="portfolio-value" type="number" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
+      <br><br>
+      <label for="btc-price">BTC Price:</label>
+      <input id="btc-price" type="number" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
+      <br><br>
+      <label for="gold-price">Gold Price:</label>
+      <input id="gold-price" type="number" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
+      <br><br>
+      <label for="other-metrics">Other Key Metrics:</label>
+      <input id="other-metrics" type="text" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
+      <br>
+      <button class="btn" onclick="saveTracker()">Save Tracker (local)</button>
+      <span id="tracker-status" style="margin-left:1em;color:#ff00cc;"></span>
+    </div>
+  </section>
+
+  <section>
+    <h2>🛠 Quick Access Links</h2>
+    <div class="quick-links">
+      <a href="#" target="_blank">Bitcoin Cycle Insights</a>
+      <a href="#" target="_blank">Gold Cycle Insights</a>
+      <a href="#" target="_blank">Macro Cycle Notes</a>
+      <a href="#" target="_blank">Sentiment Triggers</a>
+      <a href="#" target="_blank">Investment Playbook</a>
+      <a href="#" target="_blank">30% Correction Strategy</a>
+      <a href="#" target="_blank">Influencer Reference Sheet</a>
+    </div>
+  </section>
+
   <script>
+    // Live Prices
     async function fetchPrices() {
       const res = await fetch(
         'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd'
@@ -21,6 +250,41 @@
     }
     fetchPrices();
     setInterval(fetchPrices, 60_000);
+
+    // Notes - Save to localStorage
+    function saveNotes() {
+      const date = document.getElementById('note-date').value;
+      const obs = document.getElementById('market-observations').value;
+      const dec = document.getElementById('decisions').value;
+      const les = document.getElementById('lessons').value;
+      localStorage.setItem('notes-date', date);
+      localStorage.setItem('notes-obs', obs);
+      localStorage.setItem('notes-dec', dec);
+      localStorage.setItem('notes-les', les);
+      document.getElementById('save-status').textContent = "Notes saved!";
+      setTimeout(() => document.getElementById('save-status').textContent = "", 2000);
+    }
+    // Load notes on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('note-date').value = localStorage.getItem('notes-date') || '';
+      document.getElementById('market-observations').value = localStorage.getItem('notes-obs') || '';
+      document.getElementById('decisions').value = localStorage.getItem('notes-dec') || '';
+      document.getElementById('lessons').value = localStorage.getItem('notes-les') || '';
+      document.getElementById('portfolio-value').value = localStorage.getItem('tracker-portfolio') || '';
+      document.getElementById('btc-price').value = localStorage.getItem('tracker-btc') || '';
+      document.getElementById('gold-price').value = localStorage.getItem('tracker-gold') || '';
+      document.getElementById('other-metrics').value = localStorage.getItem('tracker-other') || '';
+    });
+
+    // Tracker - Save to localStorage
+    function saveTracker() {
+      localStorage.setItem('tracker-portfolio', document.getElementById('portfolio-value').value);
+      localStorage.setItem('tracker-btc', document.getElementById('btc-price').value);
+      localStorage.setItem('tracker-gold', document.getElementById('gold-price').value);
+      localStorage.setItem('tracker-other', document.getElementById('other-metrics').value);
+      document.getElementById('tracker-status').textContent = "Tracker saved!";
+      setTimeout(() => document.getElementById('tracker-status').textContent = "", 2000);
+    }
   </script>
 </body>
 </html>
