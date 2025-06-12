@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Charts | CyberSci-Dash v2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Your TradingView chart hub with live thumbnails and trusted insights.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="images/favicon.ico">
+  <style>
+    .chart-thumb.selected {
+      border: 3px solid #06b6d4;
+      box-shadow: 0 0 0 2px #06b6d4;
+    }
+    .insights-panel {
+      min-height: 340px;
+      background: linear-gradient(120deg, #232946 60%, #212124 100%);
+      border: 2px solid #06b6d4;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      color: #d1fae5;
+    }
+    .insight-item {
+      background: #14181f;
+      border-left: 4px solid #06b6d4;
+      margin-bottom: 1.1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+    }
+    .insight-item h4 { color: #facc15; margin-bottom: 0.3rem; }
+    .insight-item span { color: #67e8f9; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
+    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-pink-400">Dashboard</a>
+      <a href="warroom.html" class="hover:text-pink-400">War Room</a>
+      <a href="macro.html" class="hover:text-yellow-400">Macro</a>
+      <a href="crypto.html" class="hover:text-green-400">Crypto</a>
+      <a href="sentiment.html" class="hover:text-pink-400">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400">Scenario Builder</a>
+      <a href="insights.html" class="hover:text-yellow-400">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400">Quick Links</a>
+      <a href="my charts.html" class="text-cyan-400 border-b-2 border-cyan-400 pb-1">My Charts</a>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-7xl mx-auto">
+    <section class="mb-8">
+      <h2 class="text-2xl font-orbitron text-cyan-300 mb-4">📊 My Favorite Charts</h2>
+      <div class="flex flex-wrap gap-4 mb-6">
+        <!-- Chart Thumbnails -->
+        <div class="chart-thumb bg-gray-900 rounded-xl border border-cyan-800 p-2 cursor-pointer" onclick="showMainChart('spx')" id="thumb-spx">
+          <div class="font-bold text-sm text-cyan-200 mb-1 text-center">SPX</div>
+          <!-- TradingView Widget BEGIN -->
+          <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c8b6c&symbol=SPX&interval=D&theme=dark&style=1&locale=en&toolbar_bg=rgba(21, 32, 43, 1)&studies=[]&hideideas=1&withdateranges=0&hide_side_toolbar=1&saveimage=0&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&utm_source=none&utm_medium=widget_new&utm_campaign=chart&utm_term=SPX"
+            width="220" height="160" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+          <!-- TradingView Widget END -->
+        </div>
+        <div class="chart-thumb bg-gray-900 rounded-xl border border-cyan-800 p-2 cursor-pointer" onclick="showMainChart('dxy')" id="thumb-dxy">
+          <div class="font-bold text-sm text-cyan-200 mb-1 text-center">DXY</div>
+          <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c8b6c&symbol=TVC:DXY&interval=D&theme=dark&style=1&locale=en&toolbar_bg=rgba(21, 32, 43, 1)&studies=[]&hideideas=1&withdateranges=0&hide_side_toolbar=1&saveimage=0"
+            width="220" height="160" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <div class="chart-thumb bg-gray-900 rounded-xl border border-cyan-800 p-2 cursor-pointer" onclick="showMainChart('btcusd')" id="thumb-btcusd">
+          <div class="font-bold text-sm text-yellow-300 mb-1 text-center">BTCUSD</div>
+          <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c8b6c&symbol=BITSTAMP:BTCUSD&interval=D&theme=dark&style=1&locale=en&toolbar_bg=rgba(21, 32, 43, 1)&studies=[]&hideideas=1&withdateranges=0&hide_side_toolbar=1&saveimage=0"
+            width="220" height="160" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <div class="chart-thumb bg-gray-900 rounded-xl border border-cyan-800 p-2 cursor-pointer" onclick="showMainChart('ethusd')" id="thumb-ethusd">
+          <div class="font-bold text-sm text-green-300 mb-1 text-center">ETHUSD</div>
+          <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c8b6c&symbol=BITSTAMP:ETHUSD&interval=D&theme=dark&style=1&locale=en&toolbar_bg=rgba(21, 32, 43, 1)&studies=[]&hideideas=1&withdateranges=0&hide_side_toolbar=1&saveimage=0"
+            width="220" height="160" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <div class="chart-thumb bg-gray-900 rounded-xl border border-cyan-800 p-2 cursor-pointer" onclick="showMainChart('total3')" id="thumb-total3">
+          <div class="font-bold text-sm text-pink-300 mb-1 text-center">TOTAL3</div>
+          <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c8b6c&symbol=CRYPTOCAP:TOTAL3&interval=D&theme=dark&style=1&locale=en&toolbar_bg=rgba(21, 32, 43, 1)&studies=[]&hideideas=1&withdateranges=0&hide_side_toolbar=1&saveimage=0"
+            width="220" height="160" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+        <div class="chart-thumb bg-gray-900 rounded-xl border border-cyan-800 p-2 cursor-pointer" onclick="showMainChart('btcd')" id="thumb-btcd">
+          <div class="font-bold text-sm text-blue-300 mb-1 text-center">BTC Dominance</div>
+          <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c8b6c&symbol=CRYPTOCAP:BTC.D&interval=D&theme=dark&style=1&locale=en&toolbar_bg=rgba(21, 32, 43, 1)&studies=[]&hideideas=1&withdateranges=0&hide_side_toolbar=1&saveimage=0"
+            width="220" height="160" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+        </div>
+      </div>
+      <!-- Main Chart View -->
+      <div class="rounded-2xl border-2 border-cyan-400 shadow-xl p-4 bg-gray-900 mb-8">
+        <h3 class="font-orbitron text-cyan-200 mb-3">Main Chart</h3>
+        <div id="main-chart-view" style="min-height: 520px; text-align:center;">
+          <!-- Default: BTCUSD -->
+          <iframe id="main-chart-frame" src="https://www.tradingview.com/chart/?symbol=BITSTAMP:BTCUSD"
+            width="100%" height="510" frameborder="0" allowtransparency="true" scrolling="no" style="border-radius:1rem"></iframe>
+        </div>
+        <div class="text-xs text-gray-400 mt-2">
+          Click a thumbnail above to expand. For full analysis, log in to your TradingView account in the chart window.
+        </div>
+      </div>
+    </section>
+    <!-- Insights Panel -->
+    <section class="insights-panel mb-10">
+      <h3 class="font-orbitron text-cyan-200 mb-4">🔍 Insights Panel — Trusted Technical Analysis</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 3-Day -->
+        <div class="insight-item">
+          <h4>3-Day</h4>
+          <ul class="list-disc ml-4 text-sm">
+            <li><span>BTC RSI:</span> Oversold bounce forming.</li>
+            <li><span>Lux Algo:</span> Trend shifting bullish; watch for confirmation.</li>
+            <li><span>Market Cipher:</span> Green dot, money flow turning up.</li>
+            <li><span>Sentiment:</span> Crowd still fearful — potential for squeeze.</li>
+          </ul>
+        </div>
+        <!-- Weekly -->
+        <div class="insight-item">
+          <h4>Weekly</h4>
+          <ul class="list-disc ml-4 text-sm">
+            <li><span>Pi Cycle Top:</span> No top signal; cycle still healthy.</li>
+            <li><span>Lux Algo:</span> Mixed signals; trailing long stops advised.</li>
+            <li><span>Market Cipher:</span> Money flow neutral, keep watch on VWAP.</li>
+            <li><span>Trusted Source:</span> "Macro headwinds - but trend not broken yet." (Cowen)</li>
+          </ul>
+        </div>
+        <!-- Monthly -->
+        <div class="insight-item">
+          <h4>Monthly</h4>
+          <ul class="list-disc ml-4 text-sm">
+            <li><span>BTC RSI:</span> Reset, now in bullish territory.</li>
+            <li><span>Lux Algo:</span> Macro uptrend intact, but volatility expected.</li>
+            <li><span>Cycle Context:</span> Late expansion, but no major blow-off yet.</li>
+            <li><span>Trusted Source:</span> "Caution on leverage — cycle not over, but late." (Loukas)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
+    &copy; 2025 CyberSci-Dash. All rights reserved.
+  </footer>
+  <script>
+    // Map chart keys to TradingView embed links
+    const chartMap = {
+      'spx': 'https://www.tradingview.com/chart/?symbol=SPX',
+      'dxy': 'https://www.tradingview.com/chart/?symbol=TVC:DXY',
+      'btcusd': 'https://www.tradingview.com/chart/?symbol=BITSTAMP:BTCUSD',
+      'ethusd': 'https://www.tradingview.com/chart/?symbol=BITSTAMP:ETHUSD',
+      'total3': 'https://www.tradingview.com/chart/?symbol=CRYPTOCAP:TOTAL3',
+      'btcd': 'https://www.tradingview.com/chart/?symbol=CRYPTOCAP:BTC.D'
+    };
+    function showMainChart(chartKey) {
+      document.getElementById('main-chart-frame').src = chartMap[chartKey];
+      // Highlight selected thumb
+      document.querySelectorAll('.chart-thumb').forEach(el => el.classList.remove('selected'));
+      document.getElementById('thumb-' + chartKey).classList.add('selected');
+    }
+    // Default highlight
+    document.getElementById('thumb-btcusd').classList.add('selected');
+  </script>
+</body>
+</html>

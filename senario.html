@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CyberSci-Dash v2 | Scenario Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Scenario Builder - Plan your trades, customize market scenarios, and calculate risk/reward.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="images/favicon.ico">
+</head>
+<body class="bg-gray-900 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
+    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-pink-400" aria-label="Dashboard">Dashboard</a>
+      <a href="warroom.html" class="hover:text-pink-400" aria-label="War Room">War Room</a>
+      <a href="macro.html" class="hover:text-yellow-400" aria-label="Macro">Macro</a>
+      <a href="crypto.html" class="hover:text-green-400" aria-label="Crypto">Crypto</a>
+      <a href="sentiment.html" class="hover:text-pink-400" aria-label="Sentiment">Sentiment</a>
+      <a href="scenario.html" class="text-cyan-400 border-b-2 border-cyan-400 pb-1" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-4xl mx-auto">
+    <!-- SCENARIO BUILDER HERO -->
+    <section class="mb-10 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-cyan-300 mb-5 tracking-widest">🧪 Scenario Builder</h2>
+      <p class="mb-4 text-lg text-cyan-100">
+        Build your trade or investment plan. Select a scenario, set your levels, and get a risk/reward breakdown. Use this tool before any big move.
+      </p>
+      <form class="space-y-6" aria-label="Scenario Builder Form">
+        <div>
+          <label for="scenario-type" class="block font-bold text-cyan-300 mb-1">Choose Scenario Type:</label>
+          <select id="scenario-type" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white">
+            <option>Bull Market Breakout</option>
+            <option>Bear Market Breakdown</option>
+            <option>Choppy/Rangebound</option>
+            <option>Black Swan Event</option>
+            <option>Altseason Rotation</option>
+            <option>Fed Pivot Macro Shock</option>
+            <option>Custom Scenario</option>
+          </select>
+        </div>
+        <div>
+          <label for="macro-trigger" class="block font-bold text-cyan-300 mb-1">Key Macro Trigger:</label>
+          <select id="macro-trigger" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white">
+            <option>Fed Policy - QT Ended</option>
+            <option>Fed Policy - QE Starting</option>
+            <option>Fed Policy - QT Ongoing</option>
+            <option>Macro Environment - Recession</option>
+            <option>Macro Environment - Inflation</option>
+            <option>Macro Environment - Growth</option>
+            <option>Macro Environment - Stagflation</option>
+            <option>BTC Cycle - Year 1</option>
+            <option>BTC Cycle - Year 2</option>
+            <option>BTC Cycle - Year 3</option>
+            <option>BTC Cycle - Year 4</option>
+          </select>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="entry-price" class="block font-bold text-cyan-300 mb-1">Entry Price:</label>
+            <input id="entry-price" type="number" placeholder="e.g. 65000" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white" />
+          </div>
+          <div>
+            <label for="position-size" class="block font-bold text-cyan-300 mb-1">Position Size:</label>
+            <input id="position-size" type="number" placeholder="e.g. 2.5" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white" />
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="stop-loss" class="block font-bold text-cyan-300 mb-1">Stop Loss Level:</label>
+            <input id="stop-loss" type="number" placeholder="e.g. 63500" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white" />
+          </div>
+          <div>
+            <label for="take-profit" class="block font-bold text-cyan-300 mb-1">Take Profit Level:</label>
+            <input id="take-profit" type="number" placeholder="e.g. 71000" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white" />
+          </div>
+        </div>
+        <div>
+          <label for="support-resistance" class="block font-bold text-cyan-300 mb-1">Major Support &amp; Resistance:</label>
+          <input id="support-resistance" type="text" placeholder="e.g. 62500, 68000, 71500" class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white" />
+        </div>
+        <div>
+          <label for="thoughts-plan" class="block font-bold text-cyan-300 mb-1">Your Thoughts &amp; Plan:</label>
+          <textarea id="thoughts-plan" rows="3" placeholder="Type your scenario, ideas, or paste chart links here..." class="w-full rounded bg-gray-800 border border-cyan-400 p-2 text-white"></textarea>
+        </div>
+        <div>
+          <label for="screenshot" class="block font-bold text-cyan-300 mb-1">Attach Screenshot (optional):</label>
+          <input id="screenshot" type="file" class="w-full text-white" />
+        </div>
+        <button type="submit" class="hud-action bg-cyan-500 hover:bg-cyan-700 text-lg font-bold w-full mt-4">Get Insights</button>
+      </form>
+    </section>
+
+    <!-- RISK/REWARD OUTPUT & CHECKLIST -->
+    <section class="mb-12 grid md:grid-cols-2 gap-8">
+      <div class="bg-gray-900 border border-cyan-400 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-cyan-400 mb-2">Risk/Reward Output</h3>
+        <ul class="list-inside text-base space-y-2">
+          <li><span class="font-bold text-yellow-300">Risk per Trade:</span> <span id="risk-per-trade">...</span></li>
+          <li><span class="font-bold text-green-400">Reward Potential:</span> <span id="reward-potential">...</span></li>
+          <li><span class="font-bold text-pink-300">Risk/Reward Ratio:</span> <span id="risk-reward">...</span></li>
+          <li><span class="font-bold text-cyan-300">Scenario Summary:</span> <span id="scenario-summary">...</span></li>
+        </ul>
+      </div>
+      <div class="bg-gray-900 border border-cyan-400 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-cyan-400 mb-2">Trade Checklist</h3>
+        <ul class="list-inside text-base space-y-2">
+          <li>Entry, stop, and target set and written down</li>
+          <li>Scenario matches current market regime</li>
+          <li>Position size fits risk plan</li>
+          <li>Reviewed support/resistance and major news</li>
+          <li>No FOMO or revenge trades</li>
+          <li>Plan for both success and failure</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
+    &copy; 2025 CyberSci-Dash. All rights reserved.
+  </footer>
+</body>
+</html>

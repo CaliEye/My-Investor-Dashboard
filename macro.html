@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CyberSci-Dash v2 | Macro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Macro Market Intelligence - Economic research, charts, and key insights.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="images/favicon.ico">
+</head>
+<body class="bg-gray-900 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">CyberSci-Dash v2</h1>
+    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
+      <a href="warroom.html" class="hover:text-pink-400" aria-label="War Room">War Room</a>
+      <a href="macro.html" class="text-yellow-400 border-b-2 border-yellow-400 pb-1" aria-label="Macro">Macro</a>
+      <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
+      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-7xl mx-auto">
+    <!-- MACRO HUD HERO -->
+    <section class="mb-10 rounded-2xl border-2 border-yellow-400 shadow-yellow-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-yellow-300 mb-5 tracking-widest">🌐 Macro Market Overview</h2>
+      <div class="grid md:grid-cols-2 gap-10">
+        <div>
+          <ul class="space-y-2 text-lg">
+            <li><span class="font-bold text-cyan-300">US Inflation (CPI):</span> <span id="cpi-value">...</span></li>
+            <li><span class="font-bold text-green-300">Unemployment:</span> <span id="unemp-value">...</span></li>
+            <li><span class="font-bold text-yellow-400">GDP Growth:</span> <span id="gdp-value">...</span></li>
+            <li><span class="font-bold text-red-400">Fed Funds Rate:</span> <span id="fed-rate">...</span></li>
+            <li><span class="font-bold text-blue-300">DXY (USD Index):</span> <span id="dxy-value">...</span></li>
+            <li><span class="font-bold text-pink-400">US10Y Yield:</span> <span id="us10y-value">...</span></li>
+          </ul>
+          <div class="mt-5 text-xs text-gray-300 italic">
+            Key macro signals update automatically. <br>
+            <span class="text-yellow-300">TIP:</span> Macro regime changes lead major trends. Stay alert for central bank moves and liquidity shifts.
+          </div>
+        </div>
+        <div>
+          <div class="bg-gray-800 border border-yellow-500 rounded-xl p-4 shadow mb-5">
+            <h3 class="text-lg font-orbitron text-yellow-300 mb-2">Macro Risk Indicator</h3>
+            <div id="macro-risk-gauge" class="gauge-meter"></div>
+            <div class="mt-2 text-sm text-gray-400">A composite of growth, inflation, and policy risk.</div>
+          </div>
+          <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow">
+            <h3 class="text-lg font-orbitron text-cyan-300 mb-2">Global Macro News</h3>
+            <ul class="list-inside text-base space-y-1">
+              <li>• FOMC statement due next week</li>
+              <li>• China PMI signals contraction</li>
+              <li>• OPEC+ announces new cuts</li>
+              <li>• ECB hints at rate hold</li>
+            </ul>
+            <div class="mt-2 text-xs text-gray-400">See <a href="https://www.cnbc.com/economy/" target="_blank" class="underline text-yellow-300">CNBC Economy</a> for more</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Macro Charts -->
+    <section class="mb-12">
+      <h2 class="text-xl font-orbitron text-yellow-300 mb-4">Key Macro Charts</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-900 border border-yellow-500 rounded-xl p-5 shadow">
+          <h4 class="font-orbitron text-yellow-400 mb-2">US10Y Treasury Yield</h4>
+          <canvas id="us10y-chart" class="macro-chart"></canvas>
+        </div>
+        <div class="bg-gray-900 border border-cyan-500 rounded-xl p-5 shadow">
+          <h4 class="font-orbitron text-cyan-400 mb-2">DXY (Dollar Index)</h4>
+          <canvas id="dxy-chart" class="macro-chart"></canvas>
+        </div>
+        <div class="bg-gray-900 border border-pink-500 rounded-xl p-5 shadow">
+          <h4 class="font-orbitron text-pink-400 mb-2">S&P 500 Index</h4>
+          <canvas id="spx-chart" class="macro-chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Insights and Research -->
+    <section class="mb-12">
+      <h2 class="text-xl font-orbitron text-yellow-300 mb-4">Key Insights & Research</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-gray-900 border border-yellow-500 rounded-xl p-6 shadow">
+          <h3 class="font-orbitron text-yellow-300 mb-2">Macro Playbook</h3>
+          <ul class="list-inside list-disc text-base space-y-2">
+            <li>When <span class="font-bold text-red-400">inflation rises</span>, hard assets outperform.</li>
+            <li><span class="font-bold text-cyan-300">Fed pivots</span> often mark macro regime changes.</li>
+            <li>Watch <span class="font-bold text-green-400">unemployment spikes</span> for recession signals.</li>
+            <li><span class="font-bold text-pink-400">Yield curve inversions</span> have preceded every major US recession.</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900 border border-cyan-500 rounded-xl p-6 shadow">
+          <h3 class="font-orbitron text-cyan-300 mb-2">Expert Insights</h3>
+          <blockquote class="border-l-4 border-yellow-300 pl-4 italic text-base mb-2">
+            "The global liquidity cycle is the ultimate driver of asset prices. When central banks are easing, risk assets fly."
+          </blockquote>
+          <blockquote class="border-l-4 border-pink-400 pl-4 italic text-base">
+            "Macro trumps micro in bear markets. Don’t fight the Fed."
+          </blockquote>
+          <div class="mt-2 text-xs text-gray-400">Sources: Macro research folders, top analysts.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Macroeconomic Data -->
+    <section class="macro-data mb-12">
+      <h3 class="font-orbitron text-cyan-300 mb-2">Macroeconomic Data</h3>
+      <ul class="list-inside text-base space-y-2">
+        <li><span class="font-bold text-yellow-300">S&P 500 (SPX):</span> <span id="macro-spx">Loading...</span></li>
+        <li><span class="font-bold text-green-300">US Dollar Index (DXY):</span> <span id="macro-dxy">Loading...</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
+    &copy; 2025 CyberSci-Dash. All rights reserved.
+  </footer>
+</body>
+</html>

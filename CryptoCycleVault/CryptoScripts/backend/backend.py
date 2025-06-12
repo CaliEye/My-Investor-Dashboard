@@ -240,3 +240,20 @@ def random_quote():
 def root():
     """Root endpoint for health check."""
     return {"msg": "CyberSci-Dash backend running."}
+
+@app.get("/api/price/bitcoin")
+def get_bitcoin_price():
+    """Fetch the current Bitcoin price in USD."""
+    url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+        data = response.json()
+        price = data.get("bitcoin", {}).get("usd")
+        if price is None:
+            raise ValueError("Invalid response structure from CoinGecko API")
+        return {"symbol": "BTC", "usd": price}
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching Bitcoin price: {e}")
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=f"Error parsing API response: {e}")

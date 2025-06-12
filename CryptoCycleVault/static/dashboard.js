@@ -14,6 +14,9 @@
     <h2>Live Prices</h2>
     <p>Bitcoin (BTC): <span id="btc-price">Loading...</span></p>
     <p>Ethereum (ETH): <span id="eth-price">Loading...</span></p>
+    <p>S&P 500 (SPX): <span id="spx-price">Loading...</span></p>
+    <p>USD Index (DXY): <span id="usd-index">Loading...</span></p>
+    <p>Fear & Greed Index: <span id="fear-greed">Loading...</span></p>
   </section>
 
   <!-- Scenarios Section -->
@@ -42,23 +45,35 @@
   <script>
 const BASE_URL = "http://127.0.0.1:8000";
 
-// Fetch live prices for Bitcoin and Ethereum
-async function fetchLivePrices() {
+// Fetch and update Market Overview
+async function updateMarketOverview() {
   try {
+    // Fetch BTC Price
     const btcResponse = await fetch(`${BASE_URL}/api/price/bitcoin`);
-    const ethResponse = await fetch(`${BASE_URL}/api/price/ethereum`);
-
-    if (!btcResponse.ok || !ethResponse.ok) throw new Error("Failed to fetch prices");
-
     const btcData = await btcResponse.json();
-    const ethData = await ethResponse.json();
-
     document.getElementById("btc-price").innerText = `$${btcData.usd}`;
+
+    // Fetch ETH Price
+    const ethResponse = await fetch(`${BASE_URL}/api/price/ethereum`);
+    const ethData = await ethResponse.json();
     document.getElementById("eth-price").innerText = `$${ethData.usd}`;
+
+    // Fetch SPX Price
+    const spxResponse = await fetch(`${BASE_URL}/api/price/spx`);
+    const spxData = await spxResponse.json();
+    document.getElementById("spx-price").innerText = `$${spxData.price}`;
+
+    // Fetch USD Index
+    const dxyResponse = await fetch(`${BASE_URL}/api/price/dxy`);
+    const dxyData = await dxyResponse.json();
+    document.getElementById("usd-index").innerText = `$${dxyData.price}`;
+
+    // Fetch Fear & Greed Index
+    const sentimentResponse = await fetch(`${BASE_URL}/api/market/sentiment`);
+    const sentimentData = await sentimentResponse.json();
+    document.getElementById("fear-greed").innerText = `${sentimentData.index} (${sentimentData.classification})`;
   } catch (error) {
-    console.error("Error fetching live prices:", error);
-    document.getElementById("btc-price").innerText = "Error";
-    document.getElementById("eth-price").innerText = "Error";
+    console.error("Error updating Market Overview:", error);
   }
 }
 
@@ -137,7 +152,7 @@ async function fetchInsights(timeframe) {
 
 // Initialize the dashboard
 function initializeDashboard() {
-  fetchLivePrices();
+  updateMarketOverview();
   fetchSavedScenarios();
 }
 
