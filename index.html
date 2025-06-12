@@ -51,6 +51,87 @@
   </header>
 
   <main>
+    <!-- Investor War Room HUD -->
+    <section class="hud-main">
+      <div class="hud-row cycles">
+        <!-- Cycles Panel -->
+        <div class="hud-panel cycles">
+          <h2>Cycle Status</h2>
+          <table class="cycle-table">
+            <thead>
+              <tr>
+                <th>Cycle</th><th>Count</th><th>Completed</th><th>Avg Cycle</th><th>Direction</th><th>Confidence</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>60-Day</td><td>4</td><td>
+                  <div class="prog-bar"><div style="width:7%"></div></div>7%
+                </td>
+                <td>58d</td><td><span class="up">↑ Rising</span></td>
+                <td><span class="confidence high">High</span></td>
+                <td><span class="status-dot green"></span></td>
+              </tr>
+              <tr>
+                <td>Weekly</td><td>9</td><td>
+                  <div class="prog-bar"><div style="width:36%"></div></div>36%
+                </td>
+                <td>25w</td><td><span class="up">↑ Rising</span></td>
+                <td><span class="confidence high">High</span></td>
+                <td><span class="status-dot green"></span></td>
+              </tr>
+              <tr>
+                <td>4-Year</td><td>31</td><td>
+                  <div class="prog-bar"><div style="width:65%"></div></div>65%
+                </td>
+                <td>48mo</td><td><span class="up">↑ Rising</span></td>
+                <td><span class="confidence high">High</span></td>
+                <td><span class="status-dot green"></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="cycle-note">
+            <strong>Note:</strong> End of cycle may fake out before reversal.<br>
+            Confidence can change based on price action. <span class="glow">Status is guidance, not absolute.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-row gauges">
+        <!-- Market Gauges -->
+        <div class="hud-panel gauge">
+          <h3>Crypto Risk</h3>
+          <div class="gauge-meter" id="crypto-risk-gauge"></div>
+        </div>
+        <div class="hud-panel gauge">
+          <h3>Macro Risk</h3>
+          <div class="gauge-meter" id="macro-risk-gauge"></div>
+        </div>
+        <div class="hud-panel screener">
+          <h3>Screener</h3>
+          <div class="screener-prices">
+            <div>BTC: <span id="btc-price">...</span></div>
+            <div>ETH: <span id="eth-price">...</span></div>
+            <div>SPX: <span id="spx-latest">...</span></div>
+            <div>Fear &amp; Greed: <span id="fg-latest">...</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-row actions">
+        <!-- Tactical/Scenario Buttons -->
+        <button class="hud-action" onclick="location.href='warroom.html'">Enter War Room</button>
+        <button class="hud-action" onclick="location.href='#scenario'">Scenario Builder</button>
+        <button class="hud-action" onclick="location.href='#insights'">Get Insights</button>
+        <div class="hud-alerts">
+          <marquee behavior="scroll" direction="left" scrollamount="6">
+            <span class="alert-blink">ALERT: Macro Risk Elevated |</span>
+            BTC breaks above 50 DMA | US10Y spiking | Fed statement at 2pm | ...
+          </marquee>
+        </div>
+      </div>
+    </section>
+
     <!-- HUD Section -->
     <section id="dashboard">
       <h2 class="text-pink-400 mb-4">🚀 Market Overview</h2>
