@@ -1,0 +1,76 @@
+/* General styles */
+body {
+  font-family: 'Orbitron', sans-serif;
+  background-color: #0a0a0f;
+  color: #c8c8d1;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #ff00d6;
+  text-shadow: 0 0 8px rgba(255, 0, 214, 0.7);
+}
+
+header {
+  background-color: #111119;
+  padding: 1rem;
+  border-bottom: 2px solid #00e5ff;
+}
+
+nav a {
+  color: #00e5ff;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: #ff00d6;
+}
+
+main {
+  padding: 2rem;
+}
+
+section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #23283a;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #111119;
+  color: #c8c8d1;
+}
+
+.loader {
+  border: 4px solid #23283a;
+  border-top: 4px solid #00e5ff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1.2s linear infinite;
+  margin: 1em auto;
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  section {
+    padding: 1rem;
+  }
+}
+<link rel="stylesheet" href="css/styles.css">
