@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberSci-Dash</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="dashboard.js"></script>
+</head>
+<body>
+  <h1>CyberSci-Dash</h1>
+
+  <!-- Live Price Section -->
+  <section id="live-price">
+    <h2>Live Prices</h2>
+    <p>Bitcoin (BTC): <span id="btc-price">Loading...</span></p>
+    <p>Ethereum (ETH): <span id="eth-price">Loading...</span></p>
+  </section>
+
+  <!-- Scenarios Section -->
+  <section id="scenarios">
+    <h2>Scenarios</h2>
+    <form id="scenario-form">
+      <label for="entry-price">Entry Price:</label>
+      <input type="number" id="entry-price" name="entry_price" required>
+      <label for="position-size">Position Size:</label>
+      <input type="number" id="position-size" name="position_size" required>
+      <button type="submit">Save Scenario</button>
+    </form>
+    <h3>Saved Scenarios</h3>
+    <ul id="saved-scenarios"></ul>
+  </section>
+
+  <!-- Insights Section -->
+  <section id="insights">
+    <h2>Insights</h2>
+    <button onclick="fetchInsights('3day')">3-Day Insights</button>
+    <button onclick="fetchInsights('weekly')">Weekly Insights</button>
+    <button onclick="fetchInsights('monthly')">Monthly Insights</button>
+    <ul id="insights-list"></ul>
+  </section>
+</body>
+</html>

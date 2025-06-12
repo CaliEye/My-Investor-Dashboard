@@ -1,10 +1,30 @@
 from datetime import datetime
 import requests
-from requests.exceptions import RequestException
+import logging
+from time import sleep
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # API Endpoints
 fear_greed_url = "https://api.alternative.me/fng/?limit=1"
 coingecko_url = "https://api.coingecko.com/api/v3/global"
+
+# Alpha Vantage API Key
+ALPHA_VANTAGE_KEY = "ZGA6Y5FY790NO4QE"
+
+def fetch_data_with_retry(url, retries=3, delay=2):
+    for attempt in range(retries):
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            logging.warning(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < retries - 1:
+                sleep(delay)
+    logging.error("All attempts to fetch data failed.")
+    return None
 
 # Fetch Data with Error Handling
 try:
@@ -69,3 +89,65 @@ except PermissionError as e:
 
 print("Debug: Starting script...")
 print(f"Debug: Writing to file {output_file}")
+
+# Fetch stock data (e.g., SPX)
+def fetch_stock_data(symbol):
+    url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={ALPHA_VANTAGE_KEY}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        latest_date = list(data['Time Series (Daily)'].keys())[0]
+        close_price = data['Time Series (Daily)'][latest_date]['4. close']
+        logging.info(f"{symbol} Latest Close Price: ${close_price}")
+        return close_price
+    except Exception as e:
+        logging.error(f"Error fetching data for {symbol}: {e}")
+        return None
+
+# Fetch cryptocurrency data (e.g., BTC/USD)
+def fetch_crypto_data(symbol):
+    url = f"https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency={symbol}&to_currency=USD&apikey={ALPHA_VANTAGE_KEY}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        exchange_rate = data['Realtime Currency Exchange Rate']['5. Exchange Rate']
+        logging.info(f"{symbol}/USD Exchange Rate: ${exchange_rate}")
+        return exchange_rate
+    except Exception as e:
+        logging.error(f"Error fetching data for {symbol}: {e}")
+        return None
+
+# Generate daily report
+def generate_daily_report():
+    logging.info("Generating daily report...")
+
+    # Fetch stock data
+    spx_price = fetch_stock_data("SPX")
+    dxy_price = fetch_stock_data("DXY")
+
+    # Fetch cryptocurrency data
+    btc_price = fetch_crypto_data("BTC")
+    eth_price = fetch_crypto_data("ETH")
+
+    # Compile the report
+    report = f"""
+    Daily Market Report:
+    ---------------------
+    S&P 500 (SPX): ${spx_price if spx_price else 'Error fetching data'}
+    US Dollar Index (DXY): ${dxy_price if dxy_price else 'Error fetching data'}
+    Bitcoin (BTC/USD): ${btc_price if btc_price else 'Error fetching data'}
+    Ethereum (ETH/USD): ${eth_price if eth_price else 'Error fetching data'}
+    """
+    logging.info(report)
+
+    # Save the report to a file
+    with open("daily_report.txt", "w") as file:
+        file.write(report)
+
+    logging.info("Daily report saved to daily_report.txt")
+
+# Main execution
+if __name__ == "__main__":
+    generate_daily_report()
