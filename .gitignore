@@ -4,27 +4,48 @@ __pycache__/
 *.so
 *.egg-info/
 
-# — Virtualenvs & env files
+# — Virtualenvs & environment files
 env/
 venv/
 .venv/
 .env
+*.env
 
 # — Jupyter Notebook checkpoints & outputs
 .ipynb_checkpoints/
 *.nbconvert.ipynb
-*.html
-*.pdf
 
 # — VS Code settings & caches
 .vscode/
 .history/
+*.code-workspace
 
 # — Mac OS cruft
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # — Node modules (only if you ever npm install)
 node_modules/
 
+# — Logs and temporary files
+*.log
+*.tmp
+*.bak
+
 # — Binder config
 binder/
+
+# — Ignore PDFs and other binary files
+*.pdf
+*.exe
+*.dll
+
+# — Ignore large media files (optional)
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# — Allow HTML files
+!*.html

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>War-Room Risk Eval</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Mermaid for the decision tree -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <!-- Fonts and External CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1 class="title">War-Room Risk Eval</h1>
+    <nav id="main-nav">
+      <a href="index.html">Dashboard</a>
+      <a href="warroom.html" class="active" aria-current="page">War Room</a>
+      <a href="#macro">Macro</a>
+      <a href="#crypto">Crypto</a>
+      <a href="#sentiment">Sentiment</a>
+      <a href="#scenario">Scenario Builder</a>
+      <a href="#insights">Insights</a>
+      <a href="#links">Quick Links</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Macro Panel -->
+    <section id="macro" class="panel">
+      <h2>Macro Regime</h2>
+      <div class="option">
+        <input type="radio" name="spx" id="spxUp"><label for="spxUp">SPX ↑</label>
+      </div>
+      <div class="option">
+        <input type="radio" name="spx" id="spxDown"><label for="spxDown">SPX ↓</label>
+      </div>
+      <div class="option">
+        <input type="checkbox" id="vixSpike"><label for="vixSpike">VIX Spike</label>
+      </div>
+    </section>
+
+    <!-- Crypto Panel -->
+    <section id="crypto" class="panel">
+      <h2>Crypto Signals</h2>
+      <div class="option">
+        <input type="checkbox" id="btcUp"><label for="btcUp">BTC > 50 DMA</label>
+      </div>
+      <div class="option">
+        <input type="checkbox" id="fgExtreme"><label for="fgExtreme">Fear &amp; Greed Extreme</label>
+      </div>
+    </section>
+
+    <!-- Overrides Panel -->
+    <section id="overrides" class="panel">
+      <h2>Manual Overrides</h2>
+      <div class="option">
+        <label for="overrideHeadlines">Headline Risk</label>
+        <input type="range" id="overrideHeadlines" min="0" max="100" value="0">
+      </div>
+      <div class="option">
+        <label for="overrideTrust">Team Trust</label>
+        <input type="range" id="overrideTrust" min="0" max="100" value="50">
+      </div>
+    </section>
+
+    <div id="gauge">Risk Score: <span id="score">–</span>/100</div>
+
+    <!-- Decision Tree -->
+    <section id="tree" class="mermaid">
+      graph TD
+        A[Start] --> B{SPX ↑?}
+        B -->|Yes| C{BTC ↑?}
+        B -->|No| D{VIX Spike?}
+        C -->|Yes| E[Low Risk → BUY]
+        C -->|No| F[Medium Risk → HOLD]
+        D -->|Yes| G[High Risk → SELL]
+        D -->|No| H[Medium Risk → HOLD]
+    </section>
+
+    <!-- Notes Panel -->
+    <section id="notes" class="notes-panel">
+      <label for="war-notes">📝 War Room Notes & Actions</label>
+      <textarea id="war-notes" placeholder="Type your thoughts, scenario, or action plan here..."></textarea>
+      <button id="save-notes" type="button">Save Notes</button>
+      <span class="save-status" id="notes-status"></span>
+    </section>
+
+    <button id="reset">Reset All</button>
+  </main>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+
+    async function autoToggle() {
+      const ALPHA_VANTAGE_KEY = "ZGA6Y5FY790NO4QE"; // Replace with your actual key
+
+      // SPX via AlphaVantage
+      try {
+        const spxJ = await fetch(
+          `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=^GSPC&apikey=${ALPHA_VANTAGE_KEY}`
+        ).then(r => r.json());
+        const price = +spxJ['Global Quote']['05. price'];
+        const prev = +spxJ['Global Quote']['08. previous close'];
+        document.getElementById(price > prev ? 'spxUp' : 'spxDown').checked = true;
+      } catch {}
+
+      // BTC trend (Coingecko)
+      try {
+        const btcJ = await fetch(
+          'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly'
+        ).then(r => r.json());
+        const pts = btcJ.prices.map(p => p[1]);
+        document.getElementById('btcUp').checked = pts.at(-1) > pts.at(-2);
+      } catch {}
+
+      // Fear & Greed
+      try {
+        const fg = await fetch('https://api.alternative.me/fng/?limit=1')
+          .then(r => r.json()).then(j => +j.data[0].value);
+        document.getElementById('fgExtreme').checked = fg > 80 || fg < 20;
+      } catch {}
+
+      computeScore();
+      mermaid.init(undefined, '#tree');
+    }
+
+    function computeScore() {
+      let s = 0;
+      if (document.getElementById('spxDown').checked) s += 20;
+      if (document.getElementById('vixSpike').checked) s += 30;
+      if (!document.getElementById('btcUp').checked) s += 20;
+      if (document.getElementById('fgExtreme').checked) s += 20;
+      s += +document.getElementById('overrideHeadlines').value * 0.1;
+      s += (100 - +document.getElementById('overrideTrust').value) * 0.1;
+      s = Math.min(100, Math.round(s));
+      document.getElementById('score').textContent = s;
+    }
+
+    document.querySelectorAll('input').forEach(i =>
+      i.addEventListener('change', computeScore)
+    );
+    document.getElementById('reset').onclick = () => {
+      localStorage.clear();
+      document.querySelectorAll('input').forEach(i => {
+        if (i.type === 'range') i.value = i.id === 'overrideTrust' ? 50 : 0;
+        else i.checked = false;
+      });
+      document.getElementById('war-notes').value = '';
+      computeScore();
+    };
+
+    const notesKey = 'warroom-notes';
+    document.getElementById('save-notes').onclick = () => {
+      localStorage.setItem(notesKey, document.getElementById('war-notes').value);
+      document.getElementById('notes-status').textContent = "Notes saved!";
+      setTimeout(() => document.getElementById('notes-status').textContent = '', 2000);
+    };
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('war-notes').value = localStorage.getItem(notesKey) || '';
+    });
+
+    window.onload = autoToggle;
+    setInterval(autoToggle, 60_000);
+  </script>
+</body>
+</html>
