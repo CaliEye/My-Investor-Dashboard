@@ -1,51 +1,56 @@
-# — Python artifacts
+# Python
 __pycache__/
-*.py[cod]
-*.so
-*.egg-info/
-
-# — Virtualenvs & environment files
-env/
-venv/
-.venv/
-.env
+*.pyc
+*.pyo
 *.env
 
-# — Jupyter Notebook checkpoints & outputs
-.ipynb_checkpoints/
-*.nbconvert.ipynb
-
-# — VS Code settings & caches
-.vscode/
-.history/
-*.code-workspace
-
-# — Mac OS cruft
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# — Node modules (only if you ever npm install)
+# Node.js
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# — Logs and temporary files
+# Logs
 *.log
+logs/
+*.out
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# OS Files
+.DS_Store
+Thumbs.db
+.AppleDouble
+
+# Environment Files
+*.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Build Files
+dist/
+build/
+*.min.js
+*.min.css
+
+# Temporary Files
 *.tmp
 *.bak
+*.html~
+*.css~
+*.js~
 
-# — Binder config
-binder/
+# Jupyter Notebooks
+.ipynb_checkpoints/
 
-# — Ignore PDFs and other binary files
-*.pdf
-*.exe
-*.dll
+# Reports and Data
+*.csv
+*.txt
 
-# — Ignore large media files (optional)
-*.mp4
-*.mov
-*.avi
-*.mkv
-
-# — Allow HTML files
-!*.html
+# Alpha Vantage API Key (if stored in a file)
+alpha_vantage_key.txt

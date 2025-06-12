@@ -2,261 +2,157 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>CyberSci-Dash v2 | Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CyberSci-Dash v2 - A modern dashboard for market insights and analysis.">
-  <meta name="keywords" content="dashboard, crypto, market analysis, investing, insights">
-  <meta name="author" content="CaliEye">
-  <meta property="og:title" content="CyberSci-Dash v2">
-  <meta property="og:description" content="A modern dashboard for market insights and analysis.">
-  <meta property="og:image" content="/images/og-image.png">
-  <meta property="og:url" content="https://yourwebsite.com">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://yourwebsite.com">
-  <title>CyberSci-Dash v2</title>
+  <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
   <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="images/favicon.ico">
 </head>
-<body>
-  <header>
-    <h1 class="title">CyberSci-Dash v2</h1>
-    <div class="hamburger" id="hamburger" aria-label="Open navigation" tabindex="0" role="button">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </div>
-    <nav id="main-nav">
-      <a href="index.html" class="active" aria-current="page">Dashboard</a>
-      <a href="warroom.html">War Room</a>
-      <a href="#macro">Macro</a>
-      <a href="#crypto">Crypto</a>
-      <a href="#sentiment">Sentiment</a>
-      <a href="#scenario">Scenario Builder</a>
-      <a href="#insights">Insights</a>
-      <a href="#links">Quick Links</a>
-    </nav>
-    <nav id="mobile-nav" class="mobile-nav" style="display:none;">
-      <a href="index.html" class="active" aria-current="page">Dashboard</a>
-      <a href="warroom.html">War Room</a>
-      <a href="#macro">Macro</a>
-      <a href="#crypto">Crypto</a>
-      <a href="#sentiment">Sentiment</a>
-      <a href="#scenario">Scenario Builder</a>
-      <a href="#insights">Insights</a>
-      <a href="#links">Quick Links</a>
+<body class="bg-gray-900 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
+    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+      <a href="index.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="Dashboard">Dashboard</a>
+      <a href="warroom.html" class="hover:text-cyan-400" aria-label="War Room">War Room</a>
+      <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
+      <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
+      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
     </nav>
   </header>
 
-  <main>
-    <!-- Investor War Room HUD -->
-    <section class="hud-main">
-      <div class="hud-row cycles">
-        <!-- Cycles Panel -->
-        <div class="hud-panel cycles">
-          <h2>Cycle Status</h2>
-          <table class="cycle-table">
+  <main class="p-6 max-w-7xl mx-auto">
+    <!-- Hero HUD Section -->
+    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
+      <div class="flex flex-col md:flex-row md:space-x-12">
+        <!-- Cycle Status Block -->
+        <div class="flex-1 mb-8 md:mb-0">
+          <h2 class="text-2xl font-orbitron text-cyan-300 mb-4 tracking-widest">Cycle Status</h2>
+          <table class="w-full text-center cycle-table mb-2" aria-label="Cycle Status Table">
             <thead>
               <tr>
-                <th>Cycle</th><th>Count</th><th>Completed</th><th>Avg Cycle</th><th>Direction</th><th>Confidence</th><th>Status</th>
+                <th>Cycle</th>
+                <th>Count</th>
+                <th>Completed</th>
+                <th>Avg Cycle</th>
+                <th>Direction</th>
+                <th>Confidence</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>60-Day</td><td>4</td><td>
+                <td>60-Day</td>
+                <td>4</td>
+                <td>
                   <div class="prog-bar"><div style="width:7%"></div></div>7%
                 </td>
-                <td>58d</td><td><span class="up">↑ Rising</span></td>
-                <td><span class="confidence high">High</span></td>
-                <td><span class="status-dot green"></span></td>
+                <td>58d</td>
+                <td><span class="text-green-400 font-bold">&#8593; Rising</span></td>
+                <td><span class="text-cyan-400 font-bold">High</span></td>
+                <td><span class="status-dot inline-block bg-green-400"></span></td>
               </tr>
               <tr>
-                <td>Weekly</td><td>9</td><td>
+                <td>Weekly</td>
+                <td>9</td>
+                <td>
                   <div class="prog-bar"><div style="width:36%"></div></div>36%
                 </td>
-                <td>25w</td><td><span class="up">↑ Rising</span></td>
-                <td><span class="confidence high">High</span></td>
-                <td><span class="status-dot green"></span></td>
+                <td>25w</td>
+                <td><span class="text-green-400 font-bold">&#8593; Rising</span></td>
+                <td><span class="text-cyan-400 font-bold">High</span></td>
+                <td><span class="status-dot inline-block bg-green-400"></span></td>
               </tr>
               <tr>
-                <td>4-Year</td><td>31</td><td>
+                <td>4-Year</td>
+                <td>31</td>
+                <td>
                   <div class="prog-bar"><div style="width:65%"></div></div>65%
                 </td>
-                <td>48mo</td><td><span class="up">↑ Rising</span></td>
-                <td><span class="confidence high">High</span></td>
-                <td><span class="status-dot green"></span></td>
+                <td>48mo</td>
+                <td><span class="text-green-400 font-bold">&#8593; Rising</span></td>
+                <td><span class="text-cyan-400 font-bold">High</span></td>
+                <td><span class="status-dot inline-block bg-green-400"></span></td>
               </tr>
             </tbody>
           </table>
-          <div class="cycle-note">
+          <div class="mt-3 text-gray-200 text-xs">
             <strong>Note:</strong> End of cycle may fake out before reversal.<br>
-            Confidence can change based on price action. <span class="glow">Status is guidance, not absolute.</span>
+            Confidence can change based on price action. Status is guidance, not absolute.
+          </div>
+        </div>
+        <!-- Live Market Gauges -->
+        <div class="flex-1 space-y-6">
+          <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow">
+            <h3 class="font-orbitron text-lg text-cyan-300 mb-2">Market Overview</h3>
+            <div class="grid grid-cols-2 gap-3 text-base">
+              <div>BTC Price:</div> <div id="btc-price" class="font-bold text-yellow-300" aria-live="polite">...</div>
+              <div>ETH Price:</div> <div id="eth-price" class="font-bold text-green-300" aria-live="polite">...</div>
+              <div>SPX:</div> <div id="spx-latest" class="font-bold text-blue-300" aria-live="polite">...</div>
+              <div>USD Index:</div> <div id="usd-latest" class="font-bold text-cyan-300" aria-live="polite">...</div>
+              <div>Fear &amp; Greed:</div> <div id="fg-latest" class="font-bold text-pink-400" aria-live="polite">...</div>
+            </div>
+          </div>
+          <div class="flex flex-row space-x-4">
+            <div class="bg-gray-800 border border-green-500 rounded-xl p-4 flex-1 shadow">
+              <h3 class="font-orbitron text-lg text-green-300 mb-2">Crypto Risk</h3>
+              <div id="crypto-risk-gauge" class="gauge-meter"></div>
+            </div>
+            <div class="bg-gray-800 border border-yellow-500 rounded-xl p-4 flex-1 shadow">
+              <h3 class="font-orbitron text-lg text-yellow-300 mb-2">Macro Risk</h3>
+              <div id="macro-risk-gauge" class="gauge-meter"></div>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="hud-row gauges">
-        <!-- Market Gauges -->
-        <div class="hud-panel gauge">
-          <h3>Crypto Risk</h3>
-          <div class="gauge-meter" id="crypto-risk-gauge"></div>
-        </div>
-        <div class="hud-panel gauge">
-          <h3>Macro Risk</h3>
-          <div class="gauge-meter" id="macro-risk-gauge"></div>
-        </div>
-        <div class="hud-panel screener">
-          <h3>Screener</h3>
-          <div class="screener-prices">
-            <div>BTC: <span id="btc-price">...</span></div>
-            <div>ETH: <span id="eth-price">...</span></div>
-            <div>SPX: <span id="spx-latest">...</span></div>
-            <div>Fear &amp; Greed: <span id="fg-latest">...</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hud-row actions">
-        <!-- Tactical/Scenario Buttons -->
-        <button class="hud-action" onclick="location.href='warroom.html'">Enter War Room</button>
-        <button class="hud-action" onclick="location.href='#scenario'">Scenario Builder</button>
-        <button class="hud-action" onclick="location.href='#insights'">Get Insights</button>
-        <div class="hud-alerts">
-          <marquee behavior="scroll" direction="left" scrollamount="6">
-            <span class="alert-blink">ALERT: Macro Risk Elevated |</span>
-            BTC breaks above 50 DMA | US10Y spiking | Fed statement at 2pm | ...
-          </marquee>
-        </div>
+      <!-- Alert Ticker -->
+      <div class="mt-6 border-t border-cyan-700 pt-3">
+        <marquee behavior="scroll" direction="left" scrollamount="6" class="text-pink-400 text-lg font-bold tracking-wide">
+          ALERT: Macro Risk Elevated | BTC breaks above 50 DMA | US10Y spiking | Fed statement at 2pm | ...
+        </marquee>
       </div>
     </section>
 
-    <!-- HUD Section -->
-    <section id="dashboard">
-      <h2 class="text-pink-400 mb-4">🚀 Market Overview</h2>
-      <div class="overview-grid" aria-label="Market Overview">
-        <div>
-          <strong>BTC Price:</strong> <span id="btc-price" aria-live="polite">...</span><br>
-          <strong>ETH Price:</strong> <span id="eth-price" aria-live="polite">...</span>
-        </div>
-        <div>
-          <strong>SPX:</strong> <span id="spx-latest" aria-live="polite">...</span><br>
-          <strong>USD Index:</strong> <span id="usd-latest" aria-live="polite">...</span>
-        </div>
-        <div>
-          <strong>Fear &amp; Greed:</strong> <span id="fg-latest" aria-live="polite">...</span>
+    <!-- Dashboard Action Panel -->
+    <section class="mb-10 flex flex-col md:flex-row md:space-x-6">
+      <div class="flex-1 mb-8 md:mb-0 bg-gray-800 border border-pink-400 rounded-xl shadow p-6">
+        <h2 class="text-xl font-orbitron text-pink-400 mb-2">Current Playbook</h2>
+        <ul class="list-disc list-inside text-lg space-y-2">
+          <li>Trend: <span class="font-bold text-green-300">Uptrend</span> (Stay long, trail stops)</li>
+          <li>Risk: <span class="font-bold text-yellow-300">Moderate</span> (Scale in, consider partial profit)</li>
+          <li>Action: <span class="font-bold text-cyan-300">Monitor macro triggers, no full risk</span></li>
+        </ul>
+        <div class="mt-4 text-gray-300 text-sm">
+          <strong>Today’s Guidance:</strong> <span class="text-white">Follow your plan, avoid FOMO, update your scenario in the War Room if conditions change.</span>
         </div>
       </div>
-      <div class="loader" id="dashboard-loader"></div>
+      <div class="flex-1 bg-gray-800 border border-cyan-400 rounded-xl shadow p-6">
+        <h2 class="text-xl font-orbitron text-cyan-400 mb-2">Market News</h2>
+        <ul class="list-inside text-base space-y-1">
+          <li>• CPI print due tomorrow</li>
+          <li>• FOMC meeting next Wednesday</li>
+          <li>• ETH ETF approval rumors circulating</li>
+          <li>• Watch for BTC options expiry Friday</li>
+        </ul>
+        <div class="mt-2 text-gray-400 text-xs">News auto-updates every hour. <a href="macro.html" class="underline text-pink-400">See macro page for details &rarr;</a></div>
+      </div>
     </section>
 
-    <!-- Macro Panel -->
-    <details id="macro" open>
-      <summary>⚙️ Macro Conditions</summary>
-      <div id="macro-panel">
-        <div class="option">
-          <input type="radio" name="spx" id="spx-up" value="up">
-          <label for="spx-up">S&amp;P 500 ↑</label>
-        </div>
-        <div class="option">
-          <input type="radio" name="spx" id="spx-down" value="down">
-          <label for="spx-down">S&amp;P 500 ↓</label>
-        </div>
-        <div class="option">
-          <input type="checkbox" id="usd-strong">
-          <label for="usd-strong">USD Strong (DXY ↑)</label>
-        </div>
-        <div class="option">
-          <input type="checkbox" id="usd-weak">
-          <label for="usd-weak">USD Weak (DXY ↓)</label>
-        </div>
-        <canvas id="spxChart" height="120" aria-label="S&P 500 Chart"></canvas>
-        <canvas id="usdChart" height="120" aria-label="USD Index Chart"></canvas>
-      </div>
-    </details>
-
-    <!-- Crypto Panel -->
-    <details id="crypto">
-      <summary>💎 Crypto Signals</summary>
-      <div id="crypto-panel">
-        <div class="option">
-          <input type="checkbox" id="btc-up">
-          <label for="btc-up">BTC &gt; 50 DMA</label>
-        </div>
-        <div class="option">
-          <input type="checkbox" id="nvt-high">
-          <label for="nvt-high" title="Network Value to Transactions Ratio">NVT Ratio High</label>
-        </div>
-        <canvas id="btcChart" height="120" aria-label="Bitcoin Chart"></canvas>
-      </div>
-    </details>
-
-    <!-- Sentiment Panel -->
-    <details id="sentiment">
-      <summary>📈 Market Sentiment</summary>
-      <div id="sentiment-panel">
-        <div class="slider-wrap">
-          <label for="fgSlider">Fear &amp; Greed:</label>
-          <div class="value" id="fgValue">···</div>
-          <input type="range" id="fgSlider" min="0" max="100" step="1" aria-valuemin="0" aria-valuemax="100" aria-label="Fear & Greed Index">
-        </div>
-      </div>
-    </details>
-
-    <!-- Scenario Builder -->
-    <section class="scenario-form" id="scenario">
-      <h2>🧪 Scenario Builder</h2>
-      <label>Fed Policy:</label>
-      <input type="radio" name="fed" value="QT ended, QE starting" id="fed-qe"><label for="fed-qe">QT ended, QE starting</label>
-      <input type="radio" name="fed" value="QT ongoing" id="fed-qt"><label for="fed-qt">QT ongoing</label>
-      <input type="radio" name="fed" value="Neutral" id="fed-neutral"><label for="fed-neutral">Neutral</label>
-      <br><br>
-      <label>Macro Environment:</label>
-      <input type="checkbox" name="macro" value="Recession" id="macro-recession"><label for="macro-recession">Recession</label>
-      <input type="checkbox" name="macro" value="Inflation" id="macro-inflation"><label for="macro-inflation">Inflation</label>
-      <input type="checkbox" name="macro" value="Growth" id="macro-growth"><label for="macro-growth">Growth</label>
-      <input type="checkbox" name="macro" value="Stagflation" id="macro-stagflation"><label for="macro-stagflation">Stagflation</label>
-      <br><br>
-      <label>BTC Cycle:</label>
-      <input type="radio" name="cycle" value="Year 1" id="cycle-1"><label for="cycle-1">Year 1</label>
-      <input type="radio" name="cycle" value="Year 2" id="cycle-2"><label for="cycle-2">Year 2</label>
-      <input type="radio" name="cycle" value="Year 3" id="cycle-3"><label for="cycle-3">Year 3</label>
-      <input type="radio" name="cycle" value="Year 4" id="cycle-4"><label for="cycle-4">Year 4</label>
-      <br><br>
-      <label for="user-thoughts">Your Thoughts &amp; Ideas:</label>
-      <textarea id="user-thoughts" rows="3" placeholder="Type your scenario, ideas, or paste chart links here..."></textarea>
-      <div class="upload-section">
-        <label for="screenshot">Attach Screenshot (optional):</label>
-        <input type="file" id="screenshot" accept="image/*">
-      </div>
-      <br>
-      <button class="btn" type="button" onclick="generateInsights()">Get Insights</button>
+    <!-- Quick Panel Shortcuts -->
+    <section class="flex flex-wrap gap-6 mb-10 justify-center">
+      <a href="warroom.html" class="hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
+      <a href="scenario.html" class="hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="hud-action bg-yellow-500 hover:bg-yellow-700" aria-label="Get Insights">Get Insights</a>
+      <a href="links.html" class="hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
     </section>
-
-    <!-- Insights Panel -->
-    <div class="insights" id="insights" aria-live="polite">
-      <strong>Market insights and suggested actions will appear here based on your scenario.</strong>
-    </div>
-
-    <!-- Quick Links -->
-    <div class="quick-links" id="links" aria-label="Quick Links">
-      <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener">Fear &amp; Greed Index</a>
-      <a href="https://www.tradingview.com/chart/" target="_blank" rel="noopener">TradingView Charts</a>
-      <a href="#">Cycle Playbook</a>
-      <a href="#">Macro Notes</a>
-      <a href="#">Sentiment Triggers</a>
-      <a href="#">Investment Playbook</a>
-    </div>
-
-    <button id="reset" class="btn" type="button" aria-label="Reset All Data">Reset All</button>
-    <div class="loader" id="loader"></div>
   </main>
 
-  <footer class="text-center text-gray-500 mt-8" aria-label="Footer">
-    <p>&copy; 2025 CyberSci-Dash. All rights reserved.</p>
+  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
+    &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
-
-  <script src="js/scripts.js"></script>
 </body>
 </html>

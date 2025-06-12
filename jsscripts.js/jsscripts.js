@@ -1,261 +1,250 @@
-// ==== DASHBOARD JAVASCRIPT ====
+// CyberSci-Dash v2 Custom JavaScript
+// Author: CaliEye Copilot
+// Features: Chart switching, insights toggles, theme control, quick link add, simple local storage, dynamic tooltips, Alpha Vantage integration
 
-document.addEventListener("DOMContentLoaded", function () {
+const ALPHA_VANTAGE_KEY = "ZGA6Y5FY790NO4QE"; // Your Alpha Vantage API Key
 
-  // Hamburger menu for mobile navigation
-  const hamburger = document.getElementById('hamburger');
-  const mainNav = document.getElementById('main-nav');
-  const mobileNav = document.getElementById('mobile-nav');
-  hamburger.onclick = () => {
-    if (mobileNav.style.display === "none" || !mobileNav.style.display) {
-      mobileNav.style.display = "flex";
-    } else {
-      mobileNav.style.display = "none";
-    }
-  };
-  document.body.addEventListener('click', function (e) {
-    if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) {
-      mobileNav.style.display = "none";
-    }
-  }, true);
-
-  // Optional Loader
-  const loader = document.getElementById('dashboard-loader');
-  function showLoader() { if (loader) loader.style.display = 'block'; }
-  function hideLoader() { if (loader) loader.style.display = 'none'; }
-
-  // Storage helpers
-  const storage = key => localStorage.getItem(key);
-  const save = (key, val) => localStorage.setItem(key, val);
-  const clearAll = () => localStorage.clear();
-
-  const KEYS = {
-    spx: 'cs_spx',
-    usd: 'cs_usd',
-    btc: 'cs_btc',
-    nvt: 'cs_nvt',
-    fg: 'cs_fg'
+document.addEventListener('DOMContentLoaded', function () {
+  /* === 1. Chart Switching (my charts.html) === */
+  const chartMap = {
+    spx: 'https://www.tradingview.com/chart/?symbol=SPX',
+    dxy: 'https://www.tradingview.com/chart/?symbol=TVC:DXY',
+    btcusd: 'https://www.tradingview.com/chart/?symbol=BITSTAMP:BTCUSD',
+    ethusd: 'https://www.tradingview.com/chart/?symbol=BITSTAMP:ETHUSD',
+    total3: 'https://www.tradingview.com/chart/?symbol=CRYPTOCAP:TOTAL3',
+    btcd: 'https://www.tradingview.com/chart/?symbol=CRYPTOCAP:BTC.D'
   };
 
-  // ----- API KEYS -----
-  // IMPORTANT: Replace this with your own Alpha Vantage API key!
-  const ALPHA_VANTAGE_KEY = "ZGA6Y5FY790NO4QE"; // Replace with your actual key;
+  window.showMainChart = function (chartKey) {
+    const mainFrame = document.getElementById('main-chart-frame');
+    if (mainFrame && chartMap[chartKey]) {
+      mainFrame.src = chartMap[chartKey];
+      document.querySelectorAll('.chart-thumb').forEach(el => el.classList.remove('selected'));
+      const thumb = document.getElementById('thumb-' + chartKey);
+      if (thumb) thumb.classList.add('selected');
+    }
+  };
 
-  // ----- FETCH HELPERS -----
-  async function fetchJSON(url) {
+  // Set initial default (BTCUSD)
+  const defaultThumb = document.getElementById('thumb-btcusd');
+  if (defaultThumb) defaultThumb.classList.add('selected');
+
+  /* === 2. Insights Panel: Toggle 3D/Weekly/Monthly (all pages) === */
+  const insightBtns = document.querySelectorAll('.insight-toggle-btn');
+  if (insightBtns.length) {
+    insightBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        const target = this.dataset.target;
+        document.querySelectorAll('.insight-panel-section').forEach(panel => {
+          panel.style.display = panel.id === target ? 'block' : 'none';
+        });
+        insightBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  }
+
+  /* === 3. Quick Links: Add Favorite Link (links.html) === */
+  const quickLinkForm = document.querySelector('form.quick-links-form');
+  if (quickLinkForm) {
+    quickLinkForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = this.querySelector('input[type="text"]').value.trim();
+      const url = this.querySelector('input[type="url"]').value.trim();
+      if (!name || !url) {
+        alert('Please enter both a website name and a valid URL.');
+        return;
+      }
+      addQuickLinkToLocalStorage(name, url);
+      this.reset();
+      displayQuickLinks();
+    });
+    displayQuickLinks();
+  }
+
+  function addQuickLinkToLocalStorage(name, url) {
+    const links = JSON.parse(localStorage.getItem('cybersci_quicklinks') || '[]');
+    links.push({ name, url });
+    localStorage.setItem('cybersci_quicklinks', JSON.stringify(links));
+  }
+
+  function displayQuickLinks() {
+    const links = JSON.parse(localStorage.getItem('cybersci_quicklinks') || '[]');
+    const list = document.getElementById('my-quick-links');
+    if (!list) return;
+    list.innerHTML = '';
+    links.forEach(link => {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${link.url}" target="_blank" class="text-cyan-300 underline">${link.name}</a>`;
+      list.appendChild(li);
+    });
+  }
+
+  /* === 4. Theme Toggle (dark/cyber/bright) === */
+  const themeBtn = document.getElementById('theme-toggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      const body = document.body;
+      if (body.classList.contains('theme-dark')) {
+        body.classList.replace('theme-dark', 'theme-cyber');
+      } else if (body.classList.contains('theme-cyber')) {
+        body.classList.replace('theme-cyber', 'theme-bright');
+      } else {
+        body.classList.replace('theme-bright', 'theme-dark');
+      }
+    });
+  }
+
+  /* === 5. Tooltips for Chart Thumbnails === */
+  document.querySelectorAll('.chart-thumb').forEach(thumb => {
+    thumb.addEventListener('mouseenter', function () {
+      const label = this.querySelector('div.font-bold');
+      if (!label) return;
+      const tip = document.createElement('div');
+      tip.className = 'chart-tooltip';
+      tip.innerText = 'Click to expand and analyze';
+      tip.style.position = 'absolute';
+      tip.style.background = '#232946';
+      tip.style.color = '#fff';
+      tip.style.border = '1.5px solid #06b6d4';
+      tip.style.padding = '0.4em 1em';
+      tip.style.borderRadius = '0.7em';
+      tip.style.top = `${this.offsetTop + 120}px`;
+      tip.style.left = `${this.offsetLeft + 30}px`;
+      tip.style.zIndex = 1000;
+      tip.style.pointerEvents = 'none';
+      tip.id = 'chart-tip';
+      document.body.appendChild(tip);
+    });
+    thumb.addEventListener('mouseleave', function () {
+      const tip = document.getElementById('chart-tip');
+      if (tip) tip.remove();
+    });
+  });
+
+  /* === 6. Marquee Pause/Play (for news tickers) === */
+  document.querySelectorAll('marquee, .alert-ticker').forEach(marquee => {
+    marquee.addEventListener('mouseenter', () => marquee.stop && marquee.stop());
+    marquee.addEventListener('mouseleave', () => marquee.start && marquee.start());
+  });
+
+  /* === 7. Scenario Builder: Save & Retrieve Scenarios (scenario.html) === */
+  const scenarioForm = document.querySelector('form.scenario-form');
+  if (scenarioForm) {
+    scenarioForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const data = {};
+      this.querySelectorAll('input, select, textarea').forEach(input => {
+        data[input.name || input.id || input.placeholder] = input.value;
+      });
+      const scenarios = JSON.parse(localStorage.getItem('cybersci_scenarios') || '[]');
+      scenarios.push({ ...data, time: new Date().toISOString() });
+      localStorage.setItem('cybersci_scenarios', JSON.stringify(scenarios));
+      alert('Scenario saved! (Check the console for details)');
+      console.log(scenarios);
+      this.reset();
+    });
+  }
+
+  // Validate user-entered scenarios with live market data
+  async function validateScenario(symbol, userPrice) {
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${ALPHA_VANTAGE_KEY}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const latestDate = Object.keys(data['Time Series (Daily)'])[0];
+      const livePrice = parseFloat(data['Time Series (Daily)'][latestDate]['4. close']);
+      if (Math.abs(livePrice - userPrice) / livePrice > 0.05) {
+        alert(`Warning: Your entered price for ${symbol} (${userPrice}) deviates significantly from the live price (${livePrice}).`);
+      } else {
+        alert(`Your entered price for ${symbol} (${userPrice}) is close to the live price (${livePrice}).`);
+      }
+    } catch (error) {
+      console.error(`Error validating scenario for ${symbol}:`, error);
+      alert('Error validating scenario. Please try again later.');
+    }
+  }
+
+  // Helper function for API calls
+  async function fetchAlphaVantageData(url) {
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
-      console.error(`Error fetching data from ${url}:`, error);
+      console.error(`Error fetching data from Alpha Vantage: ${error.message}`);
       return null;
     }
   }
 
-  // SPX & USD Charts (Alpha Vantage)
-  async function fetchTimeSeries(symbol) {
-    const apikey = ALPHA_VANTAGE_KEY;
-    try {
-      const res = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${encodeURIComponent(symbol)}&interval=60min&outputsize=compact&apikey=${apikey}`);
-      const json = await res.json();
-      if (json['Note'] || json['Information']) {
-        console.error('Alpha Vantage API limit or invalid API key:', json);
-        return [];
-      }
-      const data = json['Time Series (60min)'];
-      if (!data) throw new Error('No data returned from Alpha Vantage');
-      return Object.entries(data).slice(0, 48).reverse().map(([ts, val]) => ({ x: new Date(ts), y: +val['4. close'] }));
-    } catch (error) {
-      console.error(`Error fetching ${symbol} data:`, error);
-      return [];
-    }
-  }
+  // Fetch live prices for BTC and ETH
+  async function fetchCryptoPrices() {
+    const symbols = ['BTCUSD', 'ETHUSD'];
+    const promises = symbols.map(symbol => {
+      const url = `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${symbol.slice(0, 3)}&to_currency=USD&apikey=${ALPHA_VANTAGE_KEY}`;
+      return fetchAlphaVantageData(url);
+    });
 
-  // Chart rendering
-  function makeChart(ctx, label, data, color) {
-    if (!ctx) return;
-    // Destroy previous chart instance if exists for smoother updates
-    if (ctx._chartInstance) {
-      ctx._chartInstance.destroy();
-    }
-    ctx._chartInstance = new Chart(ctx, {
-      type: 'line',
-      data: { datasets: [{ label, data, borderColor: color, pointRadius: 0, fill: false, tension: 0.3 }] },
-      options: {
-        responsive: true,
-        scales: {
-          x: { type: 'time', time: { unit: 'hour', displayFormats: { hour: 'HH:mm' } }, grid: { color: '#23283a' } },
-          y: { grid: { color: '#23283a' } }
-        },
-        plugins: { legend: { display: false } },
-        elements: { line: { borderWidth: 2 } }
+    const results = await Promise.all(promises);
+    results.forEach((data, index) => {
+      const symbol = symbols[index];
+      if (data) {
+        const price = data['Realtime Currency Exchange Rate']['5. Exchange Rate'];
+        document.getElementById(`live-${symbol.toLowerCase()}-price`).innerText = `$${parseFloat(price).toFixed(2)}`;
+      } else {
+        document.getElementById(`live-${symbol.toLowerCase()}-price`).innerText = 'Error';
       }
     });
   }
 
-  // BTC Chart (Coingecko)
-  async function fetchBTC() {
-    try {
-      const res = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly');
-      const j = await res.json();
-      if (!j.prices) throw new Error('No BTC price data');
-      return j.prices.map(p => ({ x: new Date(p[0]), y: p[1] }));
-    } catch (error) {
-      console.error('Error fetching BTC data:', error);
-      return [];
-    }
-  }
+  // Call the function on page load
+  fetchCryptoPrices();
 
-  // ETH Price (Coingecko)
-  async function fetchETHPrice() {
-    try {
-      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-      const d = await res.json();
-      if (!d.ethereum || !d.ethereum.usd) throw new Error('No ETH price data');
-      return d.ethereum.usd;
-    } catch (error) {
-      console.error('Error fetching ETH price:', error);
-      return null;
-    }
-  }
+  // Fetch macroeconomic data for SPX and DXY
+  async function fetchMacroData() {
+    const symbols = ['SPX', 'DXY'];
+    const promises = symbols.map(symbol => {
+      const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${ALPHA_VANTAGE_KEY}`;
+      return fetchAlphaVantageData(url);
+    });
 
-  // Fear & Greed (Alternative.me)
-  async function fetchFG() {
-    try {
-      const j = await fetchJSON('https://api.alternative.me/fng/?limit=1');
-      if (!j || !j.data || !j.data[0]) throw new Error('No F&G data');
-      return +j.data[0].value;
-    } catch (error) {
-      console.error('Error fetching Fear & Greed data:', error);
-      return null;
-    }
-  }
-
-  // ----- DASHBOARD REFRESH -----
-  async function refreshAll() {
-    if (loader) showLoader();
-    try {
-      // SPX
-      const spxData = await fetchTimeSeries('^GSPC');
-      if (spxData && spxData.length) {
-        makeChart(document.getElementById('spxChart'), 'S&P 500', spxData, '#00e5ff');
-        const lastSPX = spxData.at(-1).y;
-        const prevSPX = spxData.at(-2).y;
-        document.getElementById('spx-latest').textContent = lastSPX.toLocaleString();
-        document.getElementById(lastSPX > prevSPX ? 'spx-up' : 'spx-down').checked = true;
-        save(KEYS.spx, lastSPX > prevSPX ? 'up' : 'down');
+    const results = await Promise.all(promises);
+    results.forEach((data, index) => {
+      const symbol = symbols[index];
+      if (data) {
+        const latestDate = Object.keys(data['Time Series (Daily)'])[0];
+        const price = data['Time Series (Daily)'][latestDate]['4. close'];
+        document.getElementById(`macro-${symbol.toLowerCase()}`).innerText = `$${parseFloat(price).toFixed(2)}`;
       } else {
-        document.getElementById('spx-latest').textContent = "N/A";
+        document.getElementById(`macro-${symbol.toLowerCase()}`).innerText = 'Error';
       }
-      // USD (DXY)
-      const usdData = await fetchTimeSeries('DX-Y.NYB');
-      if (usdData && usdData.length) {
-        makeChart(document.getElementById('usdChart'), 'USD Index', usdData, '#ff00d6');
-        const lastUSD = usdData.at(-1).y, prevUSD = usdData.at(-2).y;
-        document.getElementById('usd-latest').textContent = lastUSD.toLocaleString();
-        document.getElementById(lastUSD > prevUSD ? 'usd-strong' : 'usd-weak').checked = true;
-        save(KEYS.usd, lastUSD > prevUSD ? 'strong' : 'weak');
-      } else {
-        document.getElementById('usd-latest').textContent = "N/A";
-      }
-      // BTC
-      const btcData = await fetchBTC();
-      if (btcData && btcData.length) {
-        makeChart(document.getElementById('btcChart'), 'Bitcoin', btcData, 'yellow');
-        const lastBTC = btcData.at(-1).y, prevBTC = btcData.at(-2).y;
-        document.getElementById('btc-price').textContent = '$' + lastBTC.toLocaleString();
-        document.getElementById('btc-up').checked = lastBTC > prevBTC;
-        save(KEYS.btc, lastBTC > prevBTC);
-      } else {
-        document.getElementById('btc-price').textContent = "N/A";
-      }
-      // ETH
-      const eth = await fetchETHPrice();
-      if (eth !== null) {
-        document.getElementById('eth-price').textContent = '$' + eth.toLocaleString();
-      } else {
-        document.getElementById('eth-price').textContent = "N/A";
-      }
-      // Fear & Greed
-      const fg = await fetchFG();
-      if (fg !== null) {
-        document.getElementById('fgSlider').value = fg;
-        document.getElementById('fgValue').textContent = fg;
-        document.getElementById('fg-latest').textContent = fg;
-        save(KEYS.fg, fg);
-      } else {
-        document.getElementById('fg-latest').textContent = "N/A";
-      }
-    } catch (err) {
-      console.error("refreshAll error", err);
-    } finally {
-      if (loader) hideLoader();
-    }
-  }
-
-  // Sentiment slider
-  document.getElementById('fgSlider').oninput = e => {
-    document.getElementById('fgValue').textContent = e.target.value;
-    save(KEYS.fg, e.target.value);
-  };
-
-  // Reset All
-  document.getElementById('reset').onclick = () => {
-    if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
-      clearAll();
-      document.querySelectorAll('input[type="checkbox"],input[type="radio"]').forEach(i => i.checked = false);
-      document.getElementById('fgSlider').value = 0;
-      document.getElementById('fgValue').textContent = '0';
-      document.getElementById('fg-latest').textContent = '0';
-      document.getElementById('insights').innerHTML = "<strong>Market insights and suggested actions will appear here based on your scenario.</strong>";
-    }
-  };
-
-  // Insights
-  window.generateInsights = function () {
-    const fed = document.querySelector('input[name="fed"]:checked');
-    const macros = Array.from(document.querySelectorAll('input[name="macro"]:checked')).map(cb => cb.value);
-    const cycle = document.querySelector('input[name="cycle"]:checked');
-    const thoughts = document.getElementById('user-thoughts').value.trim();
-    let insights = [];
-    if (fed && fed.value.includes('QE')) {
-      insights.push("Fed is starting QE: Risk assets (crypto, stocks) may benefit. Consider increasing exposure.");
-    }
-    if (macros.includes('Recession')) {
-      insights.push("Recession: Defensive positioning, consider gold, cash, or low-beta assets.");
-    }
-    if (macros.includes('Inflation')) {
-      insights.push("Inflation: Hard assets like BTC and gold may outperform.");
-    }
-    if (cycle && cycle.value === 'Year 4') {
-      insights.push("BTC Cycle Year 4: Historically, late-cycle risk. Consider profit-taking strategies.");
-    }
-    if (thoughts) {
-      insights.push("Your thoughts: " + thoughts);
-    }
-    if (insights.length === 0) {
-      insights.push("Select scenario options and add your thoughts for tailored insights.");
-    }
-    document.getElementById('insights').innerHTML = insights.map(i => `<div>• ${i}</div>`).join('');
-  };
-
-  // Navigation highlight (desktop & mobile)
-  function highlightNav() {
-    let navs = [mainNav, mobileNav];
-    navs.forEach(navEl => {
-      Array.from(navEl.querySelectorAll('a')).forEach(link => {
-        link.onclick = function () {
-          navs.forEach(nv => nv.querySelectorAll('a').forEach(l => l.classList.remove('active')));
-          this.classList.add('active');
-        }
-      });
     });
   }
-  highlightNav();
 
-  // Run refresh on load and every 60s
-  refreshAll();
-  setInterval(refreshAll, 60_000);
+  // Call the function on page load
+  fetchMacroData();
 
+  // Fetch live RSI and SMA for BTC
+  async function fetchLiveMetrics() {
+    const rsiUrl = `https://www.alphavantage.co/query?function=RSI&symbol=BTCUSD&interval=daily&time_period=14&series_type=close&apikey=${ALPHA_VANTAGE_KEY}`;
+    const smaUrl = `https://www.alphavantage.co/query?function=SMA&symbol=BTCUSD&interval=daily&time_period=50&series_type=close&apikey=${ALPHA_VANTAGE_KEY}`;
+    try {
+      const rsiResponse = await fetch(rsiUrl);
+      const rsiData = await rsiResponse.json();
+      const rsi = rsiData['Technical Analysis: RSI'][Object.keys(rsiData['Technical Analysis: RSI'])[0]]['RSI'];
+      document.getElementById('live-btc-rsi').innerText = parseFloat(rsi).toFixed(2);
+
+      const smaResponse = await fetch(smaUrl);
+      const smaData = await smaResponse.json();
+      const sma = smaData['Technical Analysis: SMA'][Object.keys(smaData['Technical Analysis: SMA'])[0]]['SMA'];
+      document.getElementById('live-btc-sma').innerText = `$${parseFloat(sma).toFixed(2)}`;
+    } catch (error) {
+      console.error('Error fetching live metrics:', error);
+      document.getElementById('live-btc-rsi').innerText = 'Error';
+      document.getElementById('live-btc-sma').innerText = 'Error';
+    }
+  }
+
+  // Call the function on page load
+  fetchLiveMetrics();
 });

@@ -2,166 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>War-Room Risk Eval</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <!-- Mermaid for the decision tree -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <!-- Fonts and External CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <title>CyberSci-Dash v2 | War Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Investor War Room - Major decisions, crisis playbook, and real-time alerts.">
   <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="images/favicon.ico">
 </head>
-<body>
-  <header>
-    <h1 class="title">War-Room Risk Eval</h1>
-    <nav id="main-nav">
-      <a href="index.html">Dashboard</a>
-      <a href="warroom.html" class="active" aria-current="page">War Room</a>
-      <a href="#macro">Macro</a>
-      <a href="#crypto">Crypto</a>
-      <a href="#sentiment">Sentiment</a>
-      <a href="#scenario">Scenario Builder</a>
-      <a href="#insights">Insights</a>
-      <a href="#links">Quick Links</a>
+<body class="bg-gray-950 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-pink-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-pink-400">CyberSci-Dash v2</h1>
+    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
+      <a href="warroom.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="War Room">War Room</a>
+      <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
+      <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
+      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
     </nav>
   </header>
 
-  <main>
-    <!-- Macro Panel -->
-    <section id="macro" class="panel">
-      <h2>Macro Regime</h2>
-      <div class="option">
-        <input type="radio" name="spx" id="spxUp"><label for="spxUp">SPX ↑</label>
+  <main class="p-6 max-w-6xl mx-auto">
+    <!-- WAR ROOM HUD HERO -->
+    <section class="mb-10 rounded-2xl border-2 border-pink-400 shadow-pink-400/60 shadow-xl bg-gradient-to-br from-gray-950 via-gray-900 to-pink-900 px-8 py-8">
+      <div class="flex flex-col md:flex-row md:space-x-12">
+        <div class="flex-1 mb-8 md:mb-0">
+          <h2 class="text-2xl font-orbitron text-pink-300 mb-3 tracking-widest">🚨 War Room Status</h2>
+          <ul class="space-y-2 text-lg">
+            <li><span class="font-bold text-yellow-300">Major Market Event:</span> <span id="major-event">None Detected</span></li>
+            <li><span class="font-bold text-red-400">ALERTS:</span> <span id="war-alert">No Active Alerts</span></li>
+            <li><span class="font-bold text-green-400">Portfolio Risk Level:</span> <span id="risk-level">Neutral</span></li>
+            <li><span class="font-bold text-cyan-400">Playbook:</span> <span id="playbook-action">Monitor, No Drastic Moves</span></li>
+          </ul>
+          <div class="mt-5 text-sm text-gray-300 italic">
+            This section updates with real-time crisis signals and decision triggers. Check this page during serious volatility, macro shocks, or if you're unsure what to do next.
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <div class="bg-gray-900 border-2 border-pink-400 rounded-full w-52 h-52 flex items-center justify-center shadow-2xl">
+            <span class="font-orbitron text-3xl text-pink-400 animate-pulse">HIGH ALERT</span>
+          </div>
+          <div class="mt-4 text-center text-pink-200 text-lg font-bold tracking-wider">Ready for Anything</div>
+        </div>
       </div>
-      <div class="option">
-        <input type="radio" name="spx" id="spxDown"><label for="spxDown">SPX ↓</label>
-      </div>
-      <div class="option">
-        <input type="checkbox" id="vixSpike"><label for="vixSpike">VIX Spike</label>
-      </div>
-    </section>
-
-    <!-- Crypto Panel -->
-    <section id="crypto" class="panel">
-      <h2>Crypto Signals</h2>
-      <div class="option">
-        <input type="checkbox" id="btcUp"><label for="btcUp">BTC > 50 DMA</label>
-      </div>
-      <div class="option">
-        <input type="checkbox" id="fgExtreme"><label for="fgExtreme">Fear &amp; Greed Extreme</label>
-      </div>
-    </section>
-
-    <!-- Overrides Panel -->
-    <section id="overrides" class="panel">
-      <h2>Manual Overrides</h2>
-      <div class="option">
-        <label for="overrideHeadlines">Headline Risk</label>
-        <input type="range" id="overrideHeadlines" min="0" max="100" value="0">
-      </div>
-      <div class="option">
-        <label for="overrideTrust">Team Trust</label>
-        <input type="range" id="overrideTrust" min="0" max="100" value="50">
+      <div class="mt-7 border-t border-pink-700 pt-4">
+        <marquee behavior="scroll" direction="left" scrollamount="7" class="text-pink-400 text-lg font-bold tracking-wide">
+          EMERGENCY: FOMC volatility | BTC flash crash detected | Macro regime change possible | Whale activity spike | Check scenario builder for crisis planning!
+        </marquee>
       </div>
     </section>
 
-    <div id="gauge">Risk Score: <span id="score">–</span>/100</div>
-
-    <!-- Decision Tree -->
-    <section id="tree" class="mermaid">
-      graph TD
-        A[Start] --> B{SPX ↑?}
-        B -->|Yes| C{BTC ↑?}
-        B -->|No| D{VIX Spike?}
-        C -->|Yes| E[Low Risk → BUY]
-        C -->|No| F[Medium Risk → HOLD]
-        D -->|Yes| G[High Risk → SELL]
-        D -->|No| H[Medium Risk → HOLD]
+    <!-- Decision Trees & Crisis Playbook -->
+    <section class="mb-12">
+      <h2 class="text-xl font-orbitron text-pink-300 mb-4">Decision Tree: What Should I Do?</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-gray-900 border border-yellow-500 rounded-xl p-6 shadow">
+          <h3 class="font-orbitron text-yellow-300 mb-2">Market Crash Detected</h3>
+          <ul class="list-inside list-disc text-base space-y-2">
+            <li>Confirm the event (are multiple assets dropping fast?)</li>
+            <li>Check exchange stability and major support levels</li>
+            <li>Reduce leverage and risk immediately</li>
+            <li>Consider hedging or moving to stable assets</li>
+            <li>Update your scenario in the <a href="scenario.html" class="underline text-cyan-400">Scenario Builder</a></li>
+            <li>Refer to historical crash playbooks below</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900 border border-cyan-500 rounded-xl p-6 shadow">
+          <h3 class="font-orbitron text-cyan-300 mb-2">Regime Change / Fed Pivot</h3>
+          <ul class="list-inside list-disc text-base space-y-2">
+            <li>Monitor macro headlines (Fed, ECB, BOJ)</li>
+            <li>Watch for liquidity injections or sudden rate changes</li>
+            <li>Reassess all open risk positions</li>
+            <li>Prepare for new market leadership & volatility</li>
+            <li>Review Macro page for deep-dive context</li>
+            <li>Update your risk profile in <a href="scenario.html" class="underline text-pink-400">Scenario Builder</a></li>
+          </ul>
+        </div>
+      </div>
     </section>
 
-    <!-- Notes Panel -->
-    <section id="notes" class="notes-panel">
-      <label for="war-notes">📝 War Room Notes & Actions</label>
-      <textarea id="war-notes" placeholder="Type your thoughts, scenario, or action plan here..."></textarea>
-      <button id="save-notes" type="button">Save Notes</button>
-      <span class="save-status" id="notes-status"></span>
+    <!-- Historical Crisis Playbooks -->
+    <section class="mb-12">
+      <h2 class="text-xl font-orbitron text-pink-300 mb-4">Historical Crisis Playbooks</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-900 border border-pink-400 rounded-xl p-6 shadow">
+          <h4 class="font-orbitron text-pink-400 mb-2">March 2020 Crash</h4>
+          <ul class="list-inside list-disc text-base space-y-2">
+            <li>Massive deleveraging—cash was king</li>
+            <li>Best move: preserve capital, buy late</li>
+            <li>Wait for signs of central bank intervention</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900 border border-yellow-400 rounded-xl p-6 shadow">
+          <h4 class="font-orbitron text-yellow-400 mb-2">FTX Collapse</h4>
+          <ul class="list-inside list-disc text-base space-y-2">
+            <li>Rapid exchange outflows</li>
+            <li>Move funds to self-custody ASAP</li>
+            <li>Monitor for domino effects in DeFi/CeFi</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900 border border-cyan-400 rounded-xl p-6 shadow">
+          <h4 class="font-orbitron text-cyan-400 mb-2">Fed Tightening Shock</h4>
+          <ul class="list-inside list-disc text-base space-y-2">
+            <li>Risk assets de-rate quickly</li>
+            <li>Rotate to safe havens (cash, bonds, gold)</li>
+            <li>Don't fight the Fed trend</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
-    <button id="reset">Reset All</button>
+    <!-- Emergency Action Panel -->
+    <section class="mb-12 flex flex-col md:flex-row gap-8">
+      <div class="flex-1 bg-gray-900 border border-red-400 rounded-xl p-6 shadow">
+        <h2 class="text-lg font-orbitron text-red-400 mb-2">Emergency Actions</h2>
+        <ul class="list-inside list-disc text-base space-y-2">
+          <li><a href="https://www.tradingview.com/" target="_blank" class="underline text-cyan-300">Open TradingView for real-time charts</a></li>
+          <li><a href="crypto.html" class="underline text-yellow-300">Check on-chain & exchange flows</a></li>
+          <li><a href="links.html" class="underline text-pink-300">Access brokerage and cold storage links</a></li>
+          <li><a href="https://twitter.com/search?q=bitcoin%20crash&src=typed_query" target="_blank" class="underline text-blue-400">Scan crypto Twitter for live rumors</a></li>
+        </ul>
+      </div>
+      <div class="flex-1 bg-gray-900 border border-green-400 rounded-xl p-6 shadow">
+        <h2 class="text-lg font-orbitron text-green-400 mb-2">Post-Crisis Checklist</h2>
+        <ul class="list-inside list-disc text-base space-y-2">
+          <li>Review what worked and what failed in your plan</li>
+          <li>Document lessons for future scenarios</li>
+          <li>Update your position and risk limits</li>
+          <li>Rebuild confidence—don’t rush back in</li>
+        </ul>
+      </div>
+    </section>
   </main>
 
-  <script>
-    mermaid.initialize({ startOnLoad: true });
-
-    async function autoToggle() {
-      const ALPHA_VANTAGE_KEY = "ZGA6Y5FY790NO4QE"; // Replace with your actual key
-
-      // SPX via AlphaVantage
-      try {
-        const spxJ = await fetch(
-          `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=^GSPC&apikey=${ALPHA_VANTAGE_KEY}`
-        ).then(r => r.json());
-        const price = +spxJ['Global Quote']['05. price'];
-        const prev = +spxJ['Global Quote']['08. previous close'];
-        document.getElementById(price > prev ? 'spxUp' : 'spxDown').checked = true;
-      } catch {}
-
-      // BTC trend (Coingecko)
-      try {
-        const btcJ = await fetch(
-          'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly'
-        ).then(r => r.json());
-        const pts = btcJ.prices.map(p => p[1]);
-        document.getElementById('btcUp').checked = pts.at(-1) > pts.at(-2);
-      } catch {}
-
-      // Fear & Greed
-      try {
-        const fg = await fetch('https://api.alternative.me/fng/?limit=1')
-          .then(r => r.json()).then(j => +j.data[0].value);
-        document.getElementById('fgExtreme').checked = fg > 80 || fg < 20;
-      } catch {}
-
-      computeScore();
-      mermaid.init(undefined, '#tree');
-    }
-
-    function computeScore() {
-      let s = 0;
-      if (document.getElementById('spxDown').checked) s += 20;
-      if (document.getElementById('vixSpike').checked) s += 30;
-      if (!document.getElementById('btcUp').checked) s += 20;
-      if (document.getElementById('fgExtreme').checked) s += 20;
-      s += +document.getElementById('overrideHeadlines').value * 0.1;
-      s += (100 - +document.getElementById('overrideTrust').value) * 0.1;
-      s = Math.min(100, Math.round(s));
-      document.getElementById('score').textContent = s;
-    }
-
-    document.querySelectorAll('input').forEach(i =>
-      i.addEventListener('change', computeScore)
-    );
-    document.getElementById('reset').onclick = () => {
-      localStorage.clear();
-      document.querySelectorAll('input').forEach(i => {
-        if (i.type === 'range') i.value = i.id === 'overrideTrust' ? 50 : 0;
-        else i.checked = false;
-      });
-      document.getElementById('war-notes').value = '';
-      computeScore();
-    };
-
-    const notesKey = 'warroom-notes';
-    document.getElementById('save-notes').onclick = () => {
-      localStorage.setItem(notesKey, document.getElementById('war-notes').value);
-      document.getElementById('notes-status').textContent = "Notes saved!";
-      setTimeout(() => document.getElementById('notes-status').textContent = '', 2000);
-    };
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('war-notes').value = localStorage.getItem(notesKey) || '';
-    });
-
-    window.onload = autoToggle;
-    setInterval(autoToggle, 60_000);
-  </script>
+  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
+    &copy; 2025 CyberSci-Dash. All rights reserved.
+  </footer>
 </body>
 </html>
