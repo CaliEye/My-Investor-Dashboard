@@ -1,0 +1,30 @@
+# — Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+
+# — Virtualenvs & env files
+env/
+venv/
+.venv/
+.env
+
+# — Jupyter Notebook checkpoints & outputs
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+*.html
+*.pdf
+
+# — VS Code settings & caches
+.vscode/
+.history/
+
+# — Mac OS cruft
+.DS_Store
+
+# — Node modules (only if you ever npm install)
+node_modules/
+
+# — Binder config
+binder/
