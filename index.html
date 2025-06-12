@@ -2,106 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🧭 Crypto Cycle Master Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberSci-Dash v2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      --bg: #0a0a0f;
+      --text: #c8c8d1;
+      --neon1: #00e5ff;
+      --neon2: #ff00d6;
+      --panel-bg: #111119;
+      --neon-shadow: rgba(0,255,255,0.7);
+      --accent: #ff00d6;
+    }
+    * { box-sizing: border-box; margin:0; padding:0 }
     body {
-      background: #181c24;
-      color: #e0e6f0;
-      font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Orbitron', monospace;
+      padding: 1rem;
     }
-    header {
-      background: linear-gradient(90deg, #0f2027, #2c5364 70%);
-      padding: 2rem 1rem 1rem 1rem;
-      text-align: center;
+    nav {
+      background: #181c24;
+      display: flex;
+      justify-content: center;
+      gap: 2em;
+      padding: 1em 0;
       box-shadow: 0 2px 8px #000a;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin-bottom: 2em;
     }
-    h1 {
-      color: #00ffe7;
-      font-size: 2.5rem;
-      letter-spacing: 2px;
-      margin-bottom: 0.2em;
-      text-shadow: 0 0 8px #00ffe7aa;
-    }
-    h2 {
-      color: #ff00cc;
-      margin-top: 2em;
-      margin-bottom: 0.5em;
-      text-shadow: 0 0 6px #ff00cc55;
-    }
-    section {
-      max-width: 800px;
-      margin: 2rem auto;
-      background: #23283a;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px #0008;
-      padding: 2rem;
-      margin-bottom: 2rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1em;
-      background: #181c24;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 0.7em 1em;
-      text-align: left;
-      border-bottom: 1px solid #2c2f3a;
-    }
-    th {
-      background: #23283a;
-      color: #00ffe7;
-      font-weight: 600;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    a {
-      color: #00ffe7;
-      text-decoration: underline;
-    }
-    .checklist input[type="checkbox"] {
-      accent-color: #ff00cc;
-      margin-right: 0.5em;
-    }
-    .notes, .tracker {
-      background: #1a1e2a;
-      border-radius: 8px;
-      padding: 1em;
-      margin-bottom: 1em;
-      box-shadow: 0 2px 8px #0006;
-    }
-    .sci-fi-glow {
-      box-shadow: 0 0 16px #00ffe7, 0 0 32px #ff00cc44;
-      border: 1px solid #00ffe7;
-    }
-    .btn {
-      background: linear-gradient(90deg, #00ffe7 0%, #ff00cc 100%);
-      color: #181c24;
-      border: none;
-      border-radius: 6px;
-      padding: 0.5em 1.2em;
-      font-size: 1em;
+    nav a {
+      color: var(--neon1);
+      text-decoration: none;
       font-weight: bold;
-      cursor: pointer;
-      margin-top: 1em;
-      box-shadow: 0 2px 8px #00ffe744;
+      font-size: 1.1em;
+      padding: 0.5em 1em;
+      border-radius: 6px;
       transition: background 0.2s;
     }
-    .btn:hover {
-      background: linear-gradient(90deg, #ff00cc 0%, #00ffe7 100%);
+    nav a:hover, nav a.active {
+      background: var(--neon2);
       color: #fff;
+    }
+    h1 {
+      text-align:center;
+      margin-bottom:1rem;
+      color: var(--neon2);
+      text-shadow: 0 0 8px var(--neon-shadow);
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+    section, details {
+      background: var(--panel-bg);
+      border: 1px solid var(--neon1);
+      border-radius: 8px;
+      margin-bottom:1.5rem;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 0 10px var(--neon1);
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    summary {
+      font-size:1.1rem;
+      color: var(--neon1);
+      cursor: pointer;
+      outline: none;
+      margin-bottom: 1em;
+    }
+    .option {
+      display:flex;
+      align-items:center;
+      margin: .5rem 0;
+    }
+    .option input[type="checkbox"],
+    .option input[type="radio"] {
+      margin-right: .5rem;
+      accent-color: var(--neon2);
+    }
+    .option label { flex:1; cursor:pointer }
+    .slider-wrap {
+      margin: .5rem 0;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--neon2);
+    }
+    .value {
+      text-align:right;
+      font-weight:bold;
+      color: var(--neon2);
+    }
+    canvas {
+      margin-top:1rem;
+      background: #0f0f16;
+      border:1px solid var(--neon1);
+      border-radius:4px;
+      width: 100% !important;
+      max-width: 100%;
+    }
+    button {
+      background: var(--neon2);
+      border:none;
+      padding:.5rem 1rem;
+      color: var(--bg);
+      border-radius:4px;
+      cursor:pointer;
+      box-shadow:0 0 6px var(--neon-shadow);
+      margin-top:1rem;
+      font-family: 'Orbitron', monospace;
+      font-weight: bold;
+      font-size: 1em;
+    }
+    button:hover { transform: scale(1.05) }
+    .insights {
+      background: #23283a;
+      border-radius: 12px;
+      padding: 1.5em;
+      margin: 2em auto;
+      max-width: 700px;
+      box-shadow: 0 2px 16px #ff00cc44;
+      color: #00ffe7;
+      font-size: 1.1em;
+      min-height: 3em;
+    }
+    .upload-section {
+      margin-top: 1em;
+      color: #e0e6f0;
+    }
+    .upload-section input[type="file"] {
+      margin-top: 0.5em;
     }
     .quick-links {
       display: flex;
       flex-wrap: wrap;
       gap: 1em;
       margin-top: 1em;
+      justify-content: center;
     }
     .quick-links a {
       background: #23283a;
@@ -116,175 +157,292 @@
       background: #ff00cc;
       color: #fff;
     }
-    @media (max-width: 600px) {
-      section { padding: 1em; }
+    @media (max-width: 900px) {
+      section, details { padding: 1em; }
       h1 { font-size: 1.5rem; }
-      h2 { font-size: 1.1rem; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🧭 Crypto Cycle Master Dashboard</h1>
-    <div style="color:#e0e6f0; font-size:1.1em;">Your sci-fi command center for cycles, sentiment, macro, and strategy.</div>
-  </header>
+  <h1>CyberSci-Dash v2</h1>
+  <nav>
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="warroom.html">War Room</a>
+    <a href="#macro">Macro</a>
+    <a href="#crypto">Crypto</a>
+    <a href="#sentiment">Sentiment</a>
+    <a href="#scenario">Scenario Builder</a>
+    <a href="#insights">Insights</a>
+    <a href="#links">Quick Links</a>
+  </nav>
 
-  <section class="sci-fi-glow">
-    <h2>Live Prices</h2>
-    <div id="price-table">Loading prices…</div>
-    <button class="btn" onclick="fetchPrices()">Refresh Now</button>
-  </section>
-
-  <section>
-    <h2>🔄 Current Cycle Status</h2>
-    <ul class="checklist">
-      <li><input type="checkbox">Where are we in the 4-Year Bitcoin Cycle? (Year 1–4)</li>
-      <li><input type="checkbox">What day are we in the current 60-day cycle?</li>
-      <li><input type="checkbox">BTC Dominance trend: ↑ early cycle | ↓ altseason</li>
-      <li><input type="checkbox">MVRV Z-score: Overvalued? Undervalued?</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>🧠 Market Sentiment Scan</h2>
-    <ul class="checklist">
-      <li><input type="checkbox">Fear &amp; Greed Index: <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank">Visit</a></li>
-      <li><input type="checkbox">Derivatives premium ↑ or ↓ ?</li>
-      <li><input type="checkbox">4th day outside Bollinger Bands?</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>📊 Macro Check</h2>
-    <ul class="checklist">
-      <li><input type="checkbox">Fed policy status (QT, rate hikes/cuts)</li>
-      <li><input type="checkbox">CPI/PCE trends</li>
-      <li><input type="checkbox">ISM Manufacturing &gt; 50?</li>
-      <li><input type="checkbox">USD Index (DXY): ↑ or ↓ ?</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>💰 Strategic Actions</h2>
-    <ul class="checklist">
-      <li><input type="checkbox">Rebalance long-term accounts?</li>
-      <li><input type="checkbox">Taking profits at key resistance?</li>
-      <li><input type="checkbox">Ready for 30% dip buys?</li>
-      <li><input type="checkbox">Physical gold positioning?</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>📝 Daily/Weekly Notes & Observations</h2>
-    <div class="notes">
-      <label for="note-date">Today’s Date:</label>
-      <input id="note-date" type="date" style="background:#23283a; color:#e0e6f0; border:1px solid #00ffe7; border-radius:4px; margin-left:0.5em;">
-      <br><br>
-      <label for="market-observations">Key Market Observations:</label><br>
-      <textarea id="market-observations" rows="2" style="width:100%;background:#23283a;color:#e0e6f0;border:1px solid #00ffe7;border-radius:4px;"></textarea>
-      <br><br>
-      <label for="decisions">Decisions/Actions Taken:</label><br>
-      <textarea id="decisions" rows="2" style="width:100%;background:#23283a;color:#e0e6f0;border:1px solid #00ffe7;border-radius:4px;"></textarea>
-      <br><br>
-      <label for="lessons">Lessons Learned:</label><br>
-      <textarea id="lessons" rows="2" style="width:100%;background:#23283a;color:#e0e6f0;border:1px solid #00ffe7;border-radius:4px;"></textarea>
-      <br>
-      <button class="btn" onclick="saveNotes()">Save Notes (local)</button>
-      <span id="save-status" style="margin-left:1em;color:#00ffe7;"></span>
+  <!-- ==== DASHBOARD PANEL ==== -->
+  <section id="dashboard">
+    <h2>🚀 Market Overview</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:2em;justify-content:center;">
+      <div>
+        <strong>BTC Price:</strong> <span id="btc-price">...</span><br>
+        <strong>ETH Price:</strong> <span id="eth-price">...</span>
+      </div>
+      <div>
+        <strong>SPX:</strong> <span id="spx-latest">...</span><br>
+        <strong>USD Index:</strong> <span id="usd-latest">...</span>
+      </div>
+      <div>
+        <strong>Fear & Greed:</strong> <span id="fg-latest">...</span>
+      </div>
     </div>
   </section>
 
-  <section>
-    <h2>✅ Daily/Weekly Checklist</h2>
-    <ul>
-      <li><a href="#">Daily Market Checklist (coming soon)</a></li>
-      <li><a href="#">Weekly Review Template (coming soon)</a></li>
-    </ul>
+  <!-- ==== MACRO PANEL ==== -->
+  <details id="macro" open>
+    <summary>⚙️ Macro Conditions</summary>
+    <div id="macro-panel">
+      <div class="option">
+        <input type="radio" name="spx" id="spx-up" value="up">
+        <label for="spx-up">S&P 500 ↑</label>
+      </div>
+      <div class="option">
+        <input type="radio" name="spx" id="spx-down" value="down">
+        <label for="spx-down">S&P 500 ↓</label>
+      </div>
+      <div class="option">
+        <input type="checkbox" id="usd-strong">
+        <label for="usd-strong">USD Strong (DXY ↑)</label>
+      </div>
+      <div class="option">
+        <input type="checkbox" id="usd-weak">
+        <label for="usd-weak">USD Weak (DXY ↓)</label>
+      </div>
+      <canvas id="spxChart" height="100"></canvas>
+      <canvas id="usdChart" height="100"></canvas>
+    </div>
+  </details>
+
+  <!-- ==== CRYPTO PANEL ==== -->
+  <details id="crypto">
+    <summary>💎 Crypto Signals</summary>
+    <div id="crypto-panel">
+      <div class="option">
+        <input type="checkbox" id="btc-up">
+        <label for="btc-up">BTC > 50 DMA</label>
+      </div>
+      <div class="option">
+        <input type="checkbox" id="nvt-high">
+        <label for="nvt-high">NVT Ratio High</label>
+      </div>
+      <canvas id="btcChart" height="100"></canvas>
+    </div>
+  </details>
+
+  <!-- ==== SENTIMENT PANEL ==== -->
+  <details id="sentiment">
+    <summary>📈 Market Sentiment</summary>
+    <div id="sentiment-panel">
+      <div class="slider-wrap">
+        <label for="fgSlider">Fear &amp; Greed:</label>
+        <div class="value" id="fgValue">···</div>
+        <input type="range" id="fgSlider" min="0" max="100" step="1">
+      </div>
+    </div>
+  </details>
+
+  <!-- ==== SCENARIO BUILDER ==== -->
+  <section class="scenario-form" id="scenario">
+    <h2>🧪 Scenario Builder</h2>
+    <label>Fed Policy:</label>
+    <input type="radio" name="fed" value="QT ended, QE starting"> QT ended, QE starting
+    <input type="radio" name="fed" value="QT ongoing"> QT ongoing
+    <input type="radio" name="fed" value="Neutral"> Neutral
+    <br><br>
+    <label>Macro Environment:</label>
+    <input type="checkbox" name="macro" value="Recession"> Recession
+    <input type="checkbox" name="macro" value="Inflation"> Inflation
+    <input type="checkbox" name="macro" value="Growth"> Growth
+    <input type="checkbox" name="macro" value="Stagflation"> Stagflation
+    <br><br>
+    <label>BTC Cycle:</label>
+    <input type="radio" name="cycle" value="Year 1"> Year 1
+    <input type="radio" name="cycle" value="Year 2"> Year 2
+    <input type="radio" name="cycle" value="Year 3"> Year 3
+    <input type="radio" name="cycle" value="Year 4"> Year 4
+    <br><br>
+    <label for="user-thoughts">Your Thoughts & Ideas:</label>
+    <textarea id="user-thoughts" rows="3" placeholder="Type your scenario, ideas, or paste chart links here..."></textarea>
+    <div class="upload-section">
+      <label for="screenshot">Attach Screenshot (optional):</label>
+      <input type="file" id="screenshot" accept="image/*">
+    </div>
+    <br>
+    <button class="btn" type="button" onclick="generateInsights()">Get Insights</button>
   </section>
 
-  <section>
-    <h2>📈 Performance Tracker</h2>
-    <div class="tracker">
-      <label for="portfolio-value">Portfolio Value:</label>
-      <input id="portfolio-value" type="number" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
-      <br><br>
-      <label for="btc-price">BTC Price:</label>
-      <input id="btc-price" type="number" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
-      <br><br>
-      <label for="gold-price">Gold Price:</label>
-      <input id="gold-price" type="number" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
-      <br><br>
-      <label for="other-metrics">Other Key Metrics:</label>
-      <input id="other-metrics" type="text" style="background:#23283a;color:#e0e6f0;border:1px solid #ff00cc;border-radius:4px;margin-left:0.5em;">
-      <br>
-      <button class="btn" onclick="saveTracker()">Save Tracker (local)</button>
-      <span id="tracker-status" style="margin-left:1em;color:#ff00cc;"></span>
-    </div>
-  </section>
+  <!-- ==== INSIGHTS PANEL ==== -->
+  <div class="insights" id="insights">
+    <strong>Market insights and suggested actions will appear here based on your scenario.</strong>
+  </div>
 
-  <section>
-    <h2>🛠 Quick Access Links</h2>
-    <div class="quick-links">
-      <a href="#" target="_blank">Bitcoin Cycle Insights</a>
-      <a href="#" target="_blank">Gold Cycle Insights</a>
-      <a href="#" target="_blank">Macro Cycle Notes</a>
-      <a href="#" target="_blank">Sentiment Triggers</a>
-      <a href="#" target="_blank">Investment Playbook</a>
-      <a href="#" target="_blank">30% Correction Strategy</a>
-      <a href="#" target="_blank">Influencer Reference Sheet</a>
-    </div>
-  </section>
+  <!-- ==== QUICK LINKS ==== -->
+  <div class="quick-links" id="links">
+    <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank">Fear & Greed Index</a>
+    <a href="https://www.tradingview.com/chart/" target="_blank">TradingView Charts</a>
+    <a href="#">Cycle Playbook</a>
+    <a href="#">Macro Notes</a>
+    <a href="#">Sentiment Triggers</a>
+    <a href="#">Investment Playbook</a>
+  </div>
+
+  <button id="reset">Reset All</button>
 
   <script>
-    // Live Prices
-    async function fetchPrices() {
-      const res = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd'
-      );
-      const data = await res.json();
-      let html = '<table><tr><th>Coin</th><th>USD</th></tr>';
-      for (let [coin, vals] of Object.entries(data)) {
-        html += `<tr><td>${coin}</td><td>$${vals.usd.toLocaleString()}</td></tr>`;
-      }
-      document.getElementById('price-table').innerHTML = html;
-    }
-    fetchPrices();
-    setInterval(fetchPrices, 60_000);
+  // —— UTILS & STATE KEYS ——
+  const storage = key => localStorage.getItem(key);
+  const save = (key,val) => localStorage.setItem(key,val);
+  const clearAll = () => localStorage.clear();
 
-    // Notes - Save to localStorage
-    function saveNotes() {
-      const date = document.getElementById('note-date').value;
-      const obs = document.getElementById('market-observations').value;
-      const dec = document.getElementById('decisions').value;
-      const les = document.getElementById('lessons').value;
-      localStorage.setItem('notes-date', date);
-      localStorage.setItem('notes-obs', obs);
-      localStorage.setItem('notes-dec', dec);
-      localStorage.setItem('notes-les', les);
-      document.getElementById('save-status').textContent = "Notes saved!";
-      setTimeout(() => document.getElementById('save-status').textContent = "", 2000);
-    }
-    // Load notes on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('note-date').value = localStorage.getItem('notes-date') || '';
-      document.getElementById('market-observations').value = localStorage.getItem('notes-obs') || '';
-      document.getElementById('decisions').value = localStorage.getItem('notes-dec') || '';
-      document.getElementById('lessons').value = localStorage.getItem('notes-les') || '';
-      document.getElementById('portfolio-value').value = localStorage.getItem('tracker-portfolio') || '';
-      document.getElementById('btc-price').value = localStorage.getItem('tracker-btc') || '';
-      document.getElementById('gold-price').value = localStorage.getItem('tracker-gold') || '';
-      document.getElementById('other-metrics').value = localStorage.getItem('tracker-other') || '';
+  const KEYS = {
+    spx: 'cs_spx',
+    usd: 'cs_usd',
+    btc: 'cs_btc',
+    nvt: 'cs_nvt',
+    fg:  'cs_fg'
+  };
+
+  // —— FETCH & PLOT HELPERS ——
+  async function fetchJSON(url){ return (await fetch(url)).json() }
+
+  // 1. SPX & USD Charts (Alpha Vantage demo key)
+  async function fetchTimeSeries(symbol){
+    const apikey = 'demo'; // replace with YOUR AlphaVantage key for more data
+    const res = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=60min&outputsize=compact&apikey=${apikey}`);
+    const json = await res.json();
+    const data = json['Time Series (60min)'];
+    if (!data) return [];
+    const pts = Object.entries(data).slice(0,48).reverse(); 
+    return pts.map(([ts,val]) => ({ x: new Date(ts), y: +val['4. close'] }));
+  }
+
+  function makeChart(ctx, label, data, color){
+    return new Chart(ctx, {
+      type:'line',
+      data:{ datasets:[{ label, data, borderColor:color, pointRadius:0 }]},
+      options:{ scales:{ x:{ type:'time', time:{ unit:'hour', displayFormats:{hour:'HH:mm'} } } }, plugins:{ legend:{ display:false } } }
     });
+  }
 
-    // Tracker - Save to localStorage
-    function saveTracker() {
-      localStorage.setItem('tracker-portfolio', document.getElementById('portfolio-value').value);
-      localStorage.setItem('tracker-btc', document.getElementById('btc-price').value);
-      localStorage.setItem('tracker-gold', document.getElementById('gold-price').value);
-      localStorage.setItem('tracker-other', document.getElementById('other-metrics').value);
-      document.getElementById('tracker-status').textContent = "Tracker saved!";
-      setTimeout(() => document.getElementById('tracker-status').textContent = "", 2000);
+  // 2. BTC Chart (Coingecko)
+  async function fetchBTC(){
+    const res= await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly');
+    const j= await res.json();
+    return j.prices.map(p=>({ x:new Date(p[0]), y:p[1] }));
+  }
+
+  // 3. Fear & Greed (Alternative.me)
+  async function fetchFG(){
+    const j = await fetchJSON('https://api.alternative.me/fng/?limit=1');
+    return +j.data[0].value;
+  }
+
+  // —— RENDER & STATE ——  
+  async function refreshAll(){
+    // SPX
+    const spxData = await fetchTimeSeries('^GSPC');
+    if (spxData.length) {
+      makeChart(document.getElementById('spxChart'), 'S&P 500', spxData, 'cyan');
+      const lastSPX = spxData.at(-1).y;
+      const prevSPX = spxData.at(-2).y;
+      document.getElementById('spx-latest').textContent = lastSPX.toLocaleString();
+      document.getElementById(lastSPX>prevSPX?'spx-up':'spx-down').checked = true;
+      save(KEYS.spx, lastSPX>prevSPX?'up':'down');
     }
+
+    // USD (DXY)
+    const usdData = await fetchTimeSeries('DX-Y.NYB');
+    if (usdData.length) {
+      makeChart(document.getElementById('usdChart'), 'USD Index', usdData, 'magenta');
+      const lastUSD = usdData.at(-1).y, prevUSD = usdData.at(-2).y;
+      document.getElementById('usd-latest').textContent = lastUSD.toLocaleString();
+      document.getElementById(lastUSD>prevUSD?'usd-strong':'usd-weak').checked = true;
+      save(KEYS.usd, lastUSD>prevUSD?'strong':'weak');
+    }
+
+    // BTC
+    const btcData = await fetchBTC();
+    if (btcData.length) {
+      makeChart(document.getElementById('btcChart'), 'Bitcoin', btcData, 'yellow');
+      const lastBTC = btcData.at(-1).y, prevBTC = btcData.at(-2).y;
+      document.getElementById('btc-price').textContent = '$'+lastBTC.toLocaleString();
+      document.getElementById('btc-up').checked = lastBTC>prevBTC;
+      save(KEYS.btc, lastBTC>prevBTC);
+    }
+
+    // ETH (simple price)
+    fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
+      .then(r=>r.json())
+      .then(d=>document.getElementById('eth-price').textContent = '$'+d.ethereum.usd.toLocaleString());
+
+    // Fear & Greed
+    const fg = await fetchFG();
+    document.getElementById('fgSlider').value = fg;
+    document.getElementById('fgValue').textContent = fg;
+    document.getElementById('fg-latest').textContent = fg;
+    save(KEYS.fg, fg);
+  }
+
+  // —— WIRE UP ——  
+  document.getElementById('fgSlider').oninput = e => {
+    document.getElementById('fgValue').textContent = e.target.value;
+    save(KEYS.fg, e.target.value);
+  };
+
+  document.getElementById('reset').onclick = () => {
+    clearAll();
+    document.querySelectorAll('input').forEach(i=>i.checked=false);
+    document.getElementById('fgSlider').value=0;
+    document.getElementById('fgValue').textContent='0';
+    document.getElementById('fg-latest').textContent='0';
+  };
+
+  // Scenario Insights Engine (reuse your logic)
+  function generateInsights() {
+    const fed = document.querySelector('input[name="fed"]:checked');
+    const macros = Array.from(document.querySelectorAll('input[name="macro"]:checked')).map(cb=>cb.value);
+    const cycle = document.querySelector('input[name="cycle"]:checked');
+    const thoughts = document.getElementById('user-thoughts').value.trim();
+    let insights = [];
+
+    if (fed && fed.value.includes('QE')) {
+      insights.push("Fed is starting QE: Risk assets (crypto, stocks) may benefit. Consider increasing exposure.");
+    }
+    if (macros.includes('Recession')) {
+      insights.push("Recession: Defensive positioning, consider gold, cash, or low-beta assets.");
+    }
+    if (macros.includes('Inflation')) {
+      insights.push("Inflation: Hard assets like BTC and gold may outperform.");
+    }
+    if (cycle && cycle.value === 'Year 4') {
+      insights.push("BTC Cycle Year 4: Historically, late-cycle risk. Consider profit-taking strategies.");
+    }
+    if (thoughts) {
+      insights.push("Your thoughts: " + thoughts);
+    }
+    if (insights.length === 0) {
+      insights.push("Select scenario options and add your thoughts for tailored insights.");
+    }
+    document.getElementById('insights').innerHTML = insights.map(i=>`<div>• ${i}</div>`).join('');
+  }
+
+  // Navigation highlight
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function() {
+      document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // On load, refresh and then every 60s
+  refreshAll();
+  setInterval(refreshAll, 60_000);
   </script>
 </body>
 </html>
