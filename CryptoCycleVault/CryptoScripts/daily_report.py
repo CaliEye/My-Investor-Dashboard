@@ -2,9 +2,16 @@ from datetime import datetime
 import requests
 import logging
 from time import sleep
-
+from requests.exceptions import RequestException
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("daily_report.log"),
+        logging.StreamHandler()
+    ]
+)
 
 # API Endpoints
 fear_greed_url = "https://api.alternative.me/fng/?limit=1"
