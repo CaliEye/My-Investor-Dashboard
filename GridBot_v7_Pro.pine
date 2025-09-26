@@ -1,0 +1,379 @@
+//@version=5
+strategy("Grid Bot v7 Pro",
+  overlay=true,
+  default_qty_type=strategy.fixed, default_qty_value=0,
+  pyramiding=4, initial_capital=6000,
+  commission_type=strategy.commission.percent, commission_value=0.075,
+  slippage=2, // Adds 2 ticks of slippage to market/stop orders
+  calc_on_every_tick=true, process_orders_on_close=true, max_bars_back=2000)
+// ========================= INPUTS =========================
+// --- General Settings ---
+i_enableShorting = input.bool(true, "Enable Shorting?", group="General Settings", tooltip="Allows the strategy to open short positions.")
+i_leverage = input.float(5.0, "Leverage", minval=1.0, maxval=10.0, step=0.5, group="General Settings", tooltip="Leverage to simulate. Set to 1 for spot.")
+i_tickSize = input.float(0.1, "Tick Size", minval=1e-8, group="General Settings", tooltip="The minimum price fluctuation of the asset. E.g., BTCUSDT: 0.1, ETHUSDT: 0.01.")
+// --- Risk Management ---
+i_riskPct = input.float(2.5, "Risk % per Entry", minval=0.1, step=0.1, group="Risk Management", tooltip="The percentage of equity to risk on a single initial trade.")
+i_maxExposurePercent = input.float(15.0, "Max Exposure % of Equity", minval=1.0, group="Risk Management", tooltip="The maximum percentage of equity that can be used for a single position (including leverage).")
+i_maxDailyLoss = input.float(6.0, "Max Daily Loss %", minval=0.5, group="Risk Management", tooltip="Stops trading for the day if equity drops by this percentage.")
+// --- Strategy Parameters ---
+i_atrLen = input.int(14, "ATR Length", minval=1, group="Strategy Parameters")
+i_dmiLen = input.int(14, "DMI/ADX Length", minval=1, group="Strategy Parameters")
+i_adxThreshLong = input.float(10.0, "ADX Threshold (Long)", minval=1.0, group="Strategy Parameters")
+i_adxThreshShort = input.float(10.0, "ADX Threshold (Short)", minval=1.0, group="Strategy Parameters")
+i_volMultLong = input.float(1.5, "Volume Multiplier for Longs (x SMA)", minval=0.1, step=0.1, group="Strategy Parameters")
+i_breakoutN = input.int(10, "Breakout lookback", group="Strategy Parameters")
+i_strongTrendADX = input.float(25.0, "Strong ADX Threshold (disables grid)", minval=10.0, group="Strategy Parameters")
+i_rsiLen = input.int(14, "RSI Length", group="Strategy Parameters")
+i_rsiThresh = input.int(50, "RSI Threshold", group="Strategy Parameters")
+i_minScoreLong = input.int(6, "Min score to go Long (sum across TFs)", group="Strategy Parameters")
+i_maxScoreShort = input.int(2, "Max score to go Short (sum across TFs)", group="Strategy Parameters")
+// --- Trade Entry & Exit ---
+i_zoneATRmult = input.float(0.5, "Entry Zone width (x ATR)", step=0.1, group="Trade Entry & Exit")
+i_slATRmult = input.float(1.5, "Stop Loss (x ATR)", step=0.1, group="Trade Entry & Exit")
+i_tp1_ATR_mult = input.float(0.75, "TP1 (x ATR)", step=0.1, group="Trade Entry & Exit")
+i_tp2_ATR_mult = input.float(1.5, "TP2 (x ATR)", step=0.1, group="Trade Entry & Exit")
+i_tp3_ATR_mult = input.float(2.5, "TP3 (x ATR)", step=0.1, group="Trade Entry & Exit")
+i_runnerTrailATR = input.float(1.0, "Runner Trailing Stop (x ATR)", step=0.1, group="Trade Entry & Exit")
+// --- Long Grid ---
+i_grid_enabled = input.bool(true, "Enable Long Grid Scale-in", group="Long Grid")
+i_grid_levels = input.int(3, "Long DCA layers", minval=0, maxval=10, group="Long Grid")
+i_grid_use_atr = input.bool(false, "Use ATR for Grid Steps?", group="Long Grid", tooltip="If checked, grid steps will be based on ATR multiples instead of a fixed percentage.")
+i_grid_step_atr = input.float(0.75, "Long Grid ATR Step", step=0.1, group="Long Grid")
+i_grid_step_pct = input.float(3.0, "Long Grid % Step", step=0.1, group="Long Grid")
+i_grid_size_pct = input.float(20.0, "Long Grid layer size (% of initial qty)", step=1.0, group="Long Grid")
+// --- Short Grid ---
+i_short_grid_enabled = input.bool(true, "Enable Short Grid Scale-in", group="Short Grid")
+i_short_grid_levels = input.int(3, "Short grid levels", minval=0, maxval=6, group="Short Grid")
+i_short_grid_use_atr = input.bool(false, "Use ATR for Grid Steps?", group="Short Grid", tooltip="If checked, grid steps will be based on ATR multiples instead of a fixed percentage.")
+i_short_grid_step_atr = input.float(0.75, "Short Grid ATR Step", step=0.1, group="Short Grid")
+i_short_grid_step_pct= input.float(2.0, "Short Grid % Step", step=0.1, group="Short Grid")
+i_short_grid_size_pct= input.float(20.0, "Each short grid layer size (% of initial qty)", step=1.0, group="Short Grid")
+// --- Filters ---
+i_useMacroFilter = input.bool(true, "Enable Macro Trend Filter?", group="Filters", tooltip="Use a daily EMA to filter trades based on the macro trend.")
+i_macroEmaLen = input.int(50, "Macro EMA Length", group="Filters")
+i_score_use_4h = input.bool(true, "Use 4H in score?", group="Filters")
+i_score_use_6h = input.bool(true, "Use 6H in score?", group="Filters")
+i_score_use_8h = input.bool(false, "Use 8H in score?", group="Filters")
+i_score_use_12h = input.bool(true, "Use 12H in score?", group="Filters")
+i_score_use_D = input.bool(true, "Use Daily in score?", group="Filters")
+i_score_lookahead = input.bool(false, "Use Lookahead in Score?", group="Filters", tooltip="Using lookahead can make backtests appear smoother but may introduce forward-looking bias. Default is OFF for realistic backtesting.")
+// --- Auto Liquidity Zones ---
+autoLookback = input.int(50, "Lookback (bars)", minval=20, maxval=200, group="Auto Liquidity Zones")
+autoWickMult = input.float(1.5, "Upper wick threshold (x ATR)", step=0.1, group="Auto Liquidity Zones")
+autoMinCluster = input.int(3, "Min wick events to label cluster", minval=1, group="Auto Liquidity Zones")
+heatZoneATR = input.float(0.8, "Avoid within X ATR of zone", step=0.1, group="Auto Liquidity Zones")
+// --- Backtest Date Range ---
+useDateFilter = input.bool(false, "Use LIVE date filter", group="Backtest Date Range")
+startYear = input.int(2025, "Start Year (Live)", minval=1970, group="Backtest Date Range")
+startMonth = input.int(10, "Start Month (Live)", minval=1, maxval=12, group="Backtest Date Range")
+startDay = input.int(1, "Start Day (Live)", minval=1, maxval=31, group="Backtest Date Range")
+endYear = input.int(2026, "End Year (Live)", minval=1970, group="Backtest Date Range")
+endMonth = input.int(1, "End Month (Live)", minval=1, maxval=12, group="Backtest Date Range")
+endDay = input.int(25, "End Day (Live)", minval=1, maxval=31, group="Backtest Date Range")
+start_ts = timestamp("UTC", startYear, startMonth, startDay, 0, 0)
+end_ts = timestamp("UTC", endYear, endMonth, endDay, 23, 59)
+inDateRange = not useDateFilter or (time >= start_ts and time <= end_ts)
+useBacktestRange = input.bool(true, "Use BACKTEST date range", group="Backtest Date Range")
+backtestStartYear = input.int(2021, "Backtest Start Year", minval=1970, group="Backtest Date Range")
+backtestStartMonth = input.int(8, "Backtest Start Month", minval=1, maxval=12, group="Backtest Date Range")
+backtestStartDay = input.int(1, "Backtest Start Day", minval=1, maxval=31, group="Backtest Date Range")
+backtestEndYear = input.int(2021, "Backtest End Year", minval=1970, group="Backtest Date Range")
+backtestEndMonth = input.int(12, "Backtest End Month", minval=1, maxval=12, group="Backtest Date Range")
+backtestEndDay = input.int(31, "Backtest End Day", minval=1, maxval=31, group="Backtest Date Range")
+backtest_start_ts = timestamp("UTC", backtestStartYear, backtestStartMonth, backtestStartDay, 0, 0)
+backtest_end_ts = timestamp("UTC", backtestEndYear, backtestEndMonth, backtestEndDay, 23, 59)
+inBacktestRange = not useBacktestRange or (time >= backtest_start_ts and time <= backtest_end_ts)
+// --- Market State ---
+i_marketPhase = input.string("BTC/ETH Phase", "Market Phase", options=["BTC/ETH Phase", "Altcoin Phase"], group="General Settings", tooltip="Adjusts risk for different market cycles. 'Altcoin Phase' is higher risk.")
+btcD = request.security("CRYPTOCAP:BTC.D", timeframe.period, close, lookahead=barmerge.lookahead_off)
+highBtcD = nz(btcD) > 60.0
+altRally = nz(btcD) < 55.0
+bullPhase = i_marketPhase == "Altcoin Phase" ? 2 : 1
+var float dayStartEquity = na
+if ta.change(time("D"))
+    dayStartEquity := strategy.equity
+todayLossPct = not na(dayStartEquity) ? (dayStartEquity - strategy.equity) / dayStartEquity * 100.0 : 0.0
+allowTradesToday = todayLossPct < i_maxDailyLoss
+// ========================= PRE-CALCS & INDICATORS =========================
+capital = strategy.equity
+atrSeries = ta.atr(i_atrLen)
+atr = nz(atrSeries)
+volMASeries = ta.sma(volume, 20)
+volMA = nz(volMASeries)
+emaFast = ta.ema(close, 10)
+emaSlow = ta.ema(close, 30)
+rsi = ta.rsi(close, i_rsiLen)
+macdLine, signalLine, _ = ta.macd(close, 12, 26, 9)
+bullishOsc = macdLine > signalLine
+bearishOsc = macdLine < signalLine
+// Macro Trend Filter
+dailyEma = request.security(syminfo.tickerid, "D", ta.ema(close, i_macroEmaLen), lookahead=barmerge.lookahead_off)
+macroOK_long = not i_useMacroFilter or (close > dailyEma)
+macroOK_short = not i_useMacroFilter or (close < dailyEma)
+// Manual zones
+enable_mz1 = input.bool(false, "Enable Manual Zone 1", group="Manual Liquidity Zones")
+mz1_raw = input.float(0.0, "Manual Zone 1 Price", group="Manual Liquidity Zones")
+mz1_price = nz(mz1_raw) > 0 ? math.round(mz1_raw / i_tickSize) * i_tickSize : na
+enable_mz2 = input.bool(false, "Enable Manual Zone 2", group="Manual Liquidity Zones")
+mz2_raw = input.float(0.0, "Manual Zone 2 Price", group="Manual Liquidity Zones")
+mz2_price = nz(mz2_raw) > 0 ? math.round(mz2_raw / i_tickSize) * i_tickSize : na
+enable_mz3 = input.bool(false, "Enable Manual Zone 3", group="Manual Liquidity Zones")
+mz3_raw = input.float(0.0, "Manual Zone 3 Price", group="Manual Liquidity Zones")
+mz3_price = nz(mz3_raw) > 0 ? math.round(mz3_raw / i_tickSize) * i_tickSize : na
+var float[] manualZones = array.new_float(0)
+if enable_mz1 and not na(mz1_price)
+    array.push(manualZones, mz1_price)
+if enable_mz2 and not na(mz2_price)
+    array.push(manualZones, mz2_price)
+if enable_mz3 and not na(mz3_price)
+    array.push(manualZones, mz3_price)
+isNearManualZone(price, arr, atrDist) =>
+    near = false
+    for i = 0 to array.size(arr) - 1
+        z = array.get(arr, i)
+        if not na(z) and math.abs(price - z) <= atrDist * nz(atr)
+            near := true
+    near
+manNear = array.size(manualZones) > 0 ? isNearManualZone(close, manualZones, heatZoneATR) : false
+// ========================= AUTO LIQUIDITY CLUSTERS (More Performant) =========================
+var float bestCenter = na
+var int bestCount = 0
+bestCenter := na
+bestCount := 0
+// Step 1: Collect qualifying wick high prices from the lookback period into an array.
+lookLimit = bar_index < autoLookback ? bar_index : autoLookback
+float[] wickHighs = array.new_float(0)
+if lookLimit > 0
+    for i = 0 to lookLimit - 1
+        upperWick = high[i] - math.max(open[i], close[i])
+        locATR = nz(atrSeries[i])
+        volMAi = nz(volMASeries[i])
+        if locATR > 0 and upperWick > autoWickMult * locATR and volume[i] > volMAi
+            array.push(wickHighs, high[i])
+// Step 2: Process the array to find the densest cluster if enough wicks are found.
+if array.size(wickHighs) >= autoMinCluster
+    array.sort(wickHighs) // Sort prices to make clustering efficient.
+    // A cluster is a group of prices within a certain range (clusterWidth).
+    // We use a sliding window over the sorted array to find the densest cluster.
+    clusterWidth = atr * 1.0 // Cluster width based on current ATR.
+
+    // Iterate through each potential cluster start point.
+    for i = 0 to array.size(wickHighs) - 1
+        currentPrice = array.get(wickHighs, i)
+
+        // Find how many other wicks fall within clusterWidth from the current wick.
+        clusterSum = 0.0
+        clusterCount = 0
+        for j = i to array.size(wickHighs) - 1
+            price_j = array.get(wickHighs, j)
+            if price_j <= currentPrice + clusterWidth
+                clusterSum += price_j
+                clusterCount += 1
+            else
+                // Since the array is sorted, no more points will be in the cluster.
+                break
+
+        // If this cluster is the best one we've found so far, record it.
+        if clusterCount >= autoMinCluster and clusterCount > bestCount
+            bestCount := clusterCount
+            bestCenter := clusterSum / clusterCount
+autoNear = not na(bestCenter) ? math.abs(close - bestCenter) <= heatZoneATR * nz(atr) : false
+liquidityOK = not (manNear or autoNear)
+// ========================= DMI/ADX (using built-in ta.dmi) =========================
+[pdi, mdi, adx] = ta.dmi(i_dmiLen, i_dmiLen)
+// HTF Confirmation is now handled by the Scoring Function.
+// ========================= SCORING FUNCTION =========================
+var string[] tfs = array.from("240", "360", "480", "720", "D") // 4h, 6h, 8h, 12h, 1D
+var bool[] useTFs = array.from(i_score_use_4h, i_score_use_6h, i_score_use_8h, i_score_use_12h, i_score_use_D)
+
+f_score(sym) =>
+    totalScore = 0
+    lookahead_mode = i_score_lookahead ? barmerge.lookahead_on : barmerge.lookahead_off
+    for j = 0 to array.size(tfs) - 1
+        if array.get(useTFs, j)
+            tf = array.get(tfs, j)
+            // Pull series from target TF
+            close_tf = request.security(sym, tf, close, lookahead=lookahead_mode)
+            vol_tf = request.security(sym, tf, volume, lookahead=lookahead_mode)
+            rsi_tf = ta.rsi(close_tf, i_rsiLen)
+            // MACD on the pulled series (valid on series)
+            macdLine_tf, sig_tf, _ = ta.macd(close_tf, 12, 26, 9)
+            vol_ma_tf = ta.sma(vol_tf, 20)
+            // Components
+            rsiScore = rsi_tf > i_rsiThresh ? 1 : 0
+            macdScore = macdLine_tf > sig_tf ? 1 : 0
+            volScore = vol_tf > vol_ma_tf ? 1 : 0
+            totalScore += (rsiScore + macdScore + volScore)
+    totalScore
+
+score = f_score(syminfo.tickerid)
+// ========================= ENTRY LOGIC =========================
+zoneLow = close - i_zoneATRmult * nz(atr)
+zoneHigh = close
+trendOK_long = adx >= i_adxThreshLong
+volOK_long = volume > nz(volMA) * i_volMultLong
+baseLongCond = emaFast > emaSlow and volOK_long and liquidityOK and macroOK_long and inDateRange and inBacktestRange and allowTradesToday and score >= i_minScoreLong
+var bool longSignalRequest = false
+longSignalRequest := false
+if baseLongCond and strategy.position_size == 0 and low <= zoneLow
+    longSignalRequest := true
+shortZoneHigh = close + i_zoneATRmult * nz(atr)
+rsiOB = rsi > 80
+volSpikeShort = volume > nz(volMA) * 1.5
+trendOK_short = adx >= i_adxThreshShort or altRally
+baseShortCond = i_enableShorting and emaFast < emaSlow and rsiOB and volSpikeShort and trendOK_short and liquidityOK and macroOK_short and inDateRange and inBacktestRange and allowTradesToday and score <= i_maxScoreShort
+var bool shortSignalRequest = false
+shortSignalRequest := false
+recentHigh = ta.highest(high, 20)
+if baseShortCond and strategy.position_size == 0 and close >= recentHigh * 0.98
+    shortSignalRequest := true
+volSpike = volume > nz(volMA) * 1.5
+breakoutCond = close > ta.highest(close, i_breakoutN)[1] and volSpike and liquidityOK and macroOK_long and inDateRange and inBacktestRange and allowTradesToday and score >= i_minScoreLong
+var bool breakoutSignalRequest = false
+breakoutSignalRequest := false
+if breakoutCond and strategy.position_size == 0 and (bullPhase == 2 or not highBtcD)
+    breakoutSignalRequest := true
+// ========================= POSITION SIZING =========================
+riskAdj = bullPhase == 1 and highBtcD ? 1.5 : bullPhase == 2 and not highBtcD ? 1.5 : 1.0
+riskAmount = capital * (i_riskPct / 100.0) * riskAdj
+entryPrice = close
+slPrice_long = entryPrice - i_slATRmult * nz(atr)
+riskPerUnit_long = math.max(1e-12, entryPrice - slPrice_long)
+baseQty_long = riskPerUnit_long > 0 ? (riskAmount / riskPerUnit_long) : 0.0
+initialQty_long = math.max(0.0, baseQty_long) * i_leverage
+initialQty_long := math.min(initialQty_long, capital * (i_maxExposurePercent / 100.0) / entryPrice)
+qty_round = 1e8
+safeQtyLong = math.round(initialQty_long * qty_round) / qty_round
+safeQtyLong := math.max(safeQtyLong, 0.00000001)
+slPrice_short = entryPrice + i_slATRmult * nz(atr)
+riskPerUnit_short = math.max(1e-12, slPrice_short - entryPrice)
+baseQty_short = riskPerUnit_short > 0 ? (riskAmount / riskPerUnit_short) : 0.0
+initialQty_short = math.max(0.0, baseQty_short) * i_leverage
+initialQty_short := math.min(initialQty_short, capital * (i_maxExposurePercent / 100.0) / entryPrice)
+safeQtyShort = math.round(initialQty_short * qty_round) / qty_round
+safeQtyShort := math.max(safeQtyShort, 0.00000001)
+// ========================= GRID / DCA STATE =========================
+var float initialEntryPrice = na
+var int executedGridCount = 0
+var bool gridActive = false
+var bool gridFillCond = false
+var float gridFillLevelPrice = na
+var float gridFillQty = 0.0
+var float initialShortEntryPrice = na
+var int executedShortGridCount = 0
+var bool shortGridActive = false
+var bool shortGridFillCond = false
+var float shortGridFillLevelPrice= na
+var float shortGridFillQty = 0.0
+// ========================= EXECUTION =========================
+if longSignalRequest
+    strategy.entry("LongInit", strategy.long, qty=safeQtyLong)
+if shortSignalRequest
+    strategy.entry("ShortInit", strategy.short, qty=safeQtyShort)
+if breakoutSignalRequest
+    strategy.entry("LongBreakout", strategy.long, qty=safeQtyLong * 0.6)
+if strategy.position_size > 0 and nz(strategy.position_size[1]) == 0
+    initialEntryPrice := strategy.position_avg_price
+    executedGridCount := 0
+    gridActive := i_grid_enabled and i_grid_levels > 0 and (adx < i_strongTrendADX)
+if strategy.position_size < 0 and nz(strategy.position_size[1]) == 0
+    initialShortEntryPrice := strategy.position_avg_price
+    executedShortGridCount := 0
+    shortGridActive := i_short_grid_enabled and i_short_grid_levels > 0 and (adx < i_strongTrendADX)
+avgEntryLong = strategy.position_size > 0 ? strategy.position_avg_price : na
+avgEntryShort = strategy.position_size < 0 ? strategy.position_avg_price : na
+sl_base_long = not na(avgEntryLong) ? avgEntryLong - i_slATRmult * nz(atr) : na
+tp1_long = not na(avgEntryLong) ? avgEntryLong + i_tp1_ATR_mult * nz(atr) : na
+tp2_long = not na(avgEntryLong) ? avgEntryLong + i_tp2_ATR_mult * nz(atr) : na
+tp3_long = not na(avgEntryLong) ? avgEntryLong + i_tp3_ATR_mult * nz(atr) : na
+sl_base_short = not na(avgEntryShort) ? avgEntryShort + i_slATRmult * nz(atr) : na
+tp1_short = not na(avgEntryShort) ? avgEntryShort - i_tp1_ATR_mult * nz(atr) : na
+tp2_short = not na(avgEntryShort) ? avgEntryShort - i_tp2_ATR_mult * nz(atr) : na
+tp3_short = not na(avgEntryShort) ? avgEntryShort - i_tp3_ATR_mult * nz(atr) : na
+var float runner_stop_long = na
+if strategy.position_size > 0
+    runner_stop_long := math.max(nz(sl_base_long), close - i_runnerTrailATR * nz(atr))
+else
+    runner_stop_long := na
+var float runner_stop_short = na
+if strategy.position_size < 0
+    runner_stop_short := math.min(nz(sl_base_short), close + i_runnerTrailATR * nz(atr))
+else
+    runner_stop_short := na
+// ========================= GRID FILL TRIGGERS (LONG) =========================
+gridFillCond := false
+gridFillLevelPrice := na
+gridFillQty := 0.0
+if gridActive and not na(initialEntryPrice) and strategy.position_size > 0 and executedGridCount < i_grid_levels and (adx < i_strongTrendADX)
+    levelPrice = i_grid_use_atr ? initialEntryPrice - (i_grid_step_atr * atr * (executedGridCount + 1)) : initialEntryPrice * (1 - (i_grid_step_pct / 100.0) * (executedGridCount + 1))
+    levelPrice := math.round(levelPrice / i_tickSize) * i_tickSize
+    if close <= levelPrice
+        grid_size_actual = adx > 20 ? math.min(i_grid_size_pct, 25.0) : i_grid_size_pct
+        gridFillQty := safeQtyLong * (grid_size_actual / 100.0)
+        gridFillLevelPrice := levelPrice
+        idStr = "GRID" + str.tostring(executedGridCount + 1)
+        strategy.entry(idStr, strategy.long, qty=gridFillQty)
+        gridFillCond := true
+        executedGridCount += 1
+        if executedGridCount >= i_grid_levels
+            gridActive := false
+// ========================= SHORT GRID =========================
+shortGridFillCond := false
+shortGridFillLevelPrice := na
+shortGridFillQty := 0.0
+if shortGridActive and not na(initialShortEntryPrice) and strategy.position_size < 0 and executedShortGridCount < i_short_grid_levels and (adx < i_strongTrendADX)
+    levelPriceS = i_short_grid_use_atr ? initialShortEntryPrice + (i_short_grid_step_atr * atr * (executedShortGridCount + 1)) : initialShortEntryPrice * (1 + (i_short_grid_step_pct / 100.0) * (executedShortGridCount + 1))
+    levelPriceS := math.round(levelPriceS / i_tickSize) * i_tickSize
+    if close >= levelPriceS
+        short_grid_size_actual = adx > 20 ? math.min(i_short_grid_size_pct, 25.0) : i_short_grid_size_pct
+        shortGridFillQty := safeQtyShort * (short_grid_size_actual / 100.0)
+        shortGridFillLevelPrice := levelPriceS
+        idS = "SGRID" + str.tostring(executedShortGridCount + 1)
+        strategy.entry(idS, strategy.short, qty=shortGridFillQty)
+        shortGridFillCond := true
+        executedShortGridCount += 1
+        if executedShortGridCount >= i_short_grid_levels
+            shortGridActive := false
+// ========================= EXITS =========================
+if strategy.position_size > 0
+    strategy.exit("TP1", "LongInit", qty_percent=30, limit=tp1_long, stop=sl_base_long)
+    strategy.exit("TP2", "LongInit", qty_percent=30, limit=tp2_long, stop=sl_base_long)
+    strategy.exit("TP3", "LongInit", qty_percent=20, limit=tp3_long, stop=sl_base_long)
+    strategy.exit("Runner", "LongInit", qty_percent=20, stop=runner_stop_long)
+
+if strategy.position_size < 0
+    strategy.exit("S_TP1", "ShortInit", qty_percent=30, limit=tp1_short, stop=sl_base_short)
+    strategy.exit("S_TP2", "ShortInit", qty_percent=30, limit=tp2_short, stop=sl_base_short)
+    strategy.exit("S_TP3", "ShortInit", qty_percent=20, limit=tp3_short, stop=sl_base_short)
+    strategy.exit("S_Runner", "ShortInit", qty_percent=20, stop=runner_stop_short)
+// ========================= ALERT CONDITIONS (Fixed with JSON) =========================
+// Define JSON messages as variables to avoid long-line parsing issues
+long_json = '{"ticker":"' + syminfo.ticker + '","time":"' + str.tostring(time, "yyyy-MM-dd HH:mm:ss") + '","price":' + str.tostring(close) + '","signal":"LONG","riskPct":' + str.tostring(i_riskPct) + '","leverage":' + str.tostring(i_leverage) + '","stopLoss":' + str.tostring(nz(sl_base_long)) + '","takeProfit1":' + str.tostring(nz(tp1_long)) + '","takeProfit2":' + str.tostring(nz(tp2_long)) + '","takeProfit3":' + str.tostring(nz(tp3_long)) + '","runner":' + str.tostring(nz(runner_stop_long)) + '","note":"AI_LONG_ENTRY"}'
+short_json = '{"ticker":"' + syminfo.ticker + '","time":"' + str.tostring(time, "yyyy-MM-dd HH:mm:ss") + '","price":' + str.tostring(close) + '","signal":"SHORT","riskPct":' + str.tostring(i_riskPct) + '","leverage":' + str.tostring(i_leverage) + '","stopLoss":' + str.tostring(nz(sl_base_short)) + '","takeProfit1":' + str.tostring(nz(tp1_short)) + '","takeProfit2":' + str.tostring(nz(tp2_short)) + '","takeProfit3":' + str.tostring(nz(tp3_short)) + '","runner":' + str.tostring(nz(runner_stop_short)) + '","note":"AI_SHORT_ENTRY"}'
+grid_json = '{"ticker":"' + syminfo.ticker + '","time":"' + str.tostring(time, "yyyy-MM-dd HH:mm:ss") + '","price":' + str.tostring(close) + '","signal":"GRID_FILL","layer":' + str.tostring(executedGridCount) + '","gridLevelPrice":' + str.tostring(nz(gridFillLevelPrice)) + '","riskPct":' + str.tostring(i_riskPct) + '","leverage":' + str.tostring(i_leverage) + '","stopLoss":' + str.tostring(nz(sl_base_long)) + '","takeProfit1":' + str.tostring(nz(tp1_long)) + '","takeProfit2":' + str.tostring(nz(tp2_long)) + '","takeProfit3":' + str.tostring(nz(tp3_long)) + '","runner":' + str.tostring(nz(runner_stop_long)) + '","note":"AI_GRID_FILL"}'
+short_grid_json = '{"ticker":"' + syminfo.ticker + '","time":"' + str.tostring(time, "yyyy-MM-dd HH:mm:ss") + '","price":' + str.tostring(close) + '","signal":"SHORT_GRID_FILL","layer":' + str.tostring(executedShortGridCount) + '","gridLevelPrice":' + str.tostring(nz(shortGridFillLevelPrice)) + '","riskPct":' + str.tostring(i_riskPct) + '","leverage":' + str.tostring(i_leverage) + '","stopLoss":' + str.tostring(nz(sl_base_short)) + '","takeProfit1":' + str.tostring(nz(tp1_short)) + '","takeProfit2":' + str.tostring(nz(tp2_short)) + '","takeProfit3":' + str.tostring(nz(tp3_short)) + '","runner":' + str.tostring(nz(runner_stop_short)) + '","note":"AI_SHORT_GRID_FILL"}'
+breakout_json = '{"ticker":"' + syminfo.ticker + '","time":"' + str.tostring(time, "yyyy-MM-dd HH:mm:ss") + '","price":' + str.tostring(close) + '","signal":"BREAKOUT","riskPct":' + str.tostring(i_riskPct) + '","leverage":' + str.tostring(i_leverage) + '","stopLoss":' + str.tostring(nz(sl_base_long)) + '","takeProfit1":' + str.tostring(nz(tp1_long)) + '","takeProfit2":' + str.tostring(nz(tp2_long)) + '","takeProfit3":' + str.tostring(nz(tp3_long)) + '","runner":' + str.tostring(nz(runner_stop_long)) + '","note":"AI_BREAKOUT_ENTRY"}'
+// Use alert() for dynamic JSON messages instead of alertcondition
+if longSignalRequest
+    alert(long_json, alert.freq_once_per_bar)
+if shortSignalRequest
+    alert(short_json, alert.freq_once_per_bar)
+if gridFillCond
+    alert(grid_json, alert.freq_once_per_bar)
+if shortGridFillCond
+    alert(short_grid_json, alert.freq_once_per_bar)
+if breakoutSignalRequest
+    alert(breakout_json, alert.freq_once_per_bar)
+// ========================= PLOTS =========================
+plot(i_useMacroFilter ? dailyEma : na, title="Daily EMA", color=color.new(color.blue, 50), linewidth=2)
+plot(not na(sl_base_long) ? sl_base_long : na, title="SL", linewidth=2, color=color.red)
+plot(not na(tp1_long) ? tp1_long : na, title="TP1", linewidth=2, color=color.orange)
+plot(not na(tp2_long) ? tp2_long : na, title="TP2", linewidth=2, color=color.yellow)
+plot(not na(tp3_long) ? tp3_long : na, title="TP3", linewidth=2, color=color.purple)
+plot(not na(runner_stop_long) ? runner_stop_long : na, title="RUNNER", linewidth=2, color=color.green)
+plotshape(longSignalRequest, title="LongSignalShape", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.tiny)
+plotshape(gridFillCond, title="GridFillShape", location=location.belowbar, color=color.blue, style=shape.triangleup, size=size.tiny)
+plotshape(shortSignalRequest, title="ShortSignalShape", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.tiny)
+plotshape(shortGridFillCond, title="ShortGridFillShape", location=location.abovebar, color=color.maroon, style=shape.triangledown, size=size.tiny)
+plotshape(breakoutSignalRequest, title="BreakoutSignalShape", location=location.belowbar, color=color.lime, style=shape.triangleup, size=size.tiny)
+// ========================= END OF SCRIPT =========================
