@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
+  <script src="jsscripts.js/jsscripts.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-inter">
   <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
@@ -19,13 +20,41 @@
       <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
       <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
       <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="senario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
       <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
       <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
     </nav>
   </header>
 
   <main class="p-6 max-w-7xl mx-auto">
+    <!-- Regime + Trigger Card -->
+    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-cyan-300 mb-4 tracking-widest">InvestorOS — Regime</h2>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
+          <div class="text-sm text-gray-300">Bias</div>
+          <div id="biasState" class="text-2xl font-bold">…</div>
+          <div class="text-xs text-gray-400 mt-2">Updated: <span id="lastUpdate">…</span></div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
+          <div class="text-sm text-gray-300 mb-2">Top Triggers</div>
+          <ul class="space-y-1 text-sm">
+            <li><span id="t1">…</span></li>
+            <li><span id="t2">…</span></li>
+            <li><span id="t3">…</span></li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
+          <div class="text-sm text-gray-300">Next Review</div>
+          <div id="nextReview" class="text-xl font-semibold">…</div>
+          <div class="text-xs text-gray-400 mt-2">Rule: no action without 2+ confirmations</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Hero HUD Section -->
     <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
       <div class="flex flex-col md:flex-row md:space-x-12">
@@ -145,7 +174,7 @@
     <!-- Quick Panel Shortcuts -->
     <section class="flex flex-wrap gap-6 mb-10 justify-center">
       <a href="warroom.html" class="hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
-      <a href="scenario.html" class="hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="senario.html" class="hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
       <a href="insights.html" class="hud-action bg-yellow-500 hover:bg-yellow-700" aria-label="Get Insights">Get Insights</a>
       <a href="links.html" class="hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
     </section>
@@ -154,5 +183,68 @@
   <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
     &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
+
+  <script>
+    // === Live Market Data Fetching ===
+    async function fetchMarketData() {
+      try {
+        // Fetch BTC and ETH prices
+        const cryptoRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
+        const cryptoData = await cryptoRes.json();
+        
+        document.getElementById('btc-price').textContent = '$' + cryptoData.bitcoin.usd.toLocaleString();
+        document.getElementById('eth-price').textContent = '$' + cryptoData.ethereum.usd.toLocaleString();
+        
+        // Fetch Fear & Greed Index
+        const fgRes = await fetch('https://api.alternative.me/fng/?limit=1');
+        const fgData = await fgRes.json();
+        document.getElementById('fg-latest').textContent = fgData.data[0].value + '/100';
+        
+        // Mock SPX and USD data (replace with real API if available)
+        document.getElementById('spx-latest').textContent = '4,750';
+        document.getElementById('usd-latest').textContent = '103.2';
+        
+        // Update risk gauges
+        updateRiskGauges(fgData.data[0].value);
+        
+      } catch (error) {
+        console.log('Market data fetch error:', error);
+        // Fallback to mock data
+        document.getElementById('btc-price').textContent = '$67,500';
+        document.getElementById('eth-price').textContent = '$3,450';
+        document.getElementById('spx-latest').textContent = '4,750';
+        document.getElementById('usd-latest').textContent = '103.2';
+        document.getElementById('fg-latest').textContent = '65/100';
+      }
+    }
+    
+    // === Risk Gauge Updates ===
+    function updateRiskGauges(fearGreedValue) {
+      // Calculate risk levels (0-100)
+      const cryptoRisk = Math.min(100, Math.max(0, 100 - fearGreedValue));
+      const macroRisk = Math.random() * 60 + 20; // Mock macro risk
+      
+      // Update crypto risk gauge
+      const cryptoGauge = document.getElementById('crypto-risk-gauge');
+      const cryptoAngle = (cryptoRisk / 100) * 180 - 90;
+      cryptoGauge.style.setProperty('--gauge-rotation', cryptoAngle + 'deg');
+      
+      // Update macro risk gauge
+      const macroGauge = document.getElementById('macro-risk-gauge');
+      const macroAngle = (macroRisk / 100) * 180 - 90;
+      macroGauge.style.setProperty('--gauge-rotation', macroAngle + 'deg');
+      
+      // Add risk level text
+      cryptoGauge.innerHTML = `<div style="text-align:center;margin-top:1rem;font-weight:bold;">${Math.round(cryptoRisk)}%</div>`;
+      macroGauge.innerHTML = `<div style="text-align:center;margin-top:1rem;font-weight:bold;">${Math.round(macroRisk)}%</div>`;
+    }
+    
+    // === Initialize Dashboard ===
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchMarketData();
+      // Refresh every 60 seconds
+      setInterval(fetchMarketData, 60000);
+    });
+  </script>
 </body>
 </html>

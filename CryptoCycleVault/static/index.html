@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CyberSci-Dash v2 | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="images/favicon.ico">
+  <script defer src="dashboard.js"></script>
+</head>
+<body class="bg-gray-900 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
+    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+      <a href="index.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="Dashboard">Dashboard</a>
+      <a href="warroom.html" class="hover:text-cyan-400" aria-label="War Room">War Room</a>
+      <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
+      <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
+      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-7xl mx-auto">
+    <!-- Market Overview Section -->
+    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-cyan-300 mb-4 tracking-widest">Market Overview</h2>
+      <div id="market-overview" class="grid grid-cols-2 gap-3 text-base">
+        <div>BTC Price:</div> <div id="btc-price" class="font-bold text-yellow-300" aria-live="polite">---</div>
+        <div>ETH Price:</div> <div id="eth-price" class="font-bold text-green-300" aria-live="polite">---</div>
+        <div>SPX:</div> <div id="spx-price" class="font-bold text-blue-300" aria-live="polite">---</div>
+        <div>USD Index:</div> <div id="usd-price" class="font-bold text-cyan-300" aria-live="polite">---</div>
+        <div>Fear &amp; Greed:</div> <div id="fg-index" class="font-bold text-pink-400" aria-live="polite">---</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
+    &copy; 2025 CyberSci-Dash. All rights reserved.
+  </footer>
+</body>
+</html>

@@ -178,6 +178,19 @@ class Insight(BaseModel):
     content: str
     source: str
 
+class Alert(BaseModel):
+    ticker: str
+    time: str
+    price: float
+    signal: str
+    riskPct: float
+    leverage: float
+    stopLoss: float
+    takeProfit1: float
+    takeProfit2: float
+    runner: float
+    note: str
+
 # Mount the static directory
 import os
 
@@ -335,3 +348,11 @@ async def get_spx_price():
 
     # If all API keys fail, return an error
     raise HTTPException(status_code=500, detail="Failed to fetch SPX price from all available APIs.")
+
+@app.post("/api/alert")
+def receive_alert(alert: Alert):
+    """Receive alert from Pine Script strategy in agent mode."""
+    logging.info(f"Received alert: {alert.dict()}")
+    # In agent mode, process the alert (e.g., log, send to trading platform, etc.)
+    # For now, just return success
+    return {"success": True, "message": "Alert received and processed."}
