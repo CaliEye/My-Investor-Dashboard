@@ -391,6 +391,11 @@ footer {
   width: 120px;
   height: 120px;
   margin: 0 auto;
+  transition: transform 0.3s ease;
+}
+
+.risk-gauge-container:hover {
+  transform: scale(1.05);
 }
 
 .risk-gauge-arc {
@@ -400,6 +405,7 @@ footer {
   position: relative;
   background: conic-gradient(#374151 0deg, #374151 270deg, transparent 270deg);
   transform: rotate(-135deg);
+  transition: all 0.5s ease;
 }
 
 .risk-gauge-center {
@@ -416,6 +422,7 @@ footer {
   justify-content: center;
   align-items: center;
   border: 2px solid #374151;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .risk-percentage {
@@ -440,17 +447,32 @@ footer {
   margin-top: 0.5rem;
 }
 
-/* Animated pulse for high risk */
-.risk-gauge-container:has(.risk-percentage:contains("70")), 
-.risk-gauge-container:has(.risk-percentage:contains("80")),
-.risk-gauge-container:has(.risk-percentage:contains("90")) {
-  animation: pulse 2s infinite;
+/* High risk pulsing animation */
+.risk-gauge-container:has([class*="78"]),
+.risk-gauge-container:has([class*="72"]) {
+  animation: riskPulse 2s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+@keyframes riskPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.2);
+  }
 }
+
+/* Action panel styling */
+.border-red-500 { border-color: #ef4444; }
+.border-yellow-500 { border-color: #f59e0b; }
+.border-orange-500 { border-color: #f97316; }
+.border-blue-500 { border-color: #3b82f6; }
+.text-red-400 { color: #f87171; }
+.text-yellow-400 { color: #facc15; }
+.text-orange-400 { color: #fb923c; }
+.text-blue-400 { color: #60a5fa; }
 /* === Data Display Cards === */
   text-align: center;
   padding: 1.5rem;

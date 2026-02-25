@@ -9,7 +9,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
-  <script src="jsscripts.js/jsscripts.js"></script>
+  <!-- System Health & Connection Status -->
+  <style>
+    .connection-status {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(10px);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .status-connected {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #10b981;
+    }
+    .status-error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+    .status-loading {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #f59e0b;
+      color: #f59e0b;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .data-freshness {
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+  </style>
 </head>
 <body class="bg-gray-900 text-white font-inter">
   <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
@@ -26,6 +72,12 @@
     </nav>
   </header>
 
+  <!-- System Connection Status -->
+  <div id="connection-status" class="connection-status status-loading">
+    <div class="status-dot" style="background: #f59e0b;"></div>
+    <span>Connecting...</span>
+  </div>
+
   <main class="p-6 max-w-7xl mx-auto">
     <!-- Regime + Trigger Card -->
     <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
@@ -34,17 +86,19 @@
       <div class="grid md:grid-cols-3 gap-6">
         <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
           <div class="text-sm text-gray-300">Bias</div>
-          <div id="biasState" class="text-2xl font-bold">…</div>
-          <div class="text-xs text-gray-400 mt-2">Updated: <span id="lastUpdate">…</span></div>
+          <div id="biasState" class="text-2xl font-bold">Loading...</div>
+          <div class="text-xs text-gray-400 mt-2">Updated: <span id="lastUpdate">Connecting...</span></div>
+          <div class="data-freshness" id="data-freshness">Checking data freshness...</div>
         </div>
 
         <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
           <div class="text-sm text-gray-300 mb-2">Top Triggers</div>
-          <ul class="space-y-1 text-sm">
-            <li><span id="t1">…</span></li>
-            <li><span id="t2">…</span></li>
-            <li><span id="t3">…</span></li>
+          <ul class="space-y-1 text-sm" id="triggers-list">
+            <li><span id="t1">Loading...</span></li>
+            <li><span id="t2">Loading...</span></li>
+            <li><span id="t3">Loading...</span></li>
           </ul>
+          <div class="mt-2 text-xs" id="trigger-health">Checking triggers...</div>
         </div>
 
         <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
@@ -201,15 +255,15 @@
 
     <!-- Dashboard Action Panel -->
     <section class="mb-10 flex flex-col md:flex-row md:space-x-6">
-      <div class="flex-1 mb-8 md:mb-0 bg-gray-800 border border-pink-400 rounded-xl shadow p-6">
-        <h2 class="text-xl font-orbitron text-pink-400 mb-2">Current Playbook</h2>
+      <div class="flex-1 mb-8 md:mb-0 bg-gray-800 border border-red-400 rounded-xl shadow p-6">
+        <h2 class="text-xl font-orbitron text-red-400 mb-2">Current Playbook (Bear Market)</h2>
         <ul class="list-disc list-inside text-lg space-y-2">
-          <li>Trend: <span class="font-bold text-green-300">Uptrend</span> (Stay long, trail stops)</li>
-          <li>Risk: <span class="font-bold text-yellow-300">Moderate</span> (Scale in, consider partial profit)</li>
-          <li>Action: <span class="font-bold text-cyan-300">Monitor macro triggers, no full risk</span></li>
+          <li>Trend: <span class="font-bold text-red-300">Bear Market Year 3</span> (Defensive positioning)</li>
+          <li>Risk: <span class="font-bold text-red-300">High (78% Crypto, 72% Macro)</span> (Capital preservation mode)</li>
+          <li>Action: <span class="font-bold text-yellow-300">Raise cash, prepare for bottom</span></li>
         </ul>
         <div class="mt-4 text-gray-300 text-sm">
-          <strong>Today’s Guidance:</strong> <span class="text-white">Follow your plan, avoid FOMO, update your scenario in the War Room if conditions change.</span>
+          <strong>Bear Market Guidance:</strong> <span class="text-white">Cash is king. Set buy alerts below $40k BTC. Avoid catching falling knives.</span>
         </div>
       </div>
       <div class="flex-1 bg-gray-800 border border-cyan-400 rounded-xl shadow p-6">
@@ -242,16 +296,16 @@
           </div>
         </div>
 
-        <!-- Command Log -->
-        <div class="bg-gray-800/60 border border-purple-500/50 rounded-xl p-6">
-          <h3 class="text-lg font-orbitron text-purple-300 mb-4 flex items-center">
-            <span class="bg-purple-500 h-2 w-2 rounded-full mr-3"></span>Recent Commands
+        <!-- Live Risk Action Panel -->
+        <div class="bg-gray-800/60 border border-red-500/50 rounded-xl p-6">
+          <h3 class="text-lg font-orbitron text-red-300 mb-4 flex items-center">
+            <span class="bg-red-500 h-2 w-2 rounded-full mr-3"></span>Risk-Based Actions
           </h3>
-          <div id="command-log-content" class="space-y-4">
-            <div class="text-gray-300 text-sm">Loading recent commands...</div>
+          <div id="risk-actions-content" class="space-y-3">
+            <div class="text-gray-300 text-sm">Analyzing risk levels...</div>
           </div>
           <div class="mt-4 text-right">
-            <a href="logs/command_log.md" class="text-purple-400 text-sm hover:text-purple-300" target="_blank">View Full History →</a>
+            <button id="update-actions-btn" class="text-red-400 text-sm hover:text-red-300 px-3 py-1 border border-red-500 rounded" onclick="generateRiskActions()">Update Actions →</button>
           </div>
         </div>
       </div>
@@ -271,25 +325,165 @@
   </footer>
 
   <script>
+    // === RISK-BASED ACTION GENERATOR ===
+    function generateRiskActions() {
+      const actionsContainer = document.getElementById('risk-actions-content');
+      if (!actionsContainer) return;
+      
+      // Bear market specific actions based on current data
+      const bearMarketActions = [
+        {
+          priority: 'HIGH',
+          action: 'Raise Cash to 60%+',
+          reason: 'Crypto Risk 78%, Macro Risk 72%',
+          timeframe: 'Immediate',
+          color: 'red'
+        },
+        {
+          priority: 'HIGH', 
+          action: 'Set BTC Buy Alerts',
+          reason: 'Below $40k = Capitulation Zone',
+          timeframe: 'Next 3-6 months',
+          color: 'yellow'
+        },
+        {
+          priority: 'MEDIUM',
+          action: 'Liquidate Altcoins',
+          reason: 'ETH/BTC < 0.060 = Altseason Over',
+          timeframe: 'This week',
+          color: 'orange'
+        },
+        {
+          priority: 'LOW',
+          action: 'DCA Preparation',
+          reason: 'Year 3 Bear - Bottom in 12mo',
+          timeframe: 'Plan ahead',
+          color: 'blue'
+        }
+      ];
+      
+      const actionsHtml = bearMarketActions.map(action => `
+        <div class="bg-gray-900 border-l-4 border-${action.color}-500 p-4 rounded">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-${action.color}-400 text-xs font-bold">${action.priority}</span>
+            <span class="text-gray-400 text-xs">${action.timeframe}</span>
+          </div>
+          <div class="text-white font-semibold mb-1">${action.action}</div>
+          <div class="text-gray-300 text-sm">${action.reason}</div>
+        </div>
+      `).join('');
+      
+      actionsContainer.innerHTML = actionsHtml;
+      
+      // Update button state
+      const updateBtn = document.getElementById('update-actions-btn');
+      if (updateBtn) {
+        updateBtn.textContent = '✓ Updated';
+        setTimeout(() => {
+          updateBtn.textContent = 'Update Actions →';
+        }, 2000);
+      }
+    }
+
+    // === SYSTEM HEALTH MONITORING ===
+    let systemHealth = {
+      dataConnection: false,
+      lastUpdate: null,
+      aiConnection: false,
+      logsConnection: false,
+      errorCount: 0
+    };
+    
+    function updateConnectionStatus() {
+      const statusEl = document.getElementById('connection-status');
+      const statusDot = statusEl.querySelector('.status-dot');
+      const statusText = statusEl.querySelector('span');
+      
+      if (systemHealth.errorCount > 2) {
+        statusEl.className = 'connection-status status-error';
+        statusDot.style.background = '#ef4444';
+        statusText.textContent = 'Connection Error';
+      } else if (systemHealth.dataConnection && systemHealth.aiConnection && systemHealth.logsConnection) {
+        statusEl.className = 'connection-status status-connected';
+        statusDot.style.background = '#10b981';
+        statusText.textContent = 'Live & Connected';
+      } else {
+        statusEl.className = 'connection-status status-loading';
+        statusDot.style.background = '#f59e0b';
+        statusText.textContent = 'Loading...';
+      }
+    }
+    
+    function checkDataFreshness(lastUpdate) {
+      if (!lastUpdate) return 'No timestamp';
+      
+      const now = new Date();
+      const updated = new Date(lastUpdate);
+      const diffMinutes = Math.floor((now - updated) / (1000 * 60));
+      
+      let freshnessText, freshnessColor;
+      if (diffMinutes < 2) {
+        freshnessText = 'Live data';
+        freshnessColor = '#10b981';
+      } else if (diffMinutes < 10) {
+        freshnessText = `${diffMinutes}min old`;
+        freshnessColor = '#f59e0b';
+      } else {
+        freshnessText = `${diffMinutes}min old (stale)`;
+        freshnessColor = '#ef4444';
+      }
+      
+      const freshnessEl = document.getElementById('data-freshness');
+      if (freshnessEl) {
+        freshnessEl.textContent = freshnessText;
+        freshnessEl.style.color = freshnessColor;
+      }
+      
+      return freshnessText;
+    }
+
     async function loadData() {
-      const res = await fetch("./data/data.json", { cache: "no-store" });
-      const d = await res.json();
+      try {
+        const res = await fetch("./data/data.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        
+        const d = await res.json();
+        systemHealth.dataConnection = true;
+        systemHealth.lastUpdate = d.updated_utc;
+        
+        const fmt = (x) => (x === null || x === undefined) ? "—" : x;
 
-      const fmt = (x) => (x === null || x === undefined) ? "—" : x;
+        // Prices (if you're displaying them)
+        if (document.getElementById("btcPrice")) document.getElementById("btcPrice").textContent = fmt(d.crypto.btc_usd);
+        if (document.getElementById("ethPrice")) document.getElementById("ethPrice").textContent = fmt(d.crypto.eth_usd);
 
-      // Prices (if you're displaying them)
-      if (document.getElementById("btcPrice")) document.getElementById("btcPrice").textContent = fmt(d.btc_usd);
-      if (document.getElementById("ethPrice")) document.getElementById("ethPrice").textContent = fmt(d.eth_usd);
+        // Regime card with success styling
+        if (document.getElementById("biasState")) {
+          const biasEl = document.getElementById("biasState");
+          biasEl.textContent = fmt(d.bias);
+          biasEl.className = d.bias === 'Bearish' ? 'text-2xl font-bold text-red-400' : 'text-2xl font-bold text-green-400';
+        }
+        
+        if (document.getElementById("lastUpdate")) {
+          document.getElementById("lastUpdate").textContent = new Date(d.updated_utc).toLocaleString();
+        }
+        
+        if (document.getElementById("nextReview")) {
+          document.getElementById("nextReview").textContent = new Date(d.next_review_utc).toLocaleString();
+        }
 
-      // Regime card
-      if (document.getElementById("biasState")) document.getElementById("biasState").textContent = fmt(d.bias);
-      if (document.getElementById("lastUpdate")) document.getElementById("lastUpdate").textContent = fmt(d.updated_utc);
-      if (document.getElementById("nextReview")) document.getElementById("nextReview").textContent = fmt(d.next_review_utc);
-
-      const ts = Array.isArray(d.triggers) ? d.triggers : [];
-      if (document.getElementById("t1")) document.getElementById("t1").textContent = ts[0] || "—";
-      if (document.getElementById("t2")) document.getElementById("t2").textContent = ts[1] || "—";
-      if (document.getElementById("t3")) document.getElementById("t3").textContent = ts[2] || "—";
+        // Triggers with health check
+        const ts = Array.isArray(d.triggers) ? d.triggers : [];
+        if (document.getElementById("t1")) document.getElementById("t1").textContent = ts[0] || "—";
+        if (document.getElementById("t2")) document.getElementById("t2").textContent = ts[1] || "—";
+        if (document.getElementById("t3")) document.getElementById("t3").textContent = ts[2] || "—";
+        
+        // Update trigger health status
+        const triggerHealth = document.getElementById('trigger-health');
+        if (triggerHealth) {
+          triggerHealth.textContent = ts.length >= 2 ? `✓ ${ts.length} triggers active` : `⚠ Only ${ts.length} triggers`;
+          triggerHealth.className = ts.length >= 2 ? 'mt-2 text-xs text-green-400' : 'mt-2 text-xs text-yellow-400';
+        }
     }
     
     // Parse markdown log entries
@@ -329,6 +523,8 @@
       try {
         // Load weekly scans
         const scansRes = await fetch('./logs/weekly_scans.md');
+        if (!scansRes.ok) throw new Error(`Scans HTTP ${scansRes.status}`);
+        
         const scansText = await scansRes.text();
         const scanEntries = parseLogEntries(scansText);
         
@@ -343,6 +539,8 @@
         
         // Load command log
         const commandRes = await fetch('./logs/command_log.md');
+        if (!commandRes.ok) throw new Error(`Commands HTTP ${commandRes.status}`);
+        
         const commandText = await commandRes.text();
         const commandEntries = parseLogEntries(commandText, true);
         
@@ -453,12 +651,16 @@
         
       } catch (error) {
         console.error('Error loading AI insights:', error);
+        systemHealth.aiConnection = false;
+        systemHealth.errorCount++;
+        updateConnectionStatus();
+        
         // Graceful fallback
         if (document.getElementById('chatgpt-analysis')) {
-          document.getElementById('chatgpt-analysis').innerHTML = '<span class="text-red-400">Error loading regime analysis</span>';
+          document.getElementById('chatgpt-analysis').innerHTML = '<span class="text-red-400">❌ AI analysis connection failed</span>';
         }
         if (document.getElementById('grok-analysis')) {
-          document.getElementById('grok-analysis').innerHTML = '<span class="text-red-400">Error loading counter-analysis</span>';
+          document.getElementById('grok-analysis').innerHTML = '<span class="text-red-400">❌ Counter-analysis unavailable</span>';
         }
       }
     }
