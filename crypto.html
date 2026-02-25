@@ -19,7 +19,7 @@
       <a href="macro.html" class="hover:text-yellow-400" aria-label="Macro">Macro</a>
       <a href="crypto.html" class="text-green-400 border-b-2 border-green-400 pb-1" aria-label="Crypto">Crypto</a>
       <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="senario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
       <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
       <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
     </nav>
@@ -106,6 +106,24 @@
       </div>
     </section>
 
+    <!-- 2026 Crypto Watch Rules -->
+    <section class="mb-12">
+      <h2 class="text-xl font-orbitron text-green-300 mb-4">👁️ 2026 Watch Rules</h2>
+      <div class="bg-gray-900 border border-green-500 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-green-400 mb-4">Key Signals to Monitor</h3>
+        <ul class="space-y-3 text-base">
+          <li id="watch-rule-1" class="p-3 bg-gray-800 rounded-lg border-l-4 border-green-400">...</li>
+          <li id="watch-rule-2" class="p-3 bg-gray-800 rounded-lg border-l-4 border-yellow-400">...</li>
+          <li id="watch-rule-3" class="p-3 bg-gray-800 rounded-lg border-l-4 border-blue-400">...</li>
+          <li id="watch-rule-4" class="p-3 bg-gray-800 rounded-lg border-l-4 border-pink-400">...</li>
+        </ul>
+        <div class="mt-4 p-4 bg-gray-800 rounded-lg">
+          <h4 class="font-bold text-cyan-300 mb-2">Current Cycle Assessment:</h4>
+          <p class="text-sm text-gray-300" id="cycle-assessment">Cycle analysis will appear here...</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Live Prices Section -->
     <section class="mb-12">
       <div class="live-prices">
@@ -121,5 +139,72 @@
   <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
     &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
+
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch("./data/data.json", { cache: "no-store" });
+        const d = await res.json();
+
+        const fmt = (x) => (x === null || x === undefined) ? "—" : x;
+
+        // Crypto overview data
+        if (document.getElementById("crypto-btc-price")) document.getElementById("crypto-btc-price").textContent = fmt(d.crypto.btc_price_formatted);
+        if (document.getElementById("crypto-eth-price")) document.getElementById("crypto-eth-price").textContent = fmt(d.crypto.eth_price_formatted);
+        if (document.getElementById("crypto-mcap")) document.getElementById("crypto-mcap").textContent = fmt(d.crypto.total_market_cap);
+        if (document.getElementById("crypto-dominance")) document.getElementById("crypto-dominance").textContent = fmt(d.crypto.btc_dominance);
+        if (document.getElementById("crypto-cycle")) document.getElementById("crypto-cycle").textContent = fmt(d.crypto.cycle_status);
+        
+        // On-chain signals
+        if (document.getElementById("crypto-nvt")) document.getElementById("crypto-nvt").textContent = fmt(d.crypto.nvt_ratio);
+        if (document.getElementById("crypto-whales")) document.getElementById("crypto-whales").textContent = fmt(d.crypto.whale_activity);
+        if (document.getElementById("crypto-stable")) document.getElementById("crypto-stable").textContent = fmt(d.crypto.stablecoin_flows);
+        if (document.getElementById("crypto-exchange")) document.getElementById("crypto-exchange").textContent = fmt(d.crypto.exchange_flows);
+        
+        // Liquidation levels
+        if (document.getElementById("crypto-longs")) document.getElementById("crypto-longs").textContent = fmt(d.crypto.longs_liquidation);
+        if (document.getElementById("crypto-shorts")) document.getElementById("crypto-shorts").textContent = fmt(d.crypto.shorts_liquidation);
+        if (document.getElementById("crypto-heatmap")) document.getElementById("crypto-heatmap").textContent = fmt(d.crypto.heatmap_status);
+        
+        // Key levels
+        if (document.getElementById("btc-support")) document.getElementById("btc-support").textContent = fmt(d.crypto.btc_support);
+        if (document.getElementById("btc-resistance")) document.getElementById("btc-resistance").textContent = fmt(d.crypto.btc_resistance);
+        if (document.getElementById("eth-support")) document.getElementById("eth-support").textContent = fmt(d.crypto.eth_support);
+        if (document.getElementById("eth-resistance")) document.getElementById("eth-resistance").textContent = fmt(d.crypto.eth_resistance);
+        
+        // Live prices
+        if (document.getElementById("live-btc-price")) document.getElementById("live-btc-price").textContent = fmt(d.crypto.btc_price_formatted);
+        if (document.getElementById("live-eth-price")) document.getElementById("live-eth-price").textContent = fmt(d.crypto.eth_price_formatted);
+        
+        // 2026 Watch Rules
+        if (d.crypto.watch_rules_2026 && Array.isArray(d.crypto.watch_rules_2026)) {
+          const rules = d.crypto.watch_rules_2026;
+          if (document.getElementById("watch-rule-1")) document.getElementById("watch-rule-1").textContent = rules[0] || "—";
+          if (document.getElementById("watch-rule-2")) document.getElementById("watch-rule-2").textContent = rules[1] || "—";
+          if (document.getElementById("watch-rule-3")) document.getElementById("watch-rule-3").textContent = rules[2] || "—";
+          if (document.getElementById("watch-rule-4")) document.getElementById("watch-rule-4").textContent = rules[3] || "—";
+        }
+        
+        // Cycle assessment
+        if (document.getElementById("cycle-assessment")) {
+          document.getElementById("cycle-assessment").textContent = 
+            `Currently in ${d.crypto.cycle_status}. BTC at ${d.crypto.btc_price_formatted}, ` +
+            `showing ${d.crypto.whale_activity.toLowerCase()} whale activity. ` +
+            `Watch for cycle top signals and plan accordingly.`;
+        }
+        
+      } catch (error) {
+        console.error('Error loading crypto data:', error);
+        // Set fallback data
+        document.querySelectorAll('[id*="crypto-"], [id*="btc-"], [id*="eth-"], [id*="live-"], [id*="watch-rule-"]').forEach(el => {
+          if (el.textContent === 'Loading...' || el.textContent === '...') {
+            el.textContent = 'Error loading';
+          }
+        });
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
 </body>
 </html>

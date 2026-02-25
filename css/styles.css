@@ -298,3 +298,31 @@ footer {
   transform: rotate(var(--gauge-rotation));
   transition: transform 0.3s ease;
 }
+
+/* === Operational Logs Styling === */
+.text-purple-300 { color: #d8b4fe; }
+.text-purple-400 { color: #c084fc; }
+.text-purple-500 { color: #a855f7; }
+.bg-purple-900 { background-color: #581c87; }
+.border-purple-400 { border-color: #c084fc; }
+.border-purple-500 { border-color: #a855f7; }
+.shadow-purple-400\/40 { --tw-shadow-color: #c084fc66; }
+
+.bg-gradient-to-br.from-gray-900.via-gray-800.to-purple-900 {
+  background: linear-gradient(to bottom right, #111827, #1f2937, #581c87);
+}
+
+/* === AI Intelligence Styling === */
+.text-emerald-300 { color: #6ee7b7; }
+.text-emerald-400 { color: #34d399; }
+.text-emerald-500 { color: #10b981; }
+.bg-emerald-900 { background-color: #064e3b; }
+.border-emerald-400 { border-color: #34d399; }
+.shadow-emerald-400\/40 { --tw-shadow-color: #34d39966; }
+.text-orange-300 { color: #fdba74; }
+.text-orange-400 { color: #fb923c; }
+.border-orange-400 { border-color: #fb923c; }
+
+.bg-gradient-to-br.from-gray-900.via-gray-800.to-emerald-900 {
+  background: linear-gradient(to bottom right, #111827, #1f2937, #064e3b);
+}

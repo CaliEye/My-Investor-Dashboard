@@ -19,7 +19,7 @@
       <a href="macro.html" class="hover:text-yellow-400" aria-label="Macro">Macro</a>
       <a href="crypto.html" class="hover:text-green-400" aria-label="Crypto">Crypto</a>
       <a href="sentiment.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="senario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
       <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
       <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
     </nav>
@@ -107,5 +107,59 @@
   <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
     &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
+
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch("./data/data.json", { cache: "no-store" });
+        const d = await res.json();
+
+        const fmt = (x) => (x === null || x === undefined) ? "—" : x;
+
+        // Sentiment overview data
+        if (document.getElementById("fg-value")) document.getElementById("fg-value").textContent = fmt(d.sentiment.fear_greed_index);
+        if (document.getElementById("btc-sentiment")) document.getElementById("btc-sentiment").textContent = fmt(d.sentiment.btc_sentiment);
+        if (document.getElementById("eth-sentiment")) document.getElementById("eth-sentiment").textContent = fmt(d.sentiment.eth_sentiment);
+        if (document.getElementById("alt-sentiment")) document.getElementById("alt-sentiment").textContent = fmt(d.sentiment.alt_sentiment);
+        if (document.getElementById("options-skew")) document.getElementById("options-skew").textContent = fmt(d.sentiment.options_skew);
+        
+        // Fear & Greed extremes
+        if (document.getElementById("fg-btc-extreme")) document.getElementById("fg-btc-extreme").textContent = fmt(d.sentiment.btc_extreme);
+        if (document.getElementById("fg-eth-extreme")) document.getElementById("fg-eth-extreme").textContent = fmt(d.sentiment.eth_extreme);
+        if (document.getElementById("fg-alt-extreme")) document.getElementById("fg-alt-extreme").textContent = fmt(d.sentiment.alt_extreme);
+        
+        // Crowd positioning
+        if (document.getElementById("crowd-btc")) document.getElementById("crowd-btc").textContent = fmt(d.sentiment.crowd_btc);
+        if (document.getElementById("crowd-eth")) document.getElementById("crowd-eth").textContent = fmt(d.sentiment.crowd_eth);
+        if (document.getElementById("crowd-alt")) document.getElementById("crowd-alt").textContent = fmt(d.sentiment.crowd_alt);
+        if (document.getElementById("crowd-stable")) document.getElementById("crowd-stable").textContent = fmt(d.sentiment.crowd_stable);
+        
+        // Fear & Greed main reading
+        if (document.getElementById("fg-main-value")) document.getElementById("fg-main-value").textContent = fmt(d.sentiment.fear_greed_index);
+        if (document.getElementById("fg-main-label")) document.getElementById("fg-main-label").textContent = fmt(d.sentiment.fear_greed_label);
+        
+        // Fear & Greed interpretation (NOT buy/sell advice)
+        if (document.getElementById("fg-interpretation")) {
+          document.getElementById("fg-interpretation").textContent = fmt(d.sentiment.fear_greed_meaning);
+        }
+        
+        // Market psychology indicators
+        if (document.getElementById("social-vol-status")) document.getElementById("social-vol-status").textContent = fmt(d.sentiment.social_volume);
+        if (document.getElementById("funding-status")) document.getElementById("funding-status").textContent = fmt(d.sentiment.funding_extremes);
+        if (document.getElementById("oi-status")) document.getElementById("oi-status").textContent = fmt(d.sentiment.oi_clusters);
+        
+      } catch (error) {
+        console.error('Error loading sentiment data:', error);
+        // Set fallback data
+        document.querySelectorAll('[id*="fg-"], [id*="btc-"], [id*="eth-"], [id*="alt-"], [id*="crowd-"], [id*="social-"], [id*="funding-"], [id*="oi-"]').forEach(el => {
+          if (el.textContent === 'Loading...' || el.textContent === '...') {
+            el.textContent = 'Error loading';
+          }
+        });
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
 </body>
 </html>

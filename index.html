@@ -55,6 +55,58 @@
       </div>
     </section>
 
+    <!-- AI Intelligence Section -->
+    <section class="mb-8 rounded-2xl border-2 border-emerald-400 shadow-emerald-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-emerald-300 mb-6 tracking-widest">AI Intelligence</h2>
+      
+      <div class="grid lg:grid-cols-3 gap-6">
+        <!-- ChatGPT Analysis -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="p-5 rounded-xl border border-emerald-400/60 bg-gray-900/40">
+            <div class="flex items-center mb-3">
+              <div class="bg-emerald-500 h-2 w-2 rounded-full mr-3"></div>
+              <h3 class="text-lg font-orbitron text-emerald-300">ChatGPT Regime Analysis</h3>
+            </div>
+            <div id="chatgpt-analysis" class="text-gray-100 leading-relaxed">Loading analysis...</div>
+          </div>
+          
+          <div class="p-5 rounded-xl border border-orange-400/60 bg-gray-900/40">
+            <div class="flex items-center mb-3">
+              <div class="bg-orange-500 h-2 w-2 rounded-full mr-3"></div>
+              <h3 class="text-lg font-orbitron text-orange-300">Grok Alternative View</h3>
+            </div>
+            <div id="grok-analysis" class="text-gray-100 leading-relaxed">Loading contrarian perspective...</div>
+          </div>
+        </div>
+        
+        <!-- Action Dashboard -->
+        <div class="space-y-6">
+          <div class="p-5 rounded-xl border border-emerald-400/60 bg-gray-900/40">
+            <h3 class="text-lg font-orbitron text-emerald-300 mb-4">Confluence Score</h3>
+            <div class="flex items-center justify-center mb-3">
+              <div id="confluence-gauge" class="relative">
+                <div class="w-24 h-24 rounded-full border-4 border-gray-600 relative">
+                  <div id="confluence-fill" class="absolute inset-0 rounded-full" style="background: conic-gradient(#10b981 0deg, #10b981 72deg, #374151 72deg, #374151 360deg);"></div>
+                  <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span id="confluence-value" class="text-2xl font-bold text-emerald-300">7</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center text-sm text-gray-300">Signal Strength</div>
+          </div>
+          
+          <div class="p-5 rounded-xl border border-yellow-400/60 bg-gray-900/40">
+            <h3 class="text-lg font-orbitron text-yellow-300 mb-3">Action Bias</h3>
+            <div id="action-bias" class="text-gray-100 text-sm leading-relaxed">Loading recommendations...</div>
+            <div class="mt-4 text-xs text-gray-400">
+              Last AI Update: <span id="ai-last-update">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Hero HUD Section -->
     <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
       <div class="flex flex-col md:flex-row md:space-x-12">
@@ -171,6 +223,39 @@
       </div>
     </section>
 
+    <!-- Operational Logs -->
+    <section class="mb-10 rounded-2xl border-2 border-purple-400 shadow-purple-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-purple-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-purple-300 mb-6 tracking-widest">Operational Intelligence</h2>
+      
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Weekly Scans -->
+        <div class="bg-gray-800/60 border border-purple-500/50 rounded-xl p-6">
+          <h3 class="text-lg font-orbitron text-purple-300 mb-4 flex items-center">
+            <span class="bg-purple-500 h-2 w-2 rounded-full mr-3"></span>Latest Market Scans
+          </h3>
+          <div id="weekly-scans-content" class="space-y-4">
+            <div class="text-gray-300 text-sm">Loading latest scans...</div>
+          </div>
+          <div class="mt-4 text-right">
+            <a href="logs/weekly_scans.md" class="text-purple-400 text-sm hover:text-purple-300" target="_blank">View Full History →</a>
+          </div>
+        </div>
+
+        <!-- Command Log -->
+        <div class="bg-gray-800/60 border border-purple-500/50 rounded-xl p-6">
+          <h3 class="text-lg font-orbitron text-purple-300 mb-4 flex items-center">
+            <span class="bg-purple-500 h-2 w-2 rounded-full mr-3"></span>Recent Commands
+          </h3>
+          <div id="command-log-content" class="space-y-4">
+            <div class="text-gray-300 text-sm">Loading recent commands...</div>
+          </div>
+          <div class="mt-4 text-right">
+            <a href="logs/command_log.md" class="text-purple-400 text-sm hover:text-purple-300" target="_blank">View Full History →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Quick Panel Shortcuts -->
     <section class="flex flex-wrap gap-6 mb-10 justify-center">
       <a href="warroom.html" class="hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
@@ -185,66 +270,156 @@
   </footer>
 
   <script>
-    // === Live Market Data Fetching ===
-    async function fetchMarketData() {
+    async function loadData() {
+      const res = await fetch("./data/data.json", { cache: "no-store" });
+      const d = await res.json();
+
+      const fmt = (x) => (x === null || x === undefined) ? "—" : x;
+
+      // Prices (if you're displaying them)
+      if (document.getElementById("btcPrice")) document.getElementById("btcPrice").textContent = fmt(d.btc_usd);
+      if (document.getElementById("ethPrice")) document.getElementById("ethPrice").textContent = fmt(d.eth_usd);
+
+      // Regime card
+      if (document.getElementById("biasState")) document.getElementById("biasState").textContent = fmt(d.bias);
+      if (document.getElementById("lastUpdate")) document.getElementById("lastUpdate").textContent = fmt(d.updated_utc);
+      if (document.getElementById("nextReview")) document.getElementById("nextReview").textContent = fmt(d.next_review_utc);
+
+      const ts = Array.isArray(d.triggers) ? d.triggers : [];
+      if (document.getElementById("t1")) document.getElementById("t1").textContent = ts[0] || "—";
+      if (document.getElementById("t2")) document.getElementById("t2").textContent = ts[1] || "—";
+      if (document.getElementById("t3")) document.getElementById("t3").textContent = ts[2] || "—";
+    }
+    
+    // Parse markdown log entries
+    function parseLogEntries(markdown, isCommandLog = false) {
+      const entries = [];
+      const lines = markdown.split('\n');
+      let currentEntry = null;
+      
+      for (const line of lines) {
+        if (line.startsWith('## 2026-')) {
+          if (currentEntry) entries.push(currentEntry);
+          currentEntry = {
+            date: line.replace('## ', '').trim(),
+            content: []
+          };
+        } else if (currentEntry && line.trim()) {
+          if (isCommandLog) {
+            // Parse command log format
+            if (line.startsWith('- **CMD**:')) {
+              currentEntry.cmd = line.replace('- **CMD**: ', '').trim();
+            } else if (line.startsWith('- **REASON**:')) {
+              currentEntry.reason = line.replace('- **REASON**: ', '').trim();
+            } else if (line.startsWith('- **SIZE**:')) {
+              currentEntry.size = line.replace('- **SIZE**: ', '').trim();
+            }
+          } else {
+            // Parse weekly scans format
+            currentEntry.content.push(line.trim());
+          }
+        }
+      }
+      if (currentEntry) entries.push(currentEntry);
+      return entries.slice(0, 3); // Latest 3
+    }
+    
+    async function loadLogs() {
       try {
-        // Fetch BTC and ETH prices
-        const cryptoRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
-        const cryptoData = await cryptoRes.json();
+        // Load weekly scans
+        const scansRes = await fetch('./logs/weekly_scans.md');
+        const scansText = await scansRes.text();
+        const scanEntries = parseLogEntries(scansText);
         
-        document.getElementById('btc-price').textContent = '$' + cryptoData.bitcoin.usd.toLocaleString();
-        document.getElementById('eth-price').textContent = '$' + cryptoData.ethereum.usd.toLocaleString();
+        const scansHtml = scanEntries.map(entry => `
+          <div class="border-l-2 border-purple-500 pl-3 py-2">
+            <div class="text-purple-300 text-xs font-mono">${entry.date}</div>
+            <div class="text-gray-100 text-sm mt-1">${entry.content.slice(0, 3).join('<br>')}</div>
+          </div>
+        `).join('');
         
-        // Fetch Fear & Greed Index
-        const fgRes = await fetch('https://api.alternative.me/fng/?limit=1');
-        const fgData = await fgRes.json();
-        document.getElementById('fg-latest').textContent = fgData.data[0].value + '/100';
+        document.getElementById('weekly-scans-content').innerHTML = scansHtml;
         
-        // Mock SPX and USD data (replace with real API if available)
-        document.getElementById('spx-latest').textContent = '4,750';
-        document.getElementById('usd-latest').textContent = '103.2';
+        // Load command log
+        const commandRes = await fetch('./logs/command_log.md');
+        const commandText = await commandRes.text();
+        const commandEntries = parseLogEntries(commandText, true);
         
-        // Update risk gauges
-        updateRiskGauges(fgData.data[0].value);
+        const commandHtml = commandEntries.map(entry => `
+          <div class="border-l-2 border-purple-500 pl-3 py-2">
+            <div class="text-purple-300 text-xs font-mono">${entry.date}</div>
+            <div class="text-orange-300 text-sm font-bold">${entry.cmd || 'Command'}</div>
+            <div class="text-gray-200 text-xs mt-1">${entry.reason || entry.size || ''}</div>
+          </div>
+        `).join('');
+        
+        document.getElementById('command-log-content').innerHTML = commandHtml;
         
       } catch (error) {
-        console.log('Market data fetch error:', error);
-        // Fallback to mock data
-        document.getElementById('btc-price').textContent = '$67,500';
-        document.getElementById('eth-price').textContent = '$3,450';
-        document.getElementById('spx-latest').textContent = '4,750';
-        document.getElementById('usd-latest').textContent = '103.2';
-        document.getElementById('fg-latest').textContent = '65/100';
+        console.error('Error loading logs:', error);
+        document.getElementById('weekly-scans-content').innerHTML = '<div class="text-red-400 text-sm">Error loading scan logs</div>';
+        document.getElementById('command-log-content').innerHTML = '<div class="text-red-400 text-sm">Error loading command logs</div>';
       }
     }
     
-    // === Risk Gauge Updates ===
-    function updateRiskGauges(fearGreedValue) {
-      // Calculate risk levels (0-100)
-      const cryptoRisk = Math.min(100, Math.max(0, 100 - fearGreedValue));
-      const macroRisk = Math.random() * 60 + 20; // Mock macro risk
-      
-      // Update crypto risk gauge
-      const cryptoGauge = document.getElementById('crypto-risk-gauge');
-      const cryptoAngle = (cryptoRisk / 100) * 180 - 90;
-      cryptoGauge.style.setProperty('--gauge-rotation', cryptoAngle + 'deg');
-      
-      // Update macro risk gauge
-      const macroGauge = document.getElementById('macro-risk-gauge');
-      const macroAngle = (macroRisk / 100) * 180 - 90;
-      macroGauge.style.setProperty('--gauge-rotation', macroAngle + 'deg');
-      
-      // Add risk level text
-      cryptoGauge.innerHTML = `<div style="text-align:center;margin-top:1rem;font-weight:bold;">${Math.round(cryptoRisk)}%</div>`;
-      macroGauge.innerHTML = `<div style="text-align:center;margin-top:1rem;font-weight:bold;">${Math.round(macroRisk)}%</div>`;
+    async function loadAIInsights() {
+      try {
+        const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
+        const ai = await res.json();
+        
+        // Update ChatGPT analysis
+        if (document.getElementById('chatgpt-analysis')) {
+          document.getElementById('chatgpt-analysis').textContent = ai.chatgpt_summary || 'No analysis available';
+        }
+        
+        // Update Grok analysis  
+        if (document.getElementById('grok-analysis')) {
+          document.getElementById('grok-analysis').textContent = ai.grok_alt_view || 'No alternative view available';
+        }
+        
+        // Update confluence score and gauge
+        if (document.getElementById('confluence-value')) {
+          const score = ai.confluence_score || 0;
+          document.getElementById('confluence-value').textContent = score;
+          
+          // Update gauge visual (0-10 scale)
+          const percentage = (score / 10) * 360;
+          const fill = document.getElementById('confluence-fill');
+          if (fill) {
+            let color;
+            if (score <= 3) color = '#ef4444'; // red
+            else if (score <= 6) color = '#f59e0b'; // yellow  
+            else color = '#10b981'; // green
+            
+            fill.style.background = `conic-gradient(${color} 0deg, ${color} ${percentage}deg, #374151 ${percentage}deg, #374151 360deg)`;
+          }
+        }
+        
+        // Update action bias
+        if (document.getElementById('action-bias')) {
+          document.getElementById('action-bias').textContent = ai.action_bias || 'No recommendations available';
+        }
+        
+        // Update last AI update time
+        if (document.getElementById('ai-last-update')) {
+          const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
+          document.getElementById('ai-last-update').textContent = updateTime;
+        }
+        
+      } catch (error) {
+        console.error('Error loading AI insights:', error);
+        // Graceful fallback
+        if (document.getElementById('chatgpt-analysis')) {
+          document.getElementById('chatgpt-analysis').innerHTML = '<span class="text-red-400">Error loading ChatGPT analysis</span>';
+        }
+        if (document.getElementById('grok-analysis')) {
+          document.getElementById('grok-analysis').innerHTML = '<span class="text-red-400">Error loading Grok analysis</span>';
+        }
+      }
     }
     
-    // === Initialize Dashboard ===
-    document.addEventListener('DOMContentLoaded', function() {
-      fetchMarketData();
-      // Refresh every 60 seconds
-      setInterval(fetchMarketData, 60000);
-    });
+    // Load all data
+    Promise.all([loadData(), loadLogs(), loadAIInsights()]).catch(console.error);
   </script>
 </body>
 </html>

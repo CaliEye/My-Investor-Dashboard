@@ -1,0 +1,73 @@
+{
+  "updated_utc": "2026-02-25T14:30:00Z",
+  "bias": "Neutral",
+  "triggers": [
+    "Liquidity: pending",
+    "Dollar: pending",
+    "Breadth: pending"
+  ],
+  "next_review_utc": "2026-02-26T14:30:00Z",
+  
+  "crypto": {
+    "btc_usd": 67500,
+    "eth_usd": 3450,
+    "btc_price_formatted": "$67,500",
+    "eth_price_formatted": "$3,450",
+    "total_market_cap": "$2.4T",
+    "btc_dominance": "52.3%",
+    "cycle_status": "Year 4 (Late Expansion)", 
+    "nvt_ratio": "High",
+    "whale_activity": "Accumulating",
+    "stablecoin_flows": "Neutral",
+    "exchange_flows": "Net Outflow",
+    "longs_liquidation": "$65,200",
+    "shorts_liquidation": "$69,800", 
+    "heatmap_status": "Moderate clusters",
+    "btc_support": "$65,000",
+    "btc_resistance": "$72,000",
+    "eth_support": "$3,200",
+    "eth_resistance": "$3,800",
+    "watch_rules_2026": [
+      "BTC above $70k = late cycle warning",
+      "ETH/BTC ratio > 0.055 = altseason signal",
+      "MVRV Z-score > 6 = distribution zone",
+      "Stablecoin supply growth = liquidity influx"
+    ]
+  },
+  
+  "macro": {
+    "cpi": "3.2%",
+    "unemployment": "3.8%", 
+    "gdp_growth": "2.1%",
+    "fed_funds_rate": "5.25%",
+    "dxy": "103.2",
+    "us10y_yield": "4.15%",
+    "risk_level": 45,
+    "spx": "4,750",
+    "trigger_breakdown": [
+      "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
+      "Dollar: DXY holding above 103, pressure on risk assets",
+      "Breadth: S&P 500 breadth deteriorating, 65% above 50-DMA"
+    ]
+  },
+  
+  "sentiment": {
+    "fear_greed_index": 65,
+    "fear_greed_label": "Greed",
+    "fear_greed_meaning": "Market showing signs of overconfidence. Watch for reversal symptoms.",
+    "btc_sentiment": "Bullish",
+    "eth_sentiment": "Neutral", 
+    "alt_sentiment": "FOMO",
+    "options_skew": "Put-heavy",
+    "btc_extreme": "Moderate greed",
+    "eth_extreme": "Neutral zone", 
+    "alt_extreme": "Euphoria building",
+    "crowd_btc": "Long-biased (75% bulls)",
+    "crowd_eth": "Neutral (52% bulls)",
+    "crowd_alt": "Greed/Chasing momentum",
+    "crowd_stable": "On sideline (low deployment)",
+    "social_volume": "Elevated (+40% vs avg)",
+    "funding_extremes": "Longs paying premium",
+    "oi_clusters": "Heavy at $69k BTC"
+  }
+}
