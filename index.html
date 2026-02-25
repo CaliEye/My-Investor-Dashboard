@@ -367,19 +367,47 @@
         const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
         const ai = await res.json();
         
-        // Update ChatGPT analysis
+        // Update ChatGPT analysis section
         if (document.getElementById('chatgpt-analysis')) {
-          document.getElementById('chatgpt-analysis').textContent = ai.chatgpt_summary || 'No analysis available';
+          const regime = ai.regime || 'No regime available';
+          const triggers = Array.isArray(ai.top_triggers) ? ai.top_triggers : ['—', '—', '—'];
+          const invalidation = ai.invalidation || 'No invalidation specified';
+          
+          const contextualGuidance = ai.contextual_guidance || 'No guidance available';
+          
+          const analysisHtml = `
+            <div class="mb-3">
+              <strong class="text-emerald-300">Regime:</strong> ${regime}
+            </div>
+            <div class="mb-3">
+              <strong class="text-emerald-300">Top Triggers:</strong>
+              <ul class="list-disc list-inside mt-1 ml-2">
+                <li>${triggers[0] || '—'}</li>
+                <li>${triggers[1] || '—'}</li>
+                <li>${triggers[2] || '—'}</li>
+              </ul>
+            </div>
+            <div class="mb-3">
+              <strong class="text-red-300">Invalidation:</strong> ${invalidation}
+            </div>
+            <div class="border-t border-emerald-700 pt-3 mt-3">
+              <strong class="text-cyan-300">Portfolio Action:</strong>
+              <div class="text-gray-100 mt-1">${contextualGuidance}</div>
+            </div>
+          `;
+          
+          document.getElementById('chatgpt-analysis').innerHTML = analysisHtml;
         }
         
         // Update Grok analysis  
         if (document.getElementById('grok-analysis')) {
-          document.getElementById('grok-analysis').textContent = ai.grok_alt_view || 'No alternative view available';
+          const counterView = ai.grok_counter || 'No alternative view available';
+          document.getElementById('grok-analysis').textContent = counterView;
         }
         
-        // Update confluence score and gauge
+        // Update confidence score and gauge
         if (document.getElementById('confluence-value')) {
-          const score = ai.confluence_score || 0;
+          const score = ai.confidence_score || 0;
           document.getElementById('confluence-value').textContent = score;
           
           // Update gauge visual (0-10 scale)
@@ -395,9 +423,25 @@
           }
         }
         
-        // Update action bias
+        // Update action bias (simplified)
         if (document.getElementById('action-bias')) {
-          document.getElementById('action-bias').textContent = ai.action_bias || 'No recommendations available';
+          const confidence = ai.confidence_score || 0;
+          const regime = (ai.regime || '').toLowerCase();
+          
+          let actionText;
+          if (confidence >= 8) {
+            actionText = regime.includes('bull') ? 
+              'High conviction: Add risk on pullbacks' : 
+              'High conviction: Reduce exposure, hedge positions';
+          } else if (confidence >= 5) {
+            actionText = regime.includes('bull') ? 
+              'Moderate bullish: Scale in carefully' :
+              'Cautious: Trim positions, raise cash';
+          } else {
+            actionText = 'Low confidence: Wait for clearer signals';
+          }
+          
+          document.getElementById('action-bias').textContent = actionText;
         }
         
         // Update last AI update time
@@ -410,10 +454,10 @@
         console.error('Error loading AI insights:', error);
         // Graceful fallback
         if (document.getElementById('chatgpt-analysis')) {
-          document.getElementById('chatgpt-analysis').innerHTML = '<span class="text-red-400">Error loading ChatGPT analysis</span>';
+          document.getElementById('chatgpt-analysis').innerHTML = '<span class="text-red-400">Error loading regime analysis</span>';
         }
         if (document.getElementById('grok-analysis')) {
-          document.getElementById('grok-analysis').innerHTML = '<span class="text-red-400">Error loading Grok analysis</span>';
+          document.getElementById('grok-analysis').innerHTML = '<span class="text-red-400">Error loading counter-analysis</span>';
         }
       }
     }

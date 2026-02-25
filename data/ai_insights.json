@@ -1,11 +1,16 @@
 {
   "updated_utc": "2026-02-25T14:30:00Z",
   "regime": "Late Cycle Bullish",
-  "top_triggers": ["BTC breaking $67k resistance", "DXY showing weakness", "Fed pause expectations rising"],
-  "chatgpt_summary": "Market positioning suggests late-cycle dynamics with crypto leading risk assets. Consider profit-taking on 25% of positions while maintaining core exposure. Macro backdrop remains supportive but watch for policy pivots.",
-  "grok_alt_view": "Contrarian signals emerging: whale accumulation despite retail FOMO, institutional caution increasing. Smart money may be preparing for volatility spike around FOMC decision.",
-  "action_bias": "Scale profits on strength, maintain 70% core positions. No new risk without macro confirmation.",
-  "confluence_score": 7,
-  "last_action": "Reduced BTC position by 25% at $67,800",
-  "next_review": "2026-02-26T09:00:00Z"
+  "top_triggers": [
+    "BTC breaking $67k resistance with volume",
+    "Dollar weakness accelerating (DXY < 102)",
+    "Fed pause expectations rising to 85%"
+  ],
+  "invalidation": "BTC close below $62k or DXY breakout above 104",
+  "contextual_guidance": "Based on your 25% BTC reduction at $67,800, consider taking another 10-15% profit at $70k while maintaining core position. Your disciplined approach allows for re-entry on any 15-20% pullback to $55-58k range.",
+  "grok_counter": "Smart money may be using retail FOMO to distribute positions. Institutional flow data shows increasing caution despite surface bullishness.",
+  "confidence_score": 7,
+  "btc_price_snapshot": 67200,
+  "fear_greed_snapshot": 72,
+  "next_update": "6 hours"
 }

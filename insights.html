@@ -26,6 +26,73 @@
   </header>
 
   <main class="p-6 max-w-5xl mx-auto">
+    <!-- AI INTELLIGENCE BRIEFING CARD -->
+    <section class="mb-10 rounded-2xl border-2 border-emerald-400 shadow-emerald-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-emerald-300 mb-6 tracking-widest">🤖 AI Daily Briefing</h2>
+      
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Regime Analysis -->
+        <div class="space-y-6">
+          <div class="bg-gray-900/60 border border-emerald-400/60 rounded-xl p-6">
+            <h3 class="text-lg font-orbitron text-emerald-300 mb-4 flex items-center">
+              <span class="bg-emerald-500 h-2 w-2 rounded-full mr-3"></span>Current Regime
+            </h3>
+            <div id="ai-regime-display" class="text-gray-100 text-xl font-semibold mb-4">Loading...</div>
+            
+            <div class="space-y-3">
+              <div>
+                <h4 class="text-emerald-300 text-sm font-semibold mb-2">Key Triggers to Watch:</h4>
+                <ul id="ai-triggers-list" class="space-y-1 text-sm text-gray-200">
+                  <li>• Loading triggers...</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="text-red-300 text-sm font-semibold mb-2">Invalidation Level:</h4>
+                <div id="ai-invalidation" class="text-sm text-gray-200">Loading...</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-900/60 border border-orange-400/60 rounded-xl p-6">
+            <h3 class="text-lg font-orbitron text-orange-300 mb-4 flex items-center">
+              <span class="bg-orange-500 h-2 w-2 rounded-full mr-3"></span>Contrarian View (Grok)
+            </h3>
+            <div id="ai-grok-display" class="text-gray-100 leading-relaxed">Loading contrarian perspective...</div>
+          </div>
+        </div>
+        
+        <!-- Confidence & Action -->
+        <div class="space-y-6">
+          <div class="bg-gray-900/60 border border-emerald-400/60 rounded-xl p-6">
+            <h3 class="text-lg font-orbitron text-emerald-300 mb-4">Signal Confidence</h3>
+            <div class="flex items-center justify-center mb-4">
+              <div id="ai-confidence-gauge" class="relative">
+                <div class="w-32 h-32 rounded-full border-4 border-gray-600 relative">
+                  <div id="ai-confidence-fill" class="absolute inset-0 rounded-full"></div>
+                  <div class="absolute inset-3 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span id="ai-confidence-value" class="text-3xl font-bold text-emerald-300">7</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="text-sm text-gray-300 mb-2">Confidence Score (0-10)</div>
+              <div id="ai-confidence-label" class="text-lg font-semibold text-emerald-300">High Confidence</div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-900/60 border border-yellow-400/60 rounded-xl p-6">
+            <h3 class="text-lg font-orbitron text-yellow-300 mb-4">Recommended Action</h3>
+            <div id="ai-action-display" class="text-gray-100 leading-relaxed mb-4">Loading recommendations...</div>
+            <div class="text-xs text-gray-400 border-t border-gray-600 pt-3">
+              Last AI Update: <span id="ai-briefing-timestamp">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- INSIGHTS HUD HERO -->
     <section class="mb-10 rounded-2xl border-2 border-yellow-400 shadow-yellow-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 px-8 py-8">
       <h2 class="text-2xl font-orbitron text-yellow-300 mb-5 tracking-widest">🧠 Market Insights from Top Minds</h2>
@@ -116,5 +183,113 @@
   <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
     &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
+
+  <script>
+    async function loadAIBriefing() {
+      try {
+        const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
+        const ai = await res.json();
+        
+        // Update regime display
+        if (document.getElementById('ai-regime-display')) {
+          document.getElementById('ai-regime-display').textContent = ai.regime || 'No regime available';
+        }
+        
+        // Update triggers list
+        if (document.getElementById('ai-triggers-list')) {
+          const triggers = Array.isArray(ai.top_triggers) ? ai.top_triggers : ['—', '—', '—'];
+          const triggerHtml = triggers.map(trigger => `<li>• ${trigger}</li>`).join('');
+          document.getElementById('ai-triggers-list').innerHTML = triggerHtml;
+        }
+        
+        // Update invalidation
+        if (document.getElementById('ai-invalidation')) {
+          document.getElementById('ai-invalidation').textContent = ai.invalidation || 'No invalidation specified';
+        }
+        
+        // Update Grok counter-view
+        if (document.getElementById('ai-grok-display')) {
+          document.getElementById('ai-grok-display').textContent = ai.grok_counter || 'No alternative view available';
+        }
+        
+        // Update confidence score and gauge
+        if (document.getElementById('ai-confidence-value')) {
+          const score = ai.confidence_score || 0;
+          document.getElementById('ai-confidence-value').textContent = score;
+          
+          // Update gauge visual
+          const percentage = (score / 10) * 360;
+          const fill = document.getElementById('ai-confidence-fill');
+          if (fill) {
+            let color;
+            if (score <= 3) color = '#ef4444'; // red
+            else if (score <= 6) color = '#f59e0b'; // yellow
+            else color = '#10b981'; // green
+            
+            fill.style.background = `conic-gradient(${color} 0deg, ${color} ${percentage}deg, #374151 ${percentage}deg, #374151 360deg)`;
+          }
+          
+          // Update confidence label
+          if (document.getElementById('ai-confidence-label')) {
+            let label;
+            if (score <= 3) label = 'Low Confidence';
+            else if (score <= 6) label = 'Moderate Confidence';
+            else label = 'High Confidence';
+            
+            document.getElementById('ai-confidence-label').textContent = label;
+          }
+        }
+        
+        // Update action display with contextual guidance
+        if (document.getElementById('ai-action-display')) {
+          const contextualGuidance = ai.contextual_guidance || 'No specific guidance available';
+          
+          // Use contextual guidance if available, otherwise fall back to generic
+          if (contextualGuidance && contextualGuidance !== 'No specific guidance available' && !contextualGuidance.includes('Error')) {
+            document.getElementById('ai-action-display').textContent = contextualGuidance;
+          } else {
+            // Fallback generic guidance
+            const confidence = ai.confidence_score || 0;
+            const regime = (ai.regime || '').toLowerCase();
+            
+            let actionText;
+            if (confidence >= 8) {
+              actionText = regime.includes('bull') ? 
+                'High conviction: Add risk on pullbacks. Scale positions up.' : 
+                'High conviction: Reduce exposure, add hedges. Defensive positioning.';
+            } else if (confidence >= 5) {
+              actionText = regime.includes('bull') ? 
+                'Moderate bullish: Scale in carefully. Don\'t chase breakouts.' :
+                'Cautious approach: Trim positions gradually. Raise cash levels.';
+            } else {
+              actionText = 'Low confidence: Wait for clearer signals. Avoid major position changes.';
+            }
+            
+            document.getElementById('ai-action-display').textContent = actionText;
+          }
+        }
+        
+        // Update timestamp
+        if (document.getElementById('ai-briefing-timestamp')) {
+          const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
+          document.getElementById('ai-briefing-timestamp').textContent = updateTime;
+        }
+        
+      } catch (error) {
+        console.error('Error loading AI briefing:', error);
+        // Graceful fallbacks
+        const errorMsg = 'Error loading AI insights';
+        if (document.getElementById('ai-regime-display')) {
+          document.getElementById('ai-regime-display').innerHTML = `<span class="text-red-400">${errorMsg}</span>`;
+        }
+        if (document.getElementById('ai-grok-display')) {
+          document.getElementById('ai-grok-display').innerHTML = `<span class="text-red-400">${errorMsg}</span>`;
+        }
+      }
+    }
+    
+    // Load AI briefing on page load
+    loadAIBriefing().catch(console.error);
+  </script>
 </body>
 </html>

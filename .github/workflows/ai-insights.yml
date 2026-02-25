@@ -1,9 +1,9 @@
-name: AI Insights Update
+name: Update AI Insights
 
 on:
   schedule:
-    # Run every 3 hours during market hours (9 AM - 6 PM UTC)
-    - cron: '0 9,12,15,18 * * 1-5'
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -21,183 +21,15 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install openai requests python-dateutil
+        pip install requests
         
-    - name: Generate AI Insights
+    - name: Update AI Insights
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
         LINDY_WEBHOOK_URL: ${{ secrets.LINDY_WEBHOOK_URL }}
       run: |
-        python << 'EOF'
-        import json
-        import requests
-        from datetime import datetime, timezone
-        import os
-        
-        # Read current market data
-        with open('data/data.json', 'r') as f:
-            market_data = json.load(f)
-            
-        # Read recent logs for context
-        try:
-            with open('logs/weekly_scans.md', 'r') as f:
-                recent_scans = f.read()[:2000]  # Last 2k chars
-        except:
-            recent_scans = "No recent scans available"
-            
-        try:
-            with open('logs/command_log.md', 'r') as f:
-                recent_commands = f.read()[:1500]  # Last 1.5k chars  
-        except:
-            recent_commands = "No recent commands available"
-        
-        # OpenAI API Call for Regime Analysis
-        def get_chatgpt_analysis():
-            if not os.getenv('OPENAI_API_KEY'):
-                return "OpenAI API key not configured"
-                
-            headers = {
-                'Authorization': f'Bearer {os.getenv("OPENAI_API_KEY")}',
-                'Content-Type': 'application/json'
-            }
-            
-            prompt = f"""
-            You are an expert quantitative analyst for an investment dashboard. Analyze current market conditions and provide a concise regime assessment.
-            
-            Current Market Data:
-            - BTC: ${market_data.get('btc_usd', 'N/A')} 
-            - Bias: {market_data.get('bias', 'N/A')}
-            - Triggers: {market_data.get('triggers', [])}
-            - Fear & Greed: {market_data.get('fear_greed_index', 'N/A')}
-            
-            Recent Analysis Context:
-            {recent_scans}
-            
-            Recent Commands:
-            {recent_commands}
-            
-            Provide a 2-sentence investment regime summary focusing on:
-            1. Current market phase (early/mid/late cycle, bull/bear/transition)
-            2. Specific actionable guidance for position sizing
-            
-            Be concise and actionable. This feeds an automated trading system.
-            """
-            
-            data = {
-                'model': 'gpt-4',
-                'messages': [{'role': 'user', 'content': prompt}],
-                'max_tokens': 150,
-                'temperature': 0.3
-            }
-            
-            try:
-                response = requests.post('https://api.openai.com/v1/chat/completions', 
-                                       headers=headers, json=data, timeout=30)
-                if response.status_code == 200:
-                    return response.json()['choices'][0]['message']['content'].strip()
-                else:
-                    return f"OpenAI API Error: {response.status_code}"
-            except Exception as e:
-                return f"OpenAI Error: {str(e)}"
-        
-        # Grok API Call for Alternative View
-        def get_grok_analysis():
-            if not os.getenv('XAI_API_KEY'):
-                return "Grok API key not configured"
-                
-            headers = {
-                'Authorization': f'Bearer {os.getenv("XAI_API_KEY")}',
-                'Content-Type': 'application/json'
-            }
-            
-            prompt = f"""
-            You are Grok, providing contrarian market analysis for an investment dashboard. 
-            
-            Current consensus view: {market_data.get('bias', 'Neutral')}
-            Main triggers: {', '.join(market_data.get('triggers', [])[:3])}
-            
-            Provide a contrarian 2-sentence take focusing on:
-            1. What the crowd might be missing
-            2. Hidden risks or opportunities not in mainstream narrative
-            
-            Be skeptical of obvious trades. What's the alternative viewpoint?
-            """
-            
-            data = {
-                'model': 'grok-beta',
-                'messages': [{'role': 'user', 'content': prompt}],
-                'max_tokens': 120,
-                'temperature': 0.7
-            }
-            
-            try:
-                response = requests.post('https://api.x.ai/v1/chat/completions',
-                                       headers=headers, json=data, timeout=30)
-                if response.status_code == 200:
-                    return response.json()['choices'][0]['message']['content'].strip()
-                else:
-                    return f"Grok API Error: {response.status_code}"
-            except Exception as e:
-                return f"Grok Error: {str(e)}"
-        
-        # Generate insights
-        chatgpt_summary = get_chatgpt_analysis()
-        grok_alt_view = get_grok_analysis()
-        
-        # Calculate confluence score (simple heuristic)
-        triggers = market_data.get('triggers', [])
-        confluence_score = min(len([t for t in triggers if t != "—"]), 10)
-        
-        # Determine action bias
-        bias = market_data.get('bias', 'Neutral')
-        if 'bullish' in bias.lower():
-            if confluence_score >= 6:
-                action_bias = "High conviction: add risk on pullbacks"
-            else:
-                action_bias = "Moderate bullish: scale in carefully"
-        elif 'bearish' in bias.lower():
-            if confluence_score >= 6:
-                action_bias = "High conviction: reduce risk, hedge positions"  
-            else:
-                action_bias = "Cautious: trim positions, raise cash"
-        else:
-            action_bias = "Neutral: wait for 2+ trigger confirmations"
-        
-        # Create insights JSON
-        insights = {
-            "updated_utc": datetime.now(timezone.utc).isoformat(),
-            "regime": bias,
-            "top_triggers": triggers[:3] if triggers else ["—", "—", "—"],
-            "chatgpt_summary": chatgpt_summary,
-            "grok_alt_view": grok_alt_view, 
-            "action_bias": action_bias,
-            "confluence_score": confluence_score,
-            "last_action": "Analysis updated via GitHub Action",
-            "next_review": datetime.now(timezone.utc).replace(hour=datetime.now(timezone.utc).hour+3).isoformat()
-        }
-        
-        # Write insights to file
-        with open('data/ai_insights.json', 'w') as f:
-            json.dump(insights, f, indent=2)
-            
-        print("AI insights updated successfully")
-        
-        # Optional: Notify Lindy webhook if high confluence
-        if os.getenv('LINDY_WEBHOOK_URL') and confluence_score >= 7:
-            try:
-                webhook_data = {
-                    "text": f"🚨 High Confluence Alert (Score: {confluence_score})\n"
-                           f"Regime: {bias}\n"  
-                           f"Action: {action_bias}\n"
-                           f"ChatGPT: {chatgpt_summary[:100]}...\n"
-                           f"Grok: {grok_alt_view[:100]}..."
-                }
-                requests.post(os.getenv('LINDY_WEBHOOK_URL'), json=webhook_data, timeout=10)
-                print("Lindy notification sent")
-            except Exception as e:
-                print(f"Lindy notification failed: {e}")
-        EOF
+        python scripts/update_ai_insights.py
         
     - name: Commit and push changes
       run: |
