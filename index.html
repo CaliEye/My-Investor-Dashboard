@@ -116,54 +116,55 @@
           <table class="w-full text-center cycle-table mb-2" aria-label="Cycle Status Table">
             <thead>
               <tr>
-                <th>Cycle</th>
-                <th>Count</th>
-                <th>Completed</th>
-                <th>Avg Cycle</th>
-                <th>Direction</th>
-                <th>Confidence</th>
+                <th>Cycle Type</th>
+                <th>Phase</th>
+                <th>Progress</th>
+                <th>Time Remaining</th>
+                <th>Trend</th>
+                <th>Risk Level</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>60-Day</td>
-                <td>4</td>
+                <td>4-Year Cycle</td>
+                <td>Year 3 (Bear Phase)</td>
                 <td>
-                  <div class="prog-bar"><div style="width:7%"></div></div>7%
+                  <div class="prog-bar"><div style="width:75%"></div></div>75%
                 </td>
-                <td>58d</td>
-                <td><span class="text-green-400 font-bold">&#8593; Rising</span></td>
-                <td><span class="text-cyan-400 font-bold">High</span></td>
-                <td><span class="status-dot inline-block bg-green-400"></span></td>
+                <td>~12 months to bottom</td>
+                <td><span class="text-red-400 font-bold">&#8595; Declining</span></td>
+                <td><span class="text-red-400 font-bold">High</span></td>
+                <td><span class="status-dot inline-block bg-red-400"></span></td>
               </tr>
               <tr>
-                <td>Weekly</td>
-                <td>9</td>
+                <td>Weekly Trend</td>
+                <td>Downtrend Active</td>
                 <td>
-                  <div class="prog-bar"><div style="width:36%"></div></div>36%
+                  <div class="prog-bar"><div style="width:45%"></div></div>45%
                 </td>
-                <td>25w</td>
-                <td><span class="text-green-400 font-bold">&#8593; Rising</span></td>
-                <td><span class="text-cyan-400 font-bold">High</span></td>
-                <td><span class="status-dot inline-block bg-green-400"></span></td>
+                <td>8-12 weeks to support</td>
+                <td><span class="text-red-400 font-bold">&#8595; Falling</span></td>
+                <td><span class="text-orange-400 font-bold">Medium</span></td>
+                <td><span class="status-dot inline-block bg-orange-400"></span></td>
               </tr>
               <tr>
-                <td>4-Year</td>
-                <td>31</td>
+                <td>40-Day Swing</td>
+                <td>Correction Phase</td>
                 <td>
-                  <div class="prog-bar"><div style="width:65%"></div></div>65%
+                  <div class="prog-bar"><div style="width:67%"></div></div>67%
                 </td>
-                <td>48mo</td>
-                <td><span class="text-green-400 font-bold">&#8593; Rising</span></td>
-                <td><span class="text-cyan-400 font-bold">High</span></td>
-                <td><span class="status-dot inline-block bg-green-400"></span></td>
+                <td>12-15 days to pivot</td>
+                <td><span class="text-yellow-400 font-bold">&#8595; Oversold</span></td>
+                <td><span class="text-yellow-400 font-bold">Medium</span></td>
+                <td><span class="status-dot inline-block bg-yellow-400"></span></td>
               </tr>
             </tbody>
           </table>
           <div class="mt-3 text-gray-200 text-xs">
-            <strong>Note:</strong> End of cycle may fake out before reversal.<br>
-            Confidence can change based on price action. Status is guidance, not absolute.
+            <strong>Bear Market Guidance:</strong> We're 75% through the 4-year cycle, likely 12+ months from cycle bottom.<br>
+            <strong>Current Phase:</strong> Distribution complete, now in active decline phase.<br> 
+            <strong>Status:</strong> High risk environment - cash preservation mode recommended.
           </div>
         </div>
         <!-- Live Market Gauges -->
@@ -462,8 +463,106 @@
       }
     }
     
-    // Load all data
-    Promise.all([loadData(), loadLogs(), loadAIInsights()]).catch(console.error);
+    // === AUTO-REFRESH SYSTEM === 
+    // Refresh data every 30 seconds for live updates
+    let autoRefreshInterval;
+    
+    function startAutoRefresh() {
+      autoRefreshInterval = setInterval(() => {
+        Promise.all([loadData(), loadLogs(), loadAIInsights()]).catch(console.error);
+        console.log('Auto-refreshed data at:', new Date().toLocaleTimeString());
+      }, 30000); // 30 seconds
+    }
+    
+    function stopAutoRefresh() {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+      }
+    }
+    
+    // Update ticker with live risk data
+    function updateLiveRiskTicker(data) {
+      const ticker = document.getElementById('risk-alert-ticker');
+      if (ticker && data.crypto && data.macro) {
+        const cryptoRisk = data.crypto.risk_level || 0;
+        const macroRisk = data.macro.risk_level || 0;
+        const cycleStatus = data.crypto.cycle_status || 'Unknown';
+        const whaleActivity = data.crypto.whale_activity || 'Unknown';
+        const fedStatus = data.macro.fed_rate_context ? 'Fed Tightening' : 'Fed Neutral';
+        
+        ticker.innerHTML = `LIVE ALERT: Crypto Risk ${cryptoRisk}% | Macro Risk ${macroRisk}% | ${cycleStatus} | ${whaleActivity} | ${fedStatus} | Updated: ${new Date().toLocaleTimeString()} |`;
+      }
+    }
+
+    // === RISK GAUGE UPDATES ===
+    function updateRiskGauges(data) {
+      // Update Crypto Risk Gauge
+      const cryptoGauge = document.getElementById('crypto-risk-gauge');
+      if (cryptoGauge && data.crypto && data.crypto.risk_level) {
+        const cryptoRisk = data.crypto.risk_level;
+        const cryptoColor = getRiskColor(cryptoRisk);
+        const cryptoLabel = getRiskLabel(cryptoRisk);
+        
+        cryptoGauge.innerHTML = `
+          <div class="risk-gauge-container">
+            <div class="risk-gauge-arc" style="background: conic-gradient(${cryptoColor} 0deg, ${cryptoColor} ${(cryptoRisk/100) * 270}deg, #374151 ${(cryptoRisk/100) * 270}deg, #374151 270deg);"></div>
+            <div class="risk-gauge-center">
+              <div class="risk-percentage">${cryptoRisk}%</div>
+              <div class="risk-label">${cryptoLabel}</div>
+            </div>
+          </div>
+          <div class="risk-context mt-2 text-xs text-gray-400">${data.crypto.risk_context || 'Risk assessment based on current conditions'}</div>
+        `;
+      }
+      
+      // Update Macro Risk Gauge
+      const macroGauge = document.getElementById('macro-risk-gauge');
+      if (macroGauge && data.macro && data.macro.risk_level) {
+        const macroRisk = data.macro.risk_level;
+        const macroColor = getRiskColor(macroRisk);
+        const macroLabel = getRiskLabel(macroRisk);
+        
+        macroGauge.innerHTML = `
+          <div class="risk-gauge-container">
+            <div class="risk-gauge-arc" style="background: conic-gradient(${macroColor} 0deg, ${macroColor} ${(macroRisk/100) * 270}deg, #374151 ${(macroRisk/100) * 270}deg, #374151 270deg);"></div>
+            <div class="risk-gauge-center">
+              <div class="risk-percentage">${macroRisk}%</div>
+              <div class="risk-label">${macroLabel}</div>
+            </div>
+          </div>
+          <div class="risk-context mt-2 text-xs text-gray-400">${data.macro.risk_context || 'Risk assessment based on current conditions'}</div>
+        `;
+      }
+    }
+    
+    function getRiskColor(riskLevel) {
+      if (riskLevel <= 30) return '#10b981'; // Green - Low Risk
+      if (riskLevel <= 60) return '#f59e0b'; // Yellow - Medium Risk 
+      return '#ef4444'; // Red - High Risk
+    }
+    
+    function getRiskLabel(riskLevel) {
+      if (riskLevel <= 30) return 'LOW RISK';
+      if (riskLevel <= 60) return 'MEDIUM RISK';
+      return 'HIGH RISK';
+    }
+
+    // Load all data and start auto-refresh
+    Promise.all([loadData(), loadLogs(), loadAIInsights()])
+      .then(() => {
+        console.log('Dashboard loaded, starting auto-refresh...');
+        startAutoRefresh();
+      })
+      .catch(console.error);
+    
+    // Stop auto-refresh when page is hidden to save resources
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoRefresh();
+      } else {
+        startAutoRefresh();
+      }
+    });
   </script>
 </body>
 </html>

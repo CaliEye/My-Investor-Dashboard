@@ -62,21 +62,36 @@
       </div>
     </section>
 
-    <!-- Sentiment Heatmaps and Social Metrics -->
+    <!-- Sentiment Data & Social Metrics -->
     <section class="mb-12">
-      <h2 class="text-xl font-orbitron text-pink-300 mb-4">Sentiment Heatmaps & Social Metrics</h2>
+      <h2 class="text-xl font-orbitron text-pink-300 mb-4">Sentiment Data & Social Metrics</h2>
       <div class="grid md:grid-cols-3 gap-8">
         <div class="bg-gray-900 border border-pink-400 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-pink-400 mb-2">Social Volume</h4>
-          <canvas id="social-volume-chart" class="sentiment-chart"></canvas>
+          <h4 class="font-orbitron text-pink-400 mb-3">Social Volume</h4>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-pink-300 mb-2" id="social-volume-display">+40%</div>
+            <div class="text-sm text-gray-400 mb-3">vs 30-day average</div>
+            <div class="text-xs text-gray-500">Elevated chatter = potential top</div>
+            <div class="mt-3 text-sm text-pink-300" id="social-volume-status">ELEVATED BUZZ</div>
+          </div>
         </div>
         <div class="bg-gray-900 border border-yellow-400 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-yellow-300 mb-2">Funding Rate Extremes</h4>
-          <canvas id="funding-extremes-chart" class="sentiment-chart"></canvas>
+          <h4 class="font-orbitron text-yellow-300 mb-3">Funding Rate Extremes</h4>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-yellow-300 mb-2" id="funding-extremes-display">Longs Paying</div>
+            <div class="text-sm text-gray-400 mb-3" id="funding-rate-value">0.045% / 8h</div>
+            <div class="text-xs text-gray-500">Premium = overcrowded long</div>
+            <div class="mt-3 text-sm text-red-300" id="funding-status">LONG HEAVY</div>
+          </div>
         </div>
         <div class="bg-gray-900 border border-cyan-400 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-cyan-300 mb-2">Open Interest Clusters</h4>
-          <canvas id="oi-clusters-chart" class="sentiment-chart"></canvas>
+          <h4 class="font-orbitron text-cyan-300 mb-3">Open Interest Clusters</h4>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-cyan-300 mb-2" id="oi-clusters-display">$69k BTC</div>
+            <div class="text-sm text-gray-400 mb-3">Heavy cluster zone</div>
+            <div class="text-xs text-gray-500">Major liquidation level</div>
+            <div class="mt-3 text-sm text-orange-300" id="oi-status">RESISTANCE ZONE</div>
+          </div>
         </div>
       </div>
     </section>
@@ -133,6 +148,29 @@
         if (document.getElementById("crowd-eth")) document.getElementById("crowd-eth").textContent = fmt(d.sentiment.crowd_eth);
         if (document.getElementById("crowd-alt")) document.getElementById("crowd-alt").textContent = fmt(d.sentiment.crowd_alt);
         if (document.getElementById("crowd-stable")) document.getElementById("crowd-stable").textContent = fmt(d.sentiment.crowd_stable);
+        
+        // New sentiment data displays
+        if (document.getElementById("social-volume-display")) {
+          document.getElementById("social-volume-display").textContent = fmt(d.sentiment.social_volume_trend);
+        }
+        if (document.getElementById("social-volume-status")) {
+          document.getElementById("social-volume-status").textContent = fmt(d.sentiment.social_status);
+        }
+        if (document.getElementById("funding-extremes-display")) {
+          document.getElementById("funding-extremes-display").textContent = fmt(d.sentiment.funding_extremes);
+        }
+        if (document.getElementById("funding-rate-value")) {
+          document.getElementById("funding-rate-value").textContent = fmt(d.sentiment.funding_rate);
+        }
+        if (document.getElementById("funding-status")) {
+          document.getElementById("funding-status").textContent = fmt(d.sentiment.funding_status);
+        }
+        if (document.getElementById("oi-clusters-display")) {
+          document.getElementById("oi-clusters-display").textContent = fmt(d.sentiment.oi_main_level);
+        }
+        if (document.getElementById("oi-status")) {
+          document.getElementById("oi-status").textContent = fmt(d.sentiment.oi_status);
+        }
         
         // Fear & Greed main reading
         if (document.getElementById("fg-main-value")) document.getElementById("fg-main-value").textContent = fmt(d.sentiment.fear_greed_index);

@@ -326,3 +326,161 @@ footer {
 .bg-gradient-to-br.from-gray-900.via-gray-800.to-emerald-900 {
   background: linear-gradient(to bottom right, #111827, #1f2937, #064e3b);
 }
+
+/* === Macro Context Styling === */
+.text-purple-300 { color: #d8b4fe; }
+#cpi-context, #unemp-context, #gdp-context, 
+#fed-rate-context, #dxy-context, #us10y-context, #spx-context {
+  font-style: italic;
+  margin-left: 1rem;
+}
+
+/* === Cycle Status Styling === */
+.cycle-table th {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #06b6d4;
+  border-bottom: 1px solid #374151;
+}
+
+.cycle-table td {
+  padding: 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #1f2937;
+}
+
+.prog-bar {
+  width: 100%;
+  height: 8px;
+  background: #374151;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0.25rem 0;
+}
+
+.prog-bar div {
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+  transition: width 0.3s ease;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+/* Bear market color scheme */
+.text-red-400 { color: #f87171; }
+.text-orange-400 { color: #fb923c; }
+.bg-red-400 { background-color: #f87171; }
+.bg-orange-400 { background-color: #fb923c; }
+
+/* === Risk Gauge Styling === */
+.gauge-meter {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.risk-gauge-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.risk-gauge-arc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(#374151 0deg, #374151 270deg, transparent 270deg);
+  transform: rotate(-135deg);
+}
+
+.risk-gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1f2937;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #374151;
+}
+
+.risk-percentage {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1;
+}
+
+.risk-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.risk-context {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+/* Animated pulse for high risk */
+.risk-gauge-container:has(.risk-percentage:contains("70")), 
+.risk-gauge-container:has(.risk-percentage:contains("80")),
+.risk-gauge-container:has(.risk-percentage:contains("90")) {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+/* === Data Display Cards === */
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.data-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.data-trend {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.data-context {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.status-indicator {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.status-elevated { background-color: #dc2626; color: white; }
+.status-normal { background-color: #059669; color: white; }
+.status-warning { background-color: #d97706; color: white; }

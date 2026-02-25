@@ -31,13 +31,35 @@
       <h2 class="text-2xl font-orbitron text-yellow-300 mb-5 tracking-widest">🌐 Macro Market Overview</h2>
       <div class="grid md:grid-cols-2 gap-10">
         <div>
-          <ul class="space-y-2 text-lg">
-            <li><span class="font-bold text-cyan-300">US Inflation (CPI):</span> <span id="cpi-value">...</span></li>
-            <li><span class="font-bold text-green-300">Unemployment:</span> <span id="unemp-value">...</span></li>
-            <li><span class="font-bold text-yellow-400">GDP Growth:</span> <span id="gdp-value">...</span></li>
-            <li><span class="font-bold text-red-400">Fed Funds Rate:</span> <span id="fed-rate">...</span></li>
-            <li><span class="font-bold text-blue-300">DXY (USD Index):</span> <span id="dxy-value">...</span></li>
-            <li><span class="font-bold text-pink-400">US10Y Yield:</span> <span id="us10y-value">...</span></li>
+          <ul class="space-y-3 text-lg">
+            <li>
+              <span class="font-bold text-cyan-300">US Inflation (CPI):</span> <span id="cpi-value">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="cpi-context">...</div>
+            </li>
+            <li>
+              <span class="font-bold text-green-300">Unemployment:</span> <span id="unemp-value">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="unemp-context">...</div>
+            </li>
+            <li>
+              <span class="font-bold text-yellow-400">GDP Growth:</span> <span id="gdp-value">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="gdp-context">...</div>
+            </li>
+            <li>
+              <span class="font-bold text-red-400">Fed Funds Rate:</span> <span id="fed-rate">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="fed-rate-context">...</div>
+            </li>
+            <li>
+              <span class="font-bold text-blue-300">DXY (USD Index):</span> <span id="dxy-value">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="dxy-context">...</div>
+            </li>
+            <li>
+              <span class="font-bold text-pink-400">US10Y Yield:</span> <span id="us10y-value">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="us10y-context">...</div>
+            </li>
+            <li>
+              <span class="font-bold text-purple-300">S&P 500:</span> <span id="spx-value">...</span>
+              <div class="text-sm text-gray-400 ml-4" id="spx-context">...</div>
+            </li>
           </ul>
           <div class="mt-5 text-xs text-gray-300 italic">
             Key macro signals update automatically. <br>
@@ -46,9 +68,13 @@
         </div>
         <div>
           <div class="bg-gray-800 border border-yellow-500 rounded-xl p-4 shadow mb-5">
-            <h3 class="text-lg font-orbitron text-yellow-300 mb-2">Macro Risk Indicator</h3>
-            <div id="macro-risk-gauge" class="gauge-meter"></div>
-            <div class="mt-2 text-sm text-gray-400">A composite of growth, inflation, and policy risk.</div>
+            <h3 class="text-lg font-orbitron text-yellow-300 mb-4">Macro Risk Indicator</h3>
+            <div class="flex items-center justify-between mb-3">
+              <div class="text-2xl font-bold" id="risk-level-display">...</div>
+              <div id="macro-risk-gauge" class="gauge-meter"></div>
+            </div>
+            <div class="text-sm text-gray-300 mb-2" id="risk-context-display">...</div>
+            <div class="text-xs text-gray-500">Composite of growth, inflation, and policy risk</div>
           </div>
           <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow">
             <h3 class="text-lg font-orbitron text-cyan-300 mb-2">Global Macro News</h3>
@@ -64,21 +90,33 @@
       </div>
     </section>
 
-    <!-- Macro Charts -->
+    <!-- Key Macro Data Displays -->
     <section class="mb-12">
-      <h2 class="text-xl font-orbitron text-yellow-300 mb-4">Key Macro Charts</h2>
+      <h2 class="text-xl font-orbitron text-yellow-300 mb-4">Key Macro Data</h2>
       <div class="grid md:grid-cols-3 gap-8">
         <div class="bg-gray-900 border border-yellow-500 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-yellow-400 mb-2">US10Y Treasury Yield</h4>
-          <canvas id="us10y-chart" class="macro-chart"></canvas>
+          <h4 class="font-orbitron text-yellow-400 mb-3">US10Y Treasury Yield</h4>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-yellow-300 mb-2" id="us10y-display">4.15%</div>
+            <div class="text-sm text-gray-400 mb-3" id="us10y-trend">↗ Rising (+0.25% this week)</div>
+            <div class="text-xs text-gray-500">Above 4% = credit tightening zone</div>
+          </div>
         </div>
         <div class="bg-gray-900 border border-cyan-500 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-cyan-400 mb-2">DXY (Dollar Index)</h4>
-          <canvas id="dxy-chart" class="macro-chart"></canvas>
+          <h4 class="font-orbitron text-cyan-400 mb-3">DXY (Dollar Index)</h4>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-cyan-300 mb-2" id="dxy-display">103.2</div>
+            <div class="text-sm text-gray-400 mb-3" id="dxy-trend">↗ Strong (+1.2% this month)</div>
+            <div class="text-xs text-gray-500">Above 103 = risk asset pressure</div>
+          </div>
         </div>
         <div class="bg-gray-900 border border-pink-500 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-pink-400 mb-2">S&P 500 Index</h4>
-          <canvas id="spx-chart" class="macro-chart"></canvas>
+          <h4 class="font-orbitron text-pink-400 mb-3">S&P 500 Index</h4>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-pink-300 mb-2" id="spx-display">4,750</div>
+            <div class="text-sm text-gray-400 mb-3" id="spx-trend">↗ Near ATH (within 5%)</div>
+            <div class="text-xs text-gray-500">Late cycle levels - watch breadth</div>
+          </div>
         </div>
       </div>
     </section>
@@ -157,6 +195,41 @@
         if (document.getElementById("fed-rate")) document.getElementById("fed-rate").textContent = fmt(d.macro.fed_funds_rate);
         if (document.getElementById("dxy-value")) document.getElementById("dxy-value").textContent = fmt(d.macro.dxy);
         if (document.getElementById("us10y-value")) document.getElementById("us10y-value").textContent = fmt(d.macro.us10y_yield);
+        if (document.getElementById("spx-value")) document.getElementById("spx-value").textContent = fmt(d.macro.spx);
+        
+        // Macro contextual descriptions
+        if (document.getElementById("cpi-context")) document.getElementById("cpi-context").textContent = fmt(d.macro.cpi_context);
+        if (document.getElementById("unemp-context")) document.getElementById("unemp-context").textContent = fmt(d.macro.unemployment_context);
+        if (document.getElementById("gdp-context")) document.getElementById("gdp-context").textContent = fmt(d.macro.gdp_context);
+        if (document.getElementById("fed-rate-context")) document.getElementById("fed-rate-context").textContent = fmt(d.macro.fed_rate_context);
+        if (document.getElementById("dxy-context")) document.getElementById("dxy-context").textContent = fmt(d.macro.dxy_context);
+        if (document.getElementById("us10y-context")) document.getElementById("us10y-context").textContent = fmt(d.macro.us10y_context);
+        if (document.getElementById("spx-context")) document.getElementById("spx-context").textContent = fmt(d.macro.spx_context);
+        
+        // Risk level display and context
+        if (document.getElementById("risk-level-display")) {
+          const riskLevel = d.macro.risk_level || 0;
+          let riskColor = '#4ade80'; // green
+          if (riskLevel > 60) riskColor = '#ef4444'; // red
+          else if (riskLevel > 30) riskColor = '#f59e0b'; // yellow
+          
+          document.getElementById("risk-level-display").innerHTML = 
+            `<span style="color: ${riskColor}">${riskLevel}/100</span>`;
+        }
+        if (document.getElementById("risk-context-display")) {
+          document.getElementById("risk-context-display").textContent = fmt(d.macro.risk_context);
+        }
+        
+        // Macro data displays
+        if (document.getElementById("us10y-display")) {
+          document.getElementById("us10y-display").textContent = fmt(d.macro.us10y_yield);
+        }
+        if (document.getElementById("dxy-display")) {
+          document.getElementById("dxy-display").textContent = fmt(d.macro.dxy);
+        }
+        if (document.getElementById("spx-display")) {
+          document.getElementById("spx-display").textContent = fmt(d.macro.spx);
+        }
         
         // Macro data section
         if (document.getElementById("macro-spx")) document.getElementById("macro-spx").textContent = fmt(d.macro.spx);
@@ -177,12 +250,23 @@
             `Fed policy stance and dollar strength are key drivers to monitor.`;
         }
         
-        // Update macro risk gauge if present
+        // Update macro risk gauge with improved styling
         if (document.getElementById("macro-risk-gauge")) {
           const gauge = document.getElementById("macro-risk-gauge");
-          const riskAngle = (d.macro.risk_level / 100) * 180 - 90;
-          gauge.style.setProperty('--gauge-rotation', riskAngle + 'deg');
-          gauge.innerHTML = `<div style="text-align:center;margin-top:1rem;font-weight:bold;">${d.macro.risk_level}%</div>`;
+          const riskLevel = d.macro.risk_level;
+          const riskColor = riskLevel <= 30 ? '#10b981' : riskLevel <= 60 ? '#f59e0b' : '#ef4444';
+          const riskLabel = riskLevel <= 30 ? 'LOW RISK' : riskLevel <= 60 ? 'MEDIUM RISK' : 'HIGH RISK';
+          
+          gauge.innerHTML = `
+            <div class="risk-gauge-container">
+              <div class="risk-gauge-arc" style="background: conic-gradient(${riskColor} 0deg, ${riskColor} ${(riskLevel/100) * 270}deg, #374151 ${(riskLevel/100) * 270}deg, #374151 270deg);"></div>
+              <div class="risk-gauge-center">
+                <div class="risk-percentage">${riskLevel}%</div>
+                <div class="risk-label">${riskLabel}</div>
+              </div>
+            </div>
+            <div class="risk-context mt-2 text-xs text-gray-400">${d.macro.risk_context || 'Macro risk assessment'}</div>
+          `;
         }
         
       } catch (error) {
@@ -195,6 +279,12 @@
         });
       }
     }
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      loadData();
+      console.log('Macro data refreshed at:', new Date().toLocaleTimeString());
+    }, 30000);
     
     document.addEventListener('DOMContentLoaded', loadData);
   </script>

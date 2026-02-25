@@ -78,8 +78,9 @@
           <canvas id="crypto-cycle-chart" class="crypto-chart"></canvas>
         </div>
         <div class="bg-gray-900 border border-cyan-500 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-cyan-300 mb-2">Funding Rates & Open Interest</h4>
-          <canvas id="crypto-funding-chart" class="crypto-chart"></canvas>
+          <h4 class="font-orbitron text-cyan-300 mb-2">Crypto Risk Monitor</h4>
+          <div id="crypto-risk-gauge" class="gauge-meter mb-4"></div>
+          <div id="crypto-risk-breakdown" class="text-xs space-y-1"></div>
         </div>
       </div>
     </section>
@@ -172,6 +173,28 @@
         if (document.getElementById("eth-support")) document.getElementById("eth-support").textContent = fmt(d.crypto.eth_support);
         if (document.getElementById("eth-resistance")) document.getElementById("eth-resistance").textContent = fmt(d.crypto.eth_resistance);
         
+        // Update crypto risk gauge
+        if (document.getElementById("crypto-risk-gauge") && d.crypto.risk_level) {
+          const riskLevel = d.crypto.risk_level;
+          const riskColor = riskLevel <= 30 ? '#10b981' : riskLevel <= 60 ? '#f59e0b' : '#ef4444';
+          const riskLabel = riskLevel <= 30 ? 'LOW RISK' : riskLevel <= 60 ? 'MEDIUM RISK' : 'HIGH RISK';
+          
+          document.getElementById("crypto-risk-gauge").innerHTML = `
+            <div class="risk-gauge-container">
+              <div class="risk-gauge-arc" style="background: conic-gradient(${riskColor} 0deg, ${riskColor} ${(riskLevel/100) * 270}deg, #374151 ${(riskLevel/100) * 270}deg, #374151 270deg);"></div>
+              <div class="risk-gauge-center">
+                <div class="risk-percentage">${riskLevel}%</div>
+                <div class="risk-label">${riskLabel}</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        // Update risk breakdown
+        if (document.getElementById("crypto-risk-breakdown") && d.crypto.risk_breakdown) {
+          document.getElementById("crypto-risk-breakdown").innerHTML = d.crypto.risk_breakdown.map(item => `<div class="text-gray-300">• ${item}</div>`).join('');
+        }
+        
         // Live prices
         if (document.getElementById("live-btc-price")) document.getElementById("live-btc-price").textContent = fmt(d.crypto.btc_price_formatted);
         if (document.getElementById("live-eth-price")) document.getElementById("live-eth-price").textContent = fmt(d.crypto.eth_price_formatted);
@@ -203,6 +226,12 @@
         });
       }
     }
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      loadData();
+      console.log('Crypto data refreshed at:', new Date().toLocaleTimeString());
+    }, 30000);
     
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
