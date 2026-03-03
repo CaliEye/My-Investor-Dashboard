@@ -1,12 +1,874 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=senario.html">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Redirecting to Scenario Builder</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENARIO ENGINE — ENDGAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/endgame-theme.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --void:   #000000;
+      --green:  #39ff14;
+      --red:    #ff2222;
+      --gold:   #d4af37;
+      --dim:    #111111;
+      --border: #1a1a1a;
+      --muted:  #444444;
+      --text:   #cccccc;
+    }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Source Code Pro', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--green);
+      background: var(--void);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--green);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links a.active { color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 2px; }
+    .nav-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--gold);
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 40px 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .page-header .subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+    .info-badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 6px 14px;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .regime-display {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .regime-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .regime-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--red);
+      letter-spacing: 2px;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 36px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title.gold { color: var(--gold); }
+    .section-title.red  { color: var(--red); }
+
+    /* ── PROBABILITY MATRIX ── */
+    .prob-matrix { display: flex; flex-direction: column; gap: 16px; }
+    .prob-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 60px;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      background: var(--dim);
+      transition: border-color 0.3s;
+    }
+    .prob-row.highest { border-color: var(--gold); }
+    .prob-row.danger  { border-color: var(--red); }
+    .prob-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text);
+    }
+    .prob-name small {
+      display: block;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0;
+      margin-top: 3px;
+    }
+    .prob-bar-wrap {
+      height: 8px;
+      background: var(--border);
+      position: relative;
+    }
+    .prob-bar-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .prob-bar-fill.gold  { background: var(--gold); }
+    .prob-bar-fill.red   { background: var(--red); }
+    .prob-bar-fill.green { background: var(--green); }
+    .prob-pct {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      text-align: right;
+    }
+    .prob-pct.gold  { color: var(--gold); }
+    .prob-pct.red   { color: var(--red); }
+    .prob-pct.green { color: var(--green); }
+
+    /* ── PLAYBOOK CARDS ── */
+    .playbook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .playbook-card {
+      background: var(--dim);
+      border: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .playbook-card.gold-border { border-color: var(--gold); }
+    .playbook-card.red-border  { border-color: var(--red); }
+    .playbook-card.green-border { border-color: var(--green); }
+
+    .playbook-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .playbook-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .playbook-title.gold  { color: var(--gold); }
+    .playbook-title.red   { color: var(--red); }
+    .playbook-title.green { color: var(--green); }
+    .playbook-prob {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .playbook-prob.gold  { color: var(--gold); }
+    .playbook-prob.red   { color: var(--red); }
+    .playbook-prob.green { color: var(--green); }
+
+    .playbook-block { display: flex; flex-direction: column; gap: 6px; }
+    .playbook-block-title {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .playbook-block ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .playbook-block ul li {
+      font-size: 11px;
+      color: var(--text);
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+      line-height: 1.4;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .asset-chip {
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      font-size: 10px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .asset-chip.up   { border-color: var(--green); color: var(--green); }
+    .asset-chip.down { border-color: var(--red);   color: var(--red); }
+    .asset-chip.flat { border-color: var(--muted); color: var(--muted); }
+
+    /* ── CONFLUENCE TRIGGERS ── */
+    .triggers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .trigger-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: var(--dim);
+    }
+    .trigger-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .trigger-dot.active { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .trigger-dot.alert  { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+    .trigger-text { display: flex; flex-direction: column; gap: 3px; }
+    .trigger-name { font-size: 12px; color: var(--text); font-weight: 600; }
+    .trigger-desc { font-size: 10px; color: var(--muted); }
+
+    /* ── DECISION FRAMEWORK ── */
+    .rules-display { display: flex; flex-direction: column; gap: 20px; }
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--dim);
+    }
+    .rule-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--border);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 60px;
+    }
+    .rule-content { flex: 1; }
+    .rule-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(13px, 2vw, 18px);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      line-height: 1.3;
+    }
+    .rule-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ── LOADING ── */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--void);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: 4px;
+      color: var(--gold);
+    }
+    #loading-overlay.hidden { display: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer .footer-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+    }
+    footer .footer-links { display: flex; gap: 20px; }
+    footer a {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--green);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--gold); }
+    footer .footer-ts { font-size: 10px; color: var(--muted); }
+
+    @media (max-width: 700px) {
+      nav { flex-wrap: wrap; gap: 12px; }
+      .nav-links { gap: 12px; }
+      .prob-row { grid-template-columns: 1fr 60px; }
+      .prob-row .prob-name { grid-column: 1 / -1; }
+      .asset-grid { grid-template-columns: repeat(2, 1fr); }
+      .rule-item { flex-direction: column; gap: 12px; }
+      .rule-number { font-size: 32px; }
+    }
+  </style>
 </head>
 <body>
-  Redirecting to <a href="senario.html">Scenario Builder</a>...
+
+<div id="loading-overlay">LOADING SCENARIO ENGINE...</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="index.html">ENDGAME</a>
+  <div class="nav-links">
+    <a href="index.html">WAR ROOM</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="scenario.html" class="active">SCENARIOS</a>
+    <a href="index.html#scan-log">SCAN LOG</a>
+  </div>
+  <span class="nav-label">SCENARIO ENGINE</span>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header container">
+  <h1>SCENARIO ENGINE</h1>
+  <p class="subtitle">MACRO SHIFT PLAYBOOKS — KNOW THE MOVE BEFORE IT HAPPENS</p>
+  <div class="info-badge">CONFLUENCE-BASED. NO HYPE. NO GUESSING.</div>
+  <div class="regime-display">
+    <span class="regime-label">CURRENT REGIME:</span>
+    <span class="regime-value" id="current-regime">LOADING...</span>
+  </div>
+</div>
+
+<!-- SECTION 1: PROBABILITY MATRIX -->
+<section class="container">
+  <div class="section-title gold">01 — CURRENT PROBABILITY MATRIX</div>
+  <div class="prob-matrix">
+
+    <div class="prob-row highest">
+      <div class="prob-name">
+        STAGFLATION
+        <small>Inflation sticky, growth slows, Fed trapped</small>
+      </div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-fill gold" data-target="35"></div>
+      </div>
+      <div class="prob-pct gold">35%</div>
+    </div>
+
+    <div class="prob-row">
+      <div class="prob-name">
+        SOFT LANDING
+        <small>Fed cuts, inflation tames, growth holds</small>
+      </div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-fill green" data-target="25"></div>
+      </div>
+      <div class="prob-pct green">25%</div>
+    </div>
+
+    <div class="prob-row danger">
+      <div class="prob-name">
+        LIQUIDITY CRISIS
+        <small>Credit tightens, dollar spikes, risk-off</small>
+      </div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-fill red" data-target="25"></div>
+      </div>
+      <div class="prob-pct red">25%</div>
+    </div>
+
+    <div class="prob-row">
+      <div class="prob-name">
+        BULL RESUMPTION
+        <small>Liquidity floods, risk-on, crypto + equities surge</small>
+      </div>
+      <div class="prob-bar-wrap">
+        <div class="prob-bar-fill green" data-target="15"></div>
+      </div>
+      <div class="prob-pct green">15%</div>
+    </div>
+
+  </div>
+  <p style="margin-top: 16px; font-size: 10px; color: var(--muted); letter-spacing: 1px;">
+    ▸ PROBABILITIES BASED ON CURRENT MACRO CONFLUENCE. UPDATED WEEKLY. HIGHEST PROBABILITY SCENARIO HIGHLIGHTED IN GOLD.
+  </p>
+</section>
+
+<!-- SECTION 2: PLAYBOOKS -->
+<section class="container">
+  <div class="section-title">02 — TACTICAL PLAYBOOKS</div>
+  <div class="playbook-grid">
+
+    <!-- STAGFLATION -->
+    <div class="playbook-card gold-border">
+      <div class="playbook-header">
+        <div class="playbook-title gold">STAGFLATION</div>
+        <div class="playbook-prob gold">35%</div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TRIGGER CONDITIONS</div>
+        <ul>
+          <li>CPI &gt; 3.5% — inflation not taming</li>
+          <li>GDP growth &lt; 1.5% — economy slowing</li>
+          <li>Fed holds rates — trapped by inflation</li>
+          <li>Unemployment rising despite sticky prices</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">ASSET BEHAVIOR</div>
+        <div class="asset-grid">
+          <div class="asset-chip up">GOLD ↑</div>
+          <div class="asset-chip up">XLE ↑</div>
+          <div class="asset-chip up">DXY ↑</div>
+          <div class="asset-chip down">SPY ↓</div>
+          <div class="asset-chip down">TLT ↓</div>
+          <div class="asset-chip down">BTC ↓</div>
+        </div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TACTICAL MOVES</div>
+        <ul>
+          <li>Long GLD / IAU — primary hedge</li>
+          <li>Long commodities: XLE, PDBC, SLV</li>
+          <li>Short TLT — bonds get crushed</li>
+          <li>Reduce equity exposure significantly</li>
+          <li>Hold 30-40% cash — optionality</li>
+          <li>Avoid growth / tech / crypto</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">WARNING SIGNS</div>
+        <ul>
+          <li>Yield curve steepening (long rates rising)</li>
+          <li>Oil price spike above $100/bbl</li>
+          <li>Wage growth acceleration &gt; 4.5%</li>
+          <li>Core PCE re-accelerating</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LIQUIDITY CRISIS -->
+    <div class="playbook-card red-border">
+      <div class="playbook-header">
+        <div class="playbook-title red">LIQUIDITY CRISIS</div>
+        <div class="playbook-prob red">25%</div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TRIGGER CONDITIONS</div>
+        <ul>
+          <li>Credit spreads widen &gt; 200bps</li>
+          <li>DXY breaks above 108 — dollar spike</li>
+          <li>VIX spikes above 35</li>
+          <li>HYG / JNK breakdown — junk bonds fail</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">ASSET BEHAVIOR</div>
+        <div class="asset-grid">
+          <div class="asset-chip up">GOLD ↑</div>
+          <div class="asset-chip up">TLT ↑</div>
+          <div class="asset-chip up">DXY ↑</div>
+          <div class="asset-chip down">SPY ↓↓</div>
+          <div class="asset-chip down">BTC ↓↓</div>
+          <div class="asset-chip down">HYG ↓↓</div>
+        </div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TACTICAL MOVES</div>
+        <ul>
+          <li>MAX CASH — 50%+ in cash or T-bills</li>
+          <li>Long TLT — flight to quality</li>
+          <li>Long GLD — safe haven demand</li>
+          <li>Short SPY / QQQ — equity collapse</li>
+          <li>EXIT CRYPTO ENTIRELY — no safe haven</li>
+          <li>Short HYG / JNK if confirmed</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">WARNING SIGNS</div>
+        <ul>
+          <li>Bank stress indicators rising</li>
+          <li>Repo market stress / overnight rates spike</li>
+          <li>Corporate bond issuance freezes</li>
+          <li>Emerging market currency collapse</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SOFT LANDING -->
+    <div class="playbook-card green-border">
+      <div class="playbook-header">
+        <div class="playbook-title green">SOFT LANDING</div>
+        <div class="playbook-prob green">25%</div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TRIGGER CONDITIONS</div>
+        <ul>
+          <li>CPI falls below 2.5% — inflation tamed</li>
+          <li>Unemployment stays below 4.5%</li>
+          <li>Fed cuts rates 2x — controlled pivot</li>
+          <li>GDP holds above 2% — no recession</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">ASSET BEHAVIOR</div>
+        <div class="asset-grid">
+          <div class="asset-chip up">SPY ↑</div>
+          <div class="asset-chip up">QQQ ↑</div>
+          <div class="asset-chip up">BTC ↑</div>
+          <div class="asset-chip up">TLT ↑</div>
+          <div class="asset-chip flat">GOLD ~</div>
+          <div class="asset-chip down">DXY ↓</div>
+        </div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TACTICAL MOVES</div>
+        <ul>
+          <li>Long SPY / QQQ — growth resumes</li>
+          <li>Long BTC — bull run thesis activates</li>
+          <li>Reduce gold — safe haven premium fades</li>
+          <li>Add growth / tech exposure</li>
+          <li>Long TLT — rates falling = bond rally</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">WARNING SIGNS</div>
+        <ul>
+          <li>Inflation re-acceleration above 3%</li>
+          <li>Labor market tightening again</li>
+          <li>Fed pauses cuts — narrative shifts</li>
+          <li>Oil spike disrupting disinflation</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- BULL RESUMPTION -->
+    <div class="playbook-card green-border">
+      <div class="playbook-header">
+        <div class="playbook-title green">BULL RESUMPTION</div>
+        <div class="playbook-prob green">15%</div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TRIGGER CONDITIONS</div>
+        <ul>
+          <li>Fed pivots aggressively — 3+ cuts</li>
+          <li>Global liquidity floods markets</li>
+          <li>BTC breaks and holds above $70k</li>
+          <li>Risk appetite returns — VIX below 15</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">ASSET BEHAVIOR</div>
+        <div class="asset-grid">
+          <div class="asset-chip up">BTC ↑↑</div>
+          <div class="asset-chip up">ETH ↑↑</div>
+          <div class="asset-chip up">SPY ↑</div>
+          <div class="asset-chip up">QQQ ↑</div>
+          <div class="asset-chip up">GOLD ↑</div>
+          <div class="asset-chip down">DXY ↓↓</div>
+        </div>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">TACTICAL MOVES</div>
+        <ul>
+          <li>Long BTC / ETH — primary position</li>
+          <li>Long QQQ — tech leads bull runs</li>
+          <li>Long GLD — liquidity lifts all boats</li>
+          <li>Reduce cash — deploy into risk assets</li>
+          <li>Watch MVRV ratio — exit signal at 3.5+</li>
+        </ul>
+      </div>
+
+      <div class="playbook-block">
+        <div class="playbook-block-title">WARNING SIGNS</div>
+        <ul>
+          <li>MVRV ratio exceeds 3.5 — overheated</li>
+          <li>Extreme Greed index above 85</li>
+          <li>Retail FOMO — mainstream media coverage</li>
+          <li>Inflation re-accelerates — Fed reverses</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 3: CONFLUENCE TRIGGERS -->
+<section class="container">
+  <div class="section-title red">03 — CONFLUENCE TRIGGERS TO WATCH</div>
+  <div class="triggers-grid">
+
+    <div class="trigger-item">
+      <div class="trigger-dot"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">FED PIVOT SIGNAL</div>
+        <div class="trigger-desc">Rate cut announcement or dovish pivot language — shifts Bull Resumption probability up</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot alert"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">CPI PRINT ABOVE 3%</div>
+        <div class="trigger-desc">Inflation re-acceleration — shifts Stagflation probability up, Soft Landing down</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">UNEMPLOYMENT ABOVE 4.5%</div>
+        <div class="trigger-desc">Labor market deterioration — shifts Liquidity Crisis probability up</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot alert"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">DXY ABOVE 108</div>
+        <div class="trigger-desc">Dollar spike — risk-off signal, Liquidity Crisis probability rises sharply</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">DXY BELOW 100</div>
+        <div class="trigger-desc">Dollar weakness — risk-on signal, Bull Resumption probability rises</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">BTC ABOVE $70K</div>
+        <div class="trigger-desc">Bull run confirmation — Bull Resumption scenario activates, increase crypto exposure</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot alert"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">BTC BELOW $55K</div>
+        <div class="trigger-desc">Breakdown signal — reduce crypto exposure, watch for Liquidity Crisis cascade</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot alert"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">HYG / JNK BREAKDOWN</div>
+        <div class="trigger-desc">Credit market stress — early Liquidity Crisis warning, exit risk assets</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot active"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">GOLD ABOVE $3,000</div>
+        <div class="trigger-desc">Safe haven demand surging — Stagflation or Liquidity Crisis signal, hold GLD</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">VIX SPIKE ABOVE 35</div>
+        <div class="trigger-desc">Fear spike — Liquidity Crisis probability surges, move to max cash immediately</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">CREDIT SPREADS &gt; 200BPS</div>
+        <div class="trigger-desc">Corporate bond stress — Liquidity Crisis confirmation, exit equities and crypto</div>
+      </div>
+    </div>
+
+    <div class="trigger-item">
+      <div class="trigger-dot active"></div>
+      <div class="trigger-text">
+        <div class="trigger-name">YIELD CURVE STEEPENING</div>
+        <div class="trigger-desc">Long rates rising faster than short — Stagflation signal, long commodities</div>
+      </div>
+    </div>
+
+  </div>
+  <p style="margin-top: 16px; font-size: 10px; color: var(--muted); letter-spacing: 1px;">
+    ▸ GREEN DOT = CURRENTLY ACTIVE SIGNAL &nbsp;|&nbsp; RED DOT = ALERT CONDITION &nbsp;|&nbsp; GREY = WATCHING
+  </p>
+</section>
+
+<!-- SECTION 4: DECISION FRAMEWORK -->
+<section class="container">
+  <div class="section-title gold">04 — WHEN TO ACT — CONFLUENCE RULES</div>
+  <div class="rules-display">
+
+    <div class="rule-item">
+      <div class="rule-number">01</div>
+      <div class="rule-content">
+        <div class="rule-text">WAIT FOR 3+ CONFLUENCE SIGNALS BEFORE MOVING</div>
+        <div class="rule-sub">One signal is noise. Two is a pattern. Three is a trade. Never act on a single data point — wait for macro, technical, and sentiment to align before committing capital.</div>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-number">02</div>
+      <div class="rule-content">
+        <div class="rule-text">MACRO LEADS. CRYPTO FOLLOWS. NEVER REVERSE THIS.</div>
+        <div class="rule-sub">Gold, rates, and the dollar tell you the regime. Crypto reacts to the regime — it does not create it. Check the War Room before touching the Crypto page. Always.</div>
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-number">03</div>
+      <div class="rule-content">
+        <div class="rule-text">CASH IS A POSITION. PATIENCE IS THE EDGE.</div>
+        <div class="rule-sub">In uncertain regimes, doing nothing is a strategy. Holding cash while others panic is a position. The best trades come after clarity — not before. Protect capital first, grow it second.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="container">
+  <span class="footer-brand">ENDGAME v1.0 — SCENARIO ENGINE</span>
+  <div class="footer-links">
+    <a href="index.html">← WAR ROOM</a>
+    <a href="crypto.html">CRYPTO →</a>
+  </div>
+  <span class="footer-ts" id="last-updated">UPDATED: —</span>
+</footer>
+
+<script>
+(async function() {
+  const overlay = document.getElementById('loading-overlay');
+
+  // Animate probability bars
+  function animateBars() {
+    document.querySelectorAll('.prob-bar-fill').forEach(bar => {
+      const target = bar.getAttribute('data-target');
+      if (target) {
+        setTimeout(() => { bar.style.width = target + '%'; }, 200);
+      }
+    });
+  }
+
+  try {
+    const res = await fetch('data/data.json');
+    if (!res.ok) throw new Error('data.json not found');
+    const d = await res.json();
+
+    // Regime
+    const regimeEl = document.getElementById('current-regime');
+    if (d.regime) {
+      regimeEl.textContent = d.regime;
+    }
+
+    // Last updated
+    const ts = d.updated_utc ? new Date(d.updated_utc).toUTCString() : '—';
+    document.getElementById('last-updated').textContent = `UPDATED: ${ts}`;
+
+  } catch (err) {
+    console.warn('Scenario Engine: data.json load failed, using static content.', err);
+    const regimeEl = document.getElementById('current-regime');
+    if (regimeEl) regimeEl.textContent = 'LATE CYCLE — DISTRIBUTION';
+  } finally {
+    overlay.classList.add('hidden');
+    animateBars();
+  }
+})();
+</script>
 </body>
 </html>
