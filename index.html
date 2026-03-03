@@ -145,6 +145,43 @@
       </div>
     </section>
 
+    <!-- Sector Command Grid -->
+    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-cyan-300 mb-5 tracking-widest">SECTOR COMMAND // Relative Strength Matrix</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl border border-blue-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400 mb-1">TECH / NASDAQ-100</div>
+          <div id="sector-tech-status" class="text-lg font-bold text-blue-300">Analyzing...</div>
+          <div id="sector-tech-note" class="text-xs text-gray-300 mt-2">Awaiting macro inputs</div>
+        </div>
+        <div class="p-4 rounded-xl border border-red-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400 mb-1">DEFENSE</div>
+          <div id="sector-defense-status" class="text-lg font-bold text-red-300">Analyzing...</div>
+          <div id="sector-defense-note" class="text-xs text-gray-300 mt-2">Awaiting macro inputs</div>
+        </div>
+        <div class="p-4 rounded-xl border border-yellow-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400 mb-1">PRECIOUS METALS</div>
+          <div id="sector-metals-status" class="text-lg font-bold text-yellow-300">Analyzing...</div>
+          <div id="sector-metals-note" class="text-xs text-gray-300 mt-2">Awaiting inflation/dollar context</div>
+        </div>
+        <div class="p-4 rounded-xl border border-emerald-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400 mb-1">TOP ETF BASKET</div>
+          <div id="sector-etf-status" class="text-lg font-bold text-emerald-300">Analyzing...</div>
+          <div id="sector-etf-note" class="text-xs text-gray-300 mt-2">Awaiting regime + risk profile</div>
+        </div>
+      </div>
+      <div class="mt-4 text-xs text-gray-400">Default basket: VOO, QQQ, XLI, ITA, GLD (scored by current regime).</div>
+    </section>
+
+    <!-- Event Trigger Playbooks -->
+    <section class="mb-8 rounded-2xl border-2 border-red-400 shadow-red-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-red-300 mb-5 tracking-widest">TACTICAL PLAYBOOKS // Event Response</h2>
+      <div class="grid lg:grid-cols-2 gap-5" id="event-playbook-grid">
+        <div class="p-4 rounded-xl border border-red-500/50 bg-gray-900/40 text-sm text-gray-200">Building event response models...</div>
+      </div>
+      <div class="mt-4 text-xs text-gray-400">Playbooks are auto-prioritized by current macro regime and confluence score.</div>
+    </section>
+
     <!-- Regime + Trigger Card -->
     <section class="mb-8 rounded-2xl border-2 border-matrix-green shadow-matrix-green/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-7">
       <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime</h2>
@@ -459,6 +496,8 @@
       logsConnection: false,
       errorCount: 0
     };
+    let latestMarketData = null;
+    let latestAIData = null;
     
     function updateConnectionStatus() {
       const statusEl = document.getElementById('connection-status');
@@ -576,6 +615,137 @@
       if (actionEl) {
         actionEl.innerHTML = actions.map(item => `<div class="border-l-2 border-red-400 pl-3">${item}</div>`).join('');
       }
+
+      updateSectorCommandGrid(data);
+      updateEventPlaybookGrid(data, latestAIData);
+    }
+
+    function updateSectorCommandGrid(data) {
+      const macro = data?.macro || {};
+      const sentiment = data?.sentiment || {};
+      const macroRisk = Number(macro.risk_level || 0);
+      const dxyValue = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const fearGreed = Number(sentiment.fear_greed_index || 50);
+
+      const setSector = (statusId, noteId, status, note) => {
+        const statusEl = document.getElementById(statusId);
+        const noteEl = document.getElementById(noteId);
+        if (statusEl) statusEl.textContent = status;
+        if (noteEl) noteEl.textContent = note;
+      };
+
+      const techStatus = (us10y >= 4.0 || macroRisk >= 70) ? 'UNDER PRESSURE' : 'RISK-ON WINDOW';
+      const techNote = (us10y >= 4.0)
+        ? 'Higher yields pressure duration-heavy tech; demand stronger breadth.'
+        : 'Yields contained; watch for quality-led momentum.';
+
+      const defenseStatus = (macroRisk >= 65) ? 'RELATIVE STRENGTH' : 'NEUTRAL';
+      const defenseNote = (macroRisk >= 65)
+        ? 'Risk-off regime favors defense/cashflow names.'
+        : 'No macro shock premium currently priced.';
+
+      const metalsStatus = (dxyValue >= 103 && fearGreed <= 35) ? 'ACCUMULATION WATCH' : 'WAIT FOR BREAKOUT';
+      const metalsNote = (dxyValue >= 103)
+        ? 'Strong dollar caps upside short-term; track inflation + policy shifts.'
+        : 'Dollar pressure easing can unlock metals momentum.';
+
+      const etfStatus = (macroRisk >= 70) ? 'DEFENSIVE STACK' : 'BALANCED STACK';
+      const etfNote = (macroRisk >= 70)
+        ? 'Bias VOO/VTV/GLD/ITA over high-beta growth concentration.'
+        : 'Blend broad beta with selective growth exposure.';
+
+      setSector('sector-tech-status', 'sector-tech-note', techStatus, techNote);
+      setSector('sector-defense-status', 'sector-defense-note', defenseStatus, defenseNote);
+      setSector('sector-metals-status', 'sector-metals-note', metalsStatus, metalsNote);
+      setSector('sector-etf-status', 'sector-etf-note', etfStatus, etfNote);
+    }
+
+    function updateEventPlaybookGrid(data, ai) {
+      const macro = data?.macro || {};
+      const sentiment = data?.sentiment || {};
+      const confluence = ai?.confluence || {};
+
+      const confluenceScore = Number(confluence.score || ai?.confidence_score || 5);
+      const dominantSignal = confluence.dominant_signal || 'neutral';
+      const unemployment = Number.parseFloat((macro.unemployment || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const fedRate = Number.parseFloat((macro.fed_funds_rate || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const spxContext = (macro.spx_context || '').toLowerCase();
+      const fearGreed = Number(sentiment.fear_greed_index || 50);
+      const cpi = Number.parseFloat((macro.cpi || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+
+      const cards = [
+        {
+          title: 'Unemployment Spike Response',
+          trigger: unemployment >= 4.2 ? 'ACTIVE' : 'STANDBY',
+          summary: 'If jobs weaken quickly, shift focus to duration/defensive quality while avoiding leverage.',
+          action: unemployment >= 4.2
+            ? 'Reduce cyclicals, review duration/defensive ETF weighting, use staged entries only.'
+            : 'Watch level: unemployment above 4.2% confirms growth slowdown regime shift.',
+          color: unemployment >= 4.2 ? 'red' : 'yellow'
+        },
+        {
+          title: 'Fed Pivot / Rate Cut Setup',
+          trigger: fedRate <= 4.75 ? 'ACTIVE' : 'MONITORING',
+          summary: 'Rate easing can reprice growth fast, but only if breadth confirms.',
+          action: fedRate <= 4.75
+            ? 'Selectively add quality growth while monitoring dollar + breadth confirmation.'
+            : 'Wait for clear pivot and falling US10Y before adding high-beta risk.',
+          color: fedRate <= 4.75 ? 'emerald' : 'yellow'
+        },
+        {
+          title: 'S&P Breakdown Protocol',
+          trigger: (spxContext.includes('down') || spxContext.includes('risk-off')) ? 'ACTIVE' : 'STANDBY',
+          summary: 'Breakdown + weak breadth usually favors defense over aggressive dip buying.',
+          action: (spxContext.includes('down') || spxContext.includes('risk-off'))
+            ? 'Tighten risk, hedge beta, wait for higher confluence before re-risking.'
+            : 'Activate if 2%+ down day appears on elevated volume.',
+          color: (spxContext.includes('down') || spxContext.includes('risk-off')) ? 'red' : 'yellow'
+        },
+        {
+          title: 'Gold / Metals Momentum',
+          trigger: (cpi >= 3.0 && fearGreed <= 35) ? 'ACTIVE WATCH' : 'MONITORING',
+          summary: 'Inflation persistence + fear often creates favorable metals risk/reward setups.',
+          action: (cpi >= 3.0 && fearGreed <= 35)
+            ? 'Prioritize metals watchlist and staged exposure over chase entries.'
+            : 'Need CPI persistence + weaker dollar for stronger breakout confirmation.',
+          color: (cpi >= 3.0 && fearGreed <= 35) ? 'yellow' : 'blue'
+        },
+        {
+          title: 'AI Confluence Gate',
+          trigger: `${confluenceScore}/10 ${dominantSignal.toUpperCase()}`,
+          summary: 'All tactical actions should pass confluence gate before execution.',
+          action: confluenceScore >= 7
+            ? 'Eligible for sized entries with strict invalidation rules.'
+            : 'Stay selective; favor defense/cash and scenario preparation.',
+          color: confluenceScore >= 7 ? 'emerald' : 'gray'
+        }
+      ];
+
+      const colorClasses = {
+        red: { title: 'text-red-300', trigger: 'text-red-300', border: 'border-red-500/50', stripe: 'border-red-400' },
+        yellow: { title: 'text-yellow-300', trigger: 'text-yellow-300', border: 'border-yellow-500/50', stripe: 'border-yellow-400' },
+        emerald: { title: 'text-emerald-300', trigger: 'text-emerald-300', border: 'border-emerald-500/50', stripe: 'border-emerald-400' },
+        blue: { title: 'text-blue-300', trigger: 'text-blue-300', border: 'border-blue-500/50', stripe: 'border-blue-400' },
+        gray: { title: 'text-gray-300', trigger: 'text-gray-300', border: 'border-gray-500/50', stripe: 'border-gray-400' }
+      };
+
+      const grid = document.getElementById('event-playbook-grid');
+      if (!grid) return;
+
+      grid.innerHTML = cards.map(card => {
+        const c = colorClasses[card.color] || colorClasses.gray;
+        return `
+          <div class="p-4 rounded-xl border ${c.border} bg-gray-900/40">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-orbitron ${c.title}">${card.title}</h3>
+              <span class="text-xs ${c.trigger}">${card.trigger}</span>
+            </div>
+            <div class="text-sm text-gray-200 mb-2">${card.summary}</div>
+            <div class="text-xs text-gray-300 border-l-2 ${c.stripe} pl-3">${card.action}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     async function loadData() {
@@ -584,6 +754,7 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         
         const d = await res.json();
+        latestMarketData = d;
         systemHealth.dataConnection = true;
         systemHealth.lastUpdate = d.updated_utc;
         
@@ -746,6 +917,7 @@
         const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`AI HTTP ${res.status}`);
         const ai = await res.json();
+        latestAIData = ai;
         
         // Update ChatGPT analysis section
         if (document.getElementById('chatgpt-analysis')) {
@@ -870,6 +1042,10 @@
         if (document.getElementById('ai-last-update')) {
           const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
           document.getElementById('ai-last-update').textContent = updateTime;
+        }
+
+        if (latestMarketData) {
+          updateEventPlaybookGrid(latestMarketData, latestAIData);
         }
 
         systemHealth.aiConnection = true;
