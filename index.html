@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CyberSci-Dash v2 | Dashboard</title>
+  <title>Endgame | Investment Command Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
   <link rel="stylesheet" href="css/styles.css">
@@ -64,7 +64,7 @@
 </head>
 <body class="bg-gray-900 text-white font-inter">
   <header class="px-6 py-4 flex justify-between items-center border-b border-matrix-green shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">CyberSci-Dash // Intelligence Hub</h1>
+    <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">
       <a href="index.html" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Dashboard</a>
       <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright" aria-label="War Room">War Room</a>
@@ -85,6 +85,66 @@
   </div>
 
   <main class="p-6 max-w-7xl mx-auto">
+    <!-- Macro First Command Brief -->
+    <section class="mb-8 rounded-2xl border-2 border-yellow-400 shadow-yellow-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 px-8 py-7">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-5">
+        <div>
+          <h2 class="text-2xl font-orbitron text-yellow-300 mb-2 tracking-widest">MACRO FIRST // What Matters Now</h2>
+          <p class="text-sm text-gray-300">Your twice-daily intelligence snapshot. Focus on macro regime, then execute only high-confluence actions.</p>
+        </div>
+        <div id="macro-alert-headline" class="text-sm px-4 py-2 border border-yellow-400 rounded-lg bg-gray-900/40 text-yellow-300">
+          Building macro brief...
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">UNEMPLOYMENT</div>
+          <div id="macro-unemployment" class="text-xl font-bold text-yellow-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">FED FUNDS RATE</div>
+          <div id="macro-fed-rate" class="text-xl font-bold text-yellow-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">US10Y YIELD</div>
+          <div id="macro-us10y" class="text-xl font-bold text-yellow-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">S&P 500</div>
+          <div id="macro-spx" class="text-xl font-bold text-yellow-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">USD (DXY)</div>
+          <div id="macro-dxy" class="text-xl font-bold text-yellow-300">...</div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-5">
+        <div class="p-5 rounded-xl border border-cyan-500/50 bg-gray-900/40">
+          <h3 class="text-lg font-orbitron text-cyan-300 mb-3">Strategic Watchlist</h3>
+          <ul class="space-y-2 text-sm text-gray-200" id="macro-focus-list">
+            <li>Loading strategic watchlist...</li>
+          </ul>
+        </div>
+        <div class="p-5 rounded-xl border border-red-500/50 bg-gray-900/40">
+          <h3 class="text-lg font-orbitron text-red-300 mb-3">Immediate Action Path</h3>
+          <div id="macro-actions" class="space-y-2 text-sm text-gray-200">
+            Building tactical response...
+          </div>
+        </div>
+        <div class="p-5 rounded-xl border border-emerald-500/50 bg-gray-900/40">
+          <h3 class="text-lg font-orbitron text-emerald-300 mb-3">Rapid Drill-Down</h3>
+          <div class="flex flex-col gap-2 text-sm">
+            <a href="macro.html" class="underline text-cyan-300">Open Macro Deep Dive →</a>
+            <a href="scenario.html" class="underline text-yellow-300">Open Scenario Playbook →</a>
+            <a href="insights.html" class="underline text-emerald-300">Open AI Confluence Board →</a>
+            <a href="crypto.html" class="underline text-pink-300">Open Crypto Sub-Module →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Regime + Trigger Card -->
     <section class="mb-8 rounded-2xl border-2 border-matrix-green shadow-matrix-green/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-7">
       <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime</h2>
@@ -253,7 +313,7 @@
       </div>
       <!-- Alert Ticker -->
       <div class="mt-6 border-t border-cyan-700 pt-3">
-        <marquee behavior="scroll" direction="left" scrollamount="6" class="text-pink-400 text-lg font-bold tracking-wide">
+        <marquee id="risk-alert-ticker" behavior="scroll" direction="left" scrollamount="6" class="text-pink-400 text-lg font-bold tracking-wide">
           ALERT: Macro Risk Elevated | BTC breaks above 50 DMA | US10Y spiking | Fed statement at 2pm | ...
         </marquee>
       </div>
@@ -448,6 +508,76 @@
       return freshnessText;
     }
 
+    function updateMacroCommandBrief(data) {
+      const macro = data?.macro || {};
+      const sentiment = data?.sentiment || {};
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = (value === null || value === undefined || value === '') ? '—' : String(value);
+      };
+
+      setText('macro-unemployment', macro.unemployment || 'N/A');
+      setText('macro-fed-rate', macro.fed_funds_rate || 'N/A');
+      setText('macro-us10y', macro.us10y_yield || 'N/A');
+      setText('macro-spx', macro.spx || 'N/A');
+      setText('macro-dxy', macro.dxy || 'N/A');
+
+      const macroRisk = Number(macro.risk_level || 0);
+      const fearGreed = Number(sentiment.fear_greed_index || 50);
+      const dxyValue = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+
+      const headlineEl = document.getElementById('macro-alert-headline');
+      if (headlineEl) {
+        if (macroRisk >= 70) {
+          headlineEl.textContent = '⚠ HIGH RISK REGIME: prioritize defense and selective entries';
+          headlineEl.className = 'text-sm px-4 py-2 border border-red-400 rounded-lg bg-gray-900/40 text-red-300';
+        } else if (macroRisk >= 45) {
+          headlineEl.textContent = '📊 TRANSITION REGIME: reduce size, demand stronger confluence';
+          headlineEl.className = 'text-sm px-4 py-2 border border-yellow-400 rounded-lg bg-gray-900/40 text-yellow-300';
+        } else {
+          headlineEl.textContent = '✅ STABLE REGIME: selectively add risk with confirmation';
+          headlineEl.className = 'text-sm px-4 py-2 border border-emerald-400 rounded-lg bg-gray-900/40 text-emerald-300';
+        }
+      }
+
+      const focusItems = [
+        `Jobs: ${macro.unemployment || 'N/A'} | ${macro.unemployment_context || 'Context unavailable'}`,
+        `Rates: Fed ${macro.fed_funds_rate || 'N/A'} | US10Y ${macro.us10y_yield || 'N/A'}`,
+        `Dollar Pressure: DXY ${macro.dxy || 'N/A'} (${dxyValue >= 103 ? 'elevated risk-off' : 'contained'})`,
+        `Broad Market: S&P ${macro.spx || 'N/A'} | Risk level ${macro.risk_level || 'N/A'}/100`,
+        `Sentiment: Fear & Greed ${sentiment.fear_greed_index || 'N/A'} (${fearGreed <= 30 ? 'capitulation watch' : 'neutral/greed drift'})`
+      ];
+
+      const focusListEl = document.getElementById('macro-focus-list');
+      if (focusListEl) {
+        focusListEl.innerHTML = focusItems.map(item => `<li>• ${item}</li>`).join('');
+      }
+
+      const actions = [];
+      if (macroRisk >= 70) {
+        actions.push('Defensive posture: keep position sizes smaller until confluence improves.');
+      }
+      if (dxyValue >= 103) {
+        actions.push('Watch precious metals and defensive sectors for relative strength against dollar pressure.');
+      }
+      if (us10y >= 4.0) {
+        actions.push('Monitor rate-sensitive equities closely; avoid chasing weak breadth rallies.');
+      }
+      if (fearGreed <= 30) {
+        actions.push('Prepare staged entries for capitulation opportunities; avoid all-in execution.');
+      }
+      if (actions.length === 0) {
+        actions.push('No urgent macro shock detected; follow confluence board and wait for trigger alignment.');
+      }
+
+      const actionEl = document.getElementById('macro-actions');
+      if (actionEl) {
+        actionEl.innerHTML = actions.map(item => `<div class="border-l-2 border-red-400 pl-3">${item}</div>`).join('');
+      }
+    }
+
     async function loadData() {
       try {
         const res = await fetch("./data/data.json", { cache: "no-store" });
@@ -480,6 +610,8 @@
         if (document.getElementById("nextReview")) {
           document.getElementById("nextReview").textContent = new Date(d.next_review_utc).toLocaleString();
         }
+
+        updateMacroCommandBrief(d);
 
         // Triggers with health check
         const ts = Array.isArray(d.triggers) ? d.triggers : [];
