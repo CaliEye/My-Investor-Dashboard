@@ -604,10 +604,14 @@
           const counterView = ai.grok_counter || 'No alternative view available';
           document.getElementById('grok-analysis').textContent = counterView;
         }
-        
-        // Update confidence score and gauge
+
+        // Enhanced confluence score display using new multi-source data
         if (document.getElementById('confluence-value')) {
-          const score = ai.confidence_score || 0;
+          const confluenceData = ai.confluence || {};
+          const score = confluenceData.score || ai.confidence_score || 0;
+          const dominantSignal = confluenceData.dominant_signal || 'neutral';
+          const agreementPct = confluenceData.agreement_pct || 0;
+          
           document.getElementById('confluence-value').textContent = score;
           
           // Update gauge visual (0-10 scale)
@@ -621,27 +625,65 @@
             
             fill.style.background = `conic-gradient(${color} 0deg, ${color} ${percentage}deg, #374151 ${percentage}deg, #374151 360deg)`;
           }
+          
+          // Update signal strength text with confluence info
+          const signalStrengthEl = document.querySelector('#confluence-gauge').parentElement.querySelector('.text-center.text-sm');
+          if (signalStrengthEl && confluenceData.sources) {
+            signalStrengthEl.innerHTML = `
+              <div>Signal Strength</div>
+              <div class="text-xs text-gray-400 mt-1">
+                ${dominantSignal.toUpperCase()} • ${agreementPct}% Agreement
+              </div>
+              <div class="text-xs text-gray-500">
+                ${confluenceData.sources ? confluenceData.sources.length : 3} Sources
+              </div>
+            `;
+          }
         }
         
-        // Update action bias (simplified)
+        // Enhanced action bias with confluence data
         if (document.getElementById('action-bias')) {
-          const confidence = ai.confidence_score || 0;
-          const regime = (ai.regime || '').toLowerCase();
+          const confluenceData = ai.confluence || {};
+          const score = confluenceData.score || ai.confidence_score || 0;
+          const dominantSignal = confluenceData.dominant_signal || 'neutral';
+          const agreementPct = confluenceData.agreement_pct || 0;
           
           let actionText;
-          if (confidence >= 8) {
-            actionText = regime.includes('bull') ? 
-              'High conviction: Add risk on pullbacks' : 
-              'High conviction: Reduce exposure, hedge positions';
-          } else if (confidence >= 5) {
-            actionText = regime.includes('bull') ? 
-              'Moderate bullish: Scale in carefully' :
-              'Cautious: Trim positions, raise cash';
+          let className = '';
+          
+          if (score >= 8 && agreementPct >= 70) {
+            if (dominantSignal === 'bullish') {
+              actionText = `🟢 HIGH CONFLUENCE BULLISH<br>Sources agree: Add risk on dips`;
+              className = 'text-green-300';
+            } else if (dominantSignal === 'bearish') {
+              actionText = `🔴 HIGH CONFLUENCE BEARISH<br>Sources agree: Reduce exposure, hedge`;
+              className = 'text-red-300';
+            } else {
+              actionText = `🟡 CONFLUENCE NEUTRAL<br>Mixed signals: Stay defensive`;
+              className = 'text-yellow-300';
+            }
+          } else if (score >= 6) {
+            actionText = `📊 MODERATE CONFLUENCE<br>${dominantSignal.toUpperCase()}: ${agreementPct}% agreement, proceed cautiously`;
+            className = 'text-cyan-300';
           } else {
-            actionText = 'Low confidence: Wait for clearer signals';
+            actionText = `⚠️ LOW CONFLUENCE<br>Sources diverge: Wait for clarity`;
+            className = 'text-gray-300';
           }
           
-          document.getElementById('action-bias').textContent = actionText;
+          const actionEl = document.getElementById('action-bias');
+          actionEl.innerHTML = actionText;
+          actionEl.className = `text-sm leading-relaxed ${className}`;
+          
+          // Show individual source signals if available
+          if (confluenceData.sources && confluenceData.sources.length > 0) {
+            const sourcesHtml = confluenceData.sources.map(source => {
+              const signalColor = source.signal === 'bullish' ? 'text-green-400' : 
+                                 source.signal === 'bearish' ? 'text-red-400' : 'text-yellow-400';
+              return `<div class="text-xs ${signalColor}">${source.source}: ${source.signal} (${source.strength})</div>`;
+            }).join('');
+            
+            actionEl.innerHTML += `<div class="mt-3 pt-2 border-t border-gray-600">${sourcesHtml}</div>`;
+          }
         }
         
         // Update last AI update time

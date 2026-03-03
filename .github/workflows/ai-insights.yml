@@ -24,12 +24,14 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install requests
+        pip install requests yfinance
         
-    - name: Update AI Insights
+    - name: Update AI Insights - Multi-Source Confluence
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+        ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+        POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
         LINDY_WEBHOOK_URL: ${{ secrets.LINDY_WEBHOOK_URL }}
       run: |
         python scripts/update_ai_insights.py
