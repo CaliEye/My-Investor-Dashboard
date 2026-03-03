@@ -1,12 +1,12 @@
 {
-  "updated_utc": "2026-03-03T15:45:59.603980+00:00",
+  "updated_utc": "2026-03-03T18:29:36.530041+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-03T19:45:59.603980+00:00",
+  "next_review_utc": "2026-03-03T22:29:36.530041+00:00",
   "crypto": {
     "btc_usd": 43200,
     "eth_usd": 2650,
@@ -90,50 +90,50 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-03T15:46:01.135910+00:00",
+    "updated_utc": "2026-03-03T18:29:37.377850+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
-        "price": 593.6,
-        "price_formatted": "$593.60",
-        "change_pct_day": -2.38,
-        "change_pct_5d": -2.35,
-        "volume": 33585991,
-        "volume_vs_20d": 0.49,
-        "trend": "UNDER PRESSURE",
+        "price": 601.57,
+        "price_formatted": "$601.57",
+        "change_pct_day": -1.07,
+        "change_pct_5d": -1.04,
+        "volume": 66659977,
+        "volume_vs_20d": 0.95,
+        "trend": "NEUTRAL / MIXED",
         "label": "TECH / NASDAQ-100"
       },
       "defense": {
         "symbol": "ITA",
-        "price": 242.24,
-        "price_formatted": "$242.24",
-        "change_pct_day": -3.33,
-        "change_pct_5d": -0.36,
-        "volume": 723087,
-        "volume_vs_20d": 0.76,
-        "trend": "NEUTRAL / MIXED",
+        "price": 245.76,
+        "price_formatted": "$245.76",
+        "change_pct_day": -1.92,
+        "change_pct_5d": 1.09,
+        "volume": 1360383,
+        "volume_vs_20d": 1.38,
+        "trend": "HIGH VOLATILITY",
         "label": "DEFENSE"
       },
       "metals": {
         "symbol": "GLD",
-        "price": 464.47,
-        "price_formatted": "$464.47",
-        "change_pct_day": -5.21,
-        "change_pct_5d": -2.14,
-        "volume": 10926240,
-        "volume_vs_20d": 0.74,
-        "trend": "UNDER PRESSURE",
+        "price": 469.9,
+        "price_formatted": "$469.90",
+        "change_pct_day": -4.1,
+        "change_pct_5d": -0.99,
+        "volume": 17174956,
+        "volume_vs_20d": 1.14,
+        "trend": "NEUTRAL / MIXED",
         "label": "PRECIOUS METALS"
       },
       "broad": {
         "symbol": "VOO",
-        "price": 617.48,
-        "price_formatted": "$617.48",
-        "change_pct_day": -2.19,
-        "change_pct_5d": -2.33,
-        "volume": 5975348,
-        "volume_vs_20d": 0.64,
-        "trend": "UNDER PRESSURE",
+        "price": 625.32,
+        "price_formatted": "$625.32",
+        "change_pct_day": -0.94,
+        "change_pct_5d": -1.09,
+        "volume": 10746536,
+        "volume_vs_20d": 1.12,
+        "trend": "NEUTRAL / MIXED",
         "label": "BROAD MARKET"
       }
     },
@@ -145,16 +145,16 @@
         "ITA",
         "GLD"
       ],
-      "equal_weight_change_pct_day": -3.25,
+      "equal_weight_change_pct_day": -1.98,
       "leader": {
         "symbol": "VOO",
-        "change_pct_day": -2.19,
-        "trend": "UNDER PRESSURE"
+        "change_pct_day": -0.94,
+        "trend": "NEUTRAL / MIXED"
       },
       "laggard": {
         "symbol": "GLD",
-        "change_pct_day": -5.21,
-        "trend": "UNDER PRESSURE"
+        "change_pct_day": -4.1,
+        "trend": "NEUTRAL / MIXED"
       },
       "regime_tilt": "DEFENSIVE STACK"
     }
