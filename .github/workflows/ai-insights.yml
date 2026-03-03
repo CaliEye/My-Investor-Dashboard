@@ -6,6 +6,9 @@ on:
     - cron: '0 */6 * * *'
   workflow_dispatch:  # Allow manual trigger
 
+permissions:
+  contents: write  # Allow the workflow to write to repository
+
 jobs:
   update-insights:
     runs-on: ubuntu-latest
