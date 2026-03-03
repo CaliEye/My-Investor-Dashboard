@@ -1,185 +1,61 @@
 {
-  "_meta": {
-    "version": "1.0",
-    "description": "Venomous AI-driven confluence alerts and tactical signals for the Endgame Command Center",
-    "updated_utc": "2026-03-03T09:00:00Z",
-    "next_refresh": "2026-03-09T09:00:00Z",
-    "refresh_cadence": "weekly",
-    "generated_by": "Lindy AI — Wyckoff Smart Money Scanner"
-  },
-
-  "regime": {
-    "current": "LATE-CYCLE DISTRIBUTION",
-    "confidence": 72,
-    "color": "red",
-    "summary": "Smart money distributing into strength. Breadth narrowing. Macro headwinds building. Patience is the edge.",
-    "last_updated": "2026-03-03T09:00:00Z"
-  },
-
-  "confluence_score": {
-    "overall": 62,
-    "label": "ELEVATED RISK",
-    "color": "gold",
-    "breakdown": {
-      "macro": 55,
-      "technical": 65,
-      "sentiment": 68,
-      "volume": 60
-    }
-  },
-
-  "active_alerts": [
-    {
-      "id": "alert_001",
-      "timestamp": "2026-03-03T09:00:00Z",
-      "severity": "HIGH",
-      "color": "red",
-      "asset": "S&P 500",
-      "ticker": "SPY",
-      "signal": "DISTRIBUTION SIGNATURE",
-      "detail": "SPY rallying on declining volume for 3 consecutive sessions. Breadth deteriorating — only 2 sectors (tech, financials) carrying the index. Classic Wyckoff distribution pattern. Smart money exiting into retail strength.",
-      "action": "Reduce equity exposure. Set stops. Do not chase.",
-      "confluence_sources": ["price/volume divergence", "breadth narrowing", "sector rotation to defensives"],
-      "wyckoff_phase": "DISTRIBUTION"
-    },
-    {
-      "id": "alert_002",
-      "timestamp": "2026-03-03T09:00:00Z",
-      "severity": "HIGH",
-      "color": "gold",
-      "asset": "GOLD",
-      "ticker": "GLD",
-      "signal": "ACCUMULATION CONFIRMED",
-      "detail": "Gold holding above $2,900 with volume support on dips. Central bank buying continues. DXY weakness providing tailwind. Multi-confluence long setup — inflation hedge + geopolitical demand + technical breakout.",
-      "action": "Hold or add GLD/IAU on dips. Target: $3,200. Stop: $2,750.",
-      "confluence_sources": ["central bank demand", "DXY weakness", "inflation persistence", "technical breakout"],
-      "wyckoff_phase": "MARKUP"
-    },
-    {
-      "id": "alert_003",
-      "timestamp": "2026-03-03T09:00:00Z",
-      "severity": "MEDIUM",
-      "color": "gold",
-      "asset": "BTC",
-      "ticker": "BTC",
-      "signal": "ACCUMULATION ZONE — PATIENCE",
-      "detail": "BTC consolidating between $60k-$68k. Whale accumulation detected on-chain. Fear & Greed at 14 (Extreme Fear) — historically a long-term buy signal. Not a short-term trade. Oct/Nov 2026 target window intact.",
-      "action": "Watch-only. No new entries until macro regime clears. Target entry: $58k-$62k on confirmed support.",
-      "confluence_sources": ["on-chain whale accumulation", "extreme fear sentiment", "historical cycle timing"],
-      "wyckoff_phase": "ACCUMULATION"
-    },
-    {
-      "id": "alert_004",
-      "timestamp": "2026-03-03T09:00:00Z",
-      "severity": "MEDIUM",
-      "color": "red",
-      "asset": "10Y YIELD",
-      "ticker": "TNX",
-      "signal": "YIELD PRESSURE BUILDING",
-      "detail": "10Y yield holding above 4.2%. Fed language remains cautious. Rate cut timeline pushed to Q3 2026 at earliest. Bond market pricing in 'higher for longer' — headwind for equities and crypto.",
-      "action": "Avoid long-duration bonds (TLT). Favor short-duration or cash equivalents.",
-      "confluence_sources": ["Fed language", "inflation persistence", "bond market pricing"],
-      "wyckoff_phase": "N/A"
-    },
-    {
-      "id": "alert_005",
-      "timestamp": "2026-03-03T09:00:00Z",
-      "severity": "LOW",
-      "color": "green",
-      "asset": "DEFENSIVE SECTORS",
-      "ticker": "XLU/XLP",
-      "signal": "ROTATION SIGNAL",
-      "detail": "Utilities (XLU) and Consumer Staples (XLP) showing relative strength vs. SPY. Classic late-cycle rotation — smart money moving to defensives. Confirms distribution thesis.",
-      "action": "Monitor. If rotation accelerates, increase defensive allocation.",
-      "confluence_sources": ["relative strength", "sector rotation", "late-cycle behavior"],
-      "wyckoff_phase": "N/A"
-    }
+  "updated_utc": "2026-03-03T12:17:44.807743+00:00",
+  "regime": "Bearish Consolidation",
+  "top_triggers": [
+    "Fed tightening - balance sheet contracting",
+    "DXY above 104",
+    "S&P 500 breadth deteriorating"
   ],
-
-  "scenario_probabilities": {
-    "updated_utc": "2026-03-03T09:00:00Z",
-    "scenarios": [
+  "invalidation": "DXY falling below 104",
+  "contextual_guidance": "Given the current bearish market state, it is advisable to hold off on making new investments. Consider reallocating assets to more defensive sectors until market conditions improve.",
+  "grok_counter": "The crowd might be overlooking the potential for a surprise Federal Reserve pivot toward rate cuts this week amid softening inflation data, which could ignite a risk-on rally in BTC and flip the bearish narrative overnight.",
+  "confidence_score": 6,
+  "btc_price_snapshot": "N/A",
+  "fear_greed_snapshot": 50,
+  "next_update": "6 hours",
+  "confluence": {
+    "score": 5,
+    "dominant_signal": "neutral",
+    "agreement_pct": 40,
+    "sources": [
       {
-        "name": "STAGFLATION",
-        "probability": 35,
-        "color": "gold",
-        "trend": "stable",
-        "key_driver": "Inflation sticky above 3%, Fed trapped, growth slowing"
+        "signal": "bearish",
+        "strength": 8,
+        "source": "ChatGPT"
       },
       {
-        "name": "SOFT LANDING",
-        "probability": 25,
-        "color": "green",
-        "trend": "declining",
-        "key_driver": "Requires CPI cooperation — not yet confirmed"
+        "signal": "neutral",
+        "strength": 5,
+        "note": "RSI neutral at 47.7",
+        "source": "Alpha Vantage"
       },
       {
-        "name": "LIQUIDITY CRISIS",
-        "probability": 25,
-        "color": "red",
-        "trend": "rising",
-        "key_driver": "Credit spreads widening, dollar strength, VIX elevated"
-      },
-      {
-        "name": "BULL RESUMPTION",
-        "probability": 15,
-        "color": "green",
-        "trend": "stable",
-        "key_driver": "Target Oct/Nov 2026 — requires Fed pivot + liquidity flood"
+        "signal": "bullish",
+        "strength": 7,
+        "note": "Positive news sentiment (+5)",
+        "source": "Polygon"
       }
-    ]
+    ],
+    "note": "1B/1Be/1N sources"
   },
-
-  "tactical_playbook": {
-    "current_regime_play": "STAGFLATION DEFENSE",
-    "primary_positions": [
-      { "asset": "GOLD (GLD/IAU)", "direction": "LONG", "conviction": "HIGH", "rationale": "Inflation hedge + central bank demand + technical breakout" },
-      { "asset": "CASH (USD)", "direction": "HOLD", "conviction": "HIGH", "rationale": "Optionality. Dry powder for the setup." },
-      { "asset": "ENERGY (XLE)", "direction": "LONG", "conviction": "MEDIUM", "rationale": "Inflation beneficiary. Oil supply constraints." }
-    ],
-    "avoid": [
-      { "asset": "LONG-DURATION BONDS (TLT)", "reason": "Inflation kills bonds. Higher for longer." },
-      { "asset": "SPECULATIVE CRYPTO", "reason": "Risk-off regime. Wait for macro clarity." },
-      { "asset": "HIGH-BETA TECH", "reason": "Distribution signatures. Margin compression risk." }
-    ],
-    "watch_list": [
-      { "asset": "BTC", "trigger": "Break above $70k with volume = bull resumption signal", "action": "Size up" },
-      { "asset": "DXY", "trigger": "Break below 100 = dollar weakness = risk-on", "action": "Add risk assets" },
-      { "asset": "HYG/JNK", "trigger": "Breakdown = credit stress = go defensive", "action": "Max cash" }
-    ]
+  "market_data": {
+    "btc_price": 43200,
+    "btc_change_5d": -2.1,
+    "spy_price": 445,
+    "spy_change_5d": -1.5,
+    "vix_level": 18.5,
+    "btc_volume": 25000000
   },
-
-  "wyckoff_scan": {
-    "updated_utc": "2026-03-03T09:00:00Z",
-    "indices": [
-      { "name": "S&P 500", "ticker": "SPY", "phase": "DISTRIBUTION", "signal": "BEARISH", "detail": "Weak rallies on falling volume. Breadth narrowing." },
-      { "name": "NASDAQ", "ticker": "QQQ", "phase": "DISTRIBUTION", "signal": "BEARISH", "detail": "Below 50-day SMA. Volume on down days exceeds up days." },
-      { "name": "DOW", "ticker": "DIA", "phase": "LATE MARKUP", "signal": "NEUTRAL", "detail": "Holding support but momentum fading." }
-    ],
-    "sectors": [
-      { "name": "TECH", "ticker": "XLK", "signal": "DISTRIBUTION", "note": "Carrying index but volume declining on rallies" },
-      { "name": "FINANCIALS", "ticker": "XLF", "signal": "NEUTRAL", "note": "Holding but not leading" },
-      { "name": "ENERGY", "ticker": "XLE", "signal": "ACCUMULATION", "note": "Quiet buying. Inflation beneficiary." },
-      { "name": "DEFENSIVES", "ticker": "XLU/XLP", "signal": "ACCUMULATION", "note": "Rotation signal. Smart money moving here." },
-      { "name": "MATERIALS", "ticker": "XLB", "signal": "NEUTRAL", "note": "Gold miners (GDX) outperforming." }
-    ],
-    "thought_questions": [
-      "If gold is in markup and equities are in distribution — what does that tell you about where smart money thinks inflation is going?",
-      "The Oct/Nov 2026 BTC target requires a Fed pivot. What macro data point would force the Fed's hand fastest?"
-    ]
+  "technical_analysis": {
+    "signal": "neutral",
+    "strength": 5,
+    "note": "RSI neutral at 47.7",
+    "source": "Alpha Vantage"
   },
-
-  "macro_snapshot": {
-    "updated_utc": "2026-03-03T09:00:00Z",
-    "data_points": [
-      { "label": "BTC PRICE", "value": "$65,000", "trend": "sideways", "signal": "NEUTRAL" },
-      { "label": "GOLD (XAU)", "value": "$2,940", "trend": "up", "signal": "BULLISH" },
-      { "label": "SPY", "value": "$548", "trend": "down", "signal": "BEARISH" },
-      { "label": "10Y YIELD", "value": "4.28%", "trend": "up", "signal": "BEARISH for equities" },
-      { "label": "DXY", "value": "104.2", "trend": "sideways", "signal": "NEUTRAL" },
-      { "label": "UNEMPLOYMENT", "value": "4.1%", "trend": "rising", "signal": "WATCH" },
-      { "label": "FED FUNDS RATE", "value": "5.25%", "trend": "hold", "signal": "HIGHER FOR LONGER" },
-      { "label": "FEAR & GREED", "value": "14", "trend": "extreme fear", "signal": "CONTRARIAN LONG (long-term)" }
-    ]
+  "sentiment_analysis": {
+    "signal": "bullish",
+    "strength": 7,
+    "note": "Positive news sentiment (+5)",
+    "source": "Polygon"
   }
 }
