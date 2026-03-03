@@ -1,1177 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Endgame | Investment Command Center</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/matrix-theme.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="icon" href="images/favicon.ico">
-  <!-- Enhanced JavaScript modules -->
-  <script src="js/config.js"></script>
-  <script src="js/data-manager.js"></script>
-  <script src="js/matrix-rain.js"></script>
-  <!-- System Health & Connection Status -->
-  <style>
-    .connection-status {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 9999;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(10px);
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    .status-connected {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid #10b981;
-      color: #10b981;
-    }
-    .status-error {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid #ef4444;
-      color: #ef4444;
-    }
-    .status-loading {
-      background: rgba(245, 158, 11, 0.2);
-      border: 1px solid #f59e0b;
-      color: #f59e0b;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .data-freshness {
-      font-size: 10px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/endgame-theme.css" />
 </head>
-<body class="bg-gray-900 text-white font-inter">
-  <header class="px-6 py-4 flex justify-between items-center border-b border-matrix-green shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Dashboard</a>
-      <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Crypto">Crypto</a>
-      <a href="sentiment.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Sentiment">Sentiment</a>
-      <a href="senario.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Insights">Insights</a>
-      <a href="links.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Quick Links">Quick Links</a>
-      <a href="system_test.html" class="text-matrix-warning hover:text-matrix-bright text-xs" aria-label="System Test" title="Run system health check">⚡Test</a>
-    </nav>
-  </header>
+<body>
 
-  <!-- System Connection Status -->
-  <div id="connection-status" class="connection-status status-loading">
-    <div class="status-dot" style="background: #f59e0b;"></div>
-    <span>Connecting...</span>
+<canvas id="matrix-canvas"></canvas>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="site-title">⬡ ENDGAME</div>
+      <div class="site-subtitle">Investment Command Center · Macro-First Intelligence</div>
+    </div>
+    <nav>
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="macro.html">Macro</a>
+      <a href="warroom.html">War Room</a>
+      <a href="senario.html">Scenarios</a>
+      <a href="crypto.html" class="nav-crypto">Crypto</a>
+      <a href="insights.html">Insights</a>
+    </nav>
+    <div class="timestamp" id="last-updated">--:-- --</div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="page-wrapper">
+
+  <!-- ALERT BANNER (hidden by default, shown when confluence fires) -->
+  <div id="alert-banner" class="alert-banner mb-4 hidden">
+    <span class="alert-banner-icon">⚡</span>
+    <div class="alert-banner-text" id="alert-banner-text">Confluence signal detected.</div>
+    <div class="alert-banner-score" id="alert-banner-score"></div>
   </div>
 
-  <main class="p-6 max-w-7xl mx-auto">
-    <!-- Macro First Command Brief -->
-    <section class="mb-8 rounded-2xl border-2 border-yellow-400 shadow-yellow-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 px-8 py-7">
-      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-5">
-        <div>
-          <h2 class="text-2xl font-orbitron text-yellow-300 mb-2 tracking-widest">MACRO FIRST // What Matters Now</h2>
-          <p class="text-sm text-gray-300">Your twice-daily intelligence snapshot. Focus on macro regime, then execute only high-confluence actions.</p>
+  <!-- ── SECTION 1: MACRO COMMAND BRIEF ── -->
+  <div class="section-divider">
+    <div class="section-divider-label">§01 · Macro Command Brief</div>
+    <div class="section-divider-line"></div>
+    <div class="flex items-center gap-2">
+      <span class="dot dot-live"></span>
+      <span class="timestamp">Live</span>
+    </div>
+  </div>
+
+  <div class="grid-5 mb-4">
+
+    <!-- GOLD -->
+    <div class="macro-card panel-gold">
+      <div class="macro-card-label">Gold · XAU/USD</div>
+      <div class="macro-card-value val-gold" id="gold-price">—</div>
+      <div class="macro-card-change" id="gold-change">—</div>
+      <div class="progress-bar mt-2">
+        <div class="progress-fill progress-gold" id="gold-bar" style="width:0%"></div>
+      </div>
+      <div class="macro-card-sub" id="gold-signal">Loading…</div>
+    </div>
+
+    <!-- S&P 500 -->
+    <div class="macro-card panel-acid">
+      <div class="macro-card-label">S&amp;P 500 · SPY</div>
+      <div class="macro-card-value val-up" id="spy-price">—</div>
+      <div class="macro-card-change" id="spy-change">—</div>
+      <div class="progress-bar mt-2">
+        <div class="progress-fill progress-acid" id="spy-bar" style="width:0%"></div>
+      </div>
+      <div class="macro-card-sub" id="spy-signal">Loading…</div>
+    </div>
+
+    <!-- 10Y YIELD -->
+    <div class="macro-card panel-ice">
+      <div class="macro-card-label">10Y Yield · TNX</div>
+      <div class="macro-card-value val-ice" id="yield-price">—</div>
+      <div class="macro-card-change" id="yield-change">—</div>
+      <div class="progress-bar mt-2">
+        <div class="progress-fill progress-ice" id="yield-bar" style="width:0%"></div>
+      </div>
+      <div class="macro-card-sub" id="yield-signal">Loading…</div>
+    </div>
+
+    <!-- UNEMPLOYMENT -->
+    <div class="macro-card panel-amber">
+      <div class="macro-card-label">Unemployment · FRED</div>
+      <div class="macro-card-value val-amber" id="unemp-rate">—</div>
+      <div class="macro-card-change" id="unemp-change">—</div>
+      <div class="progress-bar mt-2">
+        <div class="progress-fill progress-amber" id="unemp-bar" style="width:0%"></div>
+      </div>
+      <div class="macro-card-sub" id="unemp-signal">Loading…</div>
+    </div>
+
+    <!-- FED FUNDS RATE -->
+    <div class="macro-card panel-blood">
+      <div class="macro-card-label">Fed Funds · FRED</div>
+      <div class="macro-card-value val-down" id="fed-rate">—</div>
+      <div class="macro-card-change" id="fed-change">—</div>
+      <div class="progress-bar mt-2">
+        <div class="progress-fill progress-blood" id="fed-bar" style="width:0%"></div>
+      </div>
+      <div class="macro-card-sub" id="fed-signal">Loading…</div>
+    </div>
+
+  </div>
+
+  <!-- ── SECTION 2: REGIME + CONFLUENCE ── -->
+  <div class="section-divider">
+    <div class="section-divider-label">§02 · Regime Intelligence</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="grid-2 mb-4">
+
+    <!-- REGIME STATUS -->
+    <div class="panel panel-acid">
+      <div class="panel-label acid">Market Regime</div>
+      <div class="flex items-center gap-3 mb-3">
+        <div id="regime-badge" class="regime-badge regime-neutral">ANALYZING…</div>
+        <div class="timestamp" id="regime-updated">—</div>
+      </div>
+      <div id="regime-description" class="macro-card-sub" style="font-size:0.72rem; color:#c8c8e0; line-height:1.6;">
+        Loading regime analysis…
+      </div>
+      <div class="mt-3">
+        <div class="flex justify-between mb-1">
+          <span class="timestamp">Bull Probability</span>
+          <span class="timestamp" id="bull-prob">—</span>
         </div>
-        <div id="macro-alert-headline" class="text-sm px-4 py-2 border border-yellow-400 rounded-lg bg-gray-900/40 text-yellow-300">
-          Building macro brief...
+        <div class="progress-bar">
+          <div class="progress-fill progress-acid" id="bull-bar" style="width:0%"></div>
         </div>
       </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">UNEMPLOYMENT</div>
-          <div id="macro-unemployment" class="text-xl font-bold text-yellow-300">...</div>
+      <div class="mt-2">
+        <div class="flex justify-between mb-1">
+          <span class="timestamp">Bear Probability</span>
+          <span class="timestamp" id="bear-prob">—</span>
         </div>
-        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">FED FUNDS RATE</div>
-          <div id="macro-fed-rate" class="text-xl font-bold text-yellow-300">...</div>
-        </div>
-        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">US10Y YIELD</div>
-          <div id="macro-us10y" class="text-xl font-bold text-yellow-300">...</div>
-        </div>
-        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">S&P 500</div>
-          <div id="macro-spx" class="text-xl font-bold text-yellow-300">...</div>
-        </div>
-        <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">USD (DXY)</div>
-          <div id="macro-dxy" class="text-xl font-bold text-yellow-300">...</div>
+        <div class="progress-bar">
+          <div class="progress-fill progress-blood" id="bear-bar" style="width:0%"></div>
         </div>
       </div>
+    </div>
 
-      <div class="grid lg:grid-cols-3 gap-5">
-        <div class="p-5 rounded-xl border border-cyan-500/50 bg-gray-900/40">
-          <h3 class="text-lg font-orbitron text-cyan-300 mb-3">Strategic Watchlist</h3>
-          <ul class="space-y-2 text-sm text-gray-200" id="macro-focus-list">
-            <li>Loading strategic watchlist...</li>
-          </ul>
-        </div>
-        <div class="p-5 rounded-xl border border-red-500/50 bg-gray-900/40">
-          <h3 class="text-lg font-orbitron text-red-300 mb-3">Immediate Action Path</h3>
-          <div id="macro-actions" class="space-y-2 text-sm text-gray-200">
-            Building tactical response...
-          </div>
-        </div>
-        <div class="p-5 rounded-xl border border-emerald-500/50 bg-gray-900/40">
-          <h3 class="text-lg font-orbitron text-emerald-300 mb-3">Rapid Drill-Down</h3>
-          <div class="flex flex-col gap-2 text-sm">
-            <a href="macro.html" class="underline text-cyan-300">Open Macro Deep Dive →</a>
-            <a href="scenario.html" class="underline text-yellow-300">Open Scenario Playbook →</a>
-            <a href="insights.html" class="underline text-emerald-300">Open AI Confluence Board →</a>
-            <a href="crypto.html" class="underline text-pink-300">Open Crypto Sub-Module →</a>
-          </div>
+    <!-- CONFLUENCE SCORE -->
+    <div class="panel panel-gold" style="text-align:center;">
+      <div class="panel-label gold" style="justify-content:center;">Confluence Score</div>
+      <div class="confluence-ring mb-3">
+        <div class="confluence-ring-bg" id="confluence-fill"></div>
+        <div class="confluence-ring-inner">
+          <div id="confluence-score">—</div>
+          <div class="confluence-label">/ 100</div>
         </div>
       </div>
-    </section>
+      <div id="confluence-verdict" class="regime-badge regime-neutral" style="margin:0 auto 0.75rem;">LOADING</div>
+      <div id="confluence-detail" class="timestamp" style="line-height:1.6; text-align:left;">
+        Loading confluence analysis…
+      </div>
+    </div>
 
-    <!-- Sector Command Grid -->
-    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-cyan-300 mb-5 tracking-widest">SECTOR COMMAND // Relative Strength Matrix</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-4 rounded-xl border border-blue-500/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400 mb-1">TECH / NASDAQ-100</div>
-          <div id="sector-tech-status" class="text-lg font-bold text-blue-300">Analyzing...</div>
-          <div id="sector-tech-note" class="text-xs text-gray-300 mt-2">Awaiting macro inputs</div>
+  </div>
+
+  <!-- ── SECTION 3: SECTOR COMMAND GRID ── -->
+  <div class="section-divider">
+    <div class="section-divider-label">§03 · Sector Command Grid</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="grid-4 mb-4">
+    <div class="sector-card"><div class="sector-ticker">GLD</div><div class="sector-name">Gold ETF</div><div class="sector-price" id="sec-GLD-price">—</div><div class="sector-change" id="sec-GLD-change">—</div><div class="sector-signal" id="sec-GLD-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">XLE</div><div class="sector-name">Energy</div><div class="sector-price" id="sec-XLE-price">—</div><div class="sector-change" id="sec-XLE-change">—</div><div class="sector-signal" id="sec-XLE-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">XLF</div><div class="sector-name">Financials</div><div class="sector-price" id="sec-XLF-price">—</div><div class="sector-change" id="sec-XLF-change">—</div><div class="sector-signal" id="sec-XLF-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">XLK</div><div class="sector-name">Technology</div><div class="sector-price" id="sec-XLK-price">—</div><div class="sector-change" id="sec-XLK-change">—</div><div class="sector-signal" id="sec-XLK-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">XLU</div><div class="sector-name">Utilities</div><div class="sector-price" id="sec-XLU-price">—</div><div class="sector-change" id="sec-XLU-change">—</div><div class="sector-signal" id="sec-XLU-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">XLV</div><div class="sector-name">Healthcare</div><div class="sector-price" id="sec-XLV-price">—</div><div class="sector-change" id="sec-XLV-change">—</div><div class="sector-signal" id="sec-XLV-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">TLT</div><div class="sector-name">Long Bonds</div><div class="sector-price" id="sec-TLT-price">—</div><div class="sector-change" id="sec-TLT-change">—</div><div class="sector-signal" id="sec-TLT-signal">—</div></div>
+    <div class="sector-card"><div class="sector-ticker">DXY</div><div class="sector-name">Dollar Index</div><div class="sector-price" id="sec-DXY-price">—</div><div class="sector-change" id="sec-DXY-change">—</div><div class="sector-signal" id="sec-DXY-signal">—</div></div>
+  </div>
+
+  <!-- ── SECTION 4: TACTICAL PLAYBOOKS ── -->
+  <div class="section-divider">
+    <div class="section-divider-label">§04 · Tactical Playbooks</div>
+    <div class="section-divider-line"></div>
+    <a href="senario.html" style="font-size:0.6rem; color:var(--muted); white-space:nowrap;">Full Scenarios →</a>
+  </div>
+
+  <div class="grid-3 mb-4">
+
+    <div class="scenario-card">
+      <div class="scenario-title">⚡ Unemployment Spike</div>
+      <div class="scenario-trigger">Trigger: U-Rate &gt; 4.5% + NFP miss &gt; 100K</div>
+      <ul class="scenario-action">
+        <li>Rotate into TLT, GLD, XLU immediately</li>
+        <li>Reduce XLK, XLF exposure 30–50%</li>
+        <li>Watch Fed pivot signals — rate cut within 2 meetings</li>
+        <li>BTC watch: risk-off first, then accumulate on capitulation</li>
+      </ul>
+    </div>
+
+    <div class="scenario-card" style="border-left-color: var(--acid);">
+      <div class="scenario-title" style="color:var(--acid);">▲ Rate Cut Cycle Begins</div>
+      <div class="scenario-trigger">Trigger: Fed cuts 25bps+ · Yield curve steepens</div>
+      <ul class="scenario-action">
+        <li>Accumulate GLD — historically +15–30% in cut cycles</li>
+        <li>Add XLF on steepening curve (net interest margin expands)</li>
+        <li>TLT long — duration play as rates fall</li>
+        <li>BTC: high-conviction accumulation window opens</li>
+      </ul>
+    </div>
+
+    <div class="scenario-card" style="border-left-color: var(--blood);">
+      <div class="scenario-title" style="color:var(--blood);">▼ Stagflation Signal</div>
+      <div class="scenario-trigger">Trigger: CPI &gt; 4% + GDP &lt; 1% + Unemployment rising</div>
+      <ul class="scenario-action">
+        <li>Hard assets only: GLD, SLV, commodity ETFs</li>
+        <li>Exit growth/tech — XLK, QQQ underperform in stagflation</li>
+        <li>TIPS over nominal bonds</li>
+        <li>Cash position 20–30% — wait for clarity</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ── SECTION 5: AI INTELLIGENCE ── -->
+  <div class="section-divider">
+    <div class="section-divider-label">§05 · AI Intelligence</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="grid-2 mb-4">
+
+    <div class="panel">
+      <div class="panel-label">Wyckoff Phase Analysis</div>
+      <div id="wyckoff-analysis" style="font-size:0.72rem; color:#c8c8e0; line-height:1.7;">
+        Loading Wyckoff analysis…
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">Cross-Asset Rotation Signal</div>
+      <div id="rotation-analysis" style="font-size:0.72rem; color:#c8c8e0; line-height:1.7;">
+        Loading rotation analysis…
+      </div>
+      <div class="mt-3">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Signal</th>
+              <th>Strength</th>
+            </tr>
+          </thead>
+          <tbody id="rotation-table">
+            <tr><td colspan="3" style="color:var(--muted);">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SECTION 6: OPERATIONAL INTEL ── -->
+  <div class="section-divider">
+    <div class="section-divider-label">§06 · Operational Intel</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="grid-3 mb-4">
+
+    <div class="panel">
+      <div class="panel-label">Weekly Scan Log</div>
+      <div id="weekly-scan-log" style="font-size:0.65rem; color:var(--slate); line-height:1.7; max-height:200px; overflow-y:auto;">
+        Loading scan log…
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">Command Log</div>
+      <div id="command-log" style="font-size:0.65rem; color:var(--slate); line-height:1.7; max-height:200px; overflow-y:auto;">
+        Loading command log…
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label acid">System Status</div>
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="timestamp">Data Feed</span>
+          <span class="flex items-center gap-1"><span class="dot dot-live"></span><span class="timestamp status-connected">LIVE</span></span>
         </div>
-        <div class="p-4 rounded-xl border border-red-500/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400 mb-1">DEFENSE</div>
-          <div id="sector-defense-status" class="text-lg font-bold text-red-300">Analyzing...</div>
-          <div id="sector-defense-note" class="text-xs text-gray-300 mt-2">Awaiting macro inputs</div>
+        <div class="flex items-center justify-between">
+          <span class="timestamp">FRED API</span>
+          <span class="flex items-center gap-1"><span class="dot dot-live" id="fred-status-dot"></span><span class="timestamp" id="fred-status-text">CHECKING</span></span>
         </div>
-        <div class="p-4 rounded-xl border border-yellow-500/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400 mb-1">PRECIOUS METALS</div>
-          <div id="sector-metals-status" class="text-lg font-bold text-yellow-300">Analyzing...</div>
-          <div id="sector-metals-note" class="text-xs text-gray-300 mt-2">Awaiting inflation/dollar context</div>
+        <div class="flex items-center justify-between">
+          <span class="timestamp">AI Insights</span>
+          <span class="flex items-center gap-1"><span class="dot dot-live" id="ai-status-dot"></span><span class="timestamp" id="ai-status-text">CHECKING</span></span>
         </div>
-        <div class="p-4 rounded-xl border border-emerald-500/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400 mb-1">TOP ETF BASKET</div>
-          <div id="sector-etf-status" class="text-lg font-bold text-emerald-300">Analyzing...</div>
-          <div id="sector-etf-note" class="text-xs text-gray-300 mt-2">Awaiting regime + risk profile</div>
+        <div class="flex items-center justify-between">
+          <span class="timestamp">Last Update</span>
+          <span class="timestamp" id="sys-last-update">—</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="timestamp">Next Refresh</span>
+          <span class="timestamp" id="sys-next-refresh">—</span>
         </div>
       </div>
-      <div class="mt-4 text-xs text-gray-400">Default basket: VOO, QQQ, XLI, ITA, GLD (scored by current regime).</div>
-    </section>
+    </div>
 
-    <!-- Event Trigger Playbooks -->
-    <section class="mb-8 rounded-2xl border-2 border-red-400 shadow-red-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-red-300 mb-5 tracking-widest">TACTICAL PLAYBOOKS // Event Response</h2>
-      <div class="grid lg:grid-cols-2 gap-5" id="event-playbook-grid">
-        <div class="p-4 rounded-xl border border-red-500/50 bg-gray-900/40 text-sm text-gray-200">Building event response models...</div>
-      </div>
-      <div class="mt-4 text-xs text-gray-400">Playbooks are auto-prioritized by current macro regime and confluence score.</div>
-    </section>
+  </div>
 
-    <!-- Regime + Trigger Card -->
-    <section class="mb-8 rounded-2xl border-2 border-matrix-green shadow-matrix-green/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime</h2>
+</main>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="p-4 rounded-xl border border-matrix-green/60 bg-gray-900/40">
-          <div class="text-sm text-matrix-dim">BIAS.STATUS</div>
-          <div id="biasState" class="text-2xl font-bold">LOADING...</div>
-          <div class="text-xs text-matrix-dim mt-2">LAST.UPDATE: <span id="lastUpdate">CONNECTING...</span></div>
-          <div class="data-freshness" id="data-freshness">CHECKING.DATA.INTEGRITY...</div>
-        </div>
+<!-- ── SCRIPTS ── -->
+<script src="js/config.js"></script>
+<script src="js/matrix-rain.js"></script>
+<script src="js/endgame-dashboard.js"></script>
+<script src="js/lindy-alerts.js"></script>
 
-        <div class="p-4 rounded-xl border border-matrix-green/60 bg-gray-900/40">
-          <div class="text-sm text-matrix-dim mb-2">ACTIVE.TRIGGERS</div>
-          <ul class="space-y-1 text-sm" id="triggers-list">
-            <li><span id="t1">LOADING.TRIGGER.01...</span></li>
-            <li><span id="t2">LOADING.TRIGGER.02...</span></li>
-            <li><span id="t3">LOADING.TRIGGER.03...</span></li>
-          </ul>
-          <div class="mt-2 text-xs" id="trigger-health">Checking triggers...</div>
-        </div>
-
-        <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
-          <div class="text-sm text-gray-300">Next Review</div>
-          <div id="nextReview" class="text-xl font-semibold">…</div>
-          <div class="text-xs text-gray-400 mt-2">Rule: no action without 2+ confirmations</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- AI Intelligence Section -->
-    <section class="mb-8 rounded-2xl border-2 border-emerald-400 shadow-emerald-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-emerald-300 mb-6 tracking-widest">AI Intelligence</h2>
-      
-      <div class="grid lg:grid-cols-3 gap-6">
-        <!-- ChatGPT Analysis -->
-        <div class="lg:col-span-2 space-y-6">
-          <div class="p-5 rounded-xl border border-emerald-400/60 bg-gray-900/40">
-            <div class="flex items-center mb-3">
-              <div class="bg-emerald-500 h-2 w-2 rounded-full mr-3"></div>
-              <h3 class="text-lg font-orbitron text-emerald-300">ChatGPT Regime Analysis</h3>
-            </div>
-            <div id="chatgpt-analysis" class="text-gray-100 leading-relaxed">Loading analysis...</div>
-          </div>
-          
-          <div class="p-5 rounded-xl border border-orange-400/60 bg-gray-900/40">
-            <div class="flex items-center mb-3">
-              <div class="bg-orange-500 h-2 w-2 rounded-full mr-3"></div>
-              <h3 class="text-lg font-orbitron text-orange-300">Grok Alternative View</h3>
-            </div>
-            <div id="grok-analysis" class="text-gray-100 leading-relaxed">Loading contrarian perspective...</div>
-          </div>
-        </div>
-        
-        <!-- Action Dashboard -->
-        <div class="space-y-6">
-          <div class="p-5 rounded-xl border border-emerald-400/60 bg-gray-900/40">
-            <h3 class="text-lg font-orbitron text-emerald-300 mb-4">Confluence Score</h3>
-            <div class="flex items-center justify-center mb-3">
-              <div id="confluence-gauge" class="relative">
-                <div class="w-24 h-24 rounded-full border-4 border-gray-600 relative">
-                  <div id="confluence-fill" class="absolute inset-0 rounded-full" style="background: conic-gradient(#10b981 0deg, #10b981 72deg, #374151 72deg, #374151 360deg);"></div>
-                  <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
-                    <span id="confluence-score" class="text-2xl font-bold text-emerald-300">7</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="text-center text-sm text-gray-300">Signal Strength</div>
-          </div>
-          
-          <div class="p-5 rounded-xl border border-yellow-400/60 bg-gray-900/40">
-            <h3 class="text-lg font-orbitron text-yellow-300 mb-3">Action Bias</h3>
-            <div id="action-bias" class="text-gray-100 text-sm leading-relaxed">Loading recommendations...</div>
-            <div class="mt-4 text-xs text-gray-400">
-              Last AI Update: <span id="ai-last-update">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Hero HUD Section -->
-    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
-      <div class="flex flex-col md:flex-row md:space-x-12">
-        <!-- Cycle Status Block -->
-        <div class="flex-1 mb-8 md:mb-0">
-          <h2 class="text-2xl font-orbitron text-cyan-300 mb-4 tracking-widest">Cycle Status</h2>
-          <table class="w-full text-center cycle-table mb-2" aria-label="Cycle Status Table">
-            <thead>
-              <tr>
-                <th>Cycle Type</th>
-                <th>Phase</th>
-                <th>Progress</th>
-                <th>Time Remaining</th>
-                <th>Trend</th>
-                <th>Risk Level</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>4-Year Cycle</td>
-                <td>Year 3 (Bear Phase)</td>
-                <td>
-                  <div class="prog-bar"><div style="width:75%"></div></div>75%
-                </td>
-                <td>~12 months to bottom</td>
-                <td><span class="text-red-400 font-bold">&#8595; Declining</span></td>
-                <td><span class="text-red-400 font-bold">High</span></td>
-                <td><span class="status-dot inline-block bg-red-400"></span></td>
-              </tr>
-              <tr>
-                <td>Weekly Trend</td>
-                <td>Downtrend Active</td>
-                <td>
-                  <div class="prog-bar"><div style="width:45%"></div></div>45%
-                </td>
-                <td>8-12 weeks to support</td>
-                <td><span class="text-red-400 font-bold">&#8595; Falling</span></td>
-                <td><span class="text-orange-400 font-bold">Medium</span></td>
-                <td><span class="status-dot inline-block bg-orange-400"></span></td>
-              </tr>
-              <tr>
-                <td>40-Day Swing</td>
-                <td>Correction Phase</td>
-                <td>
-                  <div class="prog-bar"><div style="width:67%"></div></div>67%
-                </td>
-                <td>12-15 days to pivot</td>
-                <td><span class="text-yellow-400 font-bold">&#8595; Oversold</span></td>
-                <td><span class="text-yellow-400 font-bold">Medium</span></td>
-                <td><span class="status-dot inline-block bg-yellow-400"></span></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="mt-3 text-gray-200 text-xs">
-            <strong>Bear Market Guidance:</strong> We're 75% through the 4-year cycle, likely 12+ months from cycle bottom.<br>
-            <strong>Current Phase:</strong> Distribution complete, now in active decline phase.<br> 
-            <strong>Status:</strong> High risk environment - cash preservation mode recommended.
-          </div>
-        </div>
-        <!-- Live Market Gauges -->
-        <div class="flex-1 space-y-6">
-          <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow">
-            <h3 class="font-orbitron text-lg text-cyan-300 mb-2">Market Overview</h3>
-            <div class="grid grid-cols-2 gap-3 text-base">
-              <div>BTC Price:</div> <div id="btc-price" class="font-bold text-yellow-300" aria-live="polite">...</div>
-              <div>ETH Price:</div> <div id="eth-price" class="font-bold text-green-300" aria-live="polite">...</div>
-              <div>SPX:</div> <div id="spx-latest" class="font-bold text-blue-300" aria-live="polite">...</div>
-              <div>USD Index:</div> <div id="usd-latest" class="font-bold text-cyan-300" aria-live="polite">...</div>
-              <div>Fear &amp; Greed:</div> <div id="fg-latest" class="font-bold text-pink-400" aria-live="polite">...</div>
-            </div>
-          </div>
-          <div class="flex flex-row space-x-4">
-            <div class="bg-gray-800 border border-green-500 rounded-xl p-4 flex-1 shadow">
-              <h3 class="font-orbitron text-lg text-green-300 mb-2">Crypto Risk</h3>
-              <div id="crypto-risk-gauge" class="gauge-meter"></div>
-            </div>
-            <div class="bg-gray-800 border border-yellow-500 rounded-xl p-4 flex-1 shadow">
-              <h3 class="font-orbitron text-lg text-yellow-300 mb-2">Macro Risk</h3>
-              <div id="macro-risk-gauge" class="gauge-meter"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Alert Ticker -->
-      <div class="mt-6 border-t border-cyan-700 pt-3">
-        <marquee id="risk-alert-ticker" behavior="scroll" direction="left" scrollamount="6" class="text-pink-400 text-lg font-bold tracking-wide">
-          ALERT: Macro Risk Elevated | BTC breaks above 50 DMA | US10Y spiking | Fed statement at 2pm | ...
-        </marquee>
-      </div>
-    </section>
-
-    <!-- Dashboard Action Panel -->
-    <section class="mb-10 flex flex-col md:flex-row md:space-x-6">
-      <div class="flex-1 mb-8 md:mb-0 bg-gray-800 border border-red-400 rounded-xl shadow p-6">
-        <h2 class="text-xl font-orbitron text-red-400 mb-2">Current Playbook (Bear Market)</h2>
-        <ul class="list-disc list-inside text-lg space-y-2">
-          <li>Trend: <span class="font-bold text-red-300">Bear Market Year 3</span> (Defensive positioning)</li>
-          <li>Risk: <span class="font-bold text-red-300">High (78% Crypto, 72% Macro)</span> (Capital preservation mode)</li>
-          <li>Action: <span class="font-bold text-yellow-300">Raise cash, prepare for bottom</span></li>
-        </ul>
-        <div class="mt-4 text-gray-300 text-sm">
-          <strong>Bear Market Guidance:</strong> <span class="text-white">Cash is king. Set buy alerts below $40k BTC. Avoid catching falling knives.</span>
-        </div>
-      </div>
-      <div class="flex-1 bg-gray-800 border border-cyan-400 rounded-xl shadow p-6">
-        <h2 class="text-xl font-orbitron text-cyan-400 mb-2">Market News</h2>
-        <ul class="list-inside text-base space-y-1">
-          <li>• CPI print due tomorrow</li>
-          <li>• FOMC meeting next Wednesday</li>
-          <li>• ETH ETF approval rumors circulating</li>
-          <li>• Watch for BTC options expiry Friday</li>
-        </ul>
-        <div class="mt-2 text-gray-400 text-xs">News auto-updates every hour. <a href="macro.html" class="underline text-pink-400">See macro page for details &rarr;</a></div>
-      </div>
-    </section>
-
-    <!-- Operational Logs -->
-    <section class="mb-10 rounded-2xl border-2 border-purple-400 shadow-purple-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-purple-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-purple-300 mb-6 tracking-widest">Operational Intelligence</h2>
-      
-      <div class="grid lg:grid-cols-2 gap-6">
-        <!-- Weekly Scans -->
-        <div class="bg-gray-800/60 border border-purple-500/50 rounded-xl p-6">
-          <h3 class="text-lg font-orbitron text-purple-300 mb-4 flex items-center">
-            <span class="bg-purple-500 h-2 w-2 rounded-full mr-3"></span>Latest Market Scans
-          </h3>
-          <div id="weekly-scans-content" class="space-y-4">
-            <div class="text-gray-300 text-sm">Loading latest scans...</div>
-          </div>
-          <div class="mt-4 text-right">
-            <a href="logs/weekly_scans.md" class="text-purple-400 text-sm hover:text-purple-300" target="_blank">View Full History →</a>
-          </div>
-        </div>
-
-        <!-- Live Risk Action Panel -->
-        <div class="bg-gray-800/60 border border-red-500/50 rounded-xl p-6">
-          <h3 class="text-lg font-orbitron text-red-300 mb-4 flex items-center">
-            <span class="bg-red-500 h-2 w-2 rounded-full mr-3"></span>Risk-Based Actions
-          </h3>
-          <div id="risk-actions-content" class="space-y-3">
-            <div class="text-gray-300 text-sm">Analyzing risk levels...</div>
-          </div>
-          <div class="mt-4 text-right">
-            <button id="update-actions-btn" class="text-red-400 text-sm hover:text-red-300 px-3 py-1 border border-red-500 rounded" onclick="generateRiskActions()">Update Actions →</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Quick Panel Shortcuts -->
-    <section class="flex flex-wrap gap-6 mb-10 justify-center">
-      <a href="warroom.html" class="hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
-      <a href="senario.html" class="hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="hud-action bg-yellow-500 hover:bg-yellow-700" aria-label="Get Insights">Get Insights</a>
-      <a href="links.html" class="hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
-    </section>
-  </main>
-
-  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
-    &copy; 2025 CyberSci-Dash. All rights reserved.
-  </footer>
-
-  <script>
-    // === RISK-BASED ACTION GENERATOR ===
-    function generateRiskActions() {
-      const actionsContainer = document.getElementById('risk-actions-content');
-      if (!actionsContainer) return;
-      
-      // Bear market specific actions based on current data
-      const bearMarketActions = [
-        {
-          priority: 'HIGH',
-          action: 'Raise Cash to 60%+',
-          reason: 'Crypto Risk 78%, Macro Risk 72%',
-          timeframe: 'Immediate',
-          color: 'red'
-        },
-        {
-          priority: 'HIGH', 
-          action: 'Set BTC Buy Alerts',
-          reason: 'Below $40k = Capitulation Zone',
-          timeframe: 'Next 3-6 months',
-          color: 'yellow'
-        },
-        {
-          priority: 'MEDIUM',
-          action: 'Liquidate Altcoins',
-          reason: 'ETH/BTC < 0.060 = Altseason Over',
-          timeframe: 'This week',
-          color: 'orange'
-        },
-        {
-          priority: 'LOW',
-          action: 'DCA Preparation',
-          reason: 'Year 3 Bear - Bottom in 12mo',
-          timeframe: 'Plan ahead',
-          color: 'blue'
-        }
-      ];
-      
-      const actionsHtml = bearMarketActions.map(action => `
-        <div class="bg-gray-900 border-l-4 border-${action.color}-500 p-4 rounded">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-${action.color}-400 text-xs font-bold">${action.priority}</span>
-            <span class="text-gray-400 text-xs">${action.timeframe}</span>
-          </div>
-          <div class="text-white font-semibold mb-1">${action.action}</div>
-          <div class="text-gray-300 text-sm">${action.reason}</div>
-        </div>
-      `).join('');
-      
-      actionsContainer.innerHTML = actionsHtml;
-      
-      // Update button state
-      const updateBtn = document.getElementById('update-actions-btn');
-      if (updateBtn) {
-        updateBtn.textContent = '✓ Updated';
-        setTimeout(() => {
-          updateBtn.textContent = 'Update Actions →';
-        }, 2000);
-      }
-    }
-
-    // === SYSTEM HEALTH MONITORING ===
-    let systemHealth = {
-      dataConnection: false,
-      lastUpdate: null,
-      aiConnection: false,
-      logsConnection: false,
-      errorCount: 0
-    };
-    let latestMarketData = null;
-    let latestAIData = null;
-    
-    function updateConnectionStatus() {
-      const statusEl = document.getElementById('connection-status');
-      const statusDot = statusEl.querySelector('.status-dot');
-      const statusText = statusEl.querySelector('span');
-      
-      if (systemHealth.errorCount > 2) {
-        statusEl.className = 'connection-status status-error';
-        statusDot.style.background = '#ef4444';
-        statusText.textContent = 'Connection Error';
-      } else if (systemHealth.dataConnection && systemHealth.aiConnection && systemHealth.logsConnection) {
-        statusEl.className = 'connection-status status-connected';
-        statusDot.style.background = '#10b981';
-        statusText.textContent = 'Live & Connected';
-      } else {
-        statusEl.className = 'connection-status status-loading';
-        statusDot.style.background = '#f59e0b';
-        statusText.textContent = 'Loading...';
-      }
-    }
-    
-    function checkDataFreshness(lastUpdate) {
-      if (!lastUpdate) return 'No timestamp';
-      
-      const now = new Date();
-      const updated = new Date(lastUpdate);
-      const diffMinutes = Math.floor((now - updated) / (1000 * 60));
-      
-      let freshnessText, freshnessColor;
-      if (diffMinutes < 2) {
-        freshnessText = 'Live data';
-        freshnessColor = '#10b981';
-      } else if (diffMinutes < 10) {
-        freshnessText = `${diffMinutes}min old`;
-        freshnessColor = '#f59e0b';
-      } else {
-        freshnessText = `${diffMinutes}min old (stale)`;
-        freshnessColor = '#ef4444';
-      }
-      
-      const freshnessEl = document.getElementById('data-freshness');
-      if (freshnessEl) {
-        freshnessEl.textContent = freshnessText;
-        freshnessEl.style.color = freshnessColor;
-      }
-      
-      return freshnessText;
-    }
-
-    function updateMacroCommandBrief(data) {
-      const macro = data?.macro || {};
-      const sentiment = data?.sentiment || {};
-
-      const setText = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = (value === null || value === undefined || value === '') ? '—' : String(value);
-      };
-
-      setText('macro-unemployment', macro.unemployment || 'N/A');
-      setText('macro-fed-rate', macro.fed_funds_rate || 'N/A');
-      setText('macro-us10y', macro.us10y_yield || 'N/A');
-      setText('macro-spx', macro.spx || 'N/A');
-      setText('macro-dxy', macro.dxy || 'N/A');
-
-      const macroRisk = Number(macro.risk_level || 0);
-      const fearGreed = Number(sentiment.fear_greed_index || 50);
-      const dxyValue = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-
-      const headlineEl = document.getElementById('macro-alert-headline');
-      if (headlineEl) {
-        if (macroRisk >= 70) {
-          headlineEl.textContent = '⚠ HIGH RISK REGIME: prioritize defense and selective entries';
-          headlineEl.className = 'text-sm px-4 py-2 border border-red-400 rounded-lg bg-gray-900/40 text-red-300';
-        } else if (macroRisk >= 45) {
-          headlineEl.textContent = '📊 TRANSITION REGIME: reduce size, demand stronger confluence';
-          headlineEl.className = 'text-sm px-4 py-2 border border-yellow-400 rounded-lg bg-gray-900/40 text-yellow-300';
-        } else {
-          headlineEl.textContent = '✅ STABLE REGIME: selectively add risk with confirmation';
-          headlineEl.className = 'text-sm px-4 py-2 border border-emerald-400 rounded-lg bg-gray-900/40 text-emerald-300';
-        }
-      }
-
-      const focusItems = [
-        `Jobs: ${macro.unemployment || 'N/A'} | ${macro.unemployment_context || 'Context unavailable'}`,
-        `Rates: Fed ${macro.fed_funds_rate || 'N/A'} | US10Y ${macro.us10y_yield || 'N/A'}`,
-        `Dollar Pressure: DXY ${macro.dxy || 'N/A'} (${dxyValue >= 103 ? 'elevated risk-off' : 'contained'})`,
-        `Broad Market: S&P ${macro.spx || 'N/A'} | Risk level ${macro.risk_level || 'N/A'}/100`,
-        `Sentiment: Fear & Greed ${sentiment.fear_greed_index || 'N/A'} (${fearGreed <= 30 ? 'capitulation watch' : 'neutral/greed drift'})`
-      ];
-
-      const focusListEl = document.getElementById('macro-focus-list');
-      if (focusListEl) {
-        focusListEl.innerHTML = focusItems.map(item => `<li>• ${item}</li>`).join('');
-      }
-
-      const actions = [];
-      if (macroRisk >= 70) {
-        actions.push('Defensive posture: keep position sizes smaller until confluence improves.');
-      }
-      if (dxyValue >= 103) {
-        actions.push('Watch precious metals and defensive sectors for relative strength against dollar pressure.');
-      }
-      if (us10y >= 4.0) {
-        actions.push('Monitor rate-sensitive equities closely; avoid chasing weak breadth rallies.');
-      }
-      if (fearGreed <= 30) {
-        actions.push('Prepare staged entries for capitulation opportunities; avoid all-in execution.');
-      }
-      if (actions.length === 0) {
-        actions.push('No urgent macro shock detected; follow confluence board and wait for trigger alignment.');
-      }
-
-      const actionEl = document.getElementById('macro-actions');
-      if (actionEl) {
-        actionEl.innerHTML = actions.map(item => `<div class="border-l-2 border-red-400 pl-3">${item}</div>`).join('');
-      }
-
-      updateSectorCommandGrid(data);
-      updateEventPlaybookGrid(data, latestAIData);
-    }
-
-    function updateSectorCommandGrid(data) {
-      const macro = data?.macro || {};
-      const sentiment = data?.sentiment || {};
-      const macroRisk = Number(macro.risk_level || 0);
-      const dxyValue = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-      const fearGreed = Number(sentiment.fear_greed_index || 50);
-
-      const setSector = (statusId, noteId, status, note) => {
-        const statusEl = document.getElementById(statusId);
-        const noteEl = document.getElementById(noteId);
-        if (statusEl) statusEl.textContent = status;
-        if (noteEl) noteEl.textContent = note;
-      };
-
-      const techStatus = (us10y >= 4.0 || macroRisk >= 70) ? 'UNDER PRESSURE' : 'RISK-ON WINDOW';
-      const techNote = (us10y >= 4.0)
-        ? 'Higher yields pressure duration-heavy tech; demand stronger breadth.'
-        : 'Yields contained; watch for quality-led momentum.';
-
-      const defenseStatus = (macroRisk >= 65) ? 'RELATIVE STRENGTH' : 'NEUTRAL';
-      const defenseNote = (macroRisk >= 65)
-        ? 'Risk-off regime favors defense/cashflow names.'
-        : 'No macro shock premium currently priced.';
-
-      const metalsStatus = (dxyValue >= 103 && fearGreed <= 35) ? 'ACCUMULATION WATCH' : 'WAIT FOR BREAKOUT';
-      const metalsNote = (dxyValue >= 103)
-        ? 'Strong dollar caps upside short-term; track inflation + policy shifts.'
-        : 'Dollar pressure easing can unlock metals momentum.';
-
-      const etfStatus = (macroRisk >= 70) ? 'DEFENSIVE STACK' : 'BALANCED STACK';
-      const etfNote = (macroRisk >= 70)
-        ? 'Bias VOO/VTV/GLD/ITA over high-beta growth concentration.'
-        : 'Blend broad beta with selective growth exposure.';
-
-      setSector('sector-tech-status', 'sector-tech-note', techStatus, techNote);
-      setSector('sector-defense-status', 'sector-defense-note', defenseStatus, defenseNote);
-      setSector('sector-metals-status', 'sector-metals-note', metalsStatus, metalsNote);
-      setSector('sector-etf-status', 'sector-etf-note', etfStatus, etfNote);
-    }
-
-    function updateEventPlaybookGrid(data, ai) {
-      const macro = data?.macro || {};
-      const sentiment = data?.sentiment || {};
-      const confluence = ai?.confluence || {};
-
-      const confluenceScore = Number(confluence.score || ai?.confidence_score || 5);
-      const dominantSignal = confluence.dominant_signal || 'neutral';
-      const unemployment = Number.parseFloat((macro.unemployment || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-      const fedRate = Number.parseFloat((macro.fed_funds_rate || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-      const spxContext = (macro.spx_context || '').toLowerCase();
-      const fearGreed = Number(sentiment.fear_greed_index || 50);
-      const cpi = Number.parseFloat((macro.cpi || '0').toString().replace(/[^\d.-]/g, '')) || 0;
-
-      const cards = [
-        {
-          title: 'Unemployment Spike Response',
-          trigger: unemployment >= 4.2 ? 'ACTIVE' : 'STANDBY',
-          summary: 'If jobs weaken quickly, shift focus to duration/defensive quality while avoiding leverage.',
-          action: unemployment >= 4.2
-            ? 'Reduce cyclicals, review duration/defensive ETF weighting, use staged entries only.'
-            : 'Watch level: unemployment above 4.2% confirms growth slowdown regime shift.',
-          color: unemployment >= 4.2 ? 'red' : 'yellow'
-        },
-        {
-          title: 'Fed Pivot / Rate Cut Setup',
-          trigger: fedRate <= 4.75 ? 'ACTIVE' : 'MONITORING',
-          summary: 'Rate easing can reprice growth fast, but only if breadth confirms.',
-          action: fedRate <= 4.75
-            ? 'Selectively add quality growth while monitoring dollar + breadth confirmation.'
-            : 'Wait for clear pivot and falling US10Y before adding high-beta risk.',
-          color: fedRate <= 4.75 ? 'emerald' : 'yellow'
-        },
-        {
-          title: 'S&P Breakdown Protocol',
-          trigger: (spxContext.includes('down') || spxContext.includes('risk-off')) ? 'ACTIVE' : 'STANDBY',
-          summary: 'Breakdown + weak breadth usually favors defense over aggressive dip buying.',
-          action: (spxContext.includes('down') || spxContext.includes('risk-off'))
-            ? 'Tighten risk, hedge beta, wait for higher confluence before re-risking.'
-            : 'Activate if 2%+ down day appears on elevated volume.',
-          color: (spxContext.includes('down') || spxContext.includes('risk-off')) ? 'red' : 'yellow'
-        },
-        {
-          title: 'Gold / Metals Momentum',
-          trigger: (cpi >= 3.0 && fearGreed <= 35) ? 'ACTIVE WATCH' : 'MONITORING',
-          summary: 'Inflation persistence + fear often creates favorable metals risk/reward setups.',
-          action: (cpi >= 3.0 && fearGreed <= 35)
-            ? 'Prioritize metals watchlist and staged exposure over chase entries.'
-            : 'Need CPI persistence + weaker dollar for stronger breakout confirmation.',
-          color: (cpi >= 3.0 && fearGreed <= 35) ? 'yellow' : 'blue'
-        },
-        {
-          title: 'AI Confluence Gate',
-          trigger: `${confluenceScore}/10 ${dominantSignal.toUpperCase()}`,
-          summary: 'All tactical actions should pass confluence gate before execution.',
-          action: confluenceScore >= 7
-            ? 'Eligible for sized entries with strict invalidation rules.'
-            : 'Stay selective; favor defense/cash and scenario preparation.',
-          color: confluenceScore >= 7 ? 'emerald' : 'gray'
-        }
-      ];
-
-      const colorClasses = {
-        red: { title: 'text-red-300', trigger: 'text-red-300', border: 'border-red-500/50', stripe: 'border-red-400' },
-        yellow: { title: 'text-yellow-300', trigger: 'text-yellow-300', border: 'border-yellow-500/50', stripe: 'border-yellow-400' },
-        emerald: { title: 'text-emerald-300', trigger: 'text-emerald-300', border: 'border-emerald-500/50', stripe: 'border-emerald-400' },
-        blue: { title: 'text-blue-300', trigger: 'text-blue-300', border: 'border-blue-500/50', stripe: 'border-blue-400' },
-        gray: { title: 'text-gray-300', trigger: 'text-gray-300', border: 'border-gray-500/50', stripe: 'border-gray-400' }
-      };
-
-      const grid = document.getElementById('event-playbook-grid');
-      if (!grid) return;
-
-      grid.innerHTML = cards.map(card => {
-        const c = colorClasses[card.color] || colorClasses.gray;
-        return `
-          <div class="p-4 rounded-xl border ${c.border} bg-gray-900/40">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-base font-orbitron ${c.title}">${card.title}</h3>
-              <span class="text-xs ${c.trigger}">${card.trigger}</span>
-            </div>
-            <div class="text-sm text-gray-200 mb-2">${card.summary}</div>
-            <div class="text-xs text-gray-300 border-l-2 ${c.stripe} pl-3">${card.action}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function loadData() {
-      try {
-        const res = await fetch("./data/data.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-        const d = await res.json();
-        latestMarketData = d;
-        systemHealth.dataConnection = true;
-        systemHealth.lastUpdate = d.updated_utc;
-        
-        const fmt = (x) => (x === null || x === undefined) ? "—" : x;
-
-        // Market overview metrics
-        if (document.getElementById("btc-price")) document.getElementById("btc-price").textContent = fmt(d.crypto?.btc_price_formatted || d.crypto?.btc_usd);
-        if (document.getElementById("eth-price")) document.getElementById("eth-price").textContent = fmt(d.crypto?.eth_price_formatted || d.crypto?.eth_usd);
-        if (document.getElementById("spx-latest")) document.getElementById("spx-latest").textContent = fmt(d.macro?.spx);
-        if (document.getElementById("usd-latest")) document.getElementById("usd-latest").textContent = fmt(d.macro?.dxy);
-        if (document.getElementById("fg-latest")) document.getElementById("fg-latest").textContent = fmt(d.sentiment?.fear_greed_index);
-
-        // Regime card with success styling
-        if (document.getElementById("biasState")) {
-          const biasEl = document.getElementById("biasState");
-          biasEl.textContent = fmt(d.bias);
-          biasEl.className = d.bias === 'Bearish' ? 'text-2xl font-bold text-red-400' : 'text-2xl font-bold text-green-400';
-        }
-        
-        if (document.getElementById("lastUpdate")) {
-          document.getElementById("lastUpdate").textContent = new Date(d.updated_utc).toLocaleString();
-        }
-        
-        if (document.getElementById("nextReview")) {
-          document.getElementById("nextReview").textContent = new Date(d.next_review_utc).toLocaleString();
-        }
-
-        updateMacroCommandBrief(d);
-
-        // Triggers with health check
-        const ts = Array.isArray(d.triggers) ? d.triggers : [];
-        if (document.getElementById("t1")) document.getElementById("t1").textContent = ts[0] || "—";
-        if (document.getElementById("t2")) document.getElementById("t2").textContent = ts[1] || "—";
-        if (document.getElementById("t3")) document.getElementById("t3").textContent = ts[2] || "—";
-        
-        // Update trigger health status
-        const triggerHealth = document.getElementById('trigger-health');
-        if (triggerHealth) {
-          triggerHealth.textContent = ts.length >= 2 ? `✓ ${ts.length} triggers active` : `⚠ Only ${ts.length} triggers`;
-          triggerHealth.className = ts.length >= 2 ? 'mt-2 text-xs text-green-400' : 'mt-2 text-xs text-yellow-400';
-        }
-
-        updateLiveRiskTicker(d);
-        updateRiskGauges(d);
-        updateConnectionStatus();
-        
-      } catch (error) {
-        console.error('Error loading data:', error);
-        systemHealth.dataConnection = false;
-        systemHealth.errorCount++;
-        updateConnectionStatus();
-        
-        // Set fallback values
-        if (document.getElementById("biasState")) {
-          document.getElementById("biasState").textContent = "Connection Error";
-          document.getElementById("biasState").className = "text-2xl font-bold text-red-400";
-        }
-        if (document.getElementById("t1")) document.getElementById("t1").textContent = "Data unavailable";
-        if (document.getElementById("t2")) document.getElementById("t2").textContent = "Check connection";
-        if (document.getElementById("t3")) document.getElementById("t3").textContent = "Retrying...";
-      }
-    }
-    
-    // Parse markdown log entries
-    function parseLogEntries(markdown, isCommandLog = false) {
-      const entries = [];
-      const lines = markdown.split('\n');
-      let currentEntry = null;
-      
-      for (const line of lines) {
-        if (line.startsWith('## 2026-')) {
-          if (currentEntry) entries.push(currentEntry);
-          currentEntry = {
-            date: line.replace('## ', '').trim(),
-            content: []
-          };
-        } else if (currentEntry && line.trim()) {
-          if (isCommandLog) {
-            // Parse command log format
-            if (line.startsWith('- **CMD**:')) {
-              currentEntry.cmd = line.replace('- **CMD**: ', '').trim();
-            } else if (line.startsWith('- **REASON**:')) {
-              currentEntry.reason = line.replace('- **REASON**: ', '').trim();
-            } else if (line.startsWith('- **SIZE**:')) {
-              currentEntry.size = line.replace('- **SIZE**: ', '').trim();
-            }
-          } else {
-            // Parse weekly scans format
-            currentEntry.content.push(line.trim());
-          }
-        }
-      }
-      if (currentEntry) entries.push(currentEntry);
-      return entries.slice(0, 3); // Latest 3
-    }
-    
-    async function loadLogs() {
-      try {
-        // Load weekly scans
-        const scansRes = await fetch('./logs/weekly_scans.md');
-        if (!scansRes.ok) throw new Error(`Scans HTTP ${scansRes.status}`);
-        
-        const scansText = await scansRes.text();
-        const scanEntries = parseLogEntries(scansText);
-        
-        const scansHtml = scanEntries.map(entry => `
-          <div class="border-l-2 border-purple-500 pl-3 py-2">
-            <div class="text-purple-300 text-xs font-mono">${entry.date}</div>
-            <div class="text-gray-100 text-sm mt-1">${entry.content.slice(0, 3).join('<br>')}</div>
-          </div>
-        `).join('');
-        
-        const weeklyScansEl = document.getElementById('weekly-scans-content');
-        if (weeklyScansEl) {
-          weeklyScansEl.innerHTML = scansHtml;
-        }
-        
-        // Load command log
-        const commandRes = await fetch('./logs/command_log.md');
-        if (!commandRes.ok) throw new Error(`Commands HTTP ${commandRes.status}`);
-        
-        const commandText = await commandRes.text();
-        const commandEntries = parseLogEntries(commandText, true);
-        
-        const commandHtml = commandEntries.map(entry => `
-          <div class="border-l-2 border-purple-500 pl-3 py-2">
-            <div class="text-purple-300 text-xs font-mono">${entry.date}</div>
-            <div class="text-orange-300 text-sm font-bold">${entry.cmd || 'Command'}</div>
-            <div class="text-gray-200 text-xs mt-1">${entry.reason || entry.size || ''}</div>
-          </div>
-        `).join('');
-        
-        const commandLogEl = document.getElementById('command-log-content');
-        if (commandLogEl) {
-          commandLogEl.innerHTML = commandHtml;
-        }
-
-        systemHealth.logsConnection = true;
-        updateConnectionStatus();
-        
-      } catch (error) {
-        console.error('Error loading logs:', error);
-        systemHealth.logsConnection = true;
-        updateConnectionStatus();
-
-        const weeklyScansEl = document.getElementById('weekly-scans-content');
-        if (weeklyScansEl) {
-          weeklyScansEl.innerHTML = '<div class="text-yellow-300 text-sm">Scan logs are not deployed in this environment yet.</div>';
-        }
-
-        const commandLogEl = document.getElementById('command-log-content');
-        if (commandLogEl) {
-          commandLogEl.innerHTML = '<div class="text-yellow-300 text-sm">Command logs are not deployed in this environment yet.</div>';
-        }
-      }
-    }
-    
-    async function loadAIInsights() {
-      try {
-        const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`AI HTTP ${res.status}`);
-        const ai = await res.json();
-        latestAIData = ai;
-        
-        // Update ChatGPT analysis section
-        if (document.getElementById('chatgpt-analysis')) {
-          const regime = ai.regime || 'No regime available';
-          const triggers = Array.isArray(ai.top_triggers) ? ai.top_triggers : ['—', '—', '—'];
-          const invalidation = ai.invalidation || 'No invalidation specified';
-          
-          const contextualGuidance = ai.contextual_guidance || 'No guidance available';
-          
-          const analysisHtml = `
-            <div class="mb-3">
-              <strong class="text-emerald-300">Regime:</strong> ${regime}
-            </div>
-            <div class="mb-3">
-              <strong class="text-emerald-300">Top Triggers:</strong>
-              <ul class="list-disc list-inside mt-1 ml-2">
-                <li>${triggers[0] || '—'}</li>
-                <li>${triggers[1] || '—'}</li>
-                <li>${triggers[2] || '—'}</li>
-              </ul>
-            </div>
-            <div class="mb-3">
-              <strong class="text-red-300">Invalidation:</strong> ${invalidation}
-            </div>
-            <div class="border-t border-emerald-700 pt-3 mt-3">
-              <strong class="text-cyan-300">Portfolio Action:</strong>
-              <div class="text-gray-100 mt-1">${contextualGuidance}</div>
-            </div>
-          `;
-          
-          document.getElementById('chatgpt-analysis').innerHTML = analysisHtml;
-        }
-        
-        // Update Grok analysis  
-        if (document.getElementById('grok-analysis')) {
-          const counterView = ai.grok_counter || 'No alternative view available';
-          document.getElementById('grok-analysis').textContent = counterView;
-        }
-
-        // Enhanced confluence score display using new multi-source data
-        if (document.getElementById('confluence-score')) {
-          const confluenceData = ai.confluence || {};
-          const score = confluenceData.score || ai.confidence_score || 0;
-          const dominantSignal = confluenceData.dominant_signal || 'neutral';
-          const agreementPct = confluenceData.agreement_pct || 0;
-          
-          document.getElementById('confluence-score').textContent = score;
-          
-          // Update gauge visual (0-10 scale)
-          const percentage = (score / 10) * 360;
-          const fill = document.getElementById('confluence-fill');
-          if (fill) {
-            let color;
-            if (score <= 3) color = '#ef4444'; // red
-            else if (score <= 6) color = '#f59e0b'; // yellow  
-            else color = '#10b981'; // green
-            
-            fill.style.background = `conic-gradient(${color} 0deg, ${color} ${percentage}deg, #374151 ${percentage}deg, #374151 360deg)`;
-          }
-          
-          // Update signal strength text with confluence info
-          const signalStrengthEl = document.querySelector('#confluence-gauge').parentElement.querySelector('.text-center.text-sm');
-          if (signalStrengthEl && confluenceData.sources) {
-            signalStrengthEl.innerHTML = `
-              <div>Signal Strength</div>
-              <div class="text-xs text-gray-400 mt-1">
-                ${dominantSignal.toUpperCase()} • ${agreementPct}% Agreement
-              </div>
-              <div class="text-xs text-gray-500">
-                ${confluenceData.sources ? confluenceData.sources.length : 3} Sources
-              </div>
-            `;
-          }
-        }
-        
-        // Enhanced action bias with confluence data
-        if (document.getElementById('action-bias')) {
-          const confluenceData = ai.confluence || {};
-          const score = confluenceData.score || ai.confidence_score || 0;
-          const dominantSignal = confluenceData.dominant_signal || 'neutral';
-          const agreementPct = confluenceData.agreement_pct || 0;
-          
-          let actionText;
-          let className = '';
-          
-          if (score >= 8 && agreementPct >= 70) {
-            if (dominantSignal === 'bullish') {
-              actionText = `🟢 HIGH CONFLUENCE BULLISH<br>Sources agree: Add risk on dips`;
-              className = 'text-green-300';
-            } else if (dominantSignal === 'bearish') {
-              actionText = `🔴 HIGH CONFLUENCE BEARISH<br>Sources agree: Reduce exposure, hedge`;
-              className = 'text-red-300';
-            } else {
-              actionText = `🟡 CONFLUENCE NEUTRAL<br>Mixed signals: Stay defensive`;
-              className = 'text-yellow-300';
-            }
-          } else if (score >= 6) {
-            actionText = `📊 MODERATE CONFLUENCE<br>${dominantSignal.toUpperCase()}: ${agreementPct}% agreement, proceed cautiously`;
-            className = 'text-cyan-300';
-          } else {
-            actionText = `⚠️ LOW CONFLUENCE<br>Sources diverge: Wait for clarity`;
-            className = 'text-gray-300';
-          }
-          
-          const actionEl = document.getElementById('action-bias');
-          actionEl.innerHTML = actionText;
-          actionEl.className = `text-sm leading-relaxed ${className}`;
-          
-          // Show individual source signals if available
-          if (confluenceData.sources && confluenceData.sources.length > 0) {
-            const sourcesHtml = confluenceData.sources.map(source => {
-              const signalColor = source.signal === 'bullish' ? 'text-green-400' : 
-                                 source.signal === 'bearish' ? 'text-red-400' : 'text-yellow-400';
-              return `<div class="text-xs ${signalColor}">${source.source}: ${source.signal} (${source.strength})</div>`;
-            }).join('');
-            
-            actionEl.innerHTML += `<div class="mt-3 pt-2 border-t border-gray-600">${sourcesHtml}</div>`;
-          }
-        }
-        
-        // Update last AI update time
-        if (document.getElementById('ai-last-update')) {
-          const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
-          document.getElementById('ai-last-update').textContent = updateTime;
-        }
-
-        if (latestMarketData) {
-          updateEventPlaybookGrid(latestMarketData, latestAIData);
-        }
-
-        systemHealth.aiConnection = true;
-        updateConnectionStatus();
-        
-      } catch (error) {
-        console.error('Error loading AI insights:', error);
-        systemHealth.aiConnection = false;
-        systemHealth.errorCount++;
-        updateConnectionStatus();
-        
-        // Graceful fallback
-        if (document.getElementById('chatgpt-analysis')) {
-          document.getElementById('chatgpt-analysis').innerHTML = '<span class="text-red-400">❌ AI analysis connection failed</span>';
-        }
-        if (document.getElementById('grok-analysis')) {
-          document.getElementById('grok-analysis').innerHTML = '<span class="text-red-400">❌ Counter-analysis unavailable</span>';
-        }
-      }
-    }
-    
-    // === AUTO-REFRESH SYSTEM === 
-    // Refresh data every 30 seconds for live updates
-    let autoRefreshInterval;
-    
-    function startAutoRefresh() {
-      autoRefreshInterval = setInterval(() => {
-        // Stagger API calls to prevent throttling
-        setTimeout(() => loadData(), 0);
-        setTimeout(() => loadAIInsights(), 5000);
-        setTimeout(() => loadLogs(), 10000);
-        console.log('Auto-refreshed data at:', new Date().toLocaleTimeString());
-      }, 120000); // 2 minutes - more API-friendly
-    }
-    
-    function stopAutoRefresh() {
-      if (autoRefreshInterval) {
-        clearInterval(autoRefreshInterval);
-      }
-    }
-    
-    // Update ticker with live risk data
-    function updateLiveRiskTicker(data) {
-      const ticker = document.getElementById('risk-alert-ticker');
-      if (ticker && data.crypto && data.macro) {
-        const cryptoRisk = data.crypto.risk_level || 0;
-        const macroRisk = data.macro.risk_level || 0;
-        const cycleStatus = data.crypto.cycle_status || 'Unknown';
-        const whaleActivity = data.crypto.whale_activity || 'Unknown';
-        const fedStatus = data.macro.fed_rate_context ? 'Fed Tightening' : 'Fed Neutral';
-        
-        ticker.innerHTML = `LIVE ALERT: Crypto Risk ${cryptoRisk}% | Macro Risk ${macroRisk}% | ${cycleStatus} | ${whaleActivity} | ${fedStatus} | Updated: ${new Date().toLocaleTimeString()} |`;
-      }
-    }
-
-    // === RISK GAUGE UPDATES ===
-    function updateRiskGauges(data) {
-      // Update Crypto Risk Gauge
-      const cryptoGauge = document.getElementById('crypto-risk-gauge');
-      if (cryptoGauge && data.crypto && data.crypto.risk_level) {
-        const cryptoRisk = data.crypto.risk_level;
-        const cryptoColor = getRiskColor(cryptoRisk);
-        const cryptoLabel = getRiskLabel(cryptoRisk);
-        
-        cryptoGauge.innerHTML = `
-          <div class="risk-gauge-container">
-            <div class="risk-gauge-arc" style="background: conic-gradient(${cryptoColor} 0deg, ${cryptoColor} ${(cryptoRisk/100) * 270}deg, #374151 ${(cryptoRisk/100) * 270}deg, #374151 270deg);"></div>
-            <div class="risk-gauge-center">
-              <div class="risk-percentage">${cryptoRisk}%</div>
-              <div class="risk-label">${cryptoLabel}</div>
-            </div>
-          </div>
-          <div class="risk-context mt-2 text-xs text-gray-400">${data.crypto.risk_context || 'Risk assessment based on current conditions'}</div>
-        `;
-      }
-      
-      // Update Macro Risk Gauge
-      const macroGauge = document.getElementById('macro-risk-gauge');
-      if (macroGauge && data.macro && data.macro.risk_level) {
-        const macroRisk = data.macro.risk_level;
-        const macroColor = getRiskColor(macroRisk);
-        const macroLabel = getRiskLabel(macroRisk);
-        
-        macroGauge.innerHTML = `
-          <div class="risk-gauge-container">
-            <div class="risk-gauge-arc" style="background: conic-gradient(${macroColor} 0deg, ${macroColor} ${(macroRisk/100) * 270}deg, #374151 ${(macroRisk/100) * 270}deg, #374151 270deg);"></div>
-            <div class="risk-gauge-center">
-              <div class="risk-percentage">${macroRisk}%</div>
-              <div class="risk-label">${macroLabel}</div>
-            </div>
-          </div>
-          <div class="risk-context mt-2 text-xs text-gray-400">${data.macro.risk_context || 'Risk assessment based on current conditions'}</div>
-        `;
-      }
-    }
-    
-    function getRiskColor(riskLevel) {
-      if (riskLevel <= 30) return '#10b981'; // Green - Low Risk
-      if (riskLevel <= 60) return '#f59e0b'; // Yellow - Medium Risk 
-      return '#ef4444'; // Red - High Risk
-    }
-    
-    function getRiskLabel(riskLevel) {
-      if (riskLevel <= 30) return 'LOW RISK';
-      if (riskLevel <= 60) return 'MEDIUM RISK';
-      return 'HIGH RISK';
-    }
-
-    // Load all data and start auto-refresh
-    Promise.allSettled([loadData(), loadLogs(), loadAIInsights()])
-      .then(() => {
-        console.log('Dashboard loaded, starting auto-refresh...');
-        startAutoRefresh();
-      })
-      .catch(console.error);
-    
-    // Stop auto-refresh when page is hidden to save resources
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        stopAutoRefresh();
-      } else {
-        startAutoRefresh();
-      }
-    });
-  </script>
-
-  <script src="js/lindy-alerts.js"></script>
 </body>
 </html>
