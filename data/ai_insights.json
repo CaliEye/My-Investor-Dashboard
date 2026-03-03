@@ -1,13 +1,13 @@
 {
-  "updated_utc": "2026-03-03T05:16:54.732009+00:00",
-  "regime": "Bearish Downtrend",
+  "updated_utc": "2026-03-03T05:42:58.632116+00:00",
+  "regime": "Bear Market",
   "top_triggers": [
     "Fed tightening",
     "DXY strength",
     "Crypto market cap decline"
   ],
   "invalidation": "BTC price recovery and stabilization",
-  "contextual_guidance": "Given the current bearish market state, it is advisable to hold off on any new crypto investments. Monitor the Fed's actions and the strength of the DXY for potential market shifts. Consider diversifying the portfolio with non-crypto assets to hedge against further crypto market cap decline.",
+  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets. Monitor the Fed's actions and DXY strength closely.",
   "grok_counter": "Grok API key not configured",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
