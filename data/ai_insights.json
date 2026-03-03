@@ -1,13 +1,13 @@
 {
-  "updated_utc": "2026-03-03T05:42:58.632116+00:00",
-  "regime": "Bear Market",
+  "updated_utc": "2026-03-03T06:21:58.685636+00:00",
+  "regime": "Bearish Downtrend",
   "top_triggers": [
-    "Fed tightening",
-    "DXY strength",
-    "Crypto market cap decline"
+    "Fed tightening accelerating",
+    "DXY strength crushing risk assets",
+    "Crypto market cap declining -35% from peak"
   ],
-  "invalidation": "BTC price recovery and stabilization",
-  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets. Monitor the Fed's actions and DXY strength closely.",
+  "invalidation": "Reversal in Fed tightening policy or DXY weakening",
+  "contextual_guidance": "Given the bearish market conditions and lack of recent portfolio actions, consider holding cash or short-term treasury bonds to hedge against further market declines. Monitor the Fed's policy and DXY closely for any signs of reversal.",
   "grok_counter": "Grok API key not configured",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
