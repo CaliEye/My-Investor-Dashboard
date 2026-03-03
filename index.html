@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
   <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/matrix-theme.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
   <!-- Enhanced JavaScript modules -->
   <script src="js/config.js"></script>
   <script src="js/data-manager.js"></script>
+  <script src="js/matrix-rain.js"></script>
   <!-- System Health & Connection Status -->
   <style>
     .connection-status {
@@ -61,18 +63,18 @@
   </style>
 </head>
 <body class="bg-gray-900 text-white font-inter">
-  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
+  <header class="px-6 py-4 flex justify-between items-center border-b border-matrix-green shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">CyberSci-Dash // Intelligence Hub</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="Dashboard">Dashboard</a>
-      <a href="warroom.html" class="hover:text-cyan-400" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
-      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
-      <a href="senario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
-      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
-      <a href="system_test.html" class="hover:text-green-400 text-xs" aria-label="System Test" title="Run system health check">⚡Test</a>
+      <a href="index.html" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Dashboard</a>
+      <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright" aria-label="War Room">War Room</a>
+      <a href="macro.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Macro">Macro</a>
+      <a href="crypto.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Crypto">Crypto</a>
+      <a href="sentiment.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Sentiment">Sentiment</a>
+      <a href="senario.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Insights">Insights</a>
+      <a href="links.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Quick Links">Quick Links</a>
+      <a href="system_test.html" class="text-matrix-warning hover:text-matrix-bright text-xs" aria-label="System Test" title="Run system health check">⚡Test</a>
     </nav>
   </header>
 
@@ -84,23 +86,23 @@
 
   <main class="p-6 max-w-7xl mx-auto">
     <!-- Regime + Trigger Card -->
-    <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-cyan-300 mb-4 tracking-widest">InvestorOS — Regime</h2>
+    <section class="mb-8 rounded-2xl border-2 border-matrix-green shadow-matrix-green/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime</h2>
 
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
-          <div class="text-sm text-gray-300">Bias</div>
-          <div id="biasState" class="text-2xl font-bold">Loading...</div>
-          <div class="text-xs text-gray-400 mt-2">Updated: <span id="lastUpdate">Connecting...</span></div>
-          <div class="data-freshness" id="data-freshness">Checking data freshness...</div>
+        <div class="p-4 rounded-xl border border-matrix-green/60 bg-gray-900/40">
+          <div class="text-sm text-matrix-dim">BIAS.STATUS</div>
+          <div id="biasState" class="text-2xl font-bold">LOADING...</div>
+          <div class="text-xs text-matrix-dim mt-2">LAST.UPDATE: <span id="lastUpdate">CONNECTING...</span></div>
+          <div class="data-freshness" id="data-freshness">CHECKING.DATA.INTEGRITY...</div>
         </div>
 
-        <div class="p-4 rounded-xl border border-cyan-400/60 bg-gray-900/40">
-          <div class="text-sm text-gray-300 mb-2">Top Triggers</div>
+        <div class="p-4 rounded-xl border border-matrix-green/60 bg-gray-900/40">
+          <div class="text-sm text-matrix-dim mb-2">ACTIVE.TRIGGERS</div>
           <ul class="space-y-1 text-sm" id="triggers-list">
-            <li><span id="t1">Loading...</span></li>
-            <li><span id="t2">Loading...</span></li>
-            <li><span id="t3">Loading...</span></li>
+            <li><span id="t1">LOADING.TRIGGER.01...</span></li>
+            <li><span id="t2">LOADING.TRIGGER.02...</span></li>
+            <li><span id="t3">LOADING.TRIGGER.03...</span></li>
           </ul>
           <div class="mt-2 text-xs" id="trigger-health">Checking triggers...</div>
         </div>
@@ -557,7 +559,10 @@
           </div>
         `).join('');
         
-        document.getElementById('weekly-scans-content').innerHTML = scansHtml;
+        const weeklyScansEl = document.getElementById('weekly-scans-content');
+        if (weeklyScansEl) {
+          weeklyScansEl.innerHTML = scansHtml;
+        }
         
         // Load command log
         const commandRes = await fetch('./logs/command_log.md');
@@ -574,18 +579,36 @@
           </div>
         `).join('');
         
-        document.getElementById('command-log-content').innerHTML = commandHtml;
+        const commandLogEl = document.getElementById('command-log-content');
+        if (commandLogEl) {
+          commandLogEl.innerHTML = commandHtml;
+        }
+
+        systemHealth.logsConnection = true;
+        updateConnectionStatus();
         
       } catch (error) {
         console.error('Error loading logs:', error);
-        document.getElementById('weekly-scans-content').innerHTML = '<div class="text-red-400 text-sm">Error loading scan logs</div>';
-        document.getElementById('command-log-content').innerHTML = '<div class="text-red-400 text-sm">Error loading command logs</div>';
+        systemHealth.logsConnection = false;
+        systemHealth.errorCount++;
+        updateConnectionStatus();
+
+        const weeklyScansEl = document.getElementById('weekly-scans-content');
+        if (weeklyScansEl) {
+          weeklyScansEl.innerHTML = '<div class="text-red-400 text-sm">Error loading scan logs</div>';
+        }
+
+        const commandLogEl = document.getElementById('command-log-content');
+        if (commandLogEl) {
+          commandLogEl.innerHTML = '<div class="text-red-400 text-sm">Error loading command logs</div>';
+        }
       }
     }
     
     async function loadAIInsights() {
       try {
         const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`AI HTTP ${res.status}`);
         const ai = await res.json();
         
         // Update ChatGPT analysis section
@@ -712,6 +735,9 @@
           const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
           document.getElementById('ai-last-update').textContent = updateTime;
         }
+
+        systemHealth.aiConnection = true;
+        updateConnectionStatus();
         
       } catch (error) {
         console.error('Error loading AI insights:', error);
@@ -817,7 +843,7 @@
     }
 
     // Load all data and start auto-refresh
-    Promise.all([loadData(), loadLogs(), loadAIInsights()])
+    Promise.allSettled([loadData(), loadLogs(), loadAIInsights()])
       .then(() => {
         console.log('Dashboard loaded, starting auto-refresh...');
         startAutoRefresh();
