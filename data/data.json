@@ -1,153 +1,162 @@
 {
-  "updated_utc": "2026-03-03T09:00:00Z",
+  "updated_utc": "2026-03-03T15:45:59.603980+00:00",
   "bias": "Bearish",
-  "regime": "Late-Cycle Distribution",
-
-  "gold": {
-    "price": 2940.50,
-    "change_pct": 0.42,
-    "signal": "ACCUMULATION - Institutional bid holding",
-    "support": 2880,
-    "resistance": 3000,
-    "note": "Gold outperforming equities. Geopolitical + rate-cut thesis intact."
-  },
-
-  "spy": {
-    "price": 558.20,
-    "change_pct": -0.87,
-    "signal": "DISTRIBUTION - Breadth deteriorating",
-    "support": 540,
-    "resistance": 580,
-    "note": "S&P breadth narrowing. Only mega-cap holding index. Classic late-cycle."
-  },
-
-  "yield10y": {
-    "rate": 4.28,
-    "change_pct": 0.03,
-    "signal": "ELEVATED - Fed holding restrictive",
-    "note": "10Y above 4.2% = credit tightening. Watch for inversion signal."
-  },
-
-  "unemployment": {
-    "rate": 4.1,
-    "change": 0.1,
-    "signal": "NORMALIZING - Mild cooling",
-    "note": "FRED UNRATE. Trending up from 3.4% cycle low. Softening labor market."
-  },
-
-  "fedFunds": {
-    "rate": 4.33,
-    "change": 0.0,
-    "signal": "ELEVATED - Holding pattern",
-    "note": "FRED FEDFUNDS. No cut yet. Market pricing 2 cuts in 2026."
-  },
-
-  "sectors": {
-    "GLD":  { "price": 245.80, "change_pct":  0.38, "signal": "LONG - Accumulation" },
-    "XLE":  { "price":  88.40, "change_pct": -0.22, "signal": "NEUTRAL - Ranging" },
-    "XLF":  { "price":  42.10, "change_pct": -1.10, "signal": "DISTRIBUTION - Watch" },
-    "XLK":  { "price": 218.50, "change_pct": -1.45, "signal": "DISTRIBUTION - Breadth weak" },
-    "XLU":  { "price":  71.20, "change_pct":  0.65, "signal": "LONG - Defensive rotation" },
-    "XLV":  { "price": 148.30, "change_pct":  0.18, "signal": "NEUTRAL - Holding" },
-    "TLT":  { "price":  88.90, "change_pct":  0.55, "signal": "ACCUMULATION - Rate cut play" },
-    "DXY":  { "price": 104.20, "change_pct":  0.12, "signal": "ELEVATED - Risk headwind" }
-  },
-
-  "scan_log": [
-    { "date": "2026-03-03", "note": "Gold holding $2,900 support. Institutional accumulation confirmed via volume." },
-    { "date": "2026-03-02", "note": "S&P breadth: only 48% of stocks above 50-DMA. Narrow rally = distribution." },
-    { "date": "2026-03-01", "note": "TLT breaking out. Bond market pricing 2 Fed cuts in 2026." },
-    { "date": "2026-02-28", "note": "XLU + XLV outperforming XLK. Classic defensive rotation = late-cycle signal." }
-  ],
-
-  "command_log": [
-    { "timestamp": "2026-03-03T09:00:00Z", "action": "ENDGAME initialized. Macro-first mode active. Crypto demoted to sub-page." },
-    { "timestamp": "2026-03-02T16:00:00Z", "action": "Wyckoff scan complete. Distribution phase confirmed on S&P and Nasdaq." },
-    { "timestamp": "2026-03-01T09:00:00Z", "action": "Weekly confluence report generated. Gold + TLT + Defensives = risk-off stack." }
-  ],
-
   "triggers": [
-    "Liquidity: Fed tightening - balance sheet contracting",
-    "Dollar: DXY above 104 crushing risk assets",
-    "Breadth: S&P 500 breadth deteriorating - 48% above 50-DMA",
-    "Gold: Outperforming equities - geopolitical + rate-cut bid"
+    "Liquidity: Fed tightening accelerating",
+    "Dollar: DXY strength crushing risk assets",
+    "Breadth: Crypto market cap declining -35% from peak"
   ],
-
-  "next_review_utc": "2026-03-10T09:00:00Z",
-
+  "next_review_utc": "2026-03-03T19:45:59.603980+00:00",
   "crypto": {
-    "btc_usd": 65000,
-    "eth_usd": 2800,
-    "btc_price_formatted": "$65,000",
-    "eth_price_formatted": "$2,800",
-    "total_market_cap": "$2.1T",
-    "btc_dominance": "59.2%",
-    "cycle_status": "Post-halving accumulation phase",
+    "btc_usd": 43200,
+    "eth_usd": 2650,
+    "btc_price_formatted": "$43,200",
+    "eth_price_formatted": "$2,650",
+    "total_market_cap": "$1.6T",
+    "btc_dominance": "58.7%",
+    "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
     "nvt_ratio": "Moderate",
-    "whale_activity": "Accumulating",
-    "stablecoin_flows": "Inflow (buying pressure)",
-    "exchange_flows": "Net Outflow (holding)",
-    "longs_liquidation": "$62,000",
-    "shorts_liquidation": "$68,000",
-    "heatmap_status": "Liquidity clusters at $62k and $68k",
-    "btc_support": "$62,000",
-    "btc_resistance": "$68,000",
-    "eth_support": "$2,600",
-    "eth_resistance": "$3,200",
+    "whale_activity": "Distributing",
+    "stablecoin_flows": "Outflow (selling pressure)",
+    "exchange_flows": "Net Inflow (selling)",
+    "longs_liquidation": "$41,500",
+    "shorts_liquidation": "$45,800",
+    "heatmap_status": "Heavy liquidation zones",
+    "btc_support": "$40,000",
+    "btc_resistance": "$47,000",
+    "eth_support": "$2,400",
+    "eth_resistance": "$2,900",
     "watch_rules_2026": [
-      "BTC above $70k = bull run confirmation",
-      "ETH/BTC ratio > 0.065 = altseason signal",
-      "MVRV Z-score > 3.5 = distribution zone",
-      "Stablecoin supply growing = liquidity building"
+      "BTC below $40k = capitulation zone",
+      "ETH/BTC ratio < 0.060 = altseason over",
+      "MVRV Z-score < -1 = accumulation zone",
+      "Stablecoin supply declining = liquidity drain"
     ],
-    "risk_level": 45,
-    "risk_context": "Moderate Risk (Post-halving accumulation. Bull run target Oct/Nov 2026.)",
+    "risk_level": 78,
+    "risk_context": "High Risk (Bear market conditions: heavy selling pressure, whale distribution, funding negative)",
     "risk_breakdown": [
-      "Price Action: Holding above $60k - accumulation zone",
-      "On-Chain: Whale accumulation active, exchange outflows elevated",
-      "Sentiment: Fear at 14/100 - extreme fear = contrarian long signal",
-      "Cycle Position: Post-halving - historically 12-18 months to ATH"
+      "Price Action: 37% below ATH - deep correction territory",
+      "On-Chain: Whale distribution active, exchange inflows elevated",
+      "Sentiment: Fear at 28/100, funding rates negative (shorts paying)",
+      "Cycle Position: Year 3 bear market - typically 6-18 months from bottom"
     ]
   },
-
   "macro": {
-    "cpi": "3.1%",
-    "cpi_context": "Above Target (Fed target: 2.0% - inflation sticky)",
-    "unemployment": "4.1%",
-    "unemployment_context": "Normalizing (trending up from 3.4% cycle low)",
-    "gdp_growth": "2.3%",
-    "gdp_context": "Moderate (slowing from 3%+ peak - late cycle)",
-    "fed_funds_rate": "4.33%",
-    "fed_rate_context": "Restrictive (above neutral ~2.5% - holding pattern)",
-    "dxy": "104.2",
-    "dxy_context": "Elevated (strong dollar pressuring commodities and risk assets)",
-    "us10y_yield": "4.28%",
-    "us10y_context": "High (above 4% = credit tightening conditions)",
-    "risk_level": 68,
-    "risk_context": "Elevated Risk - Late cycle distribution. Defensive rotation underway.",
-    "spx": "558.20",
-    "spx_context": "Breadth deteriorating. Mega-cap holding index. Classic distribution.",
+    "cpi": "3.2%",
+    "cpi_context": "Above Target (Fed target: 2.0% - inflation running hot)",
+    "unemployment": "3.8%",
+    "unemployment_context": "Low (near full employment - historically tight)",
+    "gdp_growth": "2.1%",
+    "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
+    "fed_funds_rate": "5.25%",
+    "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
+    "dxy": "103.2",
+    "dxy_context": "Elevated (strong dollar pressuring commodities/risk assets)",
+    "us10y_yield": "4.15%",
+    "us10y_context": "High (above historical 3.5% average - credit tightening)",
+    "risk_level": 72,
+    "risk_context": "High Risk (0-30: Low | 31-60: Moderate | 61-100: High)",
+    "spx": "4,450",
+    "spx_context": "Down 6% from ATH (risk-off environment pressuring equities)",
     "trigger_breakdown": [
-      "Liquidity: Fed balance sheet contracting",
-      "Dollar: DXY above 104 - risk headwind",
-      "Breadth: Only 48% of S&P stocks above 50-DMA",
-      "Gold: Outperforming - flight to safety bid active"
+      "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
+      "Dollar: DXY holding above 103, pressure on risk assets",
+      "Breadth: S&P 500 breadth deteriorating, 65% above 50-DMA"
     ]
   },
-
   "sentiment": {
-    "fear_greed_index": 14,
-    "fear_greed_label": "Extreme Fear",
-    "fear_greed_meaning": "Extreme fear across markets. Contrarian long signal developing.",
-    "btc_sentiment": "Cautious accumulation",
-    "eth_sentiment": "Neutral",
-    "alt_sentiment": "Fear",
-    "options_skew": "Put-heavy (hedging)",
-    "social_volume": "Declining (-18% vs avg)",
-    "social_volume_trend": "-18%",
-    "funding_rate": "-0.01% / 8h",
-    "social_status": "QUIET FEAR",
-    "funding_status": "SHORTS DOMINANT",
+    "fear_greed_index": 28,
+    "fear_greed_label": "Fear",
+    "fear_greed_meaning": "Market in fear territory. Potential oversold conditions developing.",
+    "btc_sentiment": "Cautious",
+    "eth_sentiment": "Bearish",
+    "alt_sentiment": "Capitulation",
+    "options_skew": "Call-heavy (hedging)",
+    "btc_extreme": "Moderate fear",
+    "eth_extreme": "Oversold zone",
+    "alt_extreme": "Despair/Capitulation",
+    "crowd_btc": "Mixed (45% bulls, heavy doubt)",
+    "crowd_eth": "Bearish (35% bulls)",
+    "crowd_alt": "Capitulation/Giving up",
+    "crowd_stable": "Flight to safety (high deployment)",
+    "social_volume": "Declining (-25% vs avg)",
+    "social_volume_trend": "-25%",
+    "funding_extremes": "Shorts paying premium",
+    "funding_rate": "-0.025% / 8h",
+    "oi_clusters": "Heavy at $40k BTC support",
+    "oi_main_level": "$40k BTC",
+    "social_status": "QUIET DESPAIR",
+    "funding_status": "SHORT HEAVY",
     "oi_status": "SUPPORT TEST"
+  },
+  "sector_etfs": {
+    "updated_utc": "2026-03-03T15:46:01.135910+00:00",
+    "sectors": {
+      "tech": {
+        "symbol": "QQQ",
+        "price": 593.6,
+        "price_formatted": "$593.60",
+        "change_pct_day": -2.38,
+        "change_pct_5d": -2.35,
+        "volume": 33585991,
+        "volume_vs_20d": 0.49,
+        "trend": "UNDER PRESSURE",
+        "label": "TECH / NASDAQ-100"
+      },
+      "defense": {
+        "symbol": "ITA",
+        "price": 242.24,
+        "price_formatted": "$242.24",
+        "change_pct_day": -3.33,
+        "change_pct_5d": -0.36,
+        "volume": 723087,
+        "volume_vs_20d": 0.76,
+        "trend": "NEUTRAL / MIXED",
+        "label": "DEFENSE"
+      },
+      "metals": {
+        "symbol": "GLD",
+        "price": 464.47,
+        "price_formatted": "$464.47",
+        "change_pct_day": -5.21,
+        "change_pct_5d": -2.14,
+        "volume": 10926240,
+        "volume_vs_20d": 0.74,
+        "trend": "UNDER PRESSURE",
+        "label": "PRECIOUS METALS"
+      },
+      "broad": {
+        "symbol": "VOO",
+        "price": 617.48,
+        "price_formatted": "$617.48",
+        "change_pct_day": -2.19,
+        "change_pct_5d": -2.33,
+        "volume": 5975348,
+        "volume_vs_20d": 0.64,
+        "trend": "UNDER PRESSURE",
+        "label": "BROAD MARKET"
+      }
+    },
+    "basket": {
+      "symbols": [
+        "VOO",
+        "QQQ",
+        "XLI",
+        "ITA",
+        "GLD"
+      ],
+      "equal_weight_change_pct_day": -3.25,
+      "leader": {
+        "symbol": "VOO",
+        "change_pct_day": -2.19,
+        "trend": "UNDER PRESSURE"
+      },
+      "laggard": {
+        "symbol": "GLD",
+        "change_pct_day": -5.21,
+        "trend": "UNDER PRESSURE"
+      },
+      "regime_tilt": "DEFENSIVE STACK"
+    }
   }
 }
