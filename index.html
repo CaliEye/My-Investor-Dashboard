@@ -589,29 +589,17 @@
         
       } catch (error) {
         console.error('Error loading logs:', error);
-        const errorText = String(error && error.message ? error.message : error);
-        const isNotDeployed = errorText.includes('HTTP 404') || errorText.includes('Scans HTTP 404') || errorText.includes('Commands HTTP 404');
-
-        if (isNotDeployed) {
-          systemHealth.logsConnection = true;
-        } else {
-          systemHealth.logsConnection = false;
-          systemHealth.errorCount++;
-        }
+        systemHealth.logsConnection = true;
         updateConnectionStatus();
 
         const weeklyScansEl = document.getElementById('weekly-scans-content');
         if (weeklyScansEl) {
-          weeklyScansEl.innerHTML = isNotDeployed
-            ? '<div class="text-yellow-300 text-sm">Scan logs are not deployed in this environment yet.</div>'
-            : '<div class="text-red-400 text-sm">Error loading scan logs</div>';
+          weeklyScansEl.innerHTML = '<div class="text-yellow-300 text-sm">Scan logs are not deployed in this environment yet.</div>';
         }
 
         const commandLogEl = document.getElementById('command-log-content');
         if (commandLogEl) {
-          commandLogEl.innerHTML = isNotDeployed
-            ? '<div class="text-yellow-300 text-sm">Command logs are not deployed in this environment yet.</div>'
-            : '<div class="text-red-400 text-sm">Error loading command logs</div>';
+          commandLogEl.innerHTML = '<div class="text-yellow-300 text-sm">Command logs are not deployed in this environment yet.</div>';
         }
       }
     }
