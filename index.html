@@ -7,8 +7,11 @@
   <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
   <link rel="stylesheet" href="css/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
+  <!-- Enhanced JavaScript modules -->
+  <script src="js/config.js"></script>
+  <script src="js/data-manager.js"></script>
   <!-- System Health & Connection Status -->
   <style>
     .connection-status {
@@ -485,6 +488,24 @@
           triggerHealth.textContent = ts.length >= 2 ? `✓ ${ts.length} triggers active` : `⚠ Only ${ts.length} triggers`;
           triggerHealth.className = ts.length >= 2 ? 'mt-2 text-xs text-green-400' : 'mt-2 text-xs text-yellow-400';
         }
+
+        updateConnectionStatus();
+        
+      } catch (error) {
+        console.error('Error loading data:', error);
+        systemHealth.dataConnection = false;
+        systemHealth.errorCount++;
+        updateConnectionStatus();
+        
+        // Set fallback values
+        if (document.getElementById("biasState")) {
+          document.getElementById("biasState").textContent = "Connection Error";
+          document.getElementById("biasState").className = "text-2xl font-bold text-red-400";
+        }
+        if (document.getElementById("t1")) document.getElementById("t1").textContent = "Data unavailable";
+        if (document.getElementById("t2")) document.getElementById("t2").textContent = "Check connection";
+        if (document.getElementById("t3")) document.getElementById("t3").textContent = "Retrying...";
+      }
     }
     
     // Parse markdown log entries
@@ -714,9 +735,12 @@
     
     function startAutoRefresh() {
       autoRefreshInterval = setInterval(() => {
-        Promise.all([loadData(), loadLogs(), loadAIInsights()]).catch(console.error);
+        // Stagger API calls to prevent throttling
+        setTimeout(() => loadData(), 0);
+        setTimeout(() => loadAIInsights(), 5000);
+        setTimeout(() => loadLogs(), 10000);
         console.log('Auto-refreshed data at:', new Date().toLocaleTimeString());
-      }, 30000); // 30 seconds
+      }, 120000); // 2 minutes - more API-friendly
     }
     
     function stopAutoRefresh() {
