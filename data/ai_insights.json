@@ -1,16 +1,16 @@
 {
-  "updated_utc": "2026-02-25T14:30:00Z",
-  "regime": "Bear Market Correction",
+  "updated_utc": "2026-03-03T05:16:54.732009+00:00",
+  "regime": "Bearish Downtrend",
   "top_triggers": [
-    "BTC breaking below $45k support with volume",
-    "Altcoin dominance collapsing (-60% from peak)",
-    "Fed hawkish stance accelerating crypto sell-off"
+    "Fed tightening",
+    "DXY strength",
+    "Crypto market cap decline"
   ],
-  "invalidation": "BTC reclaim above $47k with strong volume or Fed pivot signals",
-  "contextual_guidance": "Bear market conditions require extreme caution. Consider DCA into BTC only below $40k. Avoid altcoins entirely until clear reversal signals. Current position should be 80%+ cash/stablecoins.",
-  "grok_counter": "Institutional adoption continues despite price action. MicroStrategy, El Salvador doubling down. This could be a generational accumulation opportunity disguised as despair.",
-  "confidence_score": 8,
-  "btc_price_snapshot": 43200,
-  "fear_greed_snapshot": 28,
+  "invalidation": "BTC price recovery and stabilization",
+  "contextual_guidance": "Given the current bearish market state, it is advisable to hold off on any new crypto investments. Monitor the Fed's actions and the strength of the DXY for potential market shifts. Consider diversifying the portfolio with non-crypto assets to hedge against further crypto market cap decline.",
+  "grok_counter": "Grok API key not configured",
+  "confidence_score": 5,
+  "btc_price_snapshot": "N/A",
+  "fear_greed_snapshot": 50,
   "next_update": "6 hours"
 }
