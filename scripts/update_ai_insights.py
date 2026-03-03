@@ -249,16 +249,29 @@ def main():
         webhook_url = os.getenv('LINDY_WEBHOOK_URL')
         if webhook_url:
             try:
+                # Determine signal direction based on regime
+                regime_lower = ai_insights['regime'].lower()
+                if 'bear' in regime_lower or 'sell' in regime_lower or 'short' in regime_lower:
+                    signal_direction = 'short'
+                elif 'bull' in regime_lower or 'buy' in regime_lower or 'long' in regime_lower:
+                    signal_direction = 'long'
+                else:
+                    signal_direction = 'neutral'
+                
+                # Create Lindy-compatible payload
                 webhook_data = {
-                    "text": f"🚨 High Confidence Signal (Score: {confidence_score})\n"
-                           f"Regime: {ai_insights['regime']}\n"
-                           f"Key Risk: {grok_result[:100]}...\n"
-                           f"Invalidation: {ai_insights['invalidation']}"
+                    "asset": "BTC",
+                    "confidence": confidence_score,
+                    "signal": signal_direction,
+                    "timeframe": "6H",
+                    "notes": f"{ai_insights['regime']} - {ai_insights['invalidation'][:50]}..."
                 }
-                requests.post(webhook_url, json=webhook_data, timeout=10)
-                print("Lindy webhook notification sent")
+                
+                response = requests.post(webhook_url, json=webhook_data, timeout=10)
+                if response.status_code == 200:
+                    print("✅ Lindy webhook notification sent successfully")
+                else:
+                    print(f"⚠️ Lindy webhook failed: {response.status_code}")
             except Exception as e:
-                print(f"Lindy notification failed: {e}")
-
-if __name__ == "__main__":
+                print(f"❌ Lindy notification error: {e}")
     main()
