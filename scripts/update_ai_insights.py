@@ -57,7 +57,6 @@ def get_alpha_vantage_analysis(btc_price):
         return {"signal": "neutral", "strength": 5, "note": "Alpha Vantage API key missing"}
     
     try:
-        # Get technical indicators for BTC
         url = f"https://www.alphavantage.co/query?function=RSI&symbol=BTCUSD&interval=daily&time_period=14&series_type=close&apikey={api_key}"
         response = requests.get(url, timeout=10)
         
@@ -68,7 +67,6 @@ def get_alpha_vantage_analysis(btc_price):
                 latest_date = max(rsi_data.keys())
                 current_rsi = float(rsi_data[latest_date]['RSI'])
                 
-                # Simple RSI-based signal
                 if current_rsi < 30:
                     return {"signal": "bullish", "strength": 8, "note": f"RSI oversold at {current_rsi:.1f}"}
                 elif current_rsi > 70:
@@ -88,17 +86,14 @@ def get_polygon_sentiment():
         return {"signal": "neutral", "strength": 5, "note": "Polygon API key missing"}
     
     try:
-        # Get market sentiment/news sentiment
         url = f"https://api.polygon.io/v2/reference/news?ticker=BTC&limit=10&apikey={api_key}"
         response = requests.get(url, timeout=10)
         
         if response.status_code == 200:
             data = response.json()
             if 'results' in data and len(data['results']) > 0:
-                # Simple sentiment analysis based on news count and keywords
                 news_count = len(data['results'])
                 
-                # Basic sentiment scoring (would be enhanced with NLP)
                 positive_words = ['bull', 'rise', 'gain', 'up', 'surge', 'rally']
                 negative_words = ['bear', 'fall', 'drop', 'down', 'crash', 'dump']
                 
@@ -128,10 +123,8 @@ def get_polygon_sentiment():
 def calculate_confluence_score(chatgpt_result, grok_result, alpha_vantage_result, polygon_result, market_data):
     """Calculate confluence score based on agreement across sources"""
     
-    # Extract signals from each source
     sources = []
     
-    # ChatGPT signal (from regime analysis)
     regime = chatgpt_result.get('regime', '').lower()
     if 'bear' in regime or 'sell' in regime or 'short' in regime:
         chatgpt_signal = {"signal": "bearish", "strength": 8, "source": "ChatGPT"}
@@ -142,20 +135,15 @@ def calculate_confluence_score(chatgpt_result, grok_result, alpha_vantage_result
     
     sources.append(chatgpt_signal)
     
-    # Add other sources
     alpha_vantage_result['source'] = 'Alpha Vantage'
     polygon_result['source'] = 'Polygon'
     sources.append(alpha_vantage_result)
     sources.append(polygon_result)
     
-    # Grok provides contrarian view (handled separately)
-    
-    # Calculate confluence
     bullish_signals = [s for s in sources if s['signal'] == 'bullish']
     bearish_signals = [s for s in sources if s['signal'] == 'bearish']
     neutral_signals = [s for s in sources if s['signal'] == 'neutral']
     
-    # Weight by strength
     bullish_weight = sum([s['strength'] for s in bullish_signals])
     bearish_weight = sum([s['strength'] for s in bearish_signals])
     neutral_weight = sum([s['strength'] for s in neutral_signals])
@@ -171,12 +159,10 @@ def calculate_confluence_score(chatgpt_result, grok_result, alpha_vantage_result
             "confluence_note": "No valid signals from sources"
         }
     
-    # Calculate percentages
     bullish_pct = (bullish_weight / total_weight) * 100
     bearish_pct = (bearish_weight / total_weight) * 100
     neutral_pct = (neutral_weight / total_weight) * 100
     
-    # Determine dominant signal and confluence score
     if bullish_pct > 60:
         dominant_signal = "bullish"
         confluence_score = min(10, int(6 + (bullish_pct - 60) / 10))
@@ -187,7 +173,6 @@ def calculate_confluence_score(chatgpt_result, grok_result, alpha_vantage_result
         dominant_signal = "neutral"
         confluence_score = 5
     
-    # Agreement percentage (how much sources agree)
     agreement_pct = max(bullish_pct, bearish_pct, neutral_pct)
     
     return {
@@ -217,14 +202,12 @@ def read_recent_context():
     """Read recent logs for context (last 1000 chars each)"""
     context = {}
     
-    # Recent scans
     try:
         with open('logs/weekly_scans.md', 'r') as f:
             context['recent_scans'] = f.read()[:1000]
     except FileNotFoundError:
         context['recent_scans'] = "No recent scans available"
     
-    # Recent commands  
     try:
         with open('logs/command_log.md', 'r') as f:
             context['recent_commands'] = f.read()[:800]
@@ -300,11 +283,9 @@ Make contextual_guidance actionable and specific to the portfolio situation show
         
         if response.status_code == 200:
             content = response.json()['choices'][0]['message']['content'].strip()
-            # Try to parse JSON response
             try:
                 return json.loads(content)
             except json.JSONDecodeError:
-                # Fallback parsing if not valid JSON
                 return {
                     "regime": "Analysis Error", 
                     "top_triggers": ["Failed to parse response", "", ""],
@@ -350,7 +331,7 @@ Be contrarian and specific. What could the crowd be missing? 1-2 sentences max.
                 'Content-Type': 'application/json'
             },
             json={
-                'model': 'grok-4-latest',
+                'model': 'grok-3',
                 'messages': [{'role': 'user', 'content': prompt}],
                 'max_tokens': 100,
                 'temperature': 0.6
@@ -371,33 +352,27 @@ def calculate_confidence_score(chatgpt_result, market_data):
     triggers = market_data.get('triggers', [])
     active_triggers = len([t for t in triggers if t and t != "—"])
     
-    # Base score from active triggers (0-6)
     base_score = min(active_triggers, 6)
     
-    # Boost if regime is decisive (not neutral)
     regime = chatgpt_result.get('regime', '').lower()
     if 'neutral' not in regime and 'uncertain' not in regime:
         base_score += 2
     
-    # Cap at 10
     return min(base_score, 10)
 
 def main():
     """Main execution function - Multi-Source AI Confluence System"""
     print("Starting AI Confluence Master - Multi-Source Intelligence Update...")
     
-    # Read data
     market_data = read_market_data()
     context = read_recent_context()
     state = create_state_object(market_data, context)
     
     print(f"Market state: BTC ${state['btc_price']}, Bias: {state['current_bias']}")
     
-    # Get fresh Yahoo Finance data
     print("Fetching Yahoo Finance data...")
     yahoo_data = get_yahoo_finance_data()
     
-    # Get AI analysis from all sources
     print("Calling ChatGPT for regime analysis...")
     chatgpt_result = get_chatgpt_analysis(state)
     
@@ -410,7 +385,6 @@ def main():
     print("Getting Polygon sentiment analysis...")
     polygon_result = get_polygon_sentiment()
     
-    # Calculate confluence score
     print("Calculating confluence across all sources...")
     confluence_data = calculate_confluence_score(
         chatgpt_result, 
@@ -420,13 +394,10 @@ def main():
         yahoo_data
     )
     
-    # Legacy confidence score for compatibility
     confidence_score = calculate_confidence_score(chatgpt_result, market_data)
     
-    # Build enhanced output JSON with confluence data
     ai_insights = {
         "updated_utc": datetime.now(timezone.utc).isoformat(),
-        # Core ChatGPT Analysis (legacy compatibility)
         "regime": chatgpt_result.get('regime', 'Unknown'),
         "top_triggers": chatgpt_result.get('top_triggers', ["—", "—", "—"]),
         "invalidation": chatgpt_result.get('invalidation', 'No invalidation specified'),
@@ -437,7 +408,6 @@ def main():
         "fear_greed_snapshot": state['fear_greed'],
         "next_update": "6 hours",
         
-        # New Multi-Source Confluence Data
         "confluence": {
             "score": confluence_data['confluence_score'],
             "dominant_signal": confluence_data['dominant_signal'],
@@ -457,7 +427,6 @@ def main():
         "sentiment_analysis": polygon_result
     }
     
-    # Write output
     output_path = Path('data/ai_insights.json')
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
@@ -471,17 +440,14 @@ def main():
     print(f"  Sources Agreement: {confluence_data['agreement_pct']}%")
     print(f"  Output written to: {output_path}")
     
-    # High confluence notification (8+ score or 80%+ agreement)
     high_confluence = confluence_data['confluence_score'] >= 8 or confluence_data['agreement_pct'] >= 80
     
     if high_confluence:
-        print(f"🚨 HIGH CONFLUENCE SIGNAL! Score: {confluence_data['confluence_score']}/10, Agreement: {confluence_data['agreement_pct']}%")
+        print(f"HIGH CONFLUENCE SIGNAL! Score: {confluence_data['confluence_score']}/10, Agreement: {confluence_data['agreement_pct']}%")
         
-        # Enhanced Lindy webhook with confluence data
         webhook_url = os.getenv('LINDY_WEBHOOK_URL')
         if webhook_url:
             try:
-                # Create enhanced Lindy payload with confluence data
                 webhook_data = {
                     "asset": "BTC",
                     "confidence": confluence_data['confluence_score'],
@@ -494,13 +460,13 @@ def main():
                 
                 response = requests.post(webhook_url, json=webhook_data, timeout=10)
                 if response.status_code == 200:
-                    print("✅ Enhanced Lindy confluence notification sent successfully")
+                    print("Enhanced Lindy confluence notification sent successfully")
                 else:
-                    print(f"⚠️ Lindy webhook failed: {response.status_code}")
+                    print(f"Lindy webhook failed: {response.status_code}")
             except Exception as e:
-                print(f"❌ Lindy notification error: {e}")
+                print(f"Lindy notification error: {e}")
     else:
-        print(f"📊 Normal confluence: Score {confluence_data['confluence_score']}/10, Agreement {confluence_data['agreement_pct']}%")
+        print(f"Normal confluence: Score {confluence_data['confluence_score']}/10, Agreement {confluence_data['agreement_pct']}%")
 
 if __name__ == '__main__':
     main()
