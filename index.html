@@ -143,7 +143,7 @@
                 <div class="w-24 h-24 rounded-full border-4 border-gray-600 relative">
                   <div id="confluence-fill" class="absolute inset-0 rounded-full" style="background: conic-gradient(#10b981 0deg, #10b981 72deg, #374151 72deg, #374151 360deg);"></div>
                   <div class="absolute inset-2 bg-gray-900 rounded-full flex items-center justify-center">
-                    <span id="confluence-value" class="text-2xl font-bold text-emerald-300">7</span>
+                    <span id="confluence-score" class="text-2xl font-bold text-emerald-300">7</span>
                   </div>
                 </div>
               </div>
@@ -606,13 +606,13 @@
         }
 
         // Enhanced confluence score display using new multi-source data
-        if (document.getElementById('confluence-value')) {
+        if (document.getElementById('confluence-score')) {
           const confluenceData = ai.confluence || {};
           const score = confluenceData.score || ai.confidence_score || 0;
           const dominantSignal = confluenceData.dominant_signal || 'neutral';
           const agreementPct = confluenceData.agreement_pct || 0;
           
-          document.getElementById('confluence-value').textContent = score;
+          document.getElementById('confluence-score').textContent = score;
           
           // Update gauge visual (0-10 scale)
           const percentage = (score / 10) * 360;
