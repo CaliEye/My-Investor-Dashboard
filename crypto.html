@@ -1,239 +1,695 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CyberSci-Dash v2 | Crypto</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Crypto Market Center - Cycles, on-chain data, heatmaps, and key signals.">
-  <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="icon" href="images/favicon.ico">
-</head>
-<body class="bg-gray-900 text-white font-inter">
-  <header class="px-6 py-4 flex justify-between items-center border-b border-green-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-green-400">CyberSci-Dash v2</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
-      <a href="warroom.html" class="hover:text-pink-400" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="hover:text-yellow-400" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="text-green-400 border-b-2 border-green-400 pb-1" aria-label="Crypto">Crypto</a>
-      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
-      <a href="senario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
-      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
-    </nav>
-  </header>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRYPTO COMMAND — ENDGAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/endgame-theme.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <main class="p-6 max-w-7xl mx-auto">
-    <!-- CRYPTO HUD HERO -->
-    <section class="mb-10 rounded-2xl border-2 border-green-400 shadow-green-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-8">
-      <h2 class="text-2xl font-orbitron text-green-300 mb-5 tracking-widest">🪙 Crypto Command Center</h2>
-      <div class="grid md:grid-cols-2 gap-10">
-        <div>
-          <ul class="space-y-2 text-lg">
-            <li><span class="font-bold text-yellow-300">BTC Price:</span> <span id="crypto-btc-price">...</span></li>
-            <li><span class="font-bold text-blue-300">ETH Price:</span> <span id="crypto-eth-price">...</span></li>
-            <li><span class="font-bold text-cyan-400">Total Market Cap:</span> <span id="crypto-mcap">...</span></li>
-            <li><span class="font-bold text-pink-400">Dominance:</span> <span id="crypto-dominance">...</span></li>
-            <li><span class="font-bold text-green-400">Cycle Status:</span> <span id="crypto-cycle">Year 4 (Late Expansion)</span></li>
-          </ul>
-          <div class="mt-5 text-xs text-gray-300 italic">
-            Live crypto prices, cycle status, and chain health at a glance.
-          </div>
-        </div>
-        <div>
-          <div class="bg-gray-800 border border-green-500 rounded-xl p-4 shadow mb-5">
-            <h3 class="text-lg font-orbitron text-green-300 mb-2">On-Chain Signals</h3>
-            <ul class="list-inside text-base space-y-1">
-              <li>• <span class="font-bold text-yellow-300">NVT Ratio:</span> <span id="crypto-nvt">...</span></li>
-              <li>• <span class="font-bold text-cyan-300">Whale Activity:</span> <span id="crypto-whales">...</span></li>
-              <li>• <span class="font-bold text-pink-300">Stablecoin Flows:</span> <span id="crypto-stable">...</span></li>
-              <li>• <span class="font-bold text-blue-300">Exchange Flows:</span> <span id="crypto-exchange">...</span></li>
-            </ul>
-          </div>
-          <div class="bg-gray-800 border border-pink-500 rounded-xl p-4 shadow">
-            <h3 class="text-lg font-orbitron text-pink-300 mb-2">Liquidation Levels</h3>
-            <ul class="list-inside text-base space-y-1">
-              <li>• <span class="font-bold text-yellow-400">Longs:</span> <span id="crypto-longs">...</span></li>
-              <li>• <span class="font-bold text-blue-400">Shorts:</span> <span id="crypto-shorts">...</span></li>
-              <li>• <span class="font-bold text-cyan-400">Heatmap:</span> <span id="crypto-heatmap">...</span></li>
-            </ul>
-            <div class="mt-2 text-xs text-gray-400">Major liquidation clusters update in real time.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Market Heatmap and Charts -->
-    <section class="mb-12">
-      <h2 class="text-xl font-orbitron text-green-300 mb-4">Crypto Market Heatmap</h2>
-      <div class="bg-gray-900 border border-green-500 rounded-xl p-6 shadow flex flex-col items-center">
-        <img src="images/heatmap_sample.png" alt="Crypto Market Heatmap" class="w-full max-w-2xl rounded-lg shadow-lg mb-4">
-        <div class="text-sm text-gray-400">Top movers, volume, and risk clusters highlighted.</div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-8 mt-8">
-        <div class="bg-gray-900 border border-yellow-400 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-yellow-300 mb-2">BTC/ETH Cycle Positioning</h4>
-          <canvas id="crypto-cycle-chart" class="crypto-chart"></canvas>
-        </div>
-        <div class="bg-gray-900 border border-cyan-500 rounded-xl p-5 shadow">
-          <h4 class="font-orbitron text-cyan-300 mb-2">Crypto Risk Monitor</h4>
-          <div id="crypto-risk-gauge" class="gauge-meter mb-4"></div>
-          <div id="crypto-risk-breakdown" class="text-xs space-y-1"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Key Levels and Action Guidance -->
-    <section class="mb-12 grid md:grid-cols-2 gap-8">
-      <div class="bg-gray-900 border border-pink-400 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-pink-400 mb-2">Key Support & Resistance</h3>
-        <ul class="list-inside text-base space-y-2">
-          <li><span class="font-bold text-yellow-400">BTC Support:</span> <span id="btc-support">...</span></li>
-          <li><span class="font-bold text-yellow-400">BTC Resistance:</span> <span id="btc-resistance">...</span></li>
-          <li><span class="font-bold text-blue-400">ETH Support:</span> <span id="eth-support">...</span></li>
-          <li><span class="font-bold text-blue-400">ETH Resistance:</span> <span id="eth-resistance">...</span></li>
-        </ul>
-      </div>
-      <div class="bg-gray-900 border border-green-400 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-green-400 mb-2">Action Guidance</h3>
-        <ul class="list-inside text-base space-y-2">
-          <li>Cycle: <span class="font-bold text-green-300">Late Expansion</span> - Caution on new longs</li>
-          <li>On-Chain: <span class="font-bold text-cyan-300">No major risk signals</span></li>
-          <li>Funding: <span class="font-bold text-yellow-300">Neutral</span></li>
-          <li>Plan: <span class="font-bold text-pink-300">Monitor for breakout or reversal</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- 2026 Crypto Watch Rules -->
-    <section class="mb-12">
-      <h2 class="text-xl font-orbitron text-green-300 mb-4">👁️ 2026 Watch Rules</h2>
-      <div class="bg-gray-900 border border-green-500 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-green-400 mb-4">Key Signals to Monitor</h3>
-        <ul class="space-y-3 text-base">
-          <li id="watch-rule-1" class="p-3 bg-gray-800 rounded-lg border-l-4 border-green-400">...</li>
-          <li id="watch-rule-2" class="p-3 bg-gray-800 rounded-lg border-l-4 border-yellow-400">...</li>
-          <li id="watch-rule-3" class="p-3 bg-gray-800 rounded-lg border-l-4 border-blue-400">...</li>
-          <li id="watch-rule-4" class="p-3 bg-gray-800 rounded-lg border-l-4 border-pink-400">...</li>
-        </ul>
-        <div class="mt-4 p-4 bg-gray-800 rounded-lg">
-          <h4 class="font-bold text-cyan-300 mb-2">Current Cycle Assessment:</h4>
-          <p class="text-sm text-gray-300" id="cycle-assessment">Cycle analysis will appear here...</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Live Prices Section -->
-    <section class="mb-12">
-      <div class="live-prices">
-        <h3 class="font-orbitron text-cyan-300 mb-2">Live Prices</h3>
-        <ul class="list-inside text-base space-y-2">
-          <li><span class="font-bold text-yellow-300">BTC/USD:</span> <span id="live-btc-price">Loading...</span></li>
-          <li><span class="font-bold text-green-300">ETH/USD:</span> <span id="live-eth-price">Loading...</span></li>
-        </ul>
-      </div>
-    </section>
-  </main>
-
-  <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
-    &copy; 2025 CyberSci-Dash. All rights reserved.
-  </footer>
-
-  <script>
-    async function loadData() {
-      try {
-        const res = await fetch("./data/data.json", { cache: "no-store" });
-        const d = await res.json();
-
-        const fmt = (x) => (x === null || x === undefined) ? "—" : x;
-
-        // Crypto overview data
-        if (document.getElementById("crypto-btc-price")) document.getElementById("crypto-btc-price").textContent = fmt(d.crypto.btc_price_formatted);
-        if (document.getElementById("crypto-eth-price")) document.getElementById("crypto-eth-price").textContent = fmt(d.crypto.eth_price_formatted);
-        if (document.getElementById("crypto-mcap")) document.getElementById("crypto-mcap").textContent = fmt(d.crypto.total_market_cap);
-        if (document.getElementById("crypto-dominance")) document.getElementById("crypto-dominance").textContent = fmt(d.crypto.btc_dominance);
-        if (document.getElementById("crypto-cycle")) document.getElementById("crypto-cycle").textContent = fmt(d.crypto.cycle_status);
-        
-        // On-chain signals
-        if (document.getElementById("crypto-nvt")) document.getElementById("crypto-nvt").textContent = fmt(d.crypto.nvt_ratio);
-        if (document.getElementById("crypto-whales")) document.getElementById("crypto-whales").textContent = fmt(d.crypto.whale_activity);
-        if (document.getElementById("crypto-stable")) document.getElementById("crypto-stable").textContent = fmt(d.crypto.stablecoin_flows);
-        if (document.getElementById("crypto-exchange")) document.getElementById("crypto-exchange").textContent = fmt(d.crypto.exchange_flows);
-        
-        // Liquidation levels
-        if (document.getElementById("crypto-longs")) document.getElementById("crypto-longs").textContent = fmt(d.crypto.longs_liquidation);
-        if (document.getElementById("crypto-shorts")) document.getElementById("crypto-shorts").textContent = fmt(d.crypto.shorts_liquidation);
-        if (document.getElementById("crypto-heatmap")) document.getElementById("crypto-heatmap").textContent = fmt(d.crypto.heatmap_status);
-        
-        // Key levels
-        if (document.getElementById("btc-support")) document.getElementById("btc-support").textContent = fmt(d.crypto.btc_support);
-        if (document.getElementById("btc-resistance")) document.getElementById("btc-resistance").textContent = fmt(d.crypto.btc_resistance);
-        if (document.getElementById("eth-support")) document.getElementById("eth-support").textContent = fmt(d.crypto.eth_support);
-        if (document.getElementById("eth-resistance")) document.getElementById("eth-resistance").textContent = fmt(d.crypto.eth_resistance);
-        
-        // Update crypto risk gauge
-        if (document.getElementById("crypto-risk-gauge") && d.crypto.risk_level) {
-          const riskLevel = d.crypto.risk_level;
-          const riskColor = riskLevel <= 30 ? '#10b981' : riskLevel <= 60 ? '#f59e0b' : '#ef4444';
-          const riskLabel = riskLevel <= 30 ? 'LOW RISK' : riskLevel <= 60 ? 'MEDIUM RISK' : 'HIGH RISK';
-          
-          document.getElementById("crypto-risk-gauge").innerHTML = `
-            <div class="risk-gauge-container">
-              <div class="risk-gauge-arc" style="background: conic-gradient(${riskColor} 0deg, ${riskColor} ${(riskLevel/100) * 270}deg, #374151 ${(riskLevel/100) * 270}deg, #374151 270deg);"></div>
-              <div class="risk-gauge-center">
-                <div class="risk-percentage">${riskLevel}%</div>
-                <div class="risk-label">${riskLabel}</div>
-              </div>
-            </div>
-          `;
-        }
-        
-        // Update risk breakdown
-        if (document.getElementById("crypto-risk-breakdown") && d.crypto.risk_breakdown) {
-          document.getElementById("crypto-risk-breakdown").innerHTML = d.crypto.risk_breakdown.map(item => `<div class="text-gray-300">• ${item}</div>`).join('');
-        }
-        
-        // Live prices
-        if (document.getElementById("live-btc-price")) document.getElementById("live-btc-price").textContent = fmt(d.crypto.btc_price_formatted);
-        if (document.getElementById("live-eth-price")) document.getElementById("live-eth-price").textContent = fmt(d.crypto.eth_price_formatted);
-        
-        // 2026 Watch Rules
-        if (d.crypto.watch_rules_2026 && Array.isArray(d.crypto.watch_rules_2026)) {
-          const rules = d.crypto.watch_rules_2026;
-          if (document.getElementById("watch-rule-1")) document.getElementById("watch-rule-1").textContent = rules[0] || "—";
-          if (document.getElementById("watch-rule-2")) document.getElementById("watch-rule-2").textContent = rules[1] || "—";
-          if (document.getElementById("watch-rule-3")) document.getElementById("watch-rule-3").textContent = rules[2] || "—";
-          if (document.getElementById("watch-rule-4")) document.getElementById("watch-rule-4").textContent = rules[3] || "—";
-        }
-        
-        // Cycle assessment
-        if (document.getElementById("cycle-assessment")) {
-          document.getElementById("cycle-assessment").textContent = 
-            `Currently in ${d.crypto.cycle_status}. BTC at ${d.crypto.btc_price_formatted}, ` +
-            `showing ${d.crypto.whale_activity.toLowerCase()} whale activity. ` +
-            `Watch for cycle top signals and plan accordingly.`;
-        }
-        
-      } catch (error) {
-        console.error('Error loading crypto data:', error);
-        // Set fallback data
-        document.querySelectorAll('[id*="crypto-"], [id*="btc-"], [id*="eth-"], [id*="live-"], [id*="watch-rule-"]').forEach(el => {
-          if (el.textContent === 'Loading...' || el.textContent === '...') {
-            el.textContent = 'Error loading';
-          }
-        });
-      }
+    :root {
+      --void:    #000000;
+      --green:   #39ff14;
+      --red:     #ff2222;
+      --gold:    #d4af37;
+      --dim:     #111111;
+      --border:  #1a1a1a;
+      --muted:   #444444;
+      --text:    #cccccc;
     }
-    
-    // Auto-refresh every 30 seconds
-    setInterval(() => {
-      loadData();
-      console.log('Crypto data refreshed at:', new Date().toLocaleTimeString());
-    }, 30000);
-    
-    document.addEventListener('DOMContentLoaded', loadData);
-  </script>
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Source Code Pro', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--green);
+      background: var(--void);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--green);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links a.active { color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 2px; }
+    .nav-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--red);
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 40px 24px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .page-header .subtitle {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+    .warning-badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 6px 14px;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .status-bar {
+      display: flex;
+      gap: 32px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .status-item { display: flex; flex-direction: column; gap: 2px; }
+    .status-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .status-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .status-value.gold { color: var(--gold); }
+    .status-value.red  { color: var(--red); }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 32px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title.gold { color: var(--gold); }
+    .section-title.red  { color: var(--red); }
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--dim);
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+    .card.highlight { border-color: var(--green); }
+    .card.gold-border { border-color: var(--gold); }
+    .card.red-border  { border-color: var(--red); }
+
+    .card-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .card-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+    }
+    .card-value.large { font-size: 42px; }
+    .card-value.gold  { color: var(--gold); }
+    .card-value.red   { color: var(--red); }
+    .card-value.white { color: #ffffff; }
+    .card-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .card-signal {
+      font-size: 10px;
+      letter-spacing: 1px;
+      margin-top: 10px;
+      padding: 4px 8px;
+      border-left: 2px solid var(--green);
+      color: var(--green);
+    }
+    .card-signal.gold { border-color: var(--gold); color: var(--gold); }
+    .card-signal.red  { border-color: var(--red);  color: var(--red); }
+
+    /* ── PRICE HERO ── */
+    .price-hero {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .price-hero .big-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .price-hero .ticker {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+
+    /* ── LEVELS TABLE ── */
+    .levels-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .levels-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .levels-table td:first-child { color: var(--muted); letter-spacing: 1px; width: 40%; }
+    .levels-table td:last-child  { color: var(--text); font-weight: 600; text-align: right; }
+    .levels-table tr:last-child td { border-bottom: none; }
+
+    /* ── WATCH RULES ── */
+    .rules-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .rules-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      background: var(--dim);
+    }
+    .rules-list li::before {
+      content: '▸';
+      color: var(--gold);
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .rules-list li span { color: var(--text); font-size: 12px; line-height: 1.5; }
+
+    /* ── RISK METER ── */
+    .risk-display {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .risk-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1;
+      min-width: 180px;
+    }
+    .risk-number.low    { color: var(--green); }
+    .risk-number.medium { color: var(--gold); }
+    .risk-number.high   { color: var(--red); }
+    .risk-details { flex: 1; min-width: 200px; }
+    .risk-context {
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .risk-bar-wrap {
+      height: 6px;
+      background: var(--border);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .risk-bar-fill {
+      height: 100%;
+      background: var(--gold);
+      transition: width 1s ease;
+    }
+    .risk-breakdown { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .risk-breakdown li {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+
+    /* ── FEAR GREED ── */
+    .fear-greed-display {
+      text-align: center;
+      padding: 24px;
+    }
+    .fear-greed-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+    }
+    .fear-greed-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--red);
+      margin-top: 8px;
+    }
+    .fear-greed-meaning {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 12px;
+      max-width: 280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── LOADING ── */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--void);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: 4px;
+      color: var(--green);
+    }
+    #loading-overlay.hidden { display: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 12px;
+    }
+    footer .footer-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+    }
+    footer a {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--green);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--gold); }
+    footer .footer-ts { font-size: 10px; color: var(--muted); }
+
+    @media (max-width: 600px) {
+      nav { flex-wrap: wrap; gap: 12px; }
+      .nav-links { gap: 12px; }
+      .price-hero { flex-direction: column; align-items: flex-start; }
+      .risk-display { flex-direction: column; }
+      .risk-number { font-size: 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading-overlay">LOADING CRYPTO COMMAND...</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="index.html">ENDGAME</a>
+  <div class="nav-links">
+    <a href="index.html">WAR ROOM</a>
+    <a href="crypto.html" class="active">CRYPTO</a>
+    <a href="scenario.html">SCENARIOS</a>
+    <a href="#scan-log">SCAN LOG</a>
+  </div>
+  <span class="nav-label">CRYPTO COMMAND</span>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header container">
+  <h1>CRYPTO COMMAND</h1>
+  <p class="subtitle">BTC / ETH / CYCLE INTELLIGENCE — SUB-ASSET TIER</p>
+  <div class="warning-badge">⚠ CRYPTO IS A SUB-ASSET. MACRO LEADS. CHECK WAR ROOM FIRST.</div>
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-label">REGIME</span>
+      <span class="status-value red" data-field="regime">LOADING...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">BTC</span>
+      <span class="status-value gold" data-field="btc-price">—</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">ETH</span>
+      <span class="status-value" data-field="eth-price">—</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">CYCLE</span>
+      <span class="status-value" data-field="cycle-status" style="font-size:12px;">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- BTC INTELLIGENCE -->
+<section class="container">
+  <div class="section-title gold">01 — BTC INTELLIGENCE</div>
+  <div class="price-hero">
+    <div>
+      <div class="ticker">BTC / USD</div>
+      <div class="big-price" data-field="btc-big-price">$—</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card gold-border">
+      <div class="card-label">SUPPORT / RESISTANCE</div>
+      <table class="levels-table">
+        <tr><td>RESISTANCE</td><td data-field="btc-resistance">—</td></tr>
+        <tr><td>CURRENT</td><td data-field="btc-current">—</td></tr>
+        <tr><td>SUPPORT</td><td data-field="btc-support">—</td></tr>
+        <tr><td>LONGS LIQ.</td><td data-field="btc-longs-liq">—</td></tr>
+        <tr><td>SHORTS LIQ.</td><td data-field="btc-shorts-liq">—</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-label">SMART MONEY SIGNALS</div>
+      <table class="levels-table">
+        <tr><td>WHALE ACTIVITY</td><td data-field="whale-activity">—</td></tr>
+        <tr><td>EXCHANGE FLOWS</td><td data-field="exchange-flows">—</td></tr>
+        <tr><td>STABLECOIN FLOWS</td><td data-field="stablecoin-flows">—</td></tr>
+        <tr><td>HEATMAP</td><td data-field="heatmap-status">—</td></tr>
+        <tr><td>NVT RATIO</td><td data-field="nvt-ratio">—</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ETH INTELLIGENCE -->
+<section class="container">
+  <div class="section-title">02 — ETH INTELLIGENCE</div>
+  <div class="price-hero">
+    <div>
+      <div class="ticker">ETH / USD</div>
+      <div class="big-price" style="color: var(--green);" data-field="eth-big-price">$—</div>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-label">SUPPORT</div>
+      <div class="card-value" data-field="eth-support">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">RESISTANCE</div>
+      <div class="card-value" data-field="eth-resistance">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">SENTIMENT</div>
+      <div class="card-value" style="font-size:16px;" data-field="eth-sentiment">—</div>
+      <div class="card-signal" data-field="eth-btc-watch">ETH/BTC RATIO WATCH</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET STRUCTURE -->
+<section class="container">
+  <div class="section-title">03 — MARKET STRUCTURE</div>
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-label">TOTAL MARKET CAP</div>
+      <div class="card-value gold" style="font-size:22px;" data-field="total-market-cap">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">BTC DOMINANCE</div>
+      <div class="card-value" style="font-size:22px;" data-field="btc-dominance">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">FUNDING RATE</div>
+      <div class="card-value" style="font-size:18px;" data-field="funding-rate">—</div>
+      <div class="card-sub" data-field="funding-status">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">OPEN INTEREST</div>
+      <div class="card-value" style="font-size:18px;" data-field="oi-status">—</div>
+    </div>
+  </div>
+
+  <!-- Fear & Greed -->
+  <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div class="card red-border">
+      <div class="fear-greed-display">
+        <div class="card-label">FEAR &amp; GREED INDEX</div>
+        <div class="fear-greed-number" data-field="fear-greed-index">—</div>
+        <div class="fear-greed-label" data-field="fear-greed-label">—</div>
+        <div class="fear-greed-meaning" data-field="fear-greed-meaning">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">SENTIMENT BREAKDOWN</div>
+      <table class="levels-table">
+        <tr><td>BTC SENTIMENT</td><td data-field="btc-sentiment">—</td></tr>
+        <tr><td>ETH SENTIMENT</td><td data-field="eth-sentiment-2">—</td></tr>
+        <tr><td>ALT SENTIMENT</td><td data-field="alt-sentiment">—</td></tr>
+        <tr><td>OPTIONS SKEW</td><td data-field="options-skew">—</td></tr>
+        <tr><td>SOCIAL VOLUME</td><td data-field="social-volume">—</td></tr>
+        <tr><td>SOCIAL STATUS</td><td data-field="social-status">—</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 2026 WATCH RULES -->
+<section class="container">
+  <div class="section-title gold">04 — 2026 TACTICAL RULES — DO NOT DEVIATE</div>
+  <ul class="rules-list" id="watch-rules-list">
+    <li><span>Loading rules...</span></li>
+  </ul>
+</section>
+
+<!-- RISK METER -->
+<section class="container">
+  <div class="section-title red">05 — CRYPTO RISK LEVEL</div>
+  <div class="risk-display">
+    <div class="risk-number medium" id="risk-number" data-field="risk-level">—</div>
+    <div class="risk-details">
+      <div class="risk-context" data-field="risk-context">Loading risk assessment...</div>
+      <div class="risk-bar-wrap">
+        <div class="risk-bar-fill" id="risk-bar" style="width: 0%;"></div>
+      </div>
+      <ul class="risk-breakdown" id="risk-breakdown-list">
+        <li>Loading...</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SCAN LOG -->
+<section class="container" id="scan-log">
+  <div class="section-title">06 — SCAN LOG</div>
+  <div id="scan-log-entries" style="display: flex; flex-direction: column; gap: 8px;">
+    <div style="color: var(--muted); font-size: 11px;">Loading scan log...</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="container">
+  <span class="footer-brand">ENDGAME v1.0 — CRYPTO SUB-PAGE</span>
+  <a href="index.html">← RETURN TO WAR ROOM</a>
+  <span class="footer-ts" id="last-updated">UPDATED: —</span>
+</footer>
+
+<script>
+(async function() {
+  const overlay = document.getElementById('loading-overlay');
+
+  function set(field, value) {
+    document.querySelectorAll(`[data-field="${field}"]`).forEach(el => {
+      el.textContent = value;
+    });
+  }
+
+  function getRiskClass(level) {
+    if (level <= 30) return 'low';
+    if (level <= 60) return 'medium';
+    return 'high';
+  }
+
+  function getRiskBarColor(level) {
+    if (level <= 30) return 'var(--green)';
+    if (level <= 60) return 'var(--gold)';
+    return 'var(--red)';
+  }
+
+  try {
+    const res = await fetch('data/data.json');
+    if (!res.ok) throw new Error('Failed to load data.json');
+    const d = await res.json();
+
+    const c = d.crypto || {};
+    const s = d.sentiment || {};
+
+    // Header status
+    set('regime', d.regime || 'UNKNOWN');
+    set('btc-price', c.btc_price_formatted || '$—');
+    set('eth-price', c.eth_price_formatted || '$—');
+    set('cycle-status', c.cycle_status || '—');
+
+    // BTC
+    set('btc-big-price', c.btc_price_formatted || '$—');
+    set('btc-resistance', c.btc_resistance || '—');
+    set('btc-current', c.btc_price_formatted || '—');
+    set('btc-support', c.btc_support || '—');
+    set('btc-longs-liq', c.longs_liquidation || '—');
+    set('btc-shorts-liq', c.shorts_liquidation || '—');
+    set('whale-activity', c.whale_activity || '—');
+    set('exchange-flows', c.exchange_flows || '—');
+    set('stablecoin-flows', c.stablecoin_flows || '—');
+    set('heatmap-status', c.heatmap_status || '—');
+    set('nvt-ratio', c.nvt_ratio || '—');
+
+    // ETH
+    set('eth-big-price', c.eth_price_formatted || '$—');
+    set('eth-support', c.eth_support || '—');
+    set('eth-resistance', c.eth_resistance || '—');
+    set('eth-sentiment', s.eth_sentiment || '—');
+    set('eth-btc-watch', 'ETH/BTC > 0.065 = ALTSEASON SIGNAL');
+
+    // Market structure
+    set('total-market-cap', c.total_market_cap || '—');
+    set('btc-dominance', c.btc_dominance || '—');
+    set('funding-rate', s.funding_rate || '—');
+    set('funding-status', s.funding_status || '—');
+    set('oi-status', s.oi_status || '—');
+
+    // Fear & Greed
+    set('fear-greed-index', s.fear_greed_index !== undefined ? s.fear_greed_index : '—');
+    set('fear-greed-label', s.fear_greed_label || '—');
+    set('fear-greed-meaning', s.fear_greed_meaning || '—');
+
+    // Sentiment
+    set('btc-sentiment', s.btc_sentiment || '—');
+    set('eth-sentiment-2', s.eth_sentiment || '—');
+    set('alt-sentiment', s.alt_sentiment || '—');
+    set('options-skew', s.options_skew || '—');
+    set('social-volume', s.social_volume || '—');
+    set('social-status', s.social_status || '—');
+
+    // Watch rules
+    const rulesList = document.getElementById('watch-rules-list');
+    if (c.watch_rules_2026 && c.watch_rules_2026.length) {
+      rulesList.innerHTML = c.watch_rules_2026.map(rule =>
+        `<li><span>${rule}</span></li>`
+      ).join('');
+    }
+
+    // Risk meter
+    const riskLevel = c.risk_level || 0;
+    const riskEl = document.getElementById('risk-number');
+    riskEl.textContent = riskLevel;
+    riskEl.className = `risk-number ${getRiskClass(riskLevel)}`;
+    set('risk-context', c.risk_context || '—');
+
+    const bar = document.getElementById('risk-bar');
+    bar.style.width = `${riskLevel}%`;
+    bar.style.background = getRiskBarColor(riskLevel);
+
+    const breakdownList = document.getElementById('risk-breakdown-list');
+    if (c.risk_breakdown && c.risk_breakdown.length) {
+      breakdownList.innerHTML = c.risk_breakdown.map(item =>
+        `<li>${item}</li>`
+      ).join('');
+    }
+
+    // Scan log
+    const scanLog = document.getElementById('scan-log-entries');
+    if (d.scan_log && d.scan_log.length) {
+      scanLog.innerHTML = d.scan_log.map(entry =>
+        `<div style="display:flex;gap:16px;padding:10px 14px;border:1px solid var(--border);background:var(--dim);">
+          <span style="color:var(--muted);font-size:10px;letter-spacing:1px;white-space:nowrap;">${entry.date}</span>
+          <span style="color:var(--text);font-size:12px;">${entry.note}</span>
+        </div>`
+      ).join('');
+    }
+
+    // Last updated
+    const ts = d.updated_utc ? new Date(d.updated_utc).toUTCString() : '—';
+    document.getElementById('last-updated').textContent = `UPDATED: ${ts}`;
+
+  } catch (err) {
+    console.error('Crypto Command data load error:', err);
+    document.querySelectorAll('[data-field]').forEach(el => {
+      if (el.textContent === '—' || el.textContent === 'LOADING...' || el.textContent === 'Loading...') {
+        el.textContent = 'DATA UNAVAILABLE';
+        el.style.color = 'var(--red)';
+      }
+    });
+  } finally {
+    overlay.classList.add('hidden');
+  }
+})();
+</script>
 </body>
 </html>
