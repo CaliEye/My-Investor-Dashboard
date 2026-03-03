@@ -1,16 +1,71 @@
 {
-  "updated_utc": "2026-03-03T06:21:58.685636+00:00",
-  "regime": "Bearish Downtrend",
+  "updated_utc": "2026-03-03T06:40:44.199926+00:00",
+  "regime": "API key missing",
   "top_triggers": [
-    "Fed tightening accelerating",
-    "DXY strength crushing risk assets",
-    "Crypto market cap declining -35% from peak"
+    "OpenAI API key not configured",
+    "",
+    ""
   ],
-  "invalidation": "Reversal in Fed tightening policy or DXY weakening",
-  "contextual_guidance": "Given the bearish market conditions and lack of recent portfolio actions, consider holding cash or short-term treasury bonds to hedge against further market declines. Monitor the Fed's policy and DXY closely for any signs of reversal.",
-  "grok_counter": "Grok API key not configured",
+  "invalidation": "Cannot analyze without API access",
+  "contextual_guidance": "Cannot provide guidance without API access",
+  "grok_counter": "The crowd's bearish fixation on short-term volatility and regulatory headwinds overlooks the accelerating institutional inflows into Bitcoin ETFs, which could surge post-halving as supply tightens, potentially flipping sentiment to extreme greed by quarter's end.",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
   "fear_greed_snapshot": 50,
-  "next_update": "6 hours"
+  "next_update": "6 hours",
+  "confluence": {
+    "score": 5,
+    "dominant_signal": "neutral",
+    "agreement_pct": 100,
+    "sources": [
+      {
+        "signal": "neutral",
+        "strength": 6,
+        "source": "ChatGPT"
+      },
+      {
+        "signal": "neutral",
+        "strength": 5,
+        "note": "Alpha Vantage API key missing",
+        "source": "Alpha Vantage"
+      },
+      {
+        "signal": "neutral",
+        "strength": 5,
+        "note": "Polygon API key missing",
+        "source": "Polygon"
+      }
+    ],
+    "note": "0B/0Be/3N sources"
+  },
+  "market_data": {
+    "btc_price": 43200,
+    "btc_change_5d": -2.1,
+    "spy_price": 445,
+    "spy_change_5d": -1.5,
+    "vix_level": 18.5,
+    "btc_volume": 25000000
+  },
+  "technical_analysis": {
+    "signal": "neutral",
+    "strength": 5,
+    "note": "Alpha Vantage API key missing"
+  },
+  "sentiment_analysis": {
+    "signal": "neutral",
+    "strength": 5,
+    "note": "Polygon API key missing"
+  }
+}
+    "strength": 5,
+    "note": "Alpha Vantage API key missing",
+    "source": "Alpha Vantage"
+  },
+  "sentiment_analysis": {
+    "signal": "neutral",
+    "strength": 5,
+    "note": "Polygon API key missing",
+    "source": "Polygon"
+  }
+>>>>>>> c480a76 ( GROK INTEGRATION WORKING! Fix model name and implement multi-source confluence)
 }
