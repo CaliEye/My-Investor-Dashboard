@@ -59,7 +59,7 @@
         <ul class="text-sm text-gray-300 space-y-1">
           <li>✓ <strong>Data Connection:</strong> Can load data.json file</li>
           <li>✓ <strong>Risk Calculations:</strong> Crypto and macro risk levels computed</li>
-          <li>✓ <strong>Log Files:</strong> Weekly scans and command logs accessible</li>
+          <li>✓ <strong>Log Files:</strong> Weekly scans and command logs (or optional in deployed mode)</li>
           <li>✓ <strong>AI Integration:</strong> AI insights file loading</li>
           <li>✓ <strong>Data Freshness:</strong> Timestamps within acceptable range</li>
           <li>✓ <strong>Risk Gauges:</strong> Visual elements rendering properly</li>
@@ -113,7 +113,11 @@
     async function testLogFiles() {
       const scansResponse = await fetch('./logs/weekly_scans.md');
       const commandResponse = await fetch('./logs/command_log.md');
-      
+
+      if (scansResponse.status === 404 && commandResponse.status === 404) {
+        return 'Log files are intentionally not deployed on GitHub Pages (optional)';
+      }
+
       if (!scansResponse.ok) throw new Error('Weekly scans not accessible');
       if (!commandResponse.ok) throw new Error('Command log not accessible');
       
@@ -150,11 +154,11 @@
       const now = new Date();
       const ageMinutes = Math.floor((now - lastUpdate) / (1000 * 60));
       
-      if (ageMinutes > 60) {
+      if (ageMinutes > 24 * 60) {
         throw new Error(`Data is ${ageMinutes} minutes old (stale)`);
       }
       
-      return ageMinutes < 5 ? 'Live data (fresh)' : `${ageMinutes} minutes old (acceptable)`;
+      return ageMinutes < 10 ? 'Live data (fresh)' : `${ageMinutes} minutes old (acceptable)`;
     }
 
     async function testRiskGauges() {

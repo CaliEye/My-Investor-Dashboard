@@ -459,9 +459,12 @@
         
         const fmt = (x) => (x === null || x === undefined) ? "—" : x;
 
-        // Prices (if you're displaying them)
-        if (document.getElementById("btcPrice")) document.getElementById("btcPrice").textContent = fmt(d.crypto.btc_usd);
-        if (document.getElementById("ethPrice")) document.getElementById("ethPrice").textContent = fmt(d.crypto.eth_usd);
+        // Market overview metrics
+        if (document.getElementById("btc-price")) document.getElementById("btc-price").textContent = fmt(d.crypto?.btc_price_formatted || d.crypto?.btc_usd);
+        if (document.getElementById("eth-price")) document.getElementById("eth-price").textContent = fmt(d.crypto?.eth_price_formatted || d.crypto?.eth_usd);
+        if (document.getElementById("spx-latest")) document.getElementById("spx-latest").textContent = fmt(d.macro?.spx);
+        if (document.getElementById("usd-latest")) document.getElementById("usd-latest").textContent = fmt(d.macro?.dxy);
+        if (document.getElementById("fg-latest")) document.getElementById("fg-latest").textContent = fmt(d.sentiment?.fear_greed_index);
 
         // Regime card with success styling
         if (document.getElementById("biasState")) {
@@ -491,6 +494,8 @@
           triggerHealth.className = ts.length >= 2 ? 'mt-2 text-xs text-green-400' : 'mt-2 text-xs text-yellow-400';
         }
 
+        updateLiveRiskTicker(d);
+        updateRiskGauges(d);
         updateConnectionStatus();
         
       } catch (error) {
