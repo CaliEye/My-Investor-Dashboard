@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-04T12:26:46.757808+00:00",
+  "updated_utc": "2026-03-04T14:28:41.818846+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-04T16:26:46.757808+00:00",
+  "next_review_utc": "2026-03-04T18:28:41.818846+00:00",
   "crypto": {
-    "btc_usd": 70673.73,
-    "eth_usd": 2041.11,
-    "btc_price_formatted": "$70,674",
-    "eth_price_formatted": "$2,041",
+    "btc_usd": 71614.7,
+    "eth_usd": 2073.74,
+    "btc_price_formatted": "$71,615",
+    "eth_price_formatted": "$2,074",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -50,9 +50,9 @@
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "5.25%",
     "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
-    "dxy": "98.8",
+    "dxy": "98.9",
     "dxy_context": "Contained (reduced dollar pressure)",
-    "us10y_yield": "4.06%",
+    "us10y_yield": "4.08%",
     "us10y_context": "High (tight financial conditions)",
     "risk_level": 72,
     "risk_context": "High Risk (0-30: Low | 31-60: Moderate | 61-100: High)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-04T12:26:47.533792+00:00",
+    "updated_utc": "2026-03-04T14:28:42.725063+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -160,7 +160,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-04T12:26:48.213155+00:00",
+    "updated_utc": "2026-03-04T14:28:43.450197+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
