@@ -1,14 +1,14 @@
 {
-  "updated_utc": "2026-03-04T12:16:59.823391+00:00",
-  "regime": "Bear Market",
+  "updated_utc": "2026-03-04T18:19:28.171092+00:00",
+  "regime": "Bearish Downturn",
   "top_triggers": [
-    "Fed tightening",
-    "DXY strength",
-    "Crypto market cap decline"
+    "Fed tightening accelerating",
+    "DXY strength crushing risk assets",
+    "Crypto market cap declining -35% from peak"
   ],
-  "invalidation": "BTC price recovery and stabilization",
-  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets or stablecoins to hedge against further crypto market cap decline. Monitor the Fed's actions closely.",
-  "grok_counter": "The strongest counter-argument this week is the potential for a surprise positive catalyst from institutional adoption, such as a major financial institution announcing a significant Bitcoin investment or ETF approval progress. The crowd might be overlooking subtle signals of growing mainstream acceptance, focusing instead on short-term price volatility or macro fears.",
+  "invalidation": "BTC price recovery and stabilization, reversal of Fed tightening or DXY weakening",
+  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets or holding cash. Monitor the triggers closely for any changes.",
+  "grok_counter": "The strongest counter-argument to the bearish consensus is the potential for a surprise bullish catalyst from institutional adoption, such as a major financial institution announcing a significant Bitcoin investment or ETF approval. The crowd might be missing the under-the-radar accumulation by whales and institutions during this period of neutral sentiment (Fear/Greed at 50), which could trigger a rapid sentiment shift and price surge.",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
   "fear_greed_snapshot": 50,
