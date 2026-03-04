@@ -815,6 +815,8 @@
 
 <script>
 (async function() {
+  const overlay = document.getElementById('loading-overlay');
+
   // Animate probability bars
   function animateBars() {
     document.querySelectorAll('.prob-bar-fill[data-target]').forEach(bar => {
@@ -840,6 +842,8 @@
     console.warn('Scenario data load error:', err);
     const regimeEl = document.getElementById('current-regime');
     if (regimeEl) { regimeEl.textContent = 'DATA UNAVAILABLE'; regimeEl.style.color = 'var(--red)'; }
+  } finally {
+    if (overlay) overlay.classList.add('hidden');
   }
 
   animateBars();

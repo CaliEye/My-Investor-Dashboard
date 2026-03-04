@@ -1,9 +1,17 @@
 # Enhanced backend improvements for update_ai_insights.py
 
-import redis
 import time
 from functools import wraps
 from typing import Optional, Dict, Any
+
+try:
+    from scripts.update_ai_insights import get_alpha_vantage_analysis, get_polygon_sentiment
+except Exception:
+    def get_alpha_vantage_analysis(symbol: str) -> Dict[str, Any]:
+        return {"signal": "neutral", "strength": 5, "note": f"Fallback analysis for {symbol}"}
+
+    def get_polygon_sentiment() -> Dict[str, Any]:
+        return {"signal": "neutral", "strength": 5, "note": "Fallback polygon sentiment"}
 
 def rate_limit(calls_per_minute: int = 60):
     """Decorator to enforce API rate limiting"""

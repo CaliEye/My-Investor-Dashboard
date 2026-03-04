@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import requests
 import yfinance as yf
 
 
@@ -37,6 +38,46 @@ def to_float(value, default=0.0):
 
 def format_price(value):
     return f"${value:,.2f}"
+
+
+def fetch_crypto_prices(existing_crypto):
+    btc_price = to_float(existing_crypto.get("btc_usd"), default=0.0)
+    eth_price = to_float(existing_crypto.get("eth_usd"), default=0.0)
+
+    try:
+        btc_hist = yf.Ticker("BTC-USD").history(period="5d", interval="1d", auto_adjust=True)
+        eth_hist = yf.Ticker("ETH-USD").history(period="5d", interval="1d", auto_adjust=True)
+
+        if not btc_hist.empty and "Close" in btc_hist:
+            btc_price = to_float(btc_hist["Close"].dropna().iloc[-1], default=btc_price)
+        if not eth_hist.empty and "Close" in eth_hist:
+            eth_price = to_float(eth_hist["Close"].dropna().iloc[-1], default=eth_price)
+    except Exception:
+        pass
+
+    if not btc_price or not eth_price:
+        try:
+            response = requests.get(
+                "https://api.coingecko.com/api/v3/simple/price",
+                params={"ids": "bitcoin,ethereum", "vs_currencies": "usd"},
+                timeout=8,
+            )
+            response.raise_for_status()
+            payload = response.json()
+            btc_price = to_float(payload.get("bitcoin", {}).get("usd"), default=btc_price)
+            eth_price = to_float(payload.get("ethereum", {}).get("usd"), default=eth_price)
+        except Exception:
+            pass
+
+    updated_fields = {}
+    if btc_price:
+        updated_fields["btc_usd"] = round(btc_price, 2)
+        updated_fields["btc_price_formatted"] = f"${btc_price:,.0f}"
+    if eth_price:
+        updated_fields["eth_usd"] = round(eth_price, 2)
+        updated_fields["eth_price_formatted"] = f"${eth_price:,.0f}"
+
+    return updated_fields
 
 
 def infer_trend(day_change_pct, five_day_change_pct, vol_ratio):
@@ -130,6 +171,10 @@ def main():
     now = datetime.now(timezone.utc)
 
     sector_etfs = build_sector_etf_payload(data)
+    crypto = data.get("crypto", {})
+    crypto_updates = fetch_crypto_prices(crypto)
+    if crypto_updates:
+        data["crypto"] = {**crypto, **crypto_updates}
 
     data["updated_utc"] = now.isoformat()
     data["next_review_utc"] = (now + timedelta(hours=4)).isoformat()
