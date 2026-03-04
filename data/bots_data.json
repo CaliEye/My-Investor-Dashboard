@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-03-03T00:00:00Z",
+  "updated_at": "2026-03-04T06:24:11.649954+00:00",
   "bots": [
     {
       "name": "Pionex Gold Grid Bot",
       "exchange": "Pionex",
       "strategy": "Gold ETF / XAU Trend-Grid",
       "status": "ACTIVE",
-      "weekly_pnl_pct": 2.4,
-      "weekly_pnl_usd": 184.22,
-      "max_drawdown_pct": 1.9,
+      "weekly_pnl_pct": 3.58,
+      "weekly_pnl_usd": 274.8,
+      "max_drawdown_pct": 1.7,
       "win_rate_pct": 63,
-      "confluence_score": 8,
+      "confluence_score": 7,
       "notes": "Stable in low-volatility trend; strongest when DXY weakens and real yields cool."
     },
     {
@@ -18,9 +18,9 @@
       "exchange": "Bybit",
       "strategy": "Regime + Momentum Filter",
       "status": "ACTIVE",
-      "weekly_pnl_pct": 1.6,
-      "weekly_pnl_usd": 132.7,
-      "max_drawdown_pct": 3.2,
+      "weekly_pnl_pct": 1.18,
+      "weekly_pnl_usd": 97.86,
+      "max_drawdown_pct": 3.56,
       "win_rate_pct": 57,
       "confluence_score": 7,
       "notes": "Performance improves when macro liquidity and breadth confirm risk-on."
@@ -30,11 +30,11 @@
       "exchange": "Broker API",
       "strategy": "LMT/RTX/NOC Relative Strength",
       "status": "PAPER",
-      "weekly_pnl_pct": 0.9,
-      "weekly_pnl_usd": 44.8,
-      "max_drawdown_pct": 1.1,
+      "weekly_pnl_pct": 2.08,
+      "weekly_pnl_usd": 103.54,
+      "max_drawdown_pct": 0.9,
       "win_rate_pct": 61,
-      "confluence_score": 8,
+      "confluence_score": 7,
       "notes": "Resilient in risk-off windows; lower volatility than broad index strategies."
     }
   ],
@@ -59,6 +59,16 @@
     }
   ],
   "ai_tests": [
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
     {
       "name": "Volatility Filter Stress",
       "result": "PASS",

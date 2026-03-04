@@ -1,0 +1,19 @@
+{
+  "updated_utc": "2026-03-04T06:24:11.652692+00:00",
+  "window_hours": 72,
+  "summary": {
+    "dominant_direction": "NEUTRAL",
+    "score_bear": 0,
+    "score_bull": 0,
+    "dominant_score": 0,
+    "asset_classes_in_dominant_direction": 0,
+    "threshold_hit": false,
+    "urgency": "NORMAL"
+  },
+  "tier2": {
+    "active": false,
+    "count": 0,
+    "latest": null
+  },
+  "recent_alerts": []
+}

@@ -32,6 +32,8 @@ from urllib.request import Request, urlopen
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = REPO_ROOT / "data" / "data.json"
 AI_FILE = REPO_ROOT / "data" / "ai_insights.json"
+CONFLUENCE_FILE = REPO_ROOT / "data" / "confluence_alerts.json"
+BOTS_FILE = REPO_ROOT / "data" / "bots_data.json"
 
 PAGES = [
     "index.html",
@@ -62,6 +64,19 @@ REQUIRED_AI_PATHS = [
     ("updated_utc",),
     ("confidence_score",),
     ("confluence", "score"),
+]
+
+REQUIRED_CONFLUENCE_PATHS = [
+    ("updated_utc",),
+    ("summary", "dominant_score"),
+    ("summary", "threshold_hit"),
+    ("tier2", "active"),
+]
+
+REQUIRED_BOTS_PATHS = [
+    ("updated_at",),
+    ("bots",),
+    ("ai_tests",),
 ]
 
 
@@ -120,6 +135,18 @@ def run_updaters() -> list[CheckResult]:
     except Exception as exc:
         results.append(CheckResult("update_ai_insights.py", False, f"{type(exc).__name__}: {exc}"))
 
+    try:
+        runpy.run_path(str(REPO_ROOT / "scripts" / "update_bots_data.py"), run_name="__main__")
+        results.append(CheckResult("update_bots_data.py", True, "completed"))
+    except Exception as exc:
+        results.append(CheckResult("update_bots_data.py", False, f"{type(exc).__name__}: {exc}"))
+
+    try:
+        runpy.run_path(str(REPO_ROOT / "scripts" / "process_tradingview_alerts.py"), run_name="__main__")
+        results.append(CheckResult("process_tradingview_alerts.py", True, "completed"))
+    except Exception as exc:
+        results.append(CheckResult("process_tradingview_alerts.py", False, f"{type(exc).__name__}: {exc}"))
+
     return results
 
 
@@ -145,6 +172,8 @@ def run_http_checks(base_url: str) -> list[CheckResult]:
     try:
         _, _ = fetch_text(base_url, "data/data.json")
         _, _ = fetch_text(base_url, "data/ai_insights.json")
+        _, _ = fetch_text(base_url, "data/confluence_alerts.json")
+        _, _ = fetch_text(base_url, "data/bots_data.json")
         results.append(CheckResult("data_endpoints", True, "reachable"))
     except Exception as exc:
         results.append(CheckResult("data_endpoints", False, f"{type(exc).__name__}: {exc}"))
@@ -159,14 +188,20 @@ def run_payload_checks() -> list[CheckResult]:
     try:
         data = get_json(DATA_FILE)
         ai = get_json(AI_FILE)
+        confluence = get_json(CONFLUENCE_FILE)
+        bots = get_json(BOTS_FILE)
     except Exception as exc:
         return [CheckResult("payload_read", False, f"{type(exc).__name__}: {exc}")]
 
     missing_data = [".".join(p) for p in REQUIRED_DATA_PATHS if not has_path(data, p)]
     missing_ai = [".".join(p) for p in REQUIRED_AI_PATHS if not has_path(ai, p)]
+    missing_confluence = [".".join(p) for p in REQUIRED_CONFLUENCE_PATHS if not has_path(confluence, p)]
+    missing_bots = [".".join(p) for p in REQUIRED_BOTS_PATHS if not has_path(bots, p)]
 
     results.append(CheckResult("data_required_keys", not missing_data, "ok" if not missing_data else ", ".join(missing_data)))
     results.append(CheckResult("ai_required_keys", not missing_ai, "ok" if not missing_ai else ", ".join(missing_ai)))
+    results.append(CheckResult("confluence_required_keys", not missing_confluence, "ok" if not missing_confluence else ", ".join(missing_confluence)))
+    results.append(CheckResult("bots_required_keys", not missing_bots, "ok" if not missing_bots else ", ".join(missing_bots)))
 
     freshness_items = [
         ("data.updated_utc", data.get("updated_utc")),

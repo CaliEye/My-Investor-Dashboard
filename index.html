@@ -210,6 +210,33 @@
       <div class="mt-4 text-xs text-gray-400">Playbooks are auto-prioritized by current macro regime and confluence score.</div>
     </section>
 
+    <section class="mb-8 rounded-2xl border-2 border-fuchsia-400 shadow-fuchsia-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-fuchsia-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-fuchsia-300 mb-5 tracking-widest">CONFLUENCE ESCALATION ENGINE // 72H WINDOW</h2>
+      <div class="grid lg:grid-cols-4 gap-4 mb-5">
+        <div class="p-4 rounded-xl border border-fuchsia-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">DOMINANT SCORE</div>
+          <div id="confluence-escalation-score" class="text-xl font-bold text-fuchsia-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-fuchsia-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">URGENCY</div>
+          <div id="confluence-escalation-urgency" class="text-xl font-bold text-fuchsia-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-fuchsia-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">THRESHOLD</div>
+          <div id="confluence-escalation-threshold" class="text-xl font-bold text-fuchsia-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-fuchsia-500/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">BLACK SWAN TIER2</div>
+          <div id="confluence-escalation-tier2" class="text-xl font-bold text-fuchsia-300">...</div>
+        </div>
+      </div>
+      <div id="confluence-gate-status" class="p-3 rounded border border-gray-600 bg-gray-900/50 text-sm text-gray-200 mb-4">Confluence gate initializing...</div>
+      <div class="text-xs text-gray-400 mb-2">Recent parsed alerts</div>
+      <div id="confluence-recent-list" class="space-y-2 text-sm text-gray-200">
+        <div class="text-gray-400">Waiting for TradingView alert feed...</div>
+      </div>
+    </section>
+
     <!-- Regime + Trigger Card -->
     <section class="mb-8 rounded-2xl border-2 border-matrix-green shadow-matrix-green/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-7">
       <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime</h2>
@@ -436,7 +463,7 @@
             <div class="text-gray-300 text-sm">Analyzing risk levels...</div>
           </div>
           <div class="mt-4 text-right">
-            <button id="update-actions-btn" class="text-red-400 text-sm hover:text-red-300 px-3 py-1 border border-red-500 rounded" onclick="generateRiskActions()">Update Actions →</button>
+            <button id="update-actions-btn" class="gate-controlled text-red-400 text-sm hover:text-red-300 px-3 py-1 border border-red-500 rounded" onclick="generateRiskActions()">Update Actions →</button>
           </div>
         </div>
       </div>
@@ -444,10 +471,10 @@
 
     <!-- Quick Panel Shortcuts -->
     <section class="flex flex-wrap gap-6 mb-10 justify-center">
-      <a href="warroom.html" class="hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
-      <a href="scenario.html" class="hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="hud-action bg-yellow-500 hover:bg-yellow-700" aria-label="Get Insights">Get Insights</a>
-      <a href="links.html" class="hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
+      <a href="warroom.html" class="gate-controlled hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
+      <a href="scenario.html" class="gate-controlled hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="insights.html" class="gate-controlled hud-action bg-yellow-500 hover:bg-yellow-700" aria-label="Get Insights">Get Insights</a>
+      <a href="links.html" class="gate-controlled hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
     </section>
   </main>
 
@@ -526,6 +553,87 @@
     };
     let latestMarketData = null;
     let latestAIData = null;
+    let latestConfluenceData = null;
+
+    function updateConfluenceEscalationPanel(confluence) {
+      const summary = confluence?.summary || {};
+      const tier2 = confluence?.tier2 || {};
+      const dominantScore = Number(summary.dominant_score || 0);
+      const dominantDirection = summary.dominant_direction || 'NEUTRAL';
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+
+      setText('confluence-escalation-score', `${dominantScore}/10 ${dominantDirection}`);
+      setText('confluence-escalation-urgency', summary.urgency || 'NORMAL');
+      setText('confluence-escalation-threshold', summary.threshold_hit ? 'HIT' : 'NOT HIT');
+      setText('confluence-escalation-tier2', tier2.active ? `ACTIVE (${tier2.count || 1})` : 'CLEAR');
+
+      const recentContainer = document.getElementById('confluence-recent-list');
+      const recent = Array.isArray(confluence?.recent_alerts) ? confluence.recent_alerts.slice(0, 6) : [];
+      if (recentContainer) {
+        recentContainer.innerHTML = recent.length
+          ? recent.map((item) => `
+            <div class="p-2 rounded border border-fuchsia-500/30 bg-gray-900/40">
+              <div class="text-xs text-gray-400">${new Date(item.timestamp).toLocaleString()}</div>
+              <div><span class="text-fuchsia-300">${item.tier}</span> · ${item.asset} · ${item.signal} · ${item.direction}</div>
+              <div class="text-xs text-gray-300">${item.note || ''}</div>
+            </div>
+          `).join('')
+          : '<div class="text-gray-400">No recent alerts in 72h window.</div>';
+      }
+    }
+
+    function applyConfluenceGate() {
+      const aiScore = Number(latestAIData?.confluence?.score || latestAIData?.confidence_score || 0);
+      const dominantSignal = String(latestAIData?.confluence?.dominant_signal || 'neutral').toLowerCase();
+      const triggerCount = Array.isArray(latestMarketData?.triggers) ? latestMarketData.triggers.filter(Boolean).length : 0;
+      const thresholdHit = Boolean(latestConfluenceData?.summary?.threshold_hit);
+      const tier2Active = Boolean(latestConfluenceData?.tier2?.active);
+
+      const pass = tier2Active || (aiScore >= 7 && dominantSignal !== 'neutral' && triggerCount >= 3 && thresholdHit);
+
+      const statusNode = document.getElementById('confluence-gate-status');
+      if (statusNode) {
+        if (pass && tier2Active) {
+          statusNode.className = 'p-3 rounded border border-red-500 bg-red-900/30 text-sm text-red-200 mb-4';
+          statusNode.textContent = 'CONFLUENCE GATE: OVERRIDE (Tier2 black swan). Execute emergency playbook immediately.';
+        } else if (pass) {
+          statusNode.className = 'p-3 rounded border border-emerald-500 bg-emerald-900/30 text-sm text-emerald-200 mb-4';
+          statusNode.textContent = 'CONFLUENCE GATE: OPEN. 3+ cross-asset signals aligned; controlled action permitted.';
+        } else {
+          statusNode.className = 'p-3 rounded border border-yellow-500 bg-yellow-900/30 text-sm text-yellow-200 mb-4';
+          statusNode.textContent = 'CONFLUENCE GATE: LOCKED. Require stronger cross-asset alignment before action.';
+        }
+      }
+
+      document.querySelectorAll('.gate-controlled').forEach((node) => {
+        if (pass) {
+          node.style.pointerEvents = '';
+          node.style.opacity = '';
+          node.removeAttribute('title');
+        } else {
+          node.style.pointerEvents = 'none';
+          node.style.opacity = '0.45';
+          node.setAttribute('title', 'Locked by confluence gate: waiting for 3+ aligned signals');
+        }
+      });
+    }
+
+    async function loadConfluenceAlerts() {
+      try {
+        const res = await fetch('./data/confluence_alerts.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Confluence HTTP ${res.status}`);
+        const payload = await res.json();
+        latestConfluenceData = payload;
+        updateConfluenceEscalationPanel(payload);
+      } catch (error) {
+        console.error('Error loading confluence alerts:', error);
+      }
+      applyConfluenceGate();
+    }
     
     function updateConnectionStatus() {
       const statusEl = document.getElementById('connection-status');
@@ -897,6 +1005,7 @@
 
         updateMacroCommandBrief(d);
         updateMissionPanel(d, latestAIData);
+        applyConfluenceGate();
 
         // Triggers with health check
         const ts = Array.isArray(d.triggers) ? d.triggers : [];
@@ -1162,6 +1271,8 @@
           updateMissionPanel(latestMarketData, latestAIData);
         }
 
+        applyConfluenceGate();
+
         systemHealth.aiConnection = true;
         updateConnectionStatus();
         
@@ -1191,6 +1302,7 @@
         setTimeout(() => loadData(), 0);
         setTimeout(() => loadAIInsights(), 5000);
         setTimeout(() => loadLogs(), 10000);
+        setTimeout(() => loadConfluenceAlerts(), 15000);
         console.log('Auto-refreshed data at:', new Date().toLocaleTimeString());
       }, 120000); // 2 minutes - more API-friendly
     }
@@ -1269,7 +1381,7 @@
     }
 
     // Load all data and start auto-refresh
-    Promise.allSettled([loadData(), loadLogs(), loadAIInsights()])
+    Promise.allSettled([loadData(), loadLogs(), loadAIInsights(), loadConfluenceAlerts()])
       .then(() => {
         console.log('Dashboard loaded, starting auto-refresh...');
         startAutoRefresh();

@@ -430,6 +430,9 @@
   <div class="regime-line" style="margin-top: 18px;">
     CURRENT REGIME: <span id="current-regime">LOADING...</span>
   </div>
+  <div id="scenario-confluence-gate" style="margin-top: 14px; border: 1px solid var(--border); background: var(--dim); padding: 10px 12px; font-size: 11px; letter-spacing: 1px; color: var(--text);">
+    CONFLUENCE GATE: INITIALIZING...
+  </div>
 </div>
 
 <!-- PROBABILITY MATRIX -->
@@ -827,9 +830,16 @@
 
   // Load data
   try {
-    const res = await fetch('data/data.json');
-    if (!res.ok) throw new Error('data.json not found');
-    const d = await res.json();
+    const [marketRes, aiRes, confRes] = await Promise.all([
+      fetch('data/data.json'),
+      fetch('data/ai_insights.json'),
+      fetch('data/confluence_alerts.json')
+    ]);
+
+    if (!marketRes.ok) throw new Error('data.json not found');
+    const d = await marketRes.json();
+    const ai = aiRes.ok ? await aiRes.json() : {};
+    const confluence = confRes.ok ? await confRes.json() : {};
 
     const regimeEl = document.getElementById('current-regime');
     if (regimeEl) regimeEl.textContent = d.regime || 'UNKNOWN';
@@ -837,6 +847,35 @@
     const ts = d.updated_utc ? new Date(d.updated_utc).toUTCString() : '—';
     const tsEl = document.getElementById('last-updated');
     if (tsEl) tsEl.textContent = 'UPDATED: ' + ts;
+
+    const gate = document.getElementById('scenario-confluence-gate');
+    const aiScore = Number(ai?.confluence?.score || ai?.confidence_score || 0);
+    const dominantSignal = String(ai?.confluence?.dominant_signal || 'neutral').toLowerCase();
+    const triggerCount = Array.isArray(d?.triggers) ? d.triggers.filter(Boolean).length : 0;
+    const thresholdHit = Boolean(confluence?.summary?.threshold_hit);
+    const tier2Active = Boolean(confluence?.tier2?.active);
+    const pass = tier2Active || (aiScore >= 7 && dominantSignal !== 'neutral' && triggerCount >= 3 && thresholdHit);
+
+    if (gate) {
+      if (pass && tier2Active) {
+        gate.style.borderColor = 'var(--red)';
+        gate.style.color = 'var(--red)';
+        gate.textContent = 'CONFLUENCE GATE: TIER2 OVERRIDE ACTIVE — EXECUTE EMERGENCY PLAYBOOK';
+      } else if (pass) {
+        gate.style.borderColor = 'var(--green)';
+        gate.style.color = 'var(--green)';
+        gate.textContent = 'CONFLUENCE GATE: OPEN — 3+ CROSS-ASSET SIGNALS CONFIRMED';
+      } else {
+        gate.style.borderColor = 'var(--gold)';
+        gate.style.color = 'var(--gold)';
+        gate.textContent = 'CONFLUENCE GATE: LOCKED — WAIT FOR STRONGER SIGNAL ALIGNMENT';
+      }
+    }
+
+    document.querySelectorAll('.playbook-card').forEach((card) => {
+      card.style.opacity = pass ? '1' : '0.6';
+      card.style.filter = pass ? 'none' : 'grayscale(0.35)';
+    });
 
   } catch (err) {
     console.warn('Scenario data load error:', err);

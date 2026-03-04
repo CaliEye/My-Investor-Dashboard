@@ -62,8 +62,25 @@
       <h3 class="text-lg font-orbitron text-purple-300 mb-3">Mindmap Nodes</h3>
       <div id="mindmap-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm"></div>
     </section>
+
+    <section class="bg-gray-900 border border-indigo-500 rounded-xl p-5 shadow">
+      <h3 class="text-lg font-orbitron text-indigo-300 mb-3">Secure Brain Backup</h3>
+      <div class="grid md:grid-cols-3 gap-3 items-end">
+        <div>
+          <label class="text-xs text-gray-400">Passphrase</label>
+          <input id="secure-passphrase" type="password" class="w-full bg-gray-800 border border-indigo-700 rounded px-3 py-2" placeholder="Strong passphrase">
+        </div>
+        <button id="export-secure" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded font-semibold">Export Encrypted Backup</button>
+        <input id="import-secure-file" type="file" accept="application/json" class="w-full text-sm text-gray-300">
+      </div>
+      <div class="mt-3">
+        <button id="import-secure" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded font-semibold">Import Encrypted Backup</button>
+      </div>
+      <div id="secure-backup-status" class="mt-3 text-sm text-gray-300"></div>
+    </section>
   </main>
 
+  <script src="js/secure-backup.js"></script>
   <script>
     const STORAGE_KEY = 'endgame_brain_sources_v1';
 
@@ -123,6 +140,43 @@
       const sources = readStorage();
       const answer = question ? getAnswer(question, sources) : 'Enter a question first.';
       document.getElementById('brain-answer').textContent = answer;
+    });
+
+    document.getElementById('export-secure').addEventListener('click', async () => {
+      const passphrase = document.getElementById('secure-passphrase').value.trim();
+      const status = document.getElementById('secure-backup-status');
+      if (!passphrase) {
+        status.textContent = 'Enter passphrase before export.';
+        return;
+      }
+      try {
+        await window.secureBackup.exportEncryptedStorage([
+          'endgame_brain_sources_v1',
+          'endgame_goal_notes_v1',
+          'endgame_portfolio_v1'
+        ], passphrase, 'endgame-brain-backup.json');
+        status.textContent = 'Encrypted backup exported successfully.';
+      } catch (error) {
+        status.textContent = `Export failed: ${error.message}`;
+      }
+    });
+
+    document.getElementById('import-secure').addEventListener('click', async () => {
+      const passphrase = document.getElementById('secure-passphrase').value.trim();
+      const fileInput = document.getElementById('import-secure-file');
+      const status = document.getElementById('secure-backup-status');
+      const file = fileInput.files && fileInput.files[0];
+      if (!passphrase || !file) {
+        status.textContent = 'Passphrase and backup file are required for import.';
+        return;
+      }
+      try {
+        const keys = await window.secureBackup.importEncryptedStorage(file, passphrase);
+        status.textContent = `Encrypted backup imported. Restored keys: ${keys.join(', ')}`;
+        renderSources();
+      } catch (error) {
+        status.textContent = `Import failed: ${error.message}`;
+      }
     });
 
     renderSources();
