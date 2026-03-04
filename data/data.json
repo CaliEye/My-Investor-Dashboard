@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-04T04:49:44.191776+00:00",
+  "updated_utc": "2026-03-04T06:29:50.156175+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-04T08:49:44.191776+00:00",
+  "next_review_utc": "2026-03-04T10:29:50.156175+00:00",
   "crypto": {
-    "btc_usd": 67616.74,
-    "eth_usd": 1957.41,
-    "btc_price_formatted": "$67,617",
-    "eth_price_formatted": "$1,957",
+    "btc_usd": 68122.63,
+    "eth_usd": 1966.62,
+    "btc_price_formatted": "$68,123",
+    "eth_price_formatted": "$1,967",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-04T04:49:45.073036+00:00",
+    "updated_utc": "2026-03-04T06:29:50.984707+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
