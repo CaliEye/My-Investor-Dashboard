@@ -7,13 +7,23 @@
   <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/matrix-theme.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Rajdhani:wght@500;700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
   <!-- Enhanced JavaScript modules -->
   <script src="js/config.js"></script>
   <script src="js/data-manager.js"></script>
   <script src="js/matrix-rain.js"></script>
+  <script>
+    (function routeLanding() {
+      const params = new URLSearchParams(window.location.search);
+      const path = (window.location.pathname || '').toLowerCase();
+      const isRootPath = path.endsWith('/') || !path.includes('index.html');
+      if (isRootPath && (!params.has('view') || params.get('view') !== 'summary')) {
+        window.location.replace('scenario.html');
+      }
+    })();
+  </script>
   <!-- System Health & Connection Status -->
   <style>
     .connection-status {
@@ -60,16 +70,55 @@
       color: #6b7280;
       margin-top: 2px;
     }
+    .regime-strip {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .strip-chip {
+      border: 1px solid rgba(0, 255, 120, 0.18);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: rgba(210, 255, 230, 0.88);
+      background: rgba(7, 16, 18, 0.75);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .priority-card {
+      background: rgba(7, 16, 18, 0.86);
+      border: 1px solid rgba(0, 255, 120, 0.18);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    @keyframes softPulse {
+      0% { box-shadow: 0 0 0 rgba(0, 255, 102, 0); }
+      50% { box-shadow: 0 0 24px rgba(0, 255, 102, 0.18); }
+      100% { box-shadow: 0 0 0 rgba(0, 255, 102, 0); }
+    }
+    .pulse-once {
+      animation: softPulse 1.6s ease-out 1;
+    }
+    @media (max-width: 1024px) {
+      .regime-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px) {
+      .regime-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white font-inter">
   <header class="px-6 py-4 flex justify-between items-center border-b border-matrix-green shadow-lg">
     <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Dashboard</a>
+      <a href="index.html?view=summary" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Summary</a>
       <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright" aria-label="War Room">War Room</a>
       <a href="macro.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Crypto">Crypto</a>
+      <a href="crypto.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Crypto">Crypto (Watch-Only)</a>
       <a href="bots.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Bots">Bots</a>
       <a href="sentiment.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Sentiment">Sentiment</a>
       <a href="scenario.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Scenario Builder">Scenario Builder</a>
@@ -89,11 +138,44 @@
   </div>
 
   <main class="p-6 max-w-7xl mx-auto">
+    <!-- Priority-First Decision Deck -->
+    <section class="mb-8 rounded-2xl border-2 border-emerald-400/70 shadow-emerald-400/20 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-emerald-300 mb-5 tracking-widest">OPERATE THE REGIME</h2>
+
+      <div class="priority-card mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div class="text-xs text-gray-400">REGIME STRIP</div>
+          <div id="regime-scenario" class="text-sm text-emerald-200">Top scenario: Loading...</div>
+        </div>
+        <div class="regime-strip">
+          <div id="strip-liquidity" class="strip-chip">Liquidity: —</div>
+          <div id="strip-rates" class="strip-chip">Rates: —</div>
+          <div id="strip-usd" class="strip-chip">USD: —</div>
+          <div id="strip-credit" class="strip-chip">Credit stress: —</div>
+          <div id="strip-vol" class="strip-chip">Volatility: —</div>
+          <div id="strip-gate" class="strip-chip">Confluence gate: —</div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-4">
+        <div id="risk-gate-card" class="priority-card">
+          <div class="text-xs text-gray-400 mb-2">RISK GATE</div>
+          <div id="risk-posture" class="text-xl font-bold text-yellow-300">WATCH-ONLY</div>
+          <div id="hard-rule-reminder" class="text-sm text-gray-300 mt-2">No new crypto risk until Oct/Nov 2026 unless gate flips.</div>
+        </div>
+        <div id="next-action-card" class="priority-card">
+          <div class="text-xs text-gray-400 mb-2">NEXT BEST ACTION</div>
+          <div id="next-best-action" class="text-base text-emerald-200">Hold. Await scenario + confluence update.</div>
+          <div id="next-action-evidence" class="text-xs text-gray-400 mt-2">Evidence: waiting for cross-asset alignment.</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Macro First Command Brief -->
     <section class="mb-8 rounded-2xl border-2 border-yellow-400 shadow-yellow-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 px-8 py-7">
       <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-5">
         <div>
-          <h2 class="text-2xl font-orbitron text-yellow-300 mb-2 tracking-widest">MACRO FIRST // What Matters Now</h2>
+          <h2 class="text-2xl font-orbitron text-yellow-300 mb-2 tracking-widest">MACRO FIRST // Evidence Board</h2>
           <p class="text-sm text-gray-300">Your twice-daily intelligence snapshot. Focus on macro regime, then execute only high-confluence actions.</p>
         </div>
         <div id="macro-alert-headline" class="text-sm px-4 py-2 border border-yellow-400 rounded-lg bg-gray-900/40 text-yellow-300">
@@ -103,9 +185,9 @@
 
       <div class="grid md:grid-cols-3 gap-4 mb-6">
         <div class="p-4 rounded-xl border border-purple-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">2030 ENDGAME CLOCK</div>
+          <div class="text-xs text-gray-400">2030 HORIZON</div>
           <div id="mission-days-left" class="text-xl font-bold text-purple-300">...</div>
-          <div class="text-xs text-gray-400 mt-1">Days left in singularity window</div>
+          <div class="text-xs text-gray-400 mt-1">Days remaining to 2030 horizon</div>
         </div>
         <div class="p-4 rounded-xl border border-cyan-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">4-YEAR PROGRESS</div>
@@ -211,7 +293,7 @@
     </section>
 
     <section class="mb-8 rounded-2xl border-2 border-fuchsia-400 shadow-fuchsia-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-fuchsia-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-fuchsia-300 mb-5 tracking-widest">CONFLUENCE ESCALATION ENGINE // 72H WINDOW</h2>
+      <h2 class="text-2xl font-orbitron text-fuchsia-300 mb-5 tracking-widest">CONFLUENCE ALERT ENGINE // 72H WINDOW</h2>
       <div class="grid lg:grid-cols-4 gap-4 mb-5">
         <div class="p-4 rounded-xl border border-fuchsia-500/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">DOMINANT SCORE</div>
@@ -239,7 +321,7 @@
 
     <!-- Regime + Trigger Card -->
     <section class="mb-8 rounded-2xl border-2 border-matrix-green shadow-matrix-green/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-green-900 px-8 py-7">
-      <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime</h2>
+      <h2 class="text-2xl font-orbitron text-matrix-bright mb-4 tracking-widest">InvestorOS — Regime Diagnostics</h2>
 
       <div class="grid md:grid-cols-3 gap-6">
         <div class="p-4 rounded-xl border border-matrix-green/60 bg-gray-900/40">
@@ -321,93 +403,42 @@
 
     <!-- Hero HUD Section -->
     <section class="mb-8 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-7">
-      <div class="flex flex-col md:flex-row md:space-x-12">
-        <!-- Cycle Status Block -->
-        <div class="flex-1 mb-8 md:mb-0">
-          <h2 class="text-2xl font-orbitron text-cyan-300 mb-4 tracking-widest">Cycle Status</h2>
-          <table class="w-full text-center cycle-table mb-2" aria-label="Cycle Status Table">
-            <thead>
-              <tr>
-                <th>Cycle Type</th>
-                <th>Phase</th>
-                <th>Progress</th>
-                <th>Time Remaining</th>
-                <th>Trend</th>
-                <th>Risk Level</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>4-Year Cycle</td>
-                <td>Year 3 (Bear Phase)</td>
-                <td>
-                  <div class="prog-bar"><div style="width:75%"></div></div>75%
-                </td>
-                <td>~12 months to bottom</td>
-                <td><span class="text-red-400 font-bold">&#8595; Declining</span></td>
-                <td><span class="text-red-400 font-bold">High</span></td>
-                <td><span class="status-dot inline-block bg-red-400"></span></td>
-              </tr>
-              <tr>
-                <td>Weekly Trend</td>
-                <td>Downtrend Active</td>
-                <td>
-                  <div class="prog-bar"><div style="width:45%"></div></div>45%
-                </td>
-                <td>8-12 weeks to support</td>
-                <td><span class="text-red-400 font-bold">&#8595; Falling</span></td>
-                <td><span class="text-orange-400 font-bold">Medium</span></td>
-                <td><span class="status-dot inline-block bg-orange-400"></span></td>
-              </tr>
-              <tr>
-                <td>40-Day Swing</td>
-                <td>Correction Phase</td>
-                <td>
-                  <div class="prog-bar"><div style="width:67%"></div></div>67%
-                </td>
-                <td>12-15 days to pivot</td>
-                <td><span class="text-yellow-400 font-bold">&#8595; Oversold</span></td>
-                <td><span class="text-yellow-400 font-bold">Medium</span></td>
-                <td><span class="status-dot inline-block bg-yellow-400"></span></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="mt-3 text-gray-200 text-xs">
-            <strong>Bear Market Guidance:</strong> We're 75% through the 4-year cycle, likely 12+ months from cycle bottom.<br>
-            <strong>Current Phase:</strong> Distribution complete, now in active decline phase.<br> 
-            <strong>Status:</strong> High risk environment - cash preservation mode recommended.
+      <div class="mb-5 p-3 rounded-lg border border-red-500/60 bg-red-900/20">
+        <div class="text-xs text-red-300 mb-1 tracking-wide font-bold">PRIORITY ALERT</div>
+        <div id="risk-alert-ticker" class="text-pink-300 text-sm font-bold tracking-wide">Loading live risk feed...</div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6 items-start">
+        <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow lg:col-span-2">
+          <h3 class="font-orbitron text-lg text-cyan-300 mb-2">Market Overview</h3>
+          <div class="grid grid-cols-2 gap-3 text-base">
+            <div>BTC Price:</div> <div id="btc-price" class="font-bold text-yellow-300" aria-live="polite">...</div>
+            <div>ETH Price:</div> <div id="eth-price" class="font-bold text-green-300" aria-live="polite">...</div>
+            <div>SPX:</div> <div id="spx-latest" class="font-bold text-blue-300" aria-live="polite">...</div>
+            <div>USD Index:</div> <div id="usd-latest" class="font-bold text-cyan-300" aria-live="polite">...</div>
+            <div>Fear &amp; Greed:</div> <div id="fg-latest" class="font-bold text-pink-400" aria-live="polite">...</div>
           </div>
-        </div>
-        <!-- Live Market Gauges -->
-        <div class="flex-1 space-y-6">
-          <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow">
-            <h3 class="font-orbitron text-lg text-cyan-300 mb-2">Market Overview</h3>
-            <div class="grid grid-cols-2 gap-3 text-base">
-              <div>BTC Price:</div> <div id="btc-price" class="font-bold text-yellow-300" aria-live="polite">...</div>
-              <div>ETH Price:</div> <div id="eth-price" class="font-bold text-green-300" aria-live="polite">...</div>
-              <div>SPX:</div> <div id="spx-latest" class="font-bold text-blue-300" aria-live="polite">...</div>
-              <div>USD Index:</div> <div id="usd-latest" class="font-bold text-cyan-300" aria-live="polite">...</div>
-              <div>Fear &amp; Greed:</div> <div id="fg-latest" class="font-bold text-pink-400" aria-live="polite">...</div>
-            </div>
-          </div>
-          <div class="flex flex-row space-x-4">
-            <div class="bg-gray-800 border border-green-500 rounded-xl p-4 flex-1 shadow">
+          <div class="mt-4 grid md:grid-cols-2 gap-4">
+            <div class="bg-gray-900 border border-green-500 rounded-xl p-4 shadow">
               <h3 class="font-orbitron text-lg text-green-300 mb-2">Crypto Risk</h3>
               <div id="crypto-risk-gauge" class="gauge-meter"></div>
             </div>
-            <div class="bg-gray-800 border border-yellow-500 rounded-xl p-4 flex-1 shadow">
+            <div class="bg-gray-900 border border-yellow-500 rounded-xl p-4 shadow">
               <h3 class="font-orbitron text-lg text-yellow-300 mb-2">Macro Risk</h3>
               <div id="macro-risk-gauge" class="gauge-meter"></div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Alert Ticker -->
-      <div class="mt-6 border-t border-cyan-700 pt-3">
-        <marquee id="risk-alert-ticker" behavior="scroll" direction="left" scrollamount="6" class="text-pink-400 text-lg font-bold tracking-wide">
-          ALERT: Macro Risk Elevated | BTC breaks above 50 DMA | US10Y spiking | Fed statement at 2pm | ...
-        </marquee>
+
+        <div class="bg-gray-800 border border-cyan-400 rounded-xl p-4 shadow">
+          <h3 class="font-orbitron text-base text-cyan-300 mb-2 tracking-wide">Cycle Context</h3>
+          <ul class="text-sm text-gray-200 space-y-2">
+            <li><span class="text-gray-400">Cycle:</span> <span id="cycle-context-main">—</span></li>
+            <li><span class="text-gray-400">Swing:</span> <span id="cycle-context-swing">—</span></li>
+            <li><span class="text-gray-400">Levels:</span> <span id="cycle-context-levels">—</span></li>
+            <li><span class="text-gray-400">Posture:</span> <span id="cycle-context-posture">—</span></li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -429,7 +460,7 @@
         <ul class="list-inside text-base space-y-1">
           <li>• CPI print due tomorrow</li>
           <li>• FOMC meeting next Wednesday</li>
-          <li>• ETH ETF approval rumors circulating</li>
+          <li>• ETF decision calendar update pending official source confirmation</li>
           <li>• Watch for BTC options expiry Friday</li>
         </ul>
         <div class="mt-2 text-gray-400 text-xs">News auto-updates every hour. <a href="macro.html" class="underline text-pink-400">See macro page for details &rarr;</a></div>
@@ -472,7 +503,7 @@
     <!-- Quick Panel Shortcuts -->
     <section class="flex flex-wrap gap-6 mb-10 justify-center">
       <a href="warroom.html" class="gate-controlled hud-action bg-pink-500 hover:bg-pink-700" aria-label="Enter War Room">Enter War Room</a>
-      <a href="scenario.html" class="gate-controlled hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="scenario.html" class="gate-controlled hud-action bg-cyan-500 hover:bg-cyan-700" aria-label="Scenario Engine">Scenario Engine (Primary)</a>
       <a href="insights.html" class="gate-controlled hud-action bg-yellow-500 hover:bg-yellow-700" aria-label="Get Insights">Get Insights</a>
       <a href="links.html" class="gate-controlled hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
     </section>
@@ -487,6 +518,17 @@
     function generateRiskActions() {
       const actionsContainer = document.getElementById('risk-actions-content');
       if (!actionsContainer) return;
+
+      if (!confluenceGateOpen) {
+        actionsContainer.innerHTML = `
+          <div class="bg-gray-900 border-l-4 border-yellow-500 p-4 rounded">
+            <div class="text-yellow-300 text-xs font-bold mb-1">ACTION BLOCKED</div>
+            <div class="text-white font-semibold mb-1">Confluence gate is locked</div>
+            <div class="text-gray-300 text-sm">Wait for threshold alignment or Tier2 override before updating tactical actions.</div>
+          </div>
+        `;
+        return;
+      }
       
       // Bear market specific actions based on current data
       const bearMarketActions = [
@@ -554,6 +596,7 @@
     let latestMarketData = null;
     let latestAIData = null;
     let latestConfluenceData = null;
+    let confluenceGateOpen = false;
 
     function updateConfluenceEscalationPanel(confluence) {
       const summary = confluence?.summary || {};
@@ -586,6 +629,86 @@
       }
     }
 
+    function updatePriorityDecisionDeck() {
+      const macro = latestMarketData?.macro || {};
+      const ai = latestAIData || {};
+      const decisionGate = latestMarketData?.decision_gate || {};
+
+      const dxy = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const macroRisk = Number(macro.risk_level || 0);
+      const fearGreed = Number(latestMarketData?.sentiment?.fear_greed_index || 50);
+      const confluenceCount = Number(decisionGate.signal_count || 0);
+      const confluenceMax = Number(decisionGate.max_score || 3);
+
+      const scenarioName = ai.regime || latestMarketData?.bias || 'Neutral';
+      const scenarioProb = Number(ai.confidence_score || ai?.confluence?.agreement_pct || 50);
+      const scenarioEl = document.getElementById('regime-scenario');
+      if (scenarioEl) {
+        scenarioEl.textContent = `Top scenario: ${scenarioName} (${scenarioProb}%)`;
+      }
+
+      const setStrip = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      const liquidityDir = Number.parseFloat((macro.fed_funds_rate || '0').toString().replace(/[^\d.-]/g, '')) >= 4.5 ? '↓' : '↑';
+      const ratesDir = us10y >= 4.0 ? '↑' : '↓';
+      const usdDir = dxy >= 103 ? '↑' : '↓';
+      const creditStress = macroRisk >= 70 ? 'High' : macroRisk >= 45 ? 'Med' : 'Low';
+      const volatility = fearGreed <= 30 ? 'High' : fearGreed <= 55 ? 'Med' : 'Low';
+
+      setStrip('strip-liquidity', `Liquidity: ${liquidityDir}`);
+      setStrip('strip-rates', `Rates: ${ratesDir}`);
+      setStrip('strip-usd', `USD: ${usdDir}`);
+      setStrip('strip-credit', `Credit stress: ${creditStress}`);
+      setStrip('strip-vol', `Volatility: ${volatility}`);
+      setStrip('strip-gate', `Confluence gate: ${confluenceCount}/${confluenceMax}`);
+
+      const riskPostureEl = document.getElementById('risk-posture');
+      const riskCardEl = document.getElementById('risk-gate-card');
+      const posture = String(decisionGate.risk_posture || (confluenceGateOpen ? 'MODERATE' : 'WATCH-ONLY')).toUpperCase();
+      if (riskPostureEl) {
+        riskPostureEl.textContent = posture;
+        riskPostureEl.className = posture.includes('DEFENSIVE')
+          ? 'text-xl font-bold text-red-300'
+          : posture.includes('WATCH')
+            ? 'text-xl font-bold text-yellow-300'
+            : posture.includes('MODERATE')
+              ? 'text-xl font-bold text-cyan-300'
+              : 'text-xl font-bold text-emerald-300';
+      }
+      if (riskCardEl) {
+        riskCardEl.classList.remove('pulse-once');
+        if (confluenceCount >= 3 || posture.includes('DEFENSIVE')) {
+          void riskCardEl.offsetWidth;
+          riskCardEl.classList.add('pulse-once');
+        }
+      }
+
+      const hardRuleEl = document.getElementById('hard-rule-reminder');
+      if (hardRuleEl) {
+        hardRuleEl.textContent = decisionGate.hard_rule_reminder || 'No new crypto risk until Oct/Nov 2026 unless gate flips.';
+      }
+
+      const nextActionEl = document.getElementById('next-best-action');
+      if (nextActionEl) {
+        const fallbackAction = confluenceGateOpen
+          ? 'Gate open: size small and execute only predefined, invalidation-driven setups.'
+          : 'Hold. Update scenario if DXY > 108 + VIX proxy stress + breadth weakens.';
+        nextActionEl.textContent = decisionGate.next_best_action || fallbackAction;
+      }
+
+      const evidenceEl = document.getElementById('next-action-evidence');
+      if (evidenceEl) {
+        const signals = Array.isArray(decisionGate.signals) ? decisionGate.signals : [];
+        evidenceEl.textContent = signals.length
+          ? `Evidence: ${signals.slice(0, 3).join(' | ')}`
+          : 'Evidence: waiting for stronger cross-asset confirmation.';
+      }
+    }
+
     function applyConfluenceGate() {
       const aiScore = Number(latestAIData?.confluence?.score || latestAIData?.confidence_score || 0);
       const dominantSignal = String(latestAIData?.confluence?.dominant_signal || 'neutral').toLowerCase();
@@ -594,6 +717,7 @@
       const tier2Active = Boolean(latestConfluenceData?.tier2?.active);
 
       const pass = tier2Active || (aiScore >= 7 && dominantSignal !== 'neutral' && triggerCount >= 3 && thresholdHit);
+      confluenceGateOpen = pass;
 
       const statusNode = document.getElementById('confluence-gate-status');
       if (statusNode) {
@@ -614,12 +738,28 @@
           node.style.pointerEvents = '';
           node.style.opacity = '';
           node.removeAttribute('title');
+          node.removeAttribute('aria-disabled');
+          if (node.tagName === 'A') {
+            node.setAttribute('tabindex', '0');
+          }
+          if (node.tagName === 'BUTTON') {
+            node.disabled = false;
+          }
         } else {
           node.style.pointerEvents = 'none';
           node.style.opacity = '0.45';
           node.setAttribute('title', 'Locked by confluence gate: waiting for 3+ aligned signals');
+          node.setAttribute('aria-disabled', 'true');
+          if (node.tagName === 'A') {
+            node.setAttribute('tabindex', '-1');
+          }
+          if (node.tagName === 'BUTTON') {
+            node.disabled = true;
+          }
         }
       });
+
+      updatePriorityDecisionDeck();
     }
 
     async function loadConfluenceAlerts() {
@@ -754,6 +894,31 @@
 
       updateSectorCommandGrid(data);
       updateEventPlaybookGrid(data, latestAIData);
+    }
+
+    function updateCycleContext(data) {
+      const crypto = data?.crypto || {};
+      const gate = data?.decision_gate || {};
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = (value === null || value === undefined || value === '') ? '—' : String(value);
+      };
+
+      setText('cycle-context-main', crypto.cycle_status || 'No cycle data available');
+
+      const swingWindow = crypto?.watch_rules_2026?.[0]
+        ? `Watch: ${crypto.watch_rules_2026[0]}`
+        : 'Awaiting updated swing trigger';
+      setText('cycle-context-swing', swingWindow);
+
+      const levelLine = `BTC ${crypto.btc_support || '—'} / ${crypto.btc_resistance || '—'} • ETH ${crypto.eth_support || '—'} / ${crypto.eth_resistance || '—'}`;
+      setText('cycle-context-levels', levelLine);
+
+      const postureLine = gate.risk_posture
+        ? `${gate.risk_posture} (${gate.confluence_score || 0}/${gate.max_score || 5})`
+        : 'No gate posture available';
+      setText('cycle-context-posture', postureLine);
     }
 
     function assessPrivacyExposure() {
@@ -1004,6 +1169,7 @@
         }
 
         updateMacroCommandBrief(d);
+        updateCycleContext(d);
         updateMissionPanel(d, latestAIData);
         applyConfluenceGate();
 
@@ -1396,6 +1562,16 @@
         startAutoRefresh();
       }
     });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Element ? event.target.closest('.gate-controlled') : null;
+      if (!target) return;
+
+      if (!confluenceGateOpen) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
   </script>
 
   <script src="js/lindy-alerts.js"></script>

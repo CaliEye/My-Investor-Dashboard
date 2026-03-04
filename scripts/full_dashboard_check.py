@@ -34,6 +34,8 @@ DATA_FILE = REPO_ROOT / "data" / "data.json"
 AI_FILE = REPO_ROOT / "data" / "ai_insights.json"
 CONFLUENCE_FILE = REPO_ROOT / "data" / "confluence_alerts.json"
 BOTS_FILE = REPO_ROOT / "data" / "bots_data.json"
+DISPATCH_STATE_FILE = REPO_ROOT / "data" / "alert_dispatch_state.json"
+DISPATCH_LOG_FILE = REPO_ROOT / "data" / "alert_dispatch_log.json"
 
 PAGES = [
     "index.html",
@@ -79,6 +81,13 @@ REQUIRED_BOTS_PATHS = [
     ("ai_tests",),
 ]
 
+REQUIRED_DISPATCH_LOG_PATHS = [
+    ("updated_utc",),
+    ("events",),
+]
+
+PLACEHOLDER_TOKENS = {"", "...", "—", "N/A", "Loading...", "Error loading"}
+
 
 @dataclass
 class CheckResult:
@@ -120,6 +129,43 @@ def parse_iso(ts: str) -> datetime:
     return datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
 
+def parse_numeric(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).strip()
+    if text in PLACEHOLDER_TOKENS:
+        return None
+
+    normalized = text.replace(",", "")
+    digits = []
+    dot_used = False
+    sign_allowed = True
+    for ch in normalized:
+        if ch in "+-" and sign_allowed:
+            digits.append(ch)
+            sign_allowed = False
+            continue
+        sign_allowed = False
+        if ch.isdigit():
+            digits.append(ch)
+            continue
+        if ch == "." and not dot_used:
+            dot_used = True
+            digits.append(ch)
+            continue
+        if digits:
+            break
+    candidate = "".join(digits)
+    if not candidate or candidate in {"+", "-", ".", "+.", "-."}:
+        return None
+    try:
+        return float(candidate)
+    except ValueError:
+        return None
+
+
 def run_updaters() -> list[CheckResult]:
     results: list[CheckResult] = []
 
@@ -146,6 +192,12 @@ def run_updaters() -> list[CheckResult]:
         results.append(CheckResult("process_tradingview_alerts.py", True, "completed"))
     except Exception as exc:
         results.append(CheckResult("process_tradingview_alerts.py", False, f"{type(exc).__name__}: {exc}"))
+
+    try:
+        runpy.run_path(str(REPO_ROOT / "scripts" / "dispatch_confluence_alerts.py"), run_name="__main__")
+        results.append(CheckResult("dispatch_confluence_alerts.py", True, "completed"))
+    except Exception as exc:
+        results.append(CheckResult("dispatch_confluence_alerts.py", False, f"{type(exc).__name__}: {exc}"))
 
     return results
 
@@ -190,6 +242,8 @@ def run_payload_checks() -> list[CheckResult]:
         ai = get_json(AI_FILE)
         confluence = get_json(CONFLUENCE_FILE)
         bots = get_json(BOTS_FILE)
+        dispatch_log = get_json(DISPATCH_LOG_FILE)
+        dispatch_state = get_json(DISPATCH_STATE_FILE)
     except Exception as exc:
         return [CheckResult("payload_read", False, f"{type(exc).__name__}: {exc}")]
 
@@ -197,11 +251,15 @@ def run_payload_checks() -> list[CheckResult]:
     missing_ai = [".".join(p) for p in REQUIRED_AI_PATHS if not has_path(ai, p)]
     missing_confluence = [".".join(p) for p in REQUIRED_CONFLUENCE_PATHS if not has_path(confluence, p)]
     missing_bots = [".".join(p) for p in REQUIRED_BOTS_PATHS if not has_path(bots, p)]
+    missing_dispatch_log = [".".join(p) for p in REQUIRED_DISPATCH_LOG_PATHS if not has_path(dispatch_log, p)]
+    state_has_key = has_path(dispatch_state, ("last_dispatch_utc",))
 
     results.append(CheckResult("data_required_keys", not missing_data, "ok" if not missing_data else ", ".join(missing_data)))
     results.append(CheckResult("ai_required_keys", not missing_ai, "ok" if not missing_ai else ", ".join(missing_ai)))
     results.append(CheckResult("confluence_required_keys", not missing_confluence, "ok" if not missing_confluence else ", ".join(missing_confluence)))
     results.append(CheckResult("bots_required_keys", not missing_bots, "ok" if not missing_bots else ", ".join(missing_bots)))
+    results.append(CheckResult("dispatch_log_required_keys", not missing_dispatch_log, "ok" if not missing_dispatch_log else ", ".join(missing_dispatch_log)))
+    results.append(CheckResult("dispatch_state_last_dispatch", state_has_key, "ok" if state_has_key else "missing last_dispatch_utc"))
 
     freshness_items = [
         ("data.updated_utc", data.get("updated_utc")),
@@ -219,6 +277,33 @@ def run_payload_checks() -> list[CheckResult]:
             results.append(CheckResult(label, ok, f"age={age_min} min"))
         except Exception as exc:
             results.append(CheckResult(label, False, f"parse error: {exc}"))
+
+    key_value_checks = [
+        ("numeric.btc_usd", data.get("crypto", {}).get("btc_usd"), 1000, 500000),
+        ("numeric.eth_usd", data.get("crypto", {}).get("eth_usd"), 50, 50000),
+        ("numeric.macro.spx", data.get("macro", {}).get("spx"), 1000, 100000),
+        ("numeric.macro.dxy", data.get("macro", {}).get("dxy"), 70, 130),
+        ("numeric.macro.us10y_yield", data.get("macro", {}).get("us10y_yield"), 0, 20),
+        ("numeric.sentiment.fear_greed_index", data.get("sentiment", {}).get("fear_greed_index"), 0, 100),
+    ]
+
+    for label, raw_value, low, high in key_value_checks:
+        numeric = parse_numeric(raw_value)
+        if numeric is None:
+            results.append(CheckResult(label, False, "missing/placeholder"))
+            continue
+        ok = low <= numeric <= high
+        results.append(CheckResult(label, ok, f"value={numeric}"))
+
+    key_text_fields = [
+        ("text.crypto.cycle_status", data.get("crypto", {}).get("cycle_status")),
+        ("text.crypto.risk_context", data.get("crypto", {}).get("risk_context")),
+        ("text.macro.risk_context", data.get("macro", {}).get("risk_context")),
+    ]
+    for label, value in key_text_fields:
+        text = ("" if value is None else str(value)).strip()
+        ok = text not in PLACEHOLDER_TOKENS and len(text) >= 8
+        results.append(CheckResult(label, ok, text if ok else "placeholder/too_short"))
 
     return results
 
@@ -275,8 +360,8 @@ def run_playwright_checks(base_url: str) -> list[CheckResult]:
             results.append(CheckResult("browser:index_selectors", not missing, "ok" if not missing else f"missing={missing}"))
 
             if not missing:
-                signal_ok = all(
-                    len(text(sel)) > 0
+                signal_values = {
+                    sel: text(sel)
                     for sel in [
                         "#macro-unemployment",
                         "#sector-tech-status",
@@ -285,7 +370,8 @@ def run_playwright_checks(base_url: str) -> list[CheckResult]:
                         "#macro-risk-gauge",
                         "#risk-alert-ticker",
                     ]
-                )
+                }
+                signal_ok = all(v and v.strip() not in PLACEHOLDER_TOKENS for v in signal_values.values())
                 results.append(CheckResult("browser:index_dynamic_values", signal_ok, "populated" if signal_ok else "one or more values empty"))
 
             browser.close()

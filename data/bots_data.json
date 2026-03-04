@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-03-04T06:24:11.649954+00:00",
+  "updated_at": "2026-03-04T09:10:38.592077+00:00",
   "bots": [
     {
       "name": "Pionex Gold Grid Bot",
       "exchange": "Pionex",
       "strategy": "Gold ETF / XAU Trend-Grid",
       "status": "ACTIVE",
-      "weekly_pnl_pct": 3.58,
-      "weekly_pnl_usd": 274.8,
-      "max_drawdown_pct": 1.7,
+      "weekly_pnl_pct": 8.3,
+      "weekly_pnl_usd": 637.12,
+      "max_drawdown_pct": 0.9,
       "win_rate_pct": 63,
       "confluence_score": 7,
       "notes": "Stable in low-volatility trend; strongest when DXY weakens and real yields cool."
@@ -18,9 +18,9 @@
       "exchange": "Bybit",
       "strategy": "Regime + Momentum Filter",
       "status": "ACTIVE",
-      "weekly_pnl_pct": 1.18,
-      "weekly_pnl_usd": 97.86,
-      "max_drawdown_pct": 3.56,
+      "weekly_pnl_pct": -0.5,
+      "weekly_pnl_usd": -5.0,
+      "max_drawdown_pct": 5.0,
       "win_rate_pct": 57,
       "confluence_score": 7,
       "notes": "Performance improves when macro liquidity and breadth confirm risk-on."
@@ -30,9 +30,9 @@
       "exchange": "Broker API",
       "strategy": "LMT/RTX/NOC Relative Strength",
       "status": "PAPER",
-      "weekly_pnl_pct": 2.08,
-      "weekly_pnl_usd": 103.54,
-      "max_drawdown_pct": 0.9,
+      "weekly_pnl_pct": 6.8,
+      "weekly_pnl_usd": 338.5,
+      "max_drawdown_pct": 0.5,
       "win_rate_pct": 61,
       "confluence_score": 7,
       "notes": "Resilient in risk-off windows; lower volatility than broad index strategies."
@@ -70,19 +70,44 @@
       "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
     },
     {
-      "name": "Volatility Filter Stress",
+      "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
-      "summary": "Reduced false entries by 14% in high-VIX windows."
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
     },
     {
-      "name": "Spread/Slippage Monte Carlo",
+      "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
-      "summary": "Profit factor remains >1.15 under 1.5x historical slippage assumptions."
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
     },
     {
-      "name": "News Shock Kill-Switch",
+      "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
-      "summary": "Emergency stop reduced tail drawdown by 2.1%."
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
     }
   ],
   "proposed_changes": [

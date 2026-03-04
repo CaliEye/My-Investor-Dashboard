@@ -14,13 +14,13 @@
   <header class="px-6 py-4 flex justify-between items-center border-b border-pink-400 shadow-lg">
     <h1 class="text-3xl font-orbitron tracking-widest text-pink-400">CyberSci-Dash v2</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
+      <a href="index.html?view=summary" class="hover:text-cyan-400" aria-label="Dashboard">Summary</a>
       <a href="warroom.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="War Room">War Room</a>
       <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
       <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
       <a href="bots.html" class="hover:text-cyan-400" aria-label="Bots">Bots</a>
       <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
+      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Engine">Scenario Engine</a>
       <a href="mindmap.html" class="hover:text-cyan-400" aria-label="Mindmap">Mindmap</a>
       <a href="goals.html" class="hover:text-cyan-400" aria-label="Goals">Goals</a>
       <a href="portfolio.html" class="hover:text-cyan-400" aria-label="Portfolio">Portfolio</a>
@@ -30,136 +30,48 @@
   </header>
 
   <main class="p-6 max-w-6xl mx-auto">
-    <!-- WAR ROOM HUD HERO -->
-    <section class="mb-10 rounded-2xl border-2 border-pink-400 shadow-pink-400/60 shadow-xl bg-gradient-to-br from-gray-950 via-gray-900 to-pink-900 px-8 py-8">
-      <div class="flex flex-col md:flex-row md:space-x-12">
-        <div class="flex-1 mb-8 md:mb-0">
-          <h2 class="text-2xl font-orbitron text-pink-300 mb-3 tracking-widest">🚨 War Room Status</h2>
-          <ul class="space-y-2 text-lg">
-            <li><span class="font-bold text-yellow-300">Major Market Event:</span> <span id="major-event">None Detected</span></li>
-            <li><span class="font-bold text-red-400">ALERTS:</span> <span id="war-alert">No Active Alerts</span></li>
-            <li><span class="font-bold text-green-400">Portfolio Risk Level:</span> <span id="risk-level">Neutral</span></li>
-            <li><span class="font-bold text-cyan-400">Playbook:</span> <span id="playbook-action">Monitor, No Drastic Moves</span></li>
-          </ul>
-          <div class="mt-5 text-sm text-gray-300 italic">
-            This section updates with real-time crisis signals and decision triggers. Check this page during serious volatility, macro shocks, or if you're unsure what to do next.
-          </div>
-        </div>
-        <div class="flex-1 flex flex-col items-center justify-center">
-          <div class="bg-gray-900 border-2 border-pink-400 rounded-full w-52 h-52 flex items-center justify-center shadow-2xl">
-            <span class="font-orbitron text-3xl text-pink-400 animate-pulse">HIGH ALERT</span>
-          </div>
-          <div class="mt-4 text-center text-pink-200 text-lg font-bold tracking-wider">Ready for Anything</div>
-        </div>
-      </div>
-      <div class="mt-7 border-t border-pink-700 pt-4">
-        <marquee behavior="scroll" direction="left" scrollamount="7" class="text-pink-400 text-lg font-bold tracking-wide">
-          EMERGENCY: FOMC volatility | BTC flash crash detected | Macro regime change possible | Whale activity spike | Check scenario builder for crisis planning!
-        </marquee>
-      </div>
+    <section class="mb-8 rounded-2xl border-2 border-pink-400 shadow-pink-400/30 shadow-xl bg-gradient-to-br from-gray-950 via-gray-900 to-pink-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-pink-300 mb-2 tracking-widest">WAR ROOM // DECISION SUPPORT</h2>
+      <p class="text-sm text-gray-300">Signal confirmation, capital preservation, scenario updates, and source verification. No prediction feed. No noise scanning.</p>
     </section>
 
-    <!-- Decision Trees & Crisis Playbook -->
-    <section class="mb-12">
-      <h2 class="text-xl font-orbitron text-pink-300 mb-4">Decision Tree: What Should I Do?</h2>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="bg-gray-900 border border-yellow-500 rounded-xl p-6 shadow">
-          <h3 class="font-orbitron text-yellow-300 mb-2">Market Crash Detected</h3>
-          <ul class="list-inside list-disc text-base space-y-2">
-            <li>Confirm the event (are multiple assets dropping fast?)</li>
-            <li>Check exchange stability and major support levels</li>
-            <li>Reduce leverage and risk immediately</li>
-            <li>Consider hedging or moving to stable assets</li>
-            <li>Update your scenario in the <a href="scenario.html" class="underline text-cyan-400">Scenario Builder</a></li>
-            <li>Refer to historical crash playbooks below</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 border border-cyan-500 rounded-xl p-6 shadow">
-          <h3 class="font-orbitron text-cyan-300 mb-2">Regime Change / Fed Pivot</h3>
-          <ul class="list-inside list-disc text-base space-y-2">
-            <li>Monitor macro headlines (Fed, ECB, BOJ)</li>
-            <li>Watch for liquidity injections or sudden rate changes</li>
-            <li>Reassess all open risk positions</li>
-            <li>Prepare for new market leadership & volatility</li>
-            <li>Review Macro page for deep-dive context</li>
-            <li>Update your risk profile in <a href="scenario.html" class="underline text-pink-400">Scenario Builder</a></li>
-          </ul>
-        </div>
+    <section class="mb-10 grid md:grid-cols-2 gap-6">
+      <div class="bg-gray-900 border border-red-500 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-red-300 mb-3 tracking-wide">1) CRISIS DETECTOR (SIGNALS ONLY)</h3>
+        <ul class="list-inside list-disc text-sm space-y-2 text-gray-200">
+          <li>DXY &gt; 108 with trend persistence</li>
+          <li>Credit stress widening (HYG/JNK or spreads)</li>
+          <li>Volatility break (VIX proxy spike)</li>
+          <li>Liquidity shock (rates up + risk breadth down)</li>
+          <li>Confluence gate threshold status from command center</li>
+        </ul>
+        <div class="mt-4 text-xs text-gray-400">Escalate only when 2+ independent signals confirm. Single prints are noise.</div>
       </div>
-    </section>
 
-    <!-- Historical Crisis Playbooks -->
-    <section class="mb-12">
-      <h2 class="text-xl font-orbitron text-pink-300 mb-4">Historical Crisis Playbooks</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-gray-900 border border-pink-400 rounded-xl p-6 shadow">
-          <h4 class="font-orbitron text-pink-400 mb-2">March 2020 Crash</h4>
-          <ul class="list-inside list-disc text-base space-y-2">
-            <li>Massive deleveraging—cash was king</li>
-            <li>Best move: preserve capital, buy late</li>
-            <li>Wait for signs of central bank intervention</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 border border-yellow-400 rounded-xl p-6 shadow">
-          <h4 class="font-orbitron text-yellow-400 mb-2">FTX Collapse</h4>
-          <ul class="list-inside list-disc text-base space-y-2">
-            <li>Rapid exchange outflows</li>
-            <li>Move funds to self-custody ASAP</li>
-            <li>Monitor for domino effects in DeFi/CeFi</li>
-          </ul>
-        </div>
-        <div class="bg-gray-900 border border-cyan-400 rounded-xl p-6 shadow">
-          <h4 class="font-orbitron text-cyan-400 mb-2">Fed Tightening Shock</h4>
-          <ul class="list-inside list-disc text-base space-y-2">
-            <li>Risk assets de-rate quickly</li>
-            <li>Rotate to safe havens (cash, bonds, gold)</li>
-            <li>Don't fight the Fed trend</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12 rounded-2xl border-2 border-purple-400 shadow-purple-400/30 shadow-xl bg-gradient-to-br from-gray-950 via-gray-900 to-purple-900 px-8 py-7">
-      <h2 class="text-xl font-orbitron text-purple-300 mb-4 tracking-widest">ENDGAME MISSION PANEL</h2>
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="p-4 rounded-xl border border-purple-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">2030 ENDGAME CLOCK</div>
-          <div id="mission-days-left" class="text-xl font-bold text-purple-300">...</div>
-          <div class="text-xs text-gray-400 mt-1">Days left in singularity window</div>
-        </div>
-        <div class="p-4 rounded-xl border border-cyan-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">4-YEAR PROGRESS</div>
-          <div class="w-full h-2 bg-gray-700 rounded mt-2 mb-2 overflow-hidden">
-            <div id="endgame-progress-bar" class="h-2 bg-cyan-400" style="width: 0%"></div>
-          </div>
-          <div id="endgame-progress-text" class="text-xs text-cyan-300">...</div>
-        </div>
-        <div class="p-4 rounded-xl border border-rose-400/50 bg-gray-900/40">
-          <div class="text-xs text-gray-400">PRIVACY EXPOSURE CHECK</div>
-          <div id="privacy-status" class="text-xl font-bold text-rose-300">...</div>
-          <div id="privacy-note" class="text-xs text-gray-400 mt-1">Scanning frontend surface...</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Emergency Action Panel -->
-    <section class="mb-12 flex flex-col md:flex-row gap-8">
-      <div class="flex-1 bg-gray-900 border border-red-400 rounded-xl p-6 shadow">
-        <h2 class="text-lg font-orbitron text-red-400 mb-2">Emergency Actions</h2>
-        <ul class="list-inside list-disc text-base space-y-2">
-          <li><a href="https://www.tradingview.com/" target="_blank" class="underline text-cyan-300">Open TradingView for real-time charts</a></li>
-          <li><a href="crypto.html" class="underline text-yellow-300">Check on-chain & exchange flows</a></li>
-          <li><a href="links.html" class="underline text-pink-300">Access brokerage and cold storage links</a></li>
-          <li><a href="https://twitter.com/search?q=bitcoin%20crash&src=typed_query" target="_blank" class="underline text-blue-400">Scan crypto Twitter for live rumors</a></li>
+      <div class="bg-gray-900 border border-yellow-500 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-yellow-300 mb-3 tracking-wide">2) IMMEDIATE STEPS (CAPITAL PRESERVATION)</h3>
+        <ul class="list-inside list-disc text-sm space-y-2 text-gray-200">
+          <li>Reduce gross exposure and remove leverage first</li>
+          <li>Increase cash and treasury-quality buffers</li>
+          <li>Pause new risk until confluence gate reopens</li>
+          <li>Tighten invalidation levels on remaining positions</li>
+          <li>Log decision, timestamp, and trigger evidence</li>
         </ul>
       </div>
-      <div class="flex-1 bg-gray-900 border border-green-400 rounded-xl p-6 shadow">
-        <h2 class="text-lg font-orbitron text-green-400 mb-2">Post-Crisis Checklist</h2>
-        <ul class="list-inside list-disc text-base space-y-2">
-          <li>Review what worked and what failed in your plan</li>
-          <li>Document lessons for future scenarios</li>
-          <li>Update your position and risk limits</li>
-          <li>Rebuild confidence—don’t rush back in</li>
+
+      <div class="bg-gray-900 border border-cyan-500 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-cyan-300 mb-3 tracking-wide">3) SCENARIO JUMP LINK (UPDATE MATRIX)</h3>
+        <p class="text-sm text-gray-200 mb-4">When crisis detector confirms a break, update scenario probabilities before any new tactical move.</p>
+        <a href="scenario.html" class="inline-block underline text-cyan-300 font-bold">Open Scenario Engine →</a>
+        <div class="mt-4 text-xs text-gray-400">Rule: macro leads, scenario matrix updates first, execution second.</div>
+      </div>
+
+      <div class="bg-gray-900 border border-amber-500 rounded-xl p-6 shadow">
+        <h3 class="font-orbitron text-amber-300 mb-3 tracking-wide">4) VERIFICATION SOURCES (TIERED)</h3>
+        <ul class="space-y-3 text-sm text-gray-200">
+          <li><span class="font-bold text-emerald-300">Tier 1:</span> Official releases, central banks, government/statistical agencies, primary filings.</li>
+          <li><span class="font-bold text-cyan-300">Tier 2:</span> Reputable terminals/outlets used for speed and cross-checking.</li>
+          <li><span class="font-bold text-red-300">Tier 3:</span> Social feeds <strong>OFF by default</strong>; enable only during confirmed breaks for supplemental verification.</li>
         </ul>
       </div>
     </section>
@@ -169,72 +81,5 @@
     &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
 
-  <script>
-    function assessPrivacyExposure() {
-      const html = document.documentElement?.innerHTML || '';
-      const patterns = [/sk-[A-Za-z0-9]{20,}/g, /xai-[A-Za-z0-9]{20,}/g, /api[_-]?key\s*[:=]\s*["'][^"']+/gi];
-      const findings = patterns.flatMap((pattern) => html.match(pattern) || []);
-      return {
-        risky: findings.length > 0,
-        count: findings.length
-      };
-    }
-
-    function updateMissionPanel(data) {
-      const start = new Date('2026-03-01T00:00:00Z');
-      const end = new Date('2030-01-01T00:00:00Z');
-      const now = new Date();
-
-      const totalMs = end - start;
-      const elapsedMs = Math.max(0, now - start);
-      const progressPct = Math.max(0, Math.min(100, (elapsedMs / totalMs) * 100));
-      const daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
-
-      const daysEl = document.getElementById('mission-days-left');
-      if (daysEl) daysEl.textContent = `${daysLeft.toLocaleString()} days`;
-
-      const bar = document.getElementById('endgame-progress-bar');
-      if (bar) bar.style.width = `${progressPct.toFixed(1)}%`;
-
-      const macroRisk = Number(data?.macro?.risk_level || 0);
-      const readiness = Math.max(0, Math.min(100, Math.round((100 - macroRisk) * 0.8)));
-
-      const progressText = document.getElementById('endgame-progress-text');
-      if (progressText) {
-        progressText.textContent = `Timeline: ${progressPct.toFixed(1)}% elapsed | Readiness: ${readiness}%`;
-      }
-
-      const privacy = assessPrivacyExposure();
-      const statusEl = document.getElementById('privacy-status');
-      const noteEl = document.getElementById('privacy-note');
-      if (statusEl && noteEl) {
-        if (privacy.risky) {
-          statusEl.textContent = 'RISK DETECTED';
-          statusEl.className = 'text-xl font-bold text-red-300';
-          noteEl.textContent = `${privacy.count} potential key/token pattern(s) detected in frontend source.`;
-        } else {
-          statusEl.textContent = 'CLEAR';
-          statusEl.className = 'text-xl font-bold text-emerald-300';
-          noteEl.textContent = 'No obvious API key/token patterns detected in frontend surface.';
-        }
-      }
-    }
-
-    async function loadWarroomMissionData() {
-      try {
-        const res = await fetch('./data/data.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        updateMissionPanel(data);
-      } catch {
-        updateMissionPanel({});
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadWarroomMissionData();
-      setInterval(loadWarroomMissionData, 120000);
-    });
-  </script>
 </body>
 </html>

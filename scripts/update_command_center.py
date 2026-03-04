@@ -12,6 +12,7 @@ SCRIPTS = [
     "scripts/update_ai_insights.py",
     "scripts/update_bots_data.py",
     "scripts/process_tradingview_alerts.py",
+    "scripts/dispatch_confluence_alerts.py",
 ]
 
 

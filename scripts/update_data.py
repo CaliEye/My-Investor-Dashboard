@@ -2,8 +2,11 @@
 """Update dashboard market payload with live ETF sector feeds."""
 
 import json
+import re
+from csv import DictReader
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from io import StringIO
 
 import requests
 import yfinance as yf
@@ -20,6 +23,12 @@ ETF_MAP = {
 }
 
 BASKET_SYMBOLS = ["VOO", "QQQ", "XLI", "ITA", "GLD"]
+
+FRED_SERIES = {
+    "unemployment": "UNRATE",
+    "fed_funds_rate": "FEDFUNDS",
+    "cpi_index": "CPIAUCSL",
+}
 
 
 def read_existing_data():
@@ -95,6 +104,18 @@ def to_float(value, default=0.0):
         return float(value)
     except Exception:
         return default
+
+
+def to_number(value, default=0.0):
+    if isinstance(value, (int, float)):
+        return float(value)
+    if value is None:
+        return default
+    text = str(value)
+    match = re.search(r"-?\d+(?:\.\d+)?", text.replace(",", ""))
+    if not match:
+        return default
+    return to_float(match.group(0), default=default)
 
 
 def format_price(value):
@@ -227,6 +248,176 @@ def build_sector_etf_payload(existing_data):
     }
 
 
+def fetch_latest_fred_value(series_id):
+    url = "https://fred.stlouisfed.org/graph/fredgraph.csv"
+    response = requests.get(url, params={"id": series_id}, timeout=10)
+    response.raise_for_status()
+
+    rows = list(DictReader(StringIO(response.text)))
+    for row in reversed(rows):
+        value = row.get(series_id)
+        date = row.get("DATE")
+        if value and value != "." and date:
+            return to_float(value), date
+    raise ValueError(f"No valid FRED value for {series_id}")
+
+
+def fetch_cpi_yoy():
+    url = "https://fred.stlouisfed.org/graph/fredgraph.csv"
+    response = requests.get(url, params={"id": FRED_SERIES["cpi_index"]}, timeout=10)
+    response.raise_for_status()
+
+    rows = list(DictReader(StringIO(response.text)))
+    valid_rows = [row for row in rows if row.get(FRED_SERIES["cpi_index"]) not in (None, "", ".")]
+    if len(valid_rows) < 13:
+        raise ValueError("Not enough CPI history for YoY calculation")
+
+    latest = valid_rows[-1]
+    prev_year = valid_rows[-13]
+    latest_value = to_float(latest[FRED_SERIES["cpi_index"]], default=0.0)
+    prev_value = to_float(prev_year[FRED_SERIES["cpi_index"]], default=0.0)
+    if prev_value <= 0:
+        raise ValueError("Invalid prior CPI value")
+
+    yoy = ((latest_value / prev_value) - 1.0) * 100.0
+    return yoy, latest.get("DATE", "")
+
+
+def fetch_macro_market_inputs(existing_macro):
+    macro = dict(existing_macro or {})
+
+    try:
+        spx_hist = yf.Ticker("^GSPC").history(period="10d", interval="1d", auto_adjust=True)
+        if not spx_hist.empty and "Close" in spx_hist:
+            spx_value = to_float(spx_hist["Close"].dropna().iloc[-1], default=0.0)
+            prev_spx = to_float(spx_hist["Close"].dropna().iloc[-2], default=spx_value) if len(spx_hist["Close"].dropna()) > 1 else spx_value
+            if spx_value > 0:
+                macro["spx"] = f"{spx_value:,.0f}"
+                day_change = ((spx_value / prev_spx) - 1.0) * 100 if prev_spx else 0.0
+                macro["spx_context"] = f"Daily move {day_change:+.2f}% (live market snapshot)"
+    except Exception:
+        pass
+
+    dxy_value = None
+    for symbol in ("DX-Y.NYB", "DX=F"):
+        try:
+            dxy_hist = yf.Ticker(symbol).history(period="10d", interval="1d", auto_adjust=True)
+            if not dxy_hist.empty and "Close" in dxy_hist:
+                dxy_value = to_float(dxy_hist["Close"].dropna().iloc[-1], default=0.0)
+                if dxy_value > 0:
+                    macro["dxy"] = f"{dxy_value:.1f}"
+                    macro["dxy_context"] = (
+                        "Elevated (risk-off pressure)" if dxy_value >= 103
+                        else "Contained (reduced dollar pressure)"
+                    )
+                    break
+        except Exception:
+            continue
+
+    try:
+        us10y_hist = yf.Ticker("^TNX").history(period="10d", interval="1d", auto_adjust=True)
+        if not us10y_hist.empty and "Close" in us10y_hist:
+            raw_yield = to_float(us10y_hist["Close"].dropna().iloc[-1], default=0.0)
+            us10y = raw_yield / 10.0 if raw_yield > 20 else raw_yield
+            if us10y > 0:
+                macro["us10y_yield"] = f"{us10y:.2f}%"
+                macro["us10y_context"] = (
+                    "High (tight financial conditions)" if us10y >= 4.0
+                    else "Moderate (less restrictive rates)"
+                )
+    except Exception:
+        pass
+
+    try:
+        unrate, unrate_date = fetch_latest_fred_value(FRED_SERIES["unemployment"])
+        macro["unemployment"] = f"{unrate:.1f}%"
+        macro["unemployment_context"] = (
+            f"Latest official print ({unrate_date}) — labor softening"
+            if unrate >= 4.2 else
+            f"Latest official print ({unrate_date}) — labor still firm"
+        )
+    except Exception:
+        pass
+
+    try:
+        fed_rate, fed_date = fetch_latest_fred_value(FRED_SERIES["fed_funds_rate"])
+        macro["fed_funds_rate"] = f"{fed_rate:.2f}%"
+        macro["fed_rate_context"] = (
+            f"Latest effective rate ({fed_date}) — restrictive"
+            if fed_rate >= 4.5 else
+            f"Latest effective rate ({fed_date}) — easing/neutral zone"
+        )
+    except Exception:
+        pass
+
+    try:
+        cpi_yoy, cpi_date = fetch_cpi_yoy()
+        macro["cpi"] = f"{cpi_yoy:.1f}%"
+        macro["cpi_context"] = (
+            f"Latest official CPI YoY ({cpi_date}) — above target"
+            if cpi_yoy >= 2.5 else
+            f"Latest official CPI YoY ({cpi_date}) — near target"
+        )
+    except Exception:
+        pass
+
+    return macro
+
+
+def build_decision_gate_payload(existing_data, sector_etfs):
+    macro = existing_data.get("macro", {}) if isinstance(existing_data.get("macro", {}), dict) else {}
+    triggers = existing_data.get("triggers", []) if isinstance(existing_data.get("triggers", []), list) else []
+
+    dxy = to_number(macro.get("dxy"), default=0.0)
+    us10y = to_number(macro.get("us10y_yield"), default=0.0)
+    unemployment = to_number(macro.get("unemployment"), default=0.0)
+    macro_risk = to_number(macro.get("risk_level"), default=50.0)
+    basket_day = to_number((sector_etfs.get("basket", {}) or {}).get("equal_weight_change_pct_day"), default=0.0)
+    spx_context = str(macro.get("spx_context", "")).lower()
+
+    signal_details = []
+
+    if dxy >= 108:
+        signal_details.append("DXY > 108 (liquidity headwind)")
+    if us10y >= 4.25:
+        signal_details.append("US10Y >= 4.25% (tight financial conditions)")
+    if unemployment >= 4.2:
+        signal_details.append("Unemployment >= 4.2% (growth softening)")
+    if basket_day <= -0.8 or "risk-off" in spx_context or "down" in spx_context:
+        signal_details.append("Broad risk assets weakening (SPX/ETF breadth pressure)")
+    if macro_risk >= 65 or len([t for t in triggers if t]) >= 3:
+        signal_details.append("Macro regime flagged high risk")
+
+    confluence_score = min(len(signal_details), 5)
+    threshold_hit = confluence_score >= 3
+
+    if confluence_score >= 4:
+        risk_posture = "DEFENSIVE"
+        next_action = "Hold. Reduce optional risk and update scenarios before any re-entry."
+    elif confluence_score >= 3:
+        risk_posture = "WATCH-ONLY"
+        next_action = "Hold. Update scenario and wait for cleaner alignment before action."
+    elif confluence_score == 2:
+        risk_posture = "MODERATE"
+        next_action = "Small, staged positioning only if invalidation levels are predefined."
+    else:
+        risk_posture = "RISK-ON"
+        next_action = "No immediate stress signal; keep sizing disciplined and confluence-gated."
+
+    return {
+        "updated_utc": datetime.now(timezone.utc).isoformat(),
+        "confluence_score": confluence_score,
+        "max_score": 5,
+        "threshold_hit": threshold_hit,
+        "signal_count": confluence_score,
+        "signals": signal_details,
+        "risk_posture": risk_posture,
+        "next_best_action": next_action,
+        "hard_rule_reminder": "No new crypto risk until Oct/Nov 2026 unless confluence gate flips.",
+        "watch_only_until": "2026-11-01",
+    }
+
+
 def main():
     data = read_existing_data()
     now = datetime.now(timezone.utc)
@@ -237,9 +428,12 @@ def main():
     if crypto_updates:
         data["crypto"] = {**crypto, **crypto_updates}
 
+    data["macro"] = fetch_macro_market_inputs(data.get("macro", {}))
+
     data["updated_utc"] = now.isoformat()
     data["next_review_utc"] = (now + timedelta(hours=4)).isoformat()
     data["sector_etfs"] = sector_etfs
+    data["decision_gate"] = build_decision_gate_payload(data, sector_etfs)
 
     existing_data = read_existing_data()
     should_write, new_quality, existing_quality = should_write_market_payload(data, existing_data)
