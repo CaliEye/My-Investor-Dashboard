@@ -1,12 +1,12 @@
 {
-  "updated_utc": "2026-03-04T00:49:41.210399+00:00",
+  "updated_utc": "2026-03-04T03:10:01.208039+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-04T04:49:41.210399+00:00",
+  "next_review_utc": "2026-03-04T07:10:01.208039+00:00",
   "crypto": {
     "btc_usd": 43200,
     "eth_usd": 2650,
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-04T00:49:43.060876+00:00",
+    "updated_utc": "2026-03-04T03:10:03.012467+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -98,7 +98,7 @@
         "price_formatted": "$601.58",
         "change_pct_day": -1.07,
         "change_pct_5d": -1.03,
-        "volume": 96194557,
+        "volume": 96707500,
         "volume_vs_20d": 1.36,
         "trend": "HIGH VOLATILITY",
         "label": "TECH / NASDAQ-100"
@@ -109,7 +109,7 @@
         "price_formatted": "$244.98",
         "change_pct_day": -2.23,
         "change_pct_5d": 0.77,
-        "volume": 2107120,
+        "volume": 2109100,
         "volume_vs_20d": 2.05,
         "trend": "HIGH VOLATILITY",
         "label": "DEFENSE"
@@ -120,7 +120,7 @@
         "price_formatted": "$468.14",
         "change_pct_day": -4.46,
         "change_pct_5d": -1.36,
-        "volume": 22447973,
+        "volume": 22510700,
         "volume_vs_20d": 1.53,
         "trend": "UNDER PRESSURE",
         "label": "PRECIOUS METALS"
@@ -131,7 +131,7 @@
         "price_formatted": "$625.72",
         "change_pct_day": -0.88,
         "change_pct_5d": -1.03,
-        "volume": 18385142,
+        "volume": 18395300,
         "volume_vs_20d": 1.83,
         "trend": "HIGH VOLATILITY",
         "label": "BROAD MARKET"
