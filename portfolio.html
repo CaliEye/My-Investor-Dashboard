@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Endgame | Portfolio Command</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Track assets, accounts, bots, bills, and subscriptions.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-inter">
+  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-300">ENDGAME // Portfolio Command</h1>
+    <nav class="space-x-5 text-sm md:text-base font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-cyan-400">Dashboard</a>
+      <a href="macro.html" class="hover:text-cyan-400">Macro</a>
+      <a href="bots.html" class="hover:text-cyan-400">Bots</a>
+      <a href="mindmap.html" class="hover:text-cyan-400">Mindmap</a>
+      <a href="goals.html" class="hover:text-cyan-400">Goals</a>
+      <a href="portfolio.html" class="text-cyan-300 border-b-2 border-cyan-300 pb-1">Portfolio</a>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-7xl mx-auto space-y-8">
+    <section class="rounded-2xl border-2 border-cyan-400 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-7 py-6">
+      <h2 class="text-2xl font-orbitron text-cyan-200 mb-2">Asset + Cashflow Tracker</h2>
+      <p class="text-sm text-gray-300">Track hard assets, bank accounts, bots, bills, and subscriptions. Optional integration fields included for Origin AI/budget pipelines.</p>
+    </section>
+
+    <section class="grid md:grid-cols-3 gap-4">
+      <div class="p-4 rounded-lg bg-gray-900 border border-green-600">
+        <div class="text-xs text-gray-400">Total Assets</div>
+        <div id="total-assets" class="text-2xl font-bold text-green-300">$0.00</div>
+      </div>
+      <div class="p-4 rounded-lg bg-gray-900 border border-red-600">
+        <div class="text-xs text-gray-400">Monthly Bills + Subs</div>
+        <div id="total-bills" class="text-2xl font-bold text-red-300">$0.00</div>
+      </div>
+      <div class="p-4 rounded-lg bg-gray-900 border border-yellow-600">
+        <div class="text-xs text-gray-400">Net Buffer (Assets - 12m Costs)</div>
+        <div id="net-buffer" class="text-2xl font-bold text-yellow-300">$0.00</div>
+      </div>
+    </section>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <section class="bg-gray-900 border border-green-500 rounded-xl p-5 shadow">
+        <h3 class="text-lg font-orbitron text-green-300 mb-3">Add Asset / Account / Bot</h3>
+        <div class="grid md:grid-cols-2 gap-3 mb-3">
+          <input id="item-name" class="bg-gray-800 border border-green-700 rounded px-3 py-2" placeholder="Name (e.g., BTC Wallet)">
+          <select id="item-type" class="bg-gray-800 border border-green-700 rounded px-3 py-2">
+            <option>Asset</option>
+            <option>Bank</option>
+            <option>Bot</option>
+          </select>
+        </div>
+        <input id="item-value" type="number" step="0.01" class="w-full bg-gray-800 border border-green-700 rounded px-3 py-2 mb-3" placeholder="USD value">
+        <button id="add-item" class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-semibold">Add Position</button>
+      </section>
+
+      <section class="bg-gray-900 border border-red-500 rounded-xl p-5 shadow">
+        <h3 class="text-lg font-orbitron text-red-300 mb-3">Add Bill / Subscription</h3>
+        <div class="grid md:grid-cols-2 gap-3 mb-3">
+          <input id="cost-name" class="bg-gray-800 border border-red-700 rounded px-3 py-2" placeholder="Name (e.g., Rent, SaaS)">
+          <select id="cost-type" class="bg-gray-800 border border-red-700 rounded px-3 py-2">
+            <option>Bill</option>
+            <option>Subscription</option>
+          </select>
+        </div>
+        <input id="cost-value" type="number" step="0.01" class="w-full bg-gray-800 border border-red-700 rounded px-3 py-2 mb-3" placeholder="Monthly cost">
+        <button id="add-cost" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded font-semibold">Add Cost</button>
+      </section>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <section class="bg-gray-900 border border-green-500 rounded-xl p-5 shadow">
+        <h3 class="text-lg font-orbitron text-green-300 mb-3">Positions</h3>
+        <div id="positions" class="space-y-2 text-sm"></div>
+      </section>
+
+      <section class="bg-gray-900 border border-red-500 rounded-xl p-5 shadow">
+        <h3 class="text-lg font-orbitron text-red-300 mb-3">Bills & Subscriptions</h3>
+        <div id="costs" class="space-y-2 text-sm"></div>
+      </section>
+    </div>
+
+    <section class="bg-gray-900 border border-purple-500 rounded-xl p-5 shadow">
+      <h3 class="text-lg font-orbitron text-purple-300 mb-3">Integration Notes</h3>
+      <ul class="list-disc list-inside text-sm text-gray-200 space-y-1">
+        <li>Origin AI integration placeholder: map accounts into this page as JSON import/export.</li>
+        <li>Add secured API sync later via backend endpoint (recommended) instead of direct browser keys.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'endgame_portfolio_v1';
+
+    function getState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { positions: [], costs: [] };
+      } catch {
+        return { positions: [], costs: [] };
+      }
+    }
+
+    function setState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function money(v) {
+      return `$${Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function render() {
+      const state = getState();
+      const totalAssets = state.positions.reduce((sum, p) => sum + Number(p.value || 0), 0);
+      const totalBills = state.costs.reduce((sum, c) => sum + Number(c.value || 0), 0);
+      const netBuffer = totalAssets - (totalBills * 12);
+
+      document.getElementById('total-assets').textContent = money(totalAssets);
+      document.getElementById('total-bills').textContent = money(totalBills);
+      document.getElementById('net-buffer').textContent = money(netBuffer);
+
+      document.getElementById('positions').innerHTML = state.positions.length
+        ? state.positions.map((item, index) => `
+          <div class="p-3 rounded bg-gray-800 border border-green-700 flex justify-between items-center">
+            <div>
+              <div class="text-green-300 font-semibold">${item.name}</div>
+              <div class="text-xs text-gray-400">${item.type}</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div>${money(item.value)}</div>
+              <button onclick="removePosition(${index})" class="text-red-300 text-xs">Delete</button>
+            </div>
+          </div>
+        `).join('')
+        : '<div class="text-gray-400">No positions added.</div>';
+
+      document.getElementById('costs').innerHTML = state.costs.length
+        ? state.costs.map((item, index) => `
+          <div class="p-3 rounded bg-gray-800 border border-red-700 flex justify-between items-center">
+            <div>
+              <div class="text-red-300 font-semibold">${item.name}</div>
+              <div class="text-xs text-gray-400">${item.type}</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div>${money(item.value)}</div>
+              <button onclick="removeCost(${index})" class="text-red-300 text-xs">Delete</button>
+            </div>
+          </div>
+        `).join('')
+        : '<div class="text-gray-400">No bills/subscriptions added.</div>';
+    }
+
+    function removePosition(index) {
+      const state = getState();
+      state.positions.splice(index, 1);
+      setState(state);
+      render();
+    }
+
+    function removeCost(index) {
+      const state = getState();
+      state.costs.splice(index, 1);
+      setState(state);
+      render();
+    }
+
+    document.getElementById('add-item').addEventListener('click', () => {
+      const name = document.getElementById('item-name').value.trim();
+      const type = document.getElementById('item-type').value;
+      const value = Number(document.getElementById('item-value').value);
+      if (!name || !value) return;
+
+      const state = getState();
+      state.positions.unshift({ name, type, value });
+      setState(state);
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-value').value = '';
+      render();
+    });
+
+    document.getElementById('add-cost').addEventListener('click', () => {
+      const name = document.getElementById('cost-name').value.trim();
+      const type = document.getElementById('cost-type').value;
+      const value = Number(document.getElementById('cost-value').value);
+      if (!name || !value) return;
+
+      const state = getState();
+      state.costs.unshift({ name, type, value });
+      setState(state);
+      document.getElementById('cost-name').value = '';
+      document.getElementById('cost-value').value = '';
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

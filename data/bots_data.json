@@ -1,0 +1,90 @@
+{
+  "updated_at": "2026-03-03T00:00:00Z",
+  "bots": [
+    {
+      "name": "Pionex Gold Grid Bot",
+      "exchange": "Pionex",
+      "strategy": "Gold ETF / XAU Trend-Grid",
+      "status": "ACTIVE",
+      "weekly_pnl_pct": 2.4,
+      "weekly_pnl_usd": 184.22,
+      "max_drawdown_pct": 1.9,
+      "win_rate_pct": 63,
+      "confluence_score": 8,
+      "notes": "Stable in low-volatility trend; strongest when DXY weakens and real yields cool."
+    },
+    {
+      "name": "BTC Regime Swing Bot",
+      "exchange": "Bybit",
+      "strategy": "Regime + Momentum Filter",
+      "status": "ACTIVE",
+      "weekly_pnl_pct": 1.6,
+      "weekly_pnl_usd": 132.7,
+      "max_drawdown_pct": 3.2,
+      "win_rate_pct": 57,
+      "confluence_score": 7,
+      "notes": "Performance improves when macro liquidity and breadth confirm risk-on."
+    },
+    {
+      "name": "Defense Rotation Bot",
+      "exchange": "Broker API",
+      "strategy": "LMT/RTX/NOC Relative Strength",
+      "status": "PAPER",
+      "weekly_pnl_pct": 0.9,
+      "weekly_pnl_usd": 44.8,
+      "max_drawdown_pct": 1.1,
+      "win_rate_pct": 61,
+      "confluence_score": 8,
+      "notes": "Resilient in risk-off windows; lower volatility than broad index strategies."
+    }
+  ],
+  "backtests": [
+    {
+      "bot": "Pionex Gold Grid Bot",
+      "period": "2023-01 to 2026-02",
+      "cagr_pct": 18.7,
+      "sharpe": 1.41,
+      "max_dd_pct": 8.6,
+      "profit_factor": 1.33,
+      "trades": 482
+    },
+    {
+      "bot": "BTC Regime Swing Bot",
+      "period": "2022-01 to 2026-02",
+      "cagr_pct": 22.1,
+      "sharpe": 1.12,
+      "max_dd_pct": 17.4,
+      "profit_factor": 1.26,
+      "trades": 310
+    }
+  ],
+  "ai_tests": [
+    {
+      "name": "Volatility Filter Stress",
+      "result": "PASS",
+      "summary": "Reduced false entries by 14% in high-VIX windows."
+    },
+    {
+      "name": "Spread/Slippage Monte Carlo",
+      "result": "PASS",
+      "summary": "Profit factor remains >1.15 under 1.5x historical slippage assumptions."
+    },
+    {
+      "name": "News Shock Kill-Switch",
+      "result": "PASS",
+      "summary": "Emergency stop reduced tail drawdown by 2.1%."
+    }
+  ],
+  "proposed_changes": [
+    "Add dynamic ATR band sizing for Gold Grid Bot during policy-event weeks.",
+    "Require 3-signal macro confluence before activating BTC high-beta mode.",
+    "Introduce time-of-day filter to avoid low-liquidity fills.",
+    "Lower leverage cap when US10Y rises above 4.4%."
+  ],
+  "long_term_candidates": [
+    "Gold Mean-Reversion + Trend Hybrid",
+    "Defense Momentum Rotation (LMT/RTX/NOC + ITA)",
+    "Value ETF Regime Bot (VTV/VOO split)",
+    "Volatility Carry with risk-parity cap"
+  ]
+}
