@@ -31,6 +31,107 @@ def safe_print(message):
     fallback = message.encode('ascii', errors='replace').decode('ascii')
     print(fallback)
 
+def load_existing_ai_insights(path: Path):
+    """Load current ai_insights file if present."""
+    if not path.exists():
+        return None
+
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        safe_print(f"Warning: could not read existing ai_insights.json: {e}")
+        return None
+
+def assess_insights_quality(insights: dict):
+    """Score output quality and detect downgrade indicators."""
+    if not isinstance(insights, dict):
+        return {
+            "score": 0,
+            "critical_failure": True,
+            "reasons": ["Insights payload is not a valid object"]
+        }
+
+    reasons = []
+    score = 10
+
+    regime = str(insights.get('regime', '')).lower()
+    guidance = str(insights.get('contextual_guidance', '')).lower()
+    invalidation = str(insights.get('invalidation', '')).lower()
+    grok = str(insights.get('grok_counter', '')).lower()
+    top_triggers = insights.get('top_triggers', [])
+    market = insights.get('market_data', {}) if isinstance(insights.get('market_data', {}), dict) else {}
+    sources = insights.get('confluence', {}).get('sources', []) if isinstance(insights.get('confluence', {}), dict) else []
+
+    placeholder_tokens = [
+        'api key missing',
+        'not configured',
+        'cannot provide guidance',
+        'cannot analyze',
+        'request failed',
+        'analysis error'
+    ]
+
+    text_fields = [regime, guidance, invalidation, grok]
+    placeholder_hits = sum(1 for field in text_fields for token in placeholder_tokens if token in field)
+    if placeholder_hits:
+        score -= min(placeholder_hits * 2, 6)
+        reasons.append('Contains placeholder/error language in core AI fields')
+
+    non_empty_triggers = len([t for t in top_triggers if isinstance(t, str) and t.strip() and 'not configured' not in t.lower()])
+    if non_empty_triggers < 2:
+        score -= 2
+        reasons.append('Insufficient actionable triggers')
+
+    missing_source_notes = 0
+    if isinstance(sources, list):
+        for src in sources:
+            note = str(src.get('note', '')).lower() if isinstance(src, dict) else ''
+            if any(token in note for token in ['missing', 'unavailable', 'error']):
+                missing_source_notes += 1
+
+    if missing_source_notes >= 2:
+        score -= 2
+        reasons.append('Multiple confluence sources report missing/error data')
+
+    btc_price = market.get('btc_price')
+    if not isinstance(btc_price, (int, float)) or btc_price <= 0:
+        score -= 2
+        reasons.append('Invalid BTC market snapshot')
+
+    critical_failure = (
+        placeholder_hits >= 2 or
+        non_empty_triggers == 0 or
+        missing_source_notes >= 2
+    )
+
+    return {
+        "score": max(score, 0),
+        "critical_failure": critical_failure,
+        "reasons": reasons
+    }
+
+def should_write_ai_insights(new_insights: dict, existing_insights: dict):
+    """Prevent harmful/downgrade writes that reduce dashboard quality."""
+    new_quality = assess_insights_quality(new_insights)
+
+    if existing_insights is None:
+        return True, new_quality, None
+
+    existing_quality = assess_insights_quality(existing_insights)
+
+    severe_downgrade = new_quality['score'] < existing_quality['score'] - 2
+    harmful_payload = new_quality['critical_failure'] and severe_downgrade
+    unnecessary_low_quality_rewrite = (
+        new_quality['critical_failure'] and
+        new_quality['score'] <= existing_quality['score']
+    )
+
+    if harmful_payload or unnecessary_low_quality_rewrite:
+        return False, new_quality, existing_quality
+
+    return True, new_quality, existing_quality
+
 def get_yahoo_finance_data():
     """Get current market data from Yahoo Finance"""
     try:
@@ -441,9 +542,32 @@ def main():
     
     output_path = Path('data/ai_insights.json')
     output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    existing_insights = load_existing_ai_insights(output_path)
+    should_write, new_quality, existing_quality = should_write_ai_insights(ai_insights, existing_insights)
+
+    if not should_write:
+        safe_print("Guard: blocked ai_insights.json overwrite to prevent dashboard downgrade")
+        safe_print(f"  New quality score: {new_quality['score']}/10")
+        if existing_quality:
+            safe_print(f"  Existing quality score: {existing_quality['score']}/10")
+        if new_quality['reasons']:
+            safe_print("  Reasons: " + '; '.join(new_quality['reasons']))
+        safe_print("  Kept previous ai_insights.json unchanged")
+        return
+
+    if output_path.exists():
+        backup_path = output_path.with_suffix('.json.bak')
+        try:
+            with open(output_path, 'r', encoding='utf-8') as src, open(backup_path, 'w', encoding='utf-8') as dst:
+                dst.write(src.read())
+        except Exception as e:
+            safe_print(f"Warning: could not create backup before write: {e}")
     
-    with open(output_path, 'w') as f:
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(ai_insights, f, indent=2)
+
+    safe_print(f"Guard quality check passed: {new_quality['score']}/10")
     
     print(f"AI Confluence updated:")
     print(f"  Regime: {ai_insights['regime']}")
@@ -452,7 +576,11 @@ def main():
     print(f"  Sources Agreement: {confluence_data['agreement_pct']}%")
     print(f"  Output written to: {output_path}")
     
-    high_confluence = confluence_data['confluence_score'] >= 8 or confluence_data['agreement_pct'] >= 80
+    high_confluence = (
+        not new_quality['critical_failure'] and
+        confluence_data['confluence_score'] >= 8 and
+        confluence_data['dominant_signal'] != 'neutral'
+    )
     
     if high_confluence:
         safe_print(f"HIGH CONFLUENCE SIGNAL! Score: {confluence_data['confluence_score']}/10, Agreement: {confluence_data['agreement_pct']}%")
