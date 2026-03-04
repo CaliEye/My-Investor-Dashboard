@@ -906,23 +906,22 @@
           weeklyScansEl.innerHTML = scansHtml;
         }
         
-        // Load command log
-        const commandRes = await fetch('./logs/command_log.md');
-        if (!commandRes.ok) throw new Error(`Commands HTTP ${commandRes.status}`);
-        
-        const commandText = await commandRes.text();
-        const commandEntries = parseLogEntries(commandText, true);
-        
-        const commandHtml = commandEntries.map(entry => `
-          <div class="border-l-2 border-purple-500 pl-3 py-2">
-            <div class="text-purple-300 text-xs font-mono">${entry.date}</div>
-            <div class="text-orange-300 text-sm font-bold">${entry.cmd || 'Command'}</div>
-            <div class="text-gray-200 text-xs mt-1">${entry.reason || entry.size || ''}</div>
-          </div>
-        `).join('');
-        
         const commandLogEl = document.getElementById('command-log-content');
         if (commandLogEl) {
+          const commandRes = await fetch('./logs/command_log.md');
+          if (!commandRes.ok) throw new Error(`Commands HTTP ${commandRes.status}`);
+
+          const commandText = await commandRes.text();
+          const commandEntries = parseLogEntries(commandText, true);
+
+          const commandHtml = commandEntries.map(entry => `
+            <div class="border-l-2 border-purple-500 pl-3 py-2">
+              <div class="text-purple-300 text-xs font-mono">${entry.date}</div>
+              <div class="text-orange-300 text-sm font-bold">${entry.cmd || 'Command'}</div>
+              <div class="text-gray-200 text-xs mt-1">${entry.reason || entry.size || ''}</div>
+            </div>
+          `).join('');
+
           commandLogEl.innerHTML = commandHtml;
         }
 

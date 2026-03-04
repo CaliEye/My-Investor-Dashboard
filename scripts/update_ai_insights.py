@@ -14,10 +14,22 @@ Generates confluence score based on agreement across sources.
 
 import json
 import os
+import sys
 import requests
 import yfinance as yf
 from datetime import datetime, timezone
 from pathlib import Path
+
+
+def safe_print(message):
+    """Print safely across terminals that may not support emoji/utf-8."""
+    encoding = (sys.stdout.encoding or '').lower()
+    if 'utf' in encoding:
+        print(message)
+        return
+
+    fallback = message.encode('ascii', errors='replace').decode('ascii')
+    print(fallback)
 
 def get_yahoo_finance_data():
     """Get current market data from Yahoo Finance"""
@@ -443,7 +455,7 @@ def main():
     high_confluence = confluence_data['confluence_score'] >= 8 or confluence_data['agreement_pct'] >= 80
     
     if high_confluence:
-        print(f"HIGH CONFLUENCE SIGNAL! Score: {confluence_data['confluence_score']}/10, Agreement: {confluence_data['agreement_pct']}%")
+        safe_print(f"HIGH CONFLUENCE SIGNAL! Score: {confluence_data['confluence_score']}/10, Agreement: {confluence_data['agreement_pct']}%")
         
         webhook_url = os.getenv('LINDY_WEBHOOK_URL')
         if webhook_url:
@@ -460,13 +472,13 @@ def main():
                 
                 response = requests.post(webhook_url, json=webhook_data, timeout=10)
                 if response.status_code == 200:
-                    print("Enhanced Lindy confluence notification sent successfully")
+                    safe_print("Enhanced Lindy confluence notification sent successfully")
                 else:
-                    print(f"Lindy webhook failed: {response.status_code}")
+                    safe_print(f"Lindy webhook failed: {response.status_code}")
             except Exception as e:
-                print(f"Lindy notification error: {e}")
+                safe_print(f"Lindy notification error: {e}")
     else:
-        print(f"Normal confluence: Score {confluence_data['confluence_score']}/10, Agreement {confluence_data['agreement_pct']}%")
+        safe_print(f"Normal confluence: Score {confluence_data['confluence_score']}/10, Agreement {confluence_data['agreement_pct']}%")
 
 if __name__ == '__main__':
     main()
