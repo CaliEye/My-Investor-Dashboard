@@ -29,6 +29,67 @@ def read_existing_data():
     return {}
 
 
+def assess_market_payload_quality(payload):
+    if not isinstance(payload, dict):
+        return {"score": 0, "critical_failure": True, "reasons": ["Payload is not a JSON object"]}
+
+    reasons = []
+    score = 10
+
+    macro = payload.get("macro", {}) if isinstance(payload.get("macro", {}), dict) else {}
+    crypto = payload.get("crypto", {}) if isinstance(payload.get("crypto", {}), dict) else {}
+    sector_etfs = payload.get("sector_etfs", {}) if isinstance(payload.get("sector_etfs", {}), dict) else {}
+
+    required_macro = ["spx", "dxy", "us10y_yield", "fed_funds_rate"]
+    missing_macro = [field for field in required_macro if not macro.get(field)]
+    if missing_macro:
+        score -= 3
+        reasons.append(f"Missing macro fields: {', '.join(missing_macro)}")
+
+    btc = to_float(crypto.get("btc_usd"), default=0.0)
+    eth = to_float(crypto.get("eth_usd"), default=0.0)
+    if btc <= 0 or eth <= 0:
+        score -= 3
+        reasons.append("Invalid crypto prices")
+
+    sectors = sector_etfs.get("sectors", {}) if isinstance(sector_etfs.get("sectors", {}), dict) else {}
+    if len(sectors) < 3:
+        score -= 2
+        reasons.append("Sector ETF coverage incomplete")
+
+    basket = sector_etfs.get("basket", {}) if isinstance(sector_etfs.get("basket", {}), dict) else {}
+    if not basket.get("leader") or not basket.get("laggard"):
+        score -= 1
+        reasons.append("ETF basket ranking missing")
+
+    critical_failure = (btc <= 0 or eth <= 0) or bool(missing_macro)
+    return {
+        "score": max(score, 0),
+        "critical_failure": critical_failure,
+        "reasons": reasons,
+    }
+
+
+def should_write_market_payload(new_payload, existing_payload):
+    new_quality = assess_market_payload_quality(new_payload)
+    if not existing_payload:
+        return True, new_quality, None
+
+    existing_quality = assess_market_payload_quality(existing_payload)
+    severe_downgrade = new_quality["score"] < existing_quality["score"] - 2
+    unnecessary_low_quality_rewrite = (
+        new_quality["critical_failure"] and
+        new_quality["score"] <= existing_quality["score"]
+    )
+
+    if severe_downgrade and new_quality["critical_failure"]:
+        return False, new_quality, existing_quality
+    if unnecessary_low_quality_rewrite:
+        return False, new_quality, existing_quality
+
+    return True, new_quality, existing_quality
+
+
 def to_float(value, default=0.0):
     try:
         return float(value)
@@ -180,10 +241,28 @@ def main():
     data["next_review_utc"] = (now + timedelta(hours=4)).isoformat()
     data["sector_etfs"] = sector_etfs
 
+    existing_data = read_existing_data()
+    should_write, new_quality, existing_quality = should_write_market_payload(data, existing_data)
+
+    if not should_write:
+        print("Guard: blocked data.json overwrite to prevent dashboard downgrade")
+        print(f"  New quality score: {new_quality['score']}/10")
+        if existing_quality:
+            print(f"  Existing quality score: {existing_quality['score']}/10")
+        if new_quality["reasons"]:
+            print("  Reasons: " + "; ".join(new_quality["reasons"]))
+        return
+
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+    if DATA_FILE.exists():
+        backup_file = DATA_FILE.with_suffix(".json.bak")
+        with DATA_FILE.open("r", encoding="utf-8") as src, backup_file.open("w", encoding="utf-8") as dst:
+            dst.write(src.read())
+
     with DATA_FILE.open("w", encoding="utf-8") as file:
         json.dump(data, file, indent=2)
 
+    print(f"Guard quality check passed: {new_quality['score']}/10")
     print(f"Updated {DATA_FILE}")
 
 

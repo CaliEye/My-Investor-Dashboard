@@ -101,6 +101,26 @@
         </div>
       </div>
 
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="p-4 rounded-xl border border-purple-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">2030 ENDGAME CLOCK</div>
+          <div id="mission-days-left" class="text-xl font-bold text-purple-300">...</div>
+          <div class="text-xs text-gray-400 mt-1">Days left in singularity window</div>
+        </div>
+        <div class="p-4 rounded-xl border border-cyan-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">4-YEAR PROGRESS</div>
+          <div class="w-full h-2 bg-gray-700 rounded mt-2 mb-2 overflow-hidden">
+            <div id="endgame-progress-bar" class="h-2 bg-cyan-400" style="width: 0%"></div>
+          </div>
+          <div id="endgame-progress-text" class="text-xs text-cyan-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-rose-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">PRIVACY EXPOSURE CHECK</div>
+          <div id="privacy-status" class="text-xl font-bold text-rose-300">...</div>
+          <div id="privacy-note" class="text-xs text-gray-400 mt-1">Scanning frontend surface...</div>
+        </div>
+      </div>
+
       <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">UNEMPLOYMENT</div>
@@ -628,6 +648,57 @@
       updateEventPlaybookGrid(data, latestAIData);
     }
 
+    function assessPrivacyExposure() {
+      const html = document.documentElement?.innerHTML || '';
+      const patterns = [/sk-[A-Za-z0-9]{20,}/g, /xai-[A-Za-z0-9]{20,}/g, /api[_-]?key\s*[:=]\s*["'][^"']+/gi];
+      const findings = patterns.flatMap((pattern) => html.match(pattern) || []);
+      return {
+        risky: findings.length > 0,
+        count: findings.length
+      };
+    }
+
+    function updateMissionPanel(data, ai) {
+      const start = new Date('2026-03-01T00:00:00Z');
+      const end = new Date('2030-01-01T00:00:00Z');
+      const now = new Date();
+
+      const totalMs = end - start;
+      const elapsedMs = Math.max(0, now - start);
+      const progressPct = Math.max(0, Math.min(100, (elapsedMs / totalMs) * 100));
+      const daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
+
+      const daysEl = document.getElementById('mission-days-left');
+      if (daysEl) daysEl.textContent = `${daysLeft.toLocaleString()} days`;
+
+      const bar = document.getElementById('endgame-progress-bar');
+      if (bar) bar.style.width = `${progressPct.toFixed(1)}%`;
+
+      const confluenceScore = Number(ai?.confluence?.score || ai?.confidence_score || 0);
+      const macroRisk = Number(data?.macro?.risk_level || 0);
+      const readiness = Math.max(0, Math.min(100, Math.round((confluenceScore * 8) + ((100 - macroRisk) * 0.2))));
+
+      const progressText = document.getElementById('endgame-progress-text');
+      if (progressText) {
+        progressText.textContent = `Timeline: ${progressPct.toFixed(1)}% elapsed | Readiness: ${readiness}%`;
+      }
+
+      const privacy = assessPrivacyExposure();
+      const statusEl = document.getElementById('privacy-status');
+      const noteEl = document.getElementById('privacy-note');
+      if (statusEl && noteEl) {
+        if (privacy.risky) {
+          statusEl.textContent = 'RISK DETECTED';
+          statusEl.className = 'text-xl font-bold text-red-300';
+          noteEl.textContent = `${privacy.count} potential key/token pattern(s) detected in frontend source.`;
+        } else {
+          statusEl.textContent = 'CLEAR';
+          statusEl.className = 'text-xl font-bold text-emerald-300';
+          noteEl.textContent = 'No obvious API key/token patterns detected in frontend surface.';
+        }
+      }
+    }
+
     function updateSectorCommandGrid(data) {
       const macro = data?.macro || {};
       const sentiment = data?.sentiment || {};
@@ -825,6 +896,7 @@
         }
 
         updateMacroCommandBrief(d);
+        updateMissionPanel(d, latestAIData);
 
         // Triggers with health check
         const ts = Array.isArray(d.triggers) ? d.triggers : [];
@@ -1087,6 +1159,7 @@
 
         if (latestMarketData) {
           updateEventPlaybookGrid(latestMarketData, latestAIData);
+          updateMissionPanel(latestMarketData, latestAIData);
         }
 
         systemHealth.aiConnection = true;
