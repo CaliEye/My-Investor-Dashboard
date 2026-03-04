@@ -94,6 +94,29 @@
       </div>
     </section>
 
+    <section class="mb-10 rounded-2xl border-2 border-purple-400 shadow-purple-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-purple-900 px-8 py-7">
+      <h2 class="text-2xl font-orbitron text-purple-300 mb-5 tracking-widest">ENDGAME MISSION PANEL</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="p-4 rounded-xl border border-purple-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">2030 ENDGAME CLOCK</div>
+          <div id="mission-days-left" class="text-xl font-bold text-purple-300">...</div>
+          <div class="text-xs text-gray-400 mt-1">Days left in singularity window</div>
+        </div>
+        <div class="p-4 rounded-xl border border-cyan-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">4-YEAR PROGRESS</div>
+          <div class="w-full h-2 bg-gray-700 rounded mt-2 mb-2 overflow-hidden">
+            <div id="endgame-progress-bar" class="h-2 bg-cyan-400" style="width: 0%"></div>
+          </div>
+          <div id="endgame-progress-text" class="text-xs text-cyan-300">...</div>
+        </div>
+        <div class="p-4 rounded-xl border border-rose-400/50 bg-gray-900/40">
+          <div class="text-xs text-gray-400">PRIVACY EXPOSURE CHECK</div>
+          <div id="privacy-status" class="text-xl font-bold text-rose-300">...</div>
+          <div id="privacy-note" class="text-xs text-gray-400 mt-1">Scanning frontend surface...</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Key Macro Data Displays -->
     <section class="mb-12">
       <h2 class="text-xl font-orbitron text-yellow-300 mb-4">Key Macro Data</h2>
@@ -185,6 +208,56 @@
   </footer>
 
   <script>
+    function assessPrivacyExposure() {
+      const html = document.documentElement?.innerHTML || '';
+      const patterns = [/sk-[A-Za-z0-9]{20,}/g, /xai-[A-Za-z0-9]{20,}/g, /api[_-]?key\s*[:=]\s*["'][^"']+/gi];
+      const findings = patterns.flatMap((pattern) => html.match(pattern) || []);
+      return {
+        risky: findings.length > 0,
+        count: findings.length
+      };
+    }
+
+    function updateMissionPanel(data) {
+      const start = new Date('2026-03-01T00:00:00Z');
+      const end = new Date('2030-01-01T00:00:00Z');
+      const now = new Date();
+
+      const totalMs = end - start;
+      const elapsedMs = Math.max(0, now - start);
+      const progressPct = Math.max(0, Math.min(100, (elapsedMs / totalMs) * 100));
+      const daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
+
+      const daysEl = document.getElementById('mission-days-left');
+      if (daysEl) daysEl.textContent = `${daysLeft.toLocaleString()} days`;
+
+      const bar = document.getElementById('endgame-progress-bar');
+      if (bar) bar.style.width = `${progressPct.toFixed(1)}%`;
+
+      const macroRisk = Number(data?.macro?.risk_level || 0);
+      const readiness = Math.max(0, Math.min(100, Math.round((100 - macroRisk) * 0.8)));
+
+      const progressText = document.getElementById('endgame-progress-text');
+      if (progressText) {
+        progressText.textContent = `Timeline: ${progressPct.toFixed(1)}% elapsed | Readiness: ${readiness}%`;
+      }
+
+      const privacy = assessPrivacyExposure();
+      const statusEl = document.getElementById('privacy-status');
+      const noteEl = document.getElementById('privacy-note');
+      if (statusEl && noteEl) {
+        if (privacy.risky) {
+          statusEl.textContent = 'RISK DETECTED';
+          statusEl.className = 'text-xl font-bold text-red-300';
+          noteEl.textContent = `${privacy.count} potential key/token pattern(s) detected in frontend source.`;
+        } else {
+          statusEl.textContent = 'CLEAR';
+          statusEl.className = 'text-xl font-bold text-emerald-300';
+          noteEl.textContent = 'No obvious API key/token patterns detected in frontend surface.';
+        }
+      }
+    }
+
     async function loadData() {
       try {
         const res = await fetch("./data/data.json", { cache: "no-store" });
@@ -272,6 +345,8 @@
             <div class="risk-context mt-2 text-xs text-gray-400">${d.macro.risk_context || 'Macro risk assessment'}</div>
           `;
         }
+
+        updateMissionPanel(d);
         
       } catch (error) {
         console.error('Error loading macro data:', error);
