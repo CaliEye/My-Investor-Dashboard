@@ -1,0 +1,38 @@
+name: Full Dashboard Check
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-dashboard-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests yfinance playwright
+          python -m playwright install chromium
+
+      - name: Run full dashboard validation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          LINDY_WEBHOOK_URL: ${{ secrets.LINDY_WEBHOOK_URL }}
+        run: |
+          python scripts/full_dashboard_check.py
