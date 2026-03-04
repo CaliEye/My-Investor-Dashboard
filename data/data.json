@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-04T08:26:20.299360+00:00",
+  "updated_utc": "2026-03-04T10:26:15.516317+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-04T12:26:20.299360+00:00",
+  "next_review_utc": "2026-03-04T14:26:15.516317+00:00",
   "crypto": {
-    "btc_usd": 69222.5,
-    "eth_usd": 2002.35,
-    "btc_price_formatted": "$69,222",
-    "eth_price_formatted": "$2,002",
+    "btc_usd": 71511.05,
+    "eth_usd": 2082.61,
+    "btc_price_formatted": "$71,511",
+    "eth_price_formatted": "$2,083",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -42,22 +42,22 @@
     ]
   },
   "macro": {
-    "cpi": "3.2%",
-    "cpi_context": "Above Target (Fed target: 2.0% - inflation running hot)",
+    "cpi": "2.8%",
+    "cpi_context": "Latest official CPI YoY () \u2014 above target",
     "unemployment": "3.8%",
     "unemployment_context": "Low (near full employment - historically tight)",
     "gdp_growth": "2.1%",
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "5.25%",
     "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
-    "dxy": "103.2",
-    "dxy_context": "Elevated (strong dollar pressuring commodities/risk assets)",
-    "us10y_yield": "4.15%",
-    "us10y_context": "High (above historical 3.5% average - credit tightening)",
+    "dxy": "98.8",
+    "dxy_context": "Contained (reduced dollar pressure)",
+    "us10y_yield": "4.06%",
+    "us10y_context": "High (tight financial conditions)",
     "risk_level": 72,
     "risk_context": "High Risk (0-30: Low | 31-60: Moderate | 61-100: High)",
-    "spx": "4,450",
-    "spx_context": "Down 6% from ATH (risk-off environment pressuring equities)",
+    "spx": "6,817",
+    "spx_context": "Daily move -0.94% (live market snapshot)",
     "trigger_breakdown": [
       "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
       "Dollar: DXY holding above 103, pressure on risk assets",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-04T08:26:21.342871+00:00",
+    "updated_utc": "2026-03-04T10:26:16.683841+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -158,5 +158,20 @@
       },
       "regime_tilt": "DEFENSIVE STACK"
     }
+  },
+  "decision_gate": {
+    "updated_utc": "2026-03-04T10:26:17.715145+00:00",
+    "confluence_score": 2,
+    "max_score": 5,
+    "threshold_hit": false,
+    "signal_count": 2,
+    "signals": [
+      "Broad risk assets weakening (SPX/ETF breadth pressure)",
+      "Macro regime flagged high risk"
+    ],
+    "risk_posture": "MODERATE",
+    "next_best_action": "Small, staged positioning only if invalidation levels are predefined.",
+    "hard_rule_reminder": "No new crypto risk until Oct/Nov 2026 unless confluence gate flips.",
+    "watch_only_until": "2026-11-01"
   }
 }
