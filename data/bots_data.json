@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-03-04T09:10:38.592077+00:00",
+  "updated_at": "2026-03-05T02:01:20.097249+00:00",
   "bots": [
     {
       "name": "Pionex Gold Grid Bot",
       "exchange": "Pionex",
       "strategy": "Gold ETF / XAU Trend-Grid",
       "status": "ACTIVE",
-      "weekly_pnl_pct": 8.3,
-      "weekly_pnl_usd": 637.12,
-      "max_drawdown_pct": 0.9,
+      "weekly_pnl_pct": 8.81,
+      "weekly_pnl_usd": 676.27,
+      "max_drawdown_pct": 0.6,
       "win_rate_pct": 63,
       "confluence_score": 7,
       "notes": "Stable in low-volatility trend; strongest when DXY weakens and real yields cool."
@@ -18,9 +18,9 @@
       "exchange": "Bybit",
       "strategy": "Regime + Momentum Filter",
       "status": "ACTIVE",
-      "weekly_pnl_pct": -0.5,
-      "weekly_pnl_usd": -5.0,
-      "max_drawdown_pct": 5.0,
+      "weekly_pnl_pct": -0.26,
+      "weekly_pnl_usd": -2.6,
+      "max_drawdown_pct": 5.54,
       "win_rate_pct": 57,
       "confluence_score": 7,
       "notes": "Performance improves when macro liquidity and breadth confirm risk-on."
@@ -30,8 +30,8 @@
       "exchange": "Broker API",
       "strategy": "LMT/RTX/NOC Relative Strength",
       "status": "PAPER",
-      "weekly_pnl_pct": 6.8,
-      "weekly_pnl_usd": 338.5,
+      "weekly_pnl_pct": 7.31,
+      "weekly_pnl_usd": 363.88,
       "max_drawdown_pct": 0.5,
       "win_rate_pct": 61,
       "confluence_score": 7,
@@ -62,17 +62,17 @@
     {
       "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
-      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+      "summary": "Macro risk 72, crypto risk 78, basket move 0.82% processed."
     },
     {
       "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
-      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+      "summary": "Macro risk 72, crypto risk 78, basket move 0.82% processed."
     },
     {
       "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
-      "summary": "Macro risk 72, crypto risk 78, basket move -2.11% processed."
+      "summary": "Macro risk 72, crypto risk 78, basket move 0.82% processed."
     },
     {
       "name": "Cross-Asset Confluence Drift Check",

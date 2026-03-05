@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fortress | Enhanced Bot Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Military-grade bot performance monitoring with real-time alerts and fortress-level intelligence.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Enhanced Bot Monitor Styles */
+    .fortress-status {
+      background: linear-gradient(135deg, rgba(0,40,0,0.9), rgba(0,20,0,0.7));
+      border: 1px solid #00ff41;
+      box-shadow: 0 0 20px rgba(0,255,65,0.3);
+    }
+    .bot-health-bar {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      height: 8px;
+      position: relative;
+    }
+    .health-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    .health-elite { background: linear-gradient(90deg, #00ff41, #00cc33); }
+    .health-superior { background: linear-gradient(90deg, #00cc33, #ffaa00); }
+    .health-operational { background: linear-gradient(90deg, #ffaa00, #ff6600); }
+    .health-degraded { background: linear-gradient(90deg, #ff6600, #ff0000); }
+    .health-compromised { background: linear-gradient(90deg, #ff0000, #660000); }
+    
+    .alert-badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      animation: pulse 2s infinite;
+    }
+    .alert-emergency { background: #ff0000; color: #fff; }
+    .alert-critical { background: #ff6600; color: #fff; }
+    .alert-warning { background: #ffaa00; color: #000; }
+    
+    .performance-shield {
+      position: relative;
+      background: radial-gradient(circle, rgba(0,255,65,0.1), transparent);
+      border: 2px solid rgba(0,255,65,0.3);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    
+    .trend-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 8px;
+    }
+    .trend-stable { background: #00ff41; }
+    .trend-degrading { background: #ffaa00; }
+    .trend-deteriorating { background: #ff0000; }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .fortress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    
+    .bot-fortress-card {
+      background: rgba(0,20,40,0.9);
+      border: 1px solid rgba(0,255,65,0.2);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .bot-fortress-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--status-color, #00ff41);
+    }
+    
+    .metric-cluster {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .metric-pod {
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="bots-page bg-gray-900 text-white font-inter">
+  <div class="code-rain"></div>
+  
+  <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
+    <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">FORTRESS // Enhanced Bot Intelligence</h1>
+    <nav class="space-x-5 text-sm md:text-base font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-cyan-400">Dashboard</a>
+      <a href="macro.html" class="hover:text-cyan-400">Macro</a>
+      <a href="crypto.html" class="hover:text-cyan-400">Crypto</a>
+      <a href="scenario.html" class="hover:text-cyan-400">Scenario</a>
+      <a href="bots.html" class="hover:text-cyan-400">Bots Classic</a>
+      <a href="bots-enhanced.html" class="text-yellow-400 border-b-2 border-yellow-400 pb-1">Bots Fortress</a>
+      <a href="mindmap.html" class="hover:text-cyan-400">Mindmap</a>
+      <a href="goals.html" class="hover:text-cyan-400">Goals</a>
+      <a href="portfolio.html" class="hover:text-cyan-400">Portfolio</a>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-7xl mx-auto space-y-8">
+    
+    <!-- Fortress Status Overview -->
+    <section class="fortress-status hud-panel performance-shield">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-orbitron text-green-400 matrix-important">Bot Fleet Fortress Status</h2>
+        <div id="fortress-health" class="data-metric data-metric--info">Initializing...</div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="text-3xl font-orbitron text-green-400" id="fleet-health">--</div>
+          <div class="text-sm text-gray-300">Fleet Health</div>
+          <div class="bot-health-bar mt-2">
+            <div class="health-fill" id="fleet-health-bar"></div>
+          </div>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-2xl font-orbitron text-yellow-400" id="elite-count">--</div>
+          <div class="text-sm text-gray-300">Elite Bots</div>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-2xl font-orbitron text-red-400" id="critical-alerts">--</div>
+          <div class="text-sm text-gray-300">Critical Alerts</div>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-2xl font-orbitron text-cyan-400" id="monitoring-status">ACTIVE</div>
+          <div class="text-sm text-gray-300">Monitor Status</div>
+        </div>
+      </div>
+      
+      <div id="fleet-recommendations" class="mt-4 text-sm text-gray-300">
+        <!-- Fleet recommendations will be displayed here -->
+      </div>
+    </section>
+
+    <!-- Real-time Alerts -->
+    <section class="hud-panel" id="alerts-section" style="display: none;">
+      <h3 class="text-lg font-orbitron text-red-400 mb-4 matrix-important">⚠️ Active Alerts</h3>
+      <div id="active-alerts" class="space-y-2">
+        <!-- Active alerts will be displayed here -->
+      </div>
+    </section>
+
+    <!-- Enhanced Bot Cards -->
+    <section class="hud-panel">
+      <h3 class="text-lg font-orbitron text-cyan-300 mb-4 matrix-important">Bot Performance Intelligence</h3>
+      <div class="fortress-grid" id="bot-fortress-grid">
+        <!-- Bot cards will be dynamically generated here -->
+      </div>
+    </section>
+
+    <!-- Performance Analytics -->
+    <section class="hud-panel">
+      <h3 class="text-lg font-orbitron text-purple-400 mb-4 matrix-important">Performance Analytics</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="performance-shield">
+          <h4 class="text-yellow-400 font-orbitron mb-2">Performance Distribution</h4>
+          <div id="performance-distribution">
+            <!-- Performance distribution chart will go here -->
+          </div>
+        </div>
+        
+        <div class="performance-shield">
+          <h4 class="text-yellow-400 font-orbitron mb-2">Fleet Metrics</h4>
+          <div id="fleet-metrics" class="space-y-2">
+            <!-- Fleet metrics will be displayed here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Legacy Bot Table (Minimized) -->
+    <section class="hud-panel">
+      <details>
+        <summary class="text-lg font-orbitron text-gray-400 mb-4 cursor-pointer hover:text-cyan-400">
+          📊 Legacy Bot Data Table
+        </summary>
+        <div id="legacy-bot-table" class="mt-4">
+          <!-- Legacy table will go here -->
+        </div>
+      </details>
+    </section>
+
+  </main>
+
+  <script src="js/matrix.js"></script>
+  <script>
+    class BotFortressMonitor {
+      constructor() {
+        this.monitoringData = null;
+        this.botsData = null;
+        this.refreshInterval = 30000; // 30 seconds
+        this.init();
+      }
+
+      async init() {
+        console.log("Initializing Bot Fortress Monitor...");
+        await this.loadData();
+        this.renderFortressStatus();
+        this.renderBotCards();
+        this.renderPerformanceAnalytics();
+        this.startAutoRefresh();
+      }
+
+      async loadData() {
+        try {
+          // Load bot monitoring report
+          const monitorResponse = await fetch('./logs/bot_monitoring_report.json', { cache: 'no-store' });
+          if (monitorResponse.ok) {
+            this.monitoringData = await monitorResponse.json();
+            console.log("Loaded monitoring data:", this.monitoringData);
+          }
+
+          // Load legacy bots data
+          const botsResponse = await fetch('./data/bots_data.json', { cache: 'no-store' });
+          if (botsResponse.ok) {
+            this.botsData = await botsResponse.json();
+            console.log("Loaded bots data:", this.botsData);
+          }
+        } catch (error) {
+          console.error("Error loading data:", error);
+        }
+      }
+
+      renderFortressStatus() {
+        if (!this.monitoringData) {
+          document.getElementById('fortress-health').textContent = "Data Fortress Offline";
+          return;
+        }
+
+        const fleetSummary = this.monitoringData.fleet_summary || {};
+        const avgHealth = fleetSummary.average_health_score || 0;
+        const eliteCount = fleetSummary.elite_bots || 0;
+        const totalBots = this.monitoringData.bots_monitored || 0;
+        const criticalAlerts = fleetSummary.critical_alerts || 0;
+
+        // Update fortress health display
+        document.getElementById('fleet-health').textContent = Math.round(avgHealth);
+        document.getElementById('elite-count').textContent = `${eliteCount}/${totalBots}`;
+        document.getElementById('critical-alerts').textContent = criticalAlerts;
+
+        // Update health bar
+        const healthBar = document.getElementById('fleet-health-bar');
+        healthBar.style.width = `${avgHealth}%`;
+        
+        if (avgHealth >= 80) {
+          healthBar.className = 'health-fill health-elite';
+        } else if (avgHealth >= 65) {
+          healthBar.className = 'health-fill health-superior';
+        } else if (avgHealth >= 50) {
+          healthBar.className = 'health-fill health-operational';
+        } else if (avgHealth >= 30) {
+          healthBar.className = 'health-fill health-degraded';
+        } else {
+          healthBar.className = 'health-fill health-compromised';
+        }
+
+        // Display recommendations
+        const recommendations = this.monitoringData.recommendations || [];
+        const recContainer = document.getElementById('fleet-recommendations');
+        recContainer.innerHTML = recommendations.slice(0, 2).map(rec => 
+          `<div class="text-yellow-400">• ${rec}</div>`
+        ).join('');
+
+        // Show alerts if any critical alerts exist
+        if (criticalAlerts > 0) {
+          this.renderActiveAlerts();
+        }
+      }
+
+      renderActiveAlerts() {
+        const alertsSection = document.getElementById('alerts-section');
+        const alertsContainer = document.getElementById('active-alerts');
+        
+        if (!this.monitoringData.bot_analysis) return;
+        
+        const criticalBots = this.monitoringData.bot_analysis.filter(bot => 
+          bot.alerts_count > 0 && (bot.category === 'DEGRADED' || bot.category === 'COMPROMISED')
+        );
+
+        if (criticalBots.length > 0) {
+          alertsSection.style.display = 'block';
+          alertsContainer.innerHTML = criticalBots.map(bot => `
+            <div class="alert-badge alert-${bot.category === 'COMPROMISED' ? 'emergency' : 'critical'} inline-block">
+              ${bot.name}: ${bot.category} (Health: ${bot.health_score}/100)
+            </div>
+          `).join(' ');
+        }
+      }
+
+      renderBotCards() {
+        const container = document.getElementById('bot-fortress-grid');
+        
+        if (!this.monitoringData || !this.monitoringData.bot_analysis) {
+          container.innerHTML = '<div class="text-red-400">No monitoring data available</div>';
+          return;
+        }
+
+        container.innerHTML = this.monitoringData.bot_analysis.map(bot => {
+          const statusColor = this.getCategoryColor(bot.category);
+          const trendClass = this.getTrendClass(bot.trend_analysis?.trend);
+          
+          return `
+            <div class="bot-fortress-card" style="--status-color: ${statusColor};">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="font-orbitron text-lg text-cyan-400">${bot.name}</h4>
+                <div class="flex items-center">
+                  <span class="text-sm ${this.getCategoryTextClass(bot.category)}">${bot.category}</span>
+                  <div class="trend-indicator ${trendClass}" title="${bot.trend_analysis?.trend || 'STABLE'}"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-sm text-gray-300">Health Score</span>
+                  <span class="font-bold text-${this.getHealthColor(bot.health_score)}-400">${bot.health_score}/100</span>
+                </div>
+                <div class="bot-health-bar">
+                  <div class="health-fill ${this.getHealthClass(bot.category)}" style="width: ${bot.health_score}%"></div>
+                </div>
+              </div>
+              
+              <div class="metric-cluster">
+                <div class="metric-pod">
+                  <div class="text-xs text-gray-400">Win Rate</div>
+                  <div class="font-bold text-${bot.metrics.win_rate_pct >= 55 ? 'green' : bot.metrics.win_rate_pct >= 45 ? 'yellow' : 'red'}-400">
+                    ${bot.metrics.win_rate_pct}%
+                  </div>
+                </div>
+                
+                <div class="metric-pod">
+                  <div class="text-xs text-gray-400">Max DD</div>
+                  <div class="font-bold text-${bot.metrics.max_drawdown_pct <= 5 ? 'green' : bot.metrics.max_drawdown_pct <= 10 ? 'yellow' : 'red'}-400">
+                    ${bot.metrics.max_drawdown_pct}%
+                  </div>
+                </div>
+                
+                <div class="metric-pod">
+                  <div class="text-xs text-gray-400">Weekly P&L</div>
+                  <div class="font-bold text-${bot.metrics.weekly_pnl_pct >= 0 ? 'green' : 'red'}-400">
+                    ${bot.metrics.weekly_pnl_pct > 0 ? '+' : ''}${bot.metrics.weekly_pnl_pct}%
+                  </div>
+                </div>
+                
+                <div class="metric-pod">
+                  <div class="text-xs text-gray-400">Confluence</div>
+                  <div class="font-bold text-${bot.metrics.confluence_score >= 7 ? 'green' : bot.metrics.confluence_score >= 5 ? 'yellow' : 'red'}-400">
+                    ${bot.metrics.confluence_score}/10
+                  </div>
+                </div>
+              </div>
+              
+              ${bot.alerts_count > 0 ? `
+                <div class="mt-3 text-xs text-red-400">
+                  ⚠️ ${bot.alerts_count} Alert${bot.alerts_count > 1 ? 's' : ''} Active
+                </div>
+              ` : ''}
+              
+              ${bot.recommendations.length > 0 ? `
+                <div class="mt-3 text-xs text-gray-400">
+                  <strong>Rec:</strong> ${bot.recommendations[0]}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderPerformanceAnalytics() {
+        if (!this.monitoringData) return;
+
+        // Performance distribution
+        const categories = ['ELITE', 'SUPERIOR', 'OPERATIONAL', 'DEGRADED', 'COMPROMISED'];
+        const distribution = categories.map(cat => {
+          const count = this.monitoringData.bot_analysis?.filter(bot => bot.category === cat).length || 0;
+          return { category: cat, count };
+        });
+
+        const distContainer = document.getElementById('performance-distribution');
+        distContainer.innerHTML = distribution.map(item => `
+          <div class="flex justify-between items-center py-1">
+            <span class="text-sm ${this.getCategoryTextClass(item.category)}">${item.category}</span>
+            <span class="font-bold">${item.count}</span>
+          </div>
+        `).join('');
+
+        // Fleet metrics
+        const metrics = this.monitoringData.fleet_summary || {};
+        const metricsContainer = document.getElementById('fleet-metrics');
+        metricsContainer.innerHTML = `
+          <div class="flex justify-between"><span>Best Performer:</span><span class="text-green-400">${metrics.best_performer || 'N/A'}</span></div>
+          <div class="flex justify-between"><span>Worst Performer:</span><span class="text-red-400">${metrics.worst_performer || 'N/A'}</span></div>
+          <div class="flex justify-between"><span>Bots in Warning:</span><span class="text-yellow-400">${metrics.bots_in_warning || 0}</span></div>
+          <div class="flex justify-between"><span>Total Alerts:</span><span class="text-cyan-400">${metrics.total_alerts || 0}</span></div>
+        `;
+      }
+
+      getCategoryColor(category) {
+        const colors = {
+          'ELITE': '#00ff41',
+          'SUPERIOR': '#00cc33', 
+          'OPERATIONAL': '#ffaa00',
+          'DEGRADED': '#ff6600',
+          'COMPROMISED': '#ff0000'
+        };
+        return colors[category] || '#666666';
+      }
+
+      getCategoryTextClass(category) {
+        const classes = {
+          'ELITE': 'text-green-400',
+          'SUPERIOR': 'text-green-300',
+          'OPERATIONAL': 'text-yellow-400',
+          'DEGRADED': 'text-orange-400',
+          'COMPROMISED': 'text-red-400'
+        };
+        return classes[category] || 'text-gray-400';
+      }
+
+      getHealthClass(category) {
+        const classes = {
+          'ELITE': 'health-elite',
+          'SUPERIOR': 'health-superior',
+          'OPERATIONAL': 'health-operational',
+          'DEGRADED': 'health-degraded',
+          'COMPROMISED': 'health-compromised'
+        };
+        return classes[category] || 'health-compromised';
+      }
+
+      getHealthColor(score) {
+        if (score >= 80) return 'green';
+        if (score >= 65) return 'yellow';
+        if (score >= 50) return 'orange';
+        return 'red';
+      }
+
+      getTrendClass(trend) {
+        const classes = {
+          'STABLE': 'trend-stable',
+          'DEGRADING': 'trend-degrading',
+          'DETERIORATING': 'trend-deteriorating'
+        };
+        return classes[trend] || 'trend-stable';
+      }
+
+      startAutoRefresh() {
+        setInterval(async () => {
+          console.log("Auto-refreshing fortress data...");
+          await this.loadData();
+          this.renderFortressStatus();
+          this.renderBotCards();
+          this.renderPerformanceAnalytics();
+        }, this.refreshInterval);
+      }
+    }
+
+    // Initialize the fortress monitor when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new BotFortressMonitor();
+    });
+  </script>
+</body>
+</html>

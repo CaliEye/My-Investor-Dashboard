@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-05T00:52:01.749020+00:00",
+  "updated_utc": "2026-03-05T02:28:03.597529+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-05T04:52:01.749020+00:00",
+  "next_review_utc": "2026-03-05T06:28:03.597529+00:00",
   "crypto": {
-    "btc_usd": 72900.12,
-    "eth_usd": 2132.99,
-    "btc_price_formatted": "$72,900",
-    "eth_price_formatted": "$2,133",
+    "btc_usd": 72788.93,
+    "eth_usd": 2126.54,
+    "btc_price_formatted": "$72,789",
+    "eth_price_formatted": "$2,127",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-05T00:52:03.169924+00:00",
+    "updated_utc": "2026-03-05T02:28:07.347563+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -101,6 +101,11 @@
         "volume": 69315779,
         "volume_vs_20d": 0.99,
         "trend": "NEUTRAL / MIXED",
+        "fortress_status": "SECURE",
+        "data_sources": [
+          "yahoo",
+          "alpha_vantage"
+        ],
         "label": "TECH / NASDAQ-100"
       },
       "defense": {
@@ -112,6 +117,10 @@
         "volume": 1535554,
         "volume_vs_20d": 1.51,
         "trend": "RELATIVE STRENGTH",
+        "fortress_status": "VERIFY_REQUIRED",
+        "data_sources": [
+          "yahoo"
+        ],
         "label": "DEFENSE"
       },
       "metals": {
@@ -123,6 +132,11 @@
         "volume": 9767135,
         "volume_vs_20d": 0.7,
         "trend": "NEUTRAL / MIXED",
+        "fortress_status": "SECURE",
+        "data_sources": [
+          "yahoo",
+          "alpha_vantage"
+        ],
         "label": "PRECIOUS METALS"
       },
       "broad": {
@@ -134,6 +148,10 @@
         "volume": 13407889,
         "volume_vs_20d": 1.32,
         "trend": "NEUTRAL / MIXED",
+        "fortress_status": "VERIFY_REQUIRED",
+        "data_sources": [
+          "yahoo"
+        ],
         "label": "BROAD MARKET"
       }
     },
@@ -160,7 +178,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-05T00:52:05.371811+00:00",
+    "updated_utc": "2026-03-05T02:28:09.569782+00:00",
     "confluence_score": 1,
     "max_score": 5,
     "threshold_hit": false,

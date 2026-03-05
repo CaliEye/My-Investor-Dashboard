@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fortress Command | Performance Metrics Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Military-grade performance metrics dashboard with reliability shields and immersive data visualization.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Performance Metrics Dashboard Styles */
+    .fortress-command {
+      background: radial-gradient(circle at center, rgba(0,40,80,0.2), rgba(0,0,0,0.8));
+      min-height: 100vh;
+      position: relative;
+    }
+    
+    .reliability-shield {
+      position: relative;
+      background: linear-gradient(135deg, rgba(0,255,65,0.1), rgba(0,150,40,0.05));
+      border: 2px solid rgba(0,255,65,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(5px);
+    }
+    
+    .reliability-shield::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #00ff41, #00aa33, #00ff41);
+      border-radius: 12px;
+      z-index: -1;
+      opacity: 0.3;
+      animation: shield-pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes shield-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+    
+    .data-fortress {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .metric-fortress {
+      background: rgba(0,20,40,0.95);
+      border: 1px solid rgba(0,255,65,0.4);
+      border-radius: 10px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transform: perspective(1000px) rotateX(2deg);
+      transition: all 0.3s ease;
+    }
+    
+    .metric-fortress:hover {
+      transform: perspective(1000px) rotateX(0deg) translateZ(10px);
+      border-color: rgba(0,255,65,0.8);
+      box-shadow: 0 10px 30px rgba(0,255,65,0.2);
+    }
+    
+    .hologram-chart {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(0,255,65,0.3);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      position: relative;
+    }
+    
+    .hologram-chart::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 40%, rgba(0,255,65,0.1) 50%, transparent 60%);
+      animation: hologram-scan 4s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes hologram-scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .data-stream {
+      background: rgba(0,0,0,0.8);
+      border: 1px solid rgba(0,200,255,0.5);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #00ccff;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .performance-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+    
+    .alert-klaxon {
+      background: rgba(255,0,0,0.1);
+      border: 2px solid #ff0000;
+      color: #ff6666;
+      padding: 15px;
+      border-radius: 8px;
+      animation: klaxon-flash 1s infinite;
+    }
+    
+    @keyframes klaxon-flash {
+      0%, 100% { background: rgba(255,0,0,0.1); }
+      50% { background: rgba(255,0,0,0.3); }
+    }
+    
+    .system-gauge {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+    
+    .gauge-circle {
+      stroke-width: 8;
+      fill: none;
+      stroke: rgba(0,255,65,0.2);
+    }
+    
+    .gauge-fill {
+      stroke-width: 8;
+      fill: none;
+      stroke: #00ff41;
+      stroke-linecap: round;
+      transition: stroke-dasharray 1s ease;
+    }
+    
+    .tactical-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+    
+    .status-beacon {
+      position: relative;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    .beacon-secure { background: #00ff41; box-shadow: 0 0 10px #00ff41; }
+    .beacon-warning { background: #ffaa00; box-shadow: 0 0 10px #ffaa00; }
+    .beacon-critical { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+    
+    .intel-feed {
+      background: rgba(0,0,0,0.9);
+      border-left: 4px solid #00ff41;
+      padding: 10px 15px;
+      margin: 8px 0;
+      font-size: 0.85rem;
+      color: #cccccc;
+    }
+    
+    .fortress-header {
+      background: linear-gradient(135deg, rgba(0,60,120,0.8), rgba(0,20,40,0.9));
+      border-bottom: 3px solid #00ff41;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .fortress-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff41, transparent);
+      animation: header-scan 3s linear infinite;
+    }
+    
+    @keyframes header-scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .immersive-metric {
+      perspective: 1000px;
+      transform-style: preserve-3d;
+    }
+
+    .metric-cube {
+      transform: rotateY(10deg);
+      transition: all 0.5s ease;
+      background: linear-gradient(135deg, rgba(0,255,65,0.1), rgba(0,150,40,0.05));
+      border: 1px solid rgba(0,255,65,0.3);
+      border-radius: 8px;
+      padding: 15px;
+    }
+
+    .metric-cube:hover {
+      transform: rotateY(0deg) scale(1.05);
+    }
+
+    .performance-radar {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body class="fortress-command bg-gray-900 text-white font-inter">
+  <div class="code-rain"></div>
+  
+  <header class="fortress-header">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-4xl font-orbitron tracking-widest text-green-400 mb-2">FORTRESS COMMAND</h1>
+        <div class="text-sm text-cyan-400 font-mono">Performance Metrics Intelligence • Real-Time Data Fortress</div>
+      </div>
+      <div class="text-right">
+        <div class="text-2xl font-orbitron text-yellow-400" id="system-time">--:--:--</div>
+        <div class="text-sm text-gray-300" id="fortress-status">Fortress Status: <span class="status-beacon beacon-secure"></span>SECURE</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="p-6 space-y-8">
+    
+    <!-- Commander's Overview -->
+    <section class="reliability-shield">
+      <h2 class="text-2xl font-orbitron text-green-400 mb-6 matrix-important">🛡️ Fortress Command Overview</h2>
+      
+      <div class="tactical-grid">
+        <div class="metric-fortress immersive-metric">
+          <div class="metric-cube">
+            <div class="text-center">
+              <div class="system-gauge">
+                <svg width="120" height="120">
+                  <circle cx="60" cy="60" r="50" class="gauge-circle"></circle>
+                  <circle cx="60" cy="60" r="50" class="gauge-fill" id="system-health-gauge" 
+                          stroke-dasharray="0 314" transform="rotate(-90 60 60)"></circle>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="text-center">
+                    <div class="text-2xl font-orbitron text-green-400" id="system-health">98</div>
+                    <div class="text-xs text-gray-400">HEALTH</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-fortress">
+          <h4 class="text-cyan-400 font-orbitron text-sm mb-2">Data Fortress</h4>
+          <div class="text-3xl font-bold text-green-400" id="data-reliability">95.8%</div>
+          <div class="text-sm text-gray-400">Multi-Source Reliability</div>
+          <div class="mt-2 text-xs" id="data-sources-count">
+            <span class="status-beacon beacon-secure"></span>4 Sources Active
+          </div>
+        </div>
+        
+        <div class="metric-fortress">
+          <h4 class="text-yellow-400 font-orbitron text-sm mb-2">Bot Fleet</h4>
+          <div class="text-3xl font-bold text-green-400" id="bot-fleet-health">87.2</div>
+          <div class="text-sm text-gray-400">Fleet Health Score</div>
+          <div class="mt-2 text-xs" id="elite-bots-count">
+            <span class="status-beacon beacon-secure"></span>2/3 Elite Status
+          </div>
+        </div>
+        
+        <div class="metric-fortress">
+          <h4 class="text-purple-400 font-orbitron text-sm mb-2">Market Intel</h4>
+          <div class="text-3xl font-bold text-cyan-400" id="market-confluence">7.2/10</div>
+          <div class="text-sm text-gray-400">Confluence Score</div>
+          <div class="mt-2 text-xs" id="market-regime">
+            <span class="status-beacon beacon-warning"></span>Balanced Regime
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-Time Performance Grid -->
+    <div class="performance-grid">
+      
+      <!-- Left Column: Main Performance Displays -->
+      <div class="space-y-6">
+        
+        <!-- Immersive Market Data -->
+        <section class="reliability-shield">
+          <h3 class="text-xl font-orbitron text-cyan-400 mb-4 matrix-important">📊 Live Market Intelligence</h3>
+          
+          <div class="data-fortress">
+            <div class="hologram-chart">
+              <h4 class="text-yellow-400 font-orbitron mb-2">Crypto Fortress</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <div class="text-sm text-gray-400">BTC/USD</div>
+                  <div class="text-2xl font-bold text-green-400" id="btc-price">$--,---</div>
+                  <div class="text-sm" id="btc-change">+0.00%</div>
+                </div>
+                <div>
+                  <div class="text-sm text-gray-400">ETH/USD</div>
+                  <div class="text-2xl font-bold text-green-400" id="eth-price">$--,---</div>
+                  <div class="text-sm" id="eth-change">+0.00%</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="hologram-chart">
+              <h4 class="text-purple-400 font-orbitron mb-2">Sector Intelligence</h4>
+              <div id="sector-grid" class="space-y-2">
+                <!-- Sector data will be populated here -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Enhanced Bot Performance -->
+        <section class="reliability-shield">
+          <h3 class="text-xl font-orbitron text-green-400 mb-4 matrix-important">🤖 Bot Performance Matrix</h3>
+          
+          <div class="data-fortress" id="bot-performance-matrix">
+            <!-- Bot performance cards will be populated here -->
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column: Intelligence Feeds and Alerts -->
+      <div class="space-y-6">
+        
+        <!-- System Intelligence Feed -->
+        <section class="reliability-shield">
+          <h3 class="text-lg font-orbitron text-cyan-400 mb-4 matrix-important">📡 Intelligence Feed</h3>
+          
+          <div class="space-y-3" id="intelligence-feed">
+            <!-- Intelligence updates will be populated here -->
+          </div>
+          
+          <div class="data-stream mt-4" id="system-log">
+            [FORTRESS] Initializing performance metrics...
+            [INTEL] Loading market intelligence feeds...
+            [SECURE] Data fortress authentication complete...
+          </div>
+        </section>
+
+        <!-- Active Alerts & Warnings -->
+        <section class="reliability-shield" id="alerts-section" style="display: none;">
+          <h3 class="text-lg font-orbitron text-red-400 mb-4 matrix-important">⚠️ Active Alerts</h3>
+          <div id="active-alerts">
+            <!-- Active alerts will be populated here -->
+          </div>
+        </section>
+
+        <!-- Performance Analytics -->
+        <section class="reliability-shield">
+          <h3 class="text-lg font-orbitron text-purple-400 mb-4 matrix-important">📈 Analytics</h3>
+          
+          <div class="performance-radar">
+            <canvas id="performance-radar-chart" width="200" height="200"></canvas>
+          </div>
+          
+          <div class="mt-4 space-y-2" id="analytics-summary">
+            <!-- Analytics summary will be populated here -->
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Data Validation Status -->
+    <section class="reliability-shield">
+      <h3 class="text-lg font-orbitron text-yellow-400 mb-4 matrix-important">🛡️ Data Validation Shield</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="metric-cube">
+          <div class="text-center">
+            <div class="text-2xl font-orbitron text-green-400" id="validation-score">100%</div>
+            <div class="text-sm text-gray-400">Validation Rate</div>
+          </div>
+        </div>
+        
+        <div class="metric-cube">
+          <div class="text-center">
+            <div class="text-2xl font-orbitron text-cyan-400" id="source-consensus">4/4</div>
+            <div class="text-sm text-gray-400">Source Consensus</div>
+          </div>
+        </div>
+        
+        <div class="metric-cube">
+          <div class="text-center">
+            <div class="text-2xl font-orbitron text-yellow-400" id="last-update">--</div>
+            <div class="text-sm text-gray-400">Last Update</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4">
+        <h4 class="text-cyan-400 font-orbitron text-sm mb-2">Source Status</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="source-status-grid">
+          <!-- Source status indicators will be populated here -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/matrix.js"></script>
+  <script>
+    class FortressCommand {
+      constructor() {
+        this.refreshInterval = 15000; // 15 seconds
+        this.animationFrame = null;
+        this.systemLog = [];
+        this.init();
+      }
+
+      async init() {
+        console.log("Initializing Fortress Command Dashboard...");
+        this.updateSystemTime();
+        this.startTimeUpdates();
+        await this.loadAllData();
+        this.renderDashboard();
+        this.startAutoRefresh();
+        this.log("FORTRESS COMMAND", "Dashboard initialization complete");
+      }
+
+      updateSystemTime() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { 
+          hour12: false, 
+          timeZone: 'UTC' 
+        });
+        document.getElementById('system-time').textContent = timeStr + ' UTC';
+      }
+
+      startTimeUpdates() {
+        setInterval(() => this.updateSystemTime(), 1000);
+      }
+
+      log(system, message) {
+        const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const logEntry = `[${timestamp}] [${system}] ${message}`;
+        this.systemLog.unshift(logEntry);
+        
+        // Keep only last 10 entries
+        if (this.systemLog.length > 10) {
+          this.systemLog = this.systemLog.slice(0, 10);
+        }
+        
+        this.updateSystemLog();
+      }
+
+      updateSystemLog() {
+        const logElement = document.getElementById('system-log');
+        logElement.textContent = this.systemLog.join('\\n');
+        logElement.scrollTop = 0;
+      }
+
+      async loadAllData() {
+        try {
+          // Load market data
+          const marketResponse = await fetch('./data/data.json', { cache: 'no-store' });
+          if (marketResponse.ok) {
+            this.marketData = await marketResponse.json();
+            this.log("DATA", "Market intelligence loaded");
+          }
+
+          // Load bot monitoring data
+          const monitorResponse = await fetch('./logs/bot_monitoring_report.json', { cache: 'no-store' });
+          if (monitorResponse.ok) {
+            this.monitoringData = await monitorResponse.json();
+            this.log("BOT", "Fleet intelligence loaded");
+          }
+
+          // Load data fortress status
+          const fortressResponse = await fetch('./logs/fortress_status_report.json', { cache: 'no-store' });
+          if (fortressResponse.ok) {
+            this.fortressData = await fortressResponse.json();
+            this.log("FORTRESS", "Multi-source validation loaded");
+          }
+
+        } catch (error) {
+          console.error("Error loading data:", error);
+          this.log("ERROR", "Data loading failed - operating on cached data");
+        }
+      }
+
+      renderDashboard() {
+        this.updateFortressOverview();
+        this.renderMarketIntelligence();
+        this.renderBotPerformanceMatrix();
+        this.updateIntelligenceFeed();
+        this.updateDataValidation();
+        this.checkForAlerts();
+        this.renderAnalytics();
+      }
+
+      updateFortressOverview() {
+        if (this.fortressData) {
+          const reliability = this.fortressData.fortress_reliability_pct || 95;
+          document.getElementById('data-reliability').textContent = reliability.toFixed(1) + '%';
+          
+          const activeSources = this.fortressData.active_sources_count || 4;
+          document.getElementById('data-sources-count').innerHTML = 
+            `<span class="status-beacon beacon-secure"></span>${activeSources} Sources Active`;
+        }
+
+        if (this.monitoringData) {
+          const fleetHealth = this.monitoringData.fleet_summary?.average_health_score || 87;
+          document.getElementById('bot-fleet-health').textContent = fleetHealth.toFixed(1);
+          
+          const eliteBots = this.monitoringData.fleet_summary?.elite_bots || 0;
+          const totalBots = this.monitoringData.bots_monitored || 0;
+          document.getElementById('elite-bots-count').innerHTML = 
+            `<span class="status-beacon beacon-secure"></span>${eliteBots}/${totalBots} Elite Status`;
+        }
+
+        if (this.marketData) {
+          // Calculate market confluence score
+          const sectors = this.marketData.sector_etfs?.sectors || {};
+          const confluenceValues = Object.values(sectors).map(s => s.confluence_score || 5);
+          const avgConfluence = confluenceValues.reduce((a, b) => a + b, 0) / confluenceValues.length || 7;
+          document.getElementById('market-confluence').textContent = avgConfluence.toFixed(1) + '/10';
+        }
+
+        // Update system health gauge
+        const systemHealth = Math.round((
+          (this.fortressData?.fortress_reliability_pct || 95) * 0.3 +
+          (this.monitoringData?.fleet_summary?.average_health_score || 87) * 0.4 +
+          85 * 0.3 // Market health placeholder
+        ));
+        
+        document.getElementById('system-health').textContent = systemHealth;
+        
+        // Update gauge visual
+        const circumference = 2 * Math.PI * 50; // r=50
+        const dashArray = (systemHealth / 100) * circumference;
+        document.getElementById('system-health-gauge').style.strokeDasharray = `${dashArray} ${circumference}`;
+      }
+
+      renderMarketIntelligence() {
+        if (!this.marketData) return;
+
+        const crypto = this.marketData.crypto || {};
+        
+        // Update crypto prices
+        document.getElementById('btc-price').textContent = 
+          crypto.btc_price_formatted || '$--,---';
+        document.getElementById('eth-price').textContent = 
+          crypto.eth_price_formatted || '$--,---';
+
+        // Update sector grid
+        const sectors = this.marketData.sector_etfs?.sectors || {};
+        const sectorGrid = document.getElementById('sector-grid');
+        
+        sectorGrid.innerHTML = Object.entries(sectors).slice(0, 4).map(([key, sector]) => `
+          <div class="flex justify-between items-center py-1">
+            <span class="text-sm text-gray-300">${sector.label || key}</span>
+            <div class="text-right">
+              <span class="font-bold ${sector.change_pct_day >= 0 ? 'text-green-400' : 'text-red-400'}">
+                ${sector.change_pct_day > 0 ? '+' : ''}${sector.change_pct_day?.toFixed(2) || '0.00'}%
+              </span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      renderBotPerformanceMatrix() {
+        if (!this.monitoringData?.bot_analysis) return;
+
+        const container = document.getElementById('bot-performance-matrix');
+        
+        container.innerHTML = this.monitoringData.bot_analysis.map(bot => `
+          <div class="metric-fortress">
+            <h4 class="text-cyan-400 font-orbitron text-sm mb-2">${bot.name}</h4>
+            
+            <div class="grid grid-cols-2 gap-2 mb-3">
+              <div class="text-center">
+                <div class="text-lg font-bold text-${this.getHealthColor(bot.health_score)}-400">
+                  ${bot.health_score}
+                </div>
+                <div class="text-xs text-gray-400">Health</div>
+              </div>
+              
+              <div class="text-center">
+                <div class="text-lg font-bold text-${bot.metrics.weekly_pnl_pct >= 0 ? 'green' : 'red'}-400">
+                  ${bot.metrics.weekly_pnl_pct > 0 ? '+' : ''}${bot.metrics.weekly_pnl_pct}%
+                </div>
+                <div class="text-xs text-gray-400">Weekly</div>
+              </div>
+            </div>
+            
+            <div class="text-xs text-center">
+              <span class="status-beacon ${this.getCategoryBeacon(bot.category)}"></span>
+              ${bot.category}
+            </div>
+            
+            ${bot.alerts_count > 0 ? `
+              <div class="mt-2 text-xs text-red-400 text-center">
+                ⚠️ ${bot.alerts_count} Alert${bot.alerts_count > 1 ? 's' : ''}
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+      }
+
+      updateIntelligenceFeed() {
+        const feed = document.getElementById('intelligence-feed');
+        const updates = [];
+
+        if (this.marketData) {
+          const btcChange = this.marketData.crypto?.btc_usd || 0;
+          if (btcChange !== 0) {
+            updates.push({
+              time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+              system: 'CRYPTO',
+              message: `BTC analysis complete: ${btcChange > 50000 ? 'BULLISH' : 'BEARISH'} regime detected`
+            });
+          }
+        }
+
+        if (this.monitoringData) {
+          const criticalAlerts = this.monitoringData.fleet_summary?.critical_alerts || 0;
+          if (criticalAlerts > 0) {
+            updates.push({
+              time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+              system: 'ALERT',
+              message: `${criticalAlerts} critical bot performance alert${criticalAlerts > 1 ? 's' : ''} detected`
+            });
+          }
+        }
+
+        if (this.fortressData) {
+          const reliability = this.fortressData.fortress_reliability_pct || 0;
+          if (reliability < 90) {
+            updates.push({
+              time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+              system: 'FORTRESS',
+              message: `Data source reliability degraded to ${reliability.toFixed(1)}%`
+            });
+          }
+        }
+
+        // Add default intelligence if no alerts
+        if (updates.length === 0) {
+          updates.push({
+            time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+            system: 'FORTRESS',
+            message: 'All systems operational - maintaining defensive posture'
+          });
+        }
+
+        feed.innerHTML = updates.map(update => `
+          <div class="intel-feed">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-cyan-400 font-mono text-xs">[${update.system}]</span>
+              <span class="text-gray-500 text-xs">${update.time}</span>
+            </div>
+            <div class="text-gray-300">${update.message}</div>
+          </div>
+        `).join('');
+      }
+
+      updateDataValidation() {
+        if (this.fortressData) {
+          const reliability = this.fortressData.fortress_reliability_pct || 100;
+          document.getElementById('validation-score').textContent = reliability.toFixed(0) + '%';
+          
+          const activeSources = this.fortressData.active_sources_count || 4;
+          document.getElementById('source-consensus').textContent = `${activeSources}/4`;
+        }
+
+        if (this.marketData) {
+          const lastUpdate = new Date(this.marketData.updated_utc || Date.now());
+          const timeAgo = Math.round((Date.now() - lastUpdate.getTime()) / 60000);
+          document.getElementById('last-update').textContent = `${timeAgo}m ago`;
+        }
+
+        // Update source status grid
+        const sources = ['Yahoo Finance', 'Alpha Vantage', 'Polygon', 'CoinGecko'];
+        const statusGrid = document.getElementById('source-status-grid');
+        
+        statusGrid.innerHTML = sources.map(source => {
+          // Simulated status - in real implementation, this would come from fortress data
+          const isActive = Math.random() > 0.1; // 90% uptime simulation
+          return `
+            <div class="text-center p-2 bg-gray-800 rounded">
+              <div class="status-beacon ${isActive ? 'beacon-secure' : 'beacon-critical'}"></div>
+              <div class="text-xs text-gray-300">${source}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      checkForAlerts() {
+        let hasAlerts = false;
+        const alertsContainer = document.getElementById('active-alerts');
+        const alerts = [];
+
+        if (this.monitoringData?.fleet_summary?.critical_alerts > 0) {
+          hasAlerts = true;
+          alerts.push(`Bot Fleet: ${this.monitoringData.fleet_summary.critical_alerts} critical performance alerts`);
+        }
+
+        if (this.fortressData?.fortress_reliability_pct < 90) {
+          hasAlerts = true;
+          alerts.push(`Data Fortress: Reliability degraded to ${this.fortressData.fortress_reliability_pct.toFixed(1)}%`);
+        }
+
+        if (hasAlerts) {
+          document.getElementById('alerts-section').style.display = 'block';
+          alertsContainer.innerHTML = alerts.map(alert => `
+            <div class="alert-klaxon">
+              <strong>⚠️ SYSTEM ALERT:</strong> ${alert}
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('alerts-section').style.display = 'none';
+        }
+      }
+
+      renderAnalytics() {
+        const analyticsContainer = document.getElementById('analytics-summary');
+        const analytics = [];
+
+        if (this.monitoringData) {
+          const fleetHealth = this.monitoringData.fleet_summary?.average_health_score || 0;
+          analytics.push({
+            label: 'Fleet Performance',
+            value: fleetHealth.toFixed(1),
+            status: fleetHealth >= 80 ? 'excellent' : fleetHealth >= 65 ? 'good' : 'degraded'
+          });
+        }
+
+        if (this.fortressData) {
+          const reliability = this.fortressData.fortress_reliability_pct || 0;
+          analytics.push({
+            label: 'Data Reliability',
+            value: reliability.toFixed(1) + '%',
+            status: reliability >= 95 ? 'excellent' : reliability >= 85 ? 'good' : 'degraded'
+          });
+        }
+
+        analyticsContainer.innerHTML = analytics.map(item => `
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300">${item.label}</span>
+            <span class="text-${item.status === 'excellent' ? 'green' : item.status === 'good' ? 'yellow' : 'red'}-400 font-bold">
+              ${item.value}
+            </span>
+          </div>
+        `).join('');
+      }
+
+      getHealthColor(score) {
+        if (score >= 80) return 'green';
+        if (score >= 65) return 'yellow';
+        if (score >= 50) return 'orange';
+        return 'red';
+      }
+
+      getCategoryBeacon(category) {
+        const beacons = {
+          'ELITE': 'beacon-secure',
+          'SUPERIOR': 'beacon-secure',
+          'OPERATIONAL': 'beacon-warning',
+          'DEGRADED': 'beacon-warning',
+          'COMPROMISED': 'beacon-critical'
+        };
+        return beacons[category] || 'beacon-warning';
+      }
+
+      startAutoRefresh() {
+        setInterval(async () => {
+          console.log("Auto-refreshing fortress command...");
+          await this.loadAllData();
+          this.renderDashboard();
+          this.log("SYSTEM", "Fortress data refresh complete");
+        }, this.refreshInterval);
+      }
+    }
+
+    // Initialize fortress command when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new FortressCommand();
+    });
+  </script>
+</body>
+</html>

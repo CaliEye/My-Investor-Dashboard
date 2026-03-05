@@ -1,0 +1,22 @@
+{
+  "alpha_vantage": "YOUR_ALPHA_VANTAGE_API_KEY_HERE",
+  "polygon": "YOUR_POLYGON_API_KEY_HERE",
+  "notes": {
+    "setup_instructions": "Replace the placeholder keys above with your actual API keys",
+    "alpha_vantage": {
+      "url": "https://www.alphavantage.co/support/#api-key",
+      "free_tier": "25 requests per day",
+      "cost": "$50/month for 120 requests/minute"
+    },
+    "polygon": {
+      "url": "https://polygon.io/pricing",
+      "free_tier": "5 requests per minute",
+      "cost": "$99/month for unlimited requests"
+    },
+    "fortress_mode": {
+      "description": "Data fortress automatically validates prices across multiple sources",
+      "confluence_threshold": "2% maximum deviation between sources",
+      "fallback_chain": ["Yahoo Finance", "Alpha Vantage", "Polygon", "CoinGecko"]
+    }
+  }
+}
