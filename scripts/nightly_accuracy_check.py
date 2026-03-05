@@ -25,6 +25,8 @@ REPORT_MD_FILE = REPO_ROOT / "logs" / "nightly_accuracy.md"
 FAIL_FLAG_FILE = REPO_ROOT / "logs" / "nightly_accuracy_failed.flag"
 ALERT_TXT_FILE = REPO_ROOT / "logs" / "nightly_accuracy_alert.txt"
 LINDY_BRIEF_FILE = REPO_ROOT / "logs" / "lindy_morning_brief.txt"
+RESEARCH_REPORT_JSON = REPO_ROOT / "logs" / "overnight_research_report.json"
+RESEARCH_REPORT_MD = REPO_ROOT / "logs" / "overnight_research_report.md"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -79,6 +81,13 @@ def run_full_dashboard_check() -> tuple[int, str]:
 
 def run_anti_ai_red_team() -> tuple[int, str]:
     command = [sys.executable, str(REPO_ROOT / "scripts" / "anti_ai_red_team.py")]
+    proc = subprocess.run(command, cwd=str(REPO_ROOT), capture_output=True, text=True)
+    output = (proc.stdout or "") + ("\n" + proc.stderr if proc.stderr else "")
+    return proc.returncode, output
+
+
+def run_overnight_research_pull() -> tuple[int, str]:
+    command = [sys.executable, str(REPO_ROOT / "scripts" / "overnight_research_pull.py")]
     proc = subprocess.run(command, cwd=str(REPO_ROOT), capture_output=True, text=True)
     output = (proc.stdout or "") + ("\n" + proc.stderr if proc.stderr else "")
     return proc.returncode, output
@@ -178,6 +187,12 @@ def main() -> int:
     else:
         notes.append("anti_ai_red_team.py completed")
 
+    research_return_code, research_output = run_overnight_research_pull()
+    if research_return_code != 0:
+        notes.append("overnight_research_pull.py failed (non-blocking)")
+    else:
+        notes.append("overnight_research_pull.py completed")
+
     data = load_json(DATA_FILE)
     ai = load_json(AI_FILE)
     confluence = load_json(CONFLUENCE_FILE)
@@ -242,6 +257,7 @@ def main() -> int:
         "notes": notes,
         "full_dashboard_check_return_code": return_code,
         "anti_ai_red_team_return_code": red_team_return_code,
+        "overnight_research_pull_return_code": research_return_code,
     }
 
     REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -288,6 +304,8 @@ def main() -> int:
     alert_lines.append(f"Report JSON: {REPORT_FILE}")
     alert_lines.append(f"Report Log: {REPORT_MD_FILE}")
     alert_lines.append(f"Fail Flag: {FAIL_FLAG_FILE}")
+    alert_lines.append(f"Research JSON: {RESEARCH_REPORT_JSON}")
+    alert_lines.append(f"Research MD: {RESEARCH_REPORT_MD}")
 
     ALERT_TXT_FILE.parent.mkdir(parents=True, exist_ok=True)
     ALERT_TXT_FILE.write_text("\n".join(alert_lines) + "\n", encoding="utf-8")
@@ -314,6 +332,10 @@ def main() -> int:
     if red_team_output:
         print("\n--- anti_ai_red_team.py output ---\n")
         print(red_team_output)
+
+    if research_output:
+        print("\n--- overnight_research_pull.py output ---\n")
+        print(research_output)
 
     return 0 if report["ok"] else 1
 
