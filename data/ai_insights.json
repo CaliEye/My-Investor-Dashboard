@@ -1,14 +1,14 @@
 {
-  "updated_utc": "2026-03-05T17:27:47.332808+00:00",
+  "updated_utc": "2026-03-05T18:41:21.278876+00:00",
   "regime": "Bear Market",
   "top_triggers": [
     "Fed tightening",
     "DXY strength",
     "Crypto market cap decline"
   ],
-  "invalidation": "BTC price becomes available and shows significant recovery",
-  "contextual_guidance": "Given the current bearish bias and lack of recent portfolio actions, consider diversifying into defensive assets or holding cash. Monitor the Fed's actions and the strength of the DXY closely.",
-  "grok_counter": "The strongest counter-argument to the bearish consensus is the potential for a surprise macroeconomic pivot, such as a dovish Federal Reserve statement or unexpected stimulus from China, which could reignite risk-on sentiment and drive BTC higher. The crowd might be missing early signs of institutional accumulation during this consolidation phase, as on-chain data could reveal large wallet activity signaling a bottom.",
+  "invalidation": "BTC price recovery and stabilization",
+  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets or holding cash. Monitor the Fed's actions and the strength of the DXY closely.",
+  "grok_counter": "The strongest counter-argument to the bearish consensus is the potential for a surprise uptick in institutional adoption, particularly if a major financial institution announces Bitcoin integration or ETF approval news this week. The crowd might be missing subtle signals of growing mainstream acceptance, focusing too heavily on short-term price volatility.",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
   "fear_greed_snapshot": 50,
@@ -57,11 +57,6 @@
     "strength": 7,
     "note": "Positive news sentiment (+5)",
     "source": "Polygon"
-  },
-  "guard_refresh": {
-    "core_ai_preserved": true,
-    "reason": "low_quality_api_output_blocked",
-    "core_snapshot_preserved_at": "2026-03-05T17:25:40.757119+00:00"
   },
   "investor_behavior_intelligence": {
     "phase": "crisis",
