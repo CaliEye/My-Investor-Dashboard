@@ -24,6 +24,7 @@ REPORT_FILE = REPO_ROOT / "logs" / "nightly_accuracy_report.json"
 REPORT_MD_FILE = REPO_ROOT / "logs" / "nightly_accuracy.md"
 FAIL_FLAG_FILE = REPO_ROOT / "logs" / "nightly_accuracy_failed.flag"
 ALERT_TXT_FILE = REPO_ROOT / "logs" / "nightly_accuracy_alert.txt"
+LINDY_BRIEF_FILE = REPO_ROOT / "logs" / "lindy_morning_brief.txt"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -76,6 +77,93 @@ def run_full_dashboard_check() -> tuple[int, str]:
     return proc.returncode, output
 
 
+def run_anti_ai_red_team() -> tuple[int, str]:
+    command = [sys.executable, str(REPO_ROOT / "scripts" / "anti_ai_red_team.py")]
+    proc = subprocess.run(command, cwd=str(REPO_ROOT), capture_output=True, text=True)
+    output = (proc.stdout or "") + ("\n" + proc.stderr if proc.stderr else "")
+    return proc.returncode, output
+
+
+def load_latest_json(logs_dir: Path, pattern: str) -> dict[str, Any] | None:
+    matches = sorted(logs_dir.glob(pattern), key=lambda p: p.stat().st_mtime)
+    if not matches:
+        return None
+    try:
+        return load_json(matches[-1])
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def build_lindy_brief(logs_dir: Path) -> str | None:
+    vulnerability = load_latest_json(logs_dir, "vulnerability_report_*.json")
+    manipulation = load_latest_json(logs_dir, "manipulation_detection_*.json")
+    osint = load_latest_json(logs_dir, "osint_report_*.json")
+    competitive = load_latest_json(logs_dir, "competitive_intel_*.json")
+
+    signals: list[str] = []
+    severe_triggers: list[str] = []
+
+    if vulnerability:
+        critical_count = len(vulnerability.get("critical", []))
+        high_count = len(vulnerability.get("high", []))
+        if critical_count > 0 or high_count > 0:
+            signals.append(f"Strategy vulnerability risk: {critical_count} critical, {high_count} high.")
+            severe_triggers.append("strategy_vulnerability")
+
+    if manipulation:
+        threat_level = str(manipulation.get("threat_level", "low")).lower()
+        active = len(manipulation.get("active_threats", []))
+        if threat_level in {"high", "critical"}:
+            signals.append(f"Market manipulation {threat_level.upper()} with {active} active threat patterns.")
+            severe_triggers.append("market_manipulation")
+
+    if competitive:
+        comp_level = str(competitive.get("threat_level", "low")).lower()
+        queue = competitive.get("deployment_queue", [])
+        if comp_level in {"high", "critical"}:
+            signals.append(f"Competitive crowding {comp_level.upper()}; rotate saturated tactics.")
+            severe_triggers.append("competitive_crowding")
+        if isinstance(queue, list) and queue:
+            top = queue[0]
+            score = float(top.get("deployment_score", 0))
+            if score >= 7:
+                signals.append(
+                    f"Tool edge: prioritize {top.get('tool', 'top candidate')} (score {score:.1f}) for fast deployment."
+                )
+
+    if osint:
+        analysis = osint.get("analysis", {}) if isinstance(osint, dict) else {}
+        threat_summary = analysis.get("threat_summary", {}) if isinstance(analysis, dict) else {}
+        if isinstance(threat_summary, dict):
+            if str(threat_summary.get("scam_risk", "")).lower() == "critical":
+                severe_triggers.append("critical_scam_risk")
+            if str(threat_summary.get("regulatory_risk", "")).lower() in {"elevated", "high", "critical"}:
+                severe_triggers.append("regulatory_risk")
+        priorities = analysis.get("alert_priorities", []) if isinstance(analysis, dict) else []
+        if isinstance(priorities, list):
+            high_signal_items = [
+                item for item in priorities
+                if isinstance(item, dict) and item.get("type") in {"threat", "opportunity"}
+            ]
+            for item in high_signal_items[:2]:
+                message = str(item.get("message", "")).strip()
+                if message:
+                    signals.append(message)
+
+    # Hard gate: only produce morning brief if high/critical-severity risk exists.
+    if not severe_triggers or not signals:
+        return None
+
+    now_utc = datetime.now(timezone.utc).isoformat()
+    lines = [
+        f"LINDY MORNING BRIEF ({now_utc})",
+        "Only high-signal items:",
+    ]
+    for signal in signals[:5]:
+        lines.append(f"- {signal}")
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     failures: list[str] = []
     notes: list[str] = []
@@ -83,6 +171,12 @@ def main() -> int:
     return_code, full_check_output = run_full_dashboard_check()
     if return_code != 0:
         failures.append("full_dashboard_check.py failed")
+
+    red_team_return_code, red_team_output = run_anti_ai_red_team()
+    if red_team_return_code != 0:
+        failures.append("anti_ai_red_team.py failed")
+    else:
+        notes.append("anti_ai_red_team.py completed")
 
     data = load_json(DATA_FILE)
     ai = load_json(AI_FILE)
@@ -147,6 +241,7 @@ def main() -> int:
         "failures": failures,
         "notes": notes,
         "full_dashboard_check_return_code": return_code,
+        "anti_ai_red_team_return_code": red_team_return_code,
     }
 
     REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -197,6 +292,16 @@ def main() -> int:
     ALERT_TXT_FILE.parent.mkdir(parents=True, exist_ok=True)
     ALERT_TXT_FILE.write_text("\n".join(alert_lines) + "\n", encoding="utf-8")
 
+    brief = build_lindy_brief(REPO_ROOT / "logs")
+    if brief:
+        LINDY_BRIEF_FILE.write_text(brief, encoding="utf-8")
+        print("\n--- Lindy Morning Brief ---\n")
+        print(brief)
+    else:
+        if LINDY_BRIEF_FILE.exists():
+            LINDY_BRIEF_FILE.unlink()
+        print("\nLindy Morning Brief: no high-signal items (noise suppressed).")
+
     print("Nightly accuracy check:", summary)
     if failures:
         for issue in failures:
@@ -205,6 +310,10 @@ def main() -> int:
     if full_check_output:
         print("\n--- full_dashboard_check.py output ---\n")
         print(full_check_output)
+
+    if red_team_output:
+        print("\n--- anti_ai_red_team.py output ---\n")
+        print(red_team_output)
 
     return 0 if report["ok"] else 1
 

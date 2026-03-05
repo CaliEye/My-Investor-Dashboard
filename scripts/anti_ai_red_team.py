@@ -1783,21 +1783,21 @@ class ContinuousOperationsBrain:
 
 def main():
     """Main execution function"""
-    print("🛡️  Anti-AI Red Team & Market Defense System")
-    print("🚨 Fighting: Market Makers | Hedge Funds | Whales | Insiders | Rug Pullers | Scammers")
+    print("[ANTI-AI] Red Team & Market Defense System")
+    print("[THREATS] Market Makers | Hedge Funds | Whales | Insiders | Rug Pullers | Scammers")
     print("=" * 80)
     
     # Initialize the brain
     operations_brain = ContinuousOperationsBrain()
     
     # Run one-time analysis
-    print("\n📊 Running Initial Analysis...")
+    print("\n[RUN] Running Initial Analysis...")
     
     # Vulnerability assessment
     strategy_data = operations_brain.load_strategy_data()
     vulnerabilities = operations_brain.vulnerability_tester.run_adversarial_tests(strategy_data)
     
-    print(f"\n🚨 Vulnerability Assessment Results:")
+    print(f"\n[ALERT] Vulnerability Assessment Results:")
     print(f"   Critical: {len(vulnerabilities['critical'])}")
     print(f"   High: {len(vulnerabilities['high'])}")
     print(f"   Medium: {len(vulnerabilities['medium'])}")
@@ -1805,15 +1805,15 @@ def main():
     
     # Competitive intelligence
     intelligence = operations_brain.competitive_intel.scan_competitor_activities()
-    print(f"\n🕵️  Competitive Threat Level: {intelligence['threat_level'].upper()}")
+    print(f"\n[INTEL] Competitive Threat Level: {intelligence['threat_level'].upper()}")
     print(f"   New Competitors: {len(intelligence['new_competitors'])}")
     print(f"   Emerging Techniques: {len(intelligence['emerging_techniques'])}")
     
     # Innovation scouting
     innovations = operations_brain.innovation_scout.discover_innovations()
-    print(f"\n🚀 Innovation Pipeline:")
+    print(f"\n[INNOVATION] Pipeline:")
     for innovation in innovations['implementation_priority'][:3]:
-        print(f"   • {innovation['name']} (Priority: {innovation['priority']})")
+        print(f"   - {innovation['name']} (Priority: {innovation['priority']})")
     
     operations_brain.save_vulnerability_report(vulnerabilities)
     operations_brain.save_intelligence_report(intelligence)
@@ -1823,7 +1823,7 @@ def main():
     market_data = operations_brain.load_market_data()
     manipulation_result = operations_brain.manipulation_detector.detect_manipulation_patterns(market_data)
     
-    print(f"\n🚨 Market Manipulation Detection:")
+    print(f"\n[ALERT] Market Manipulation Detection:")
     print(f"   Threat Level: {manipulation_result['threat_level'].upper()}")
     print(f"   Active Threats: {len(manipulation_result['active_threats'])}")
     print(f"   Opportunities: {len(manipulation_result['opportunity_alerts'])}")
@@ -1832,7 +1832,7 @@ def main():
     intelligence = operations_brain.osint_collector.collect_intelligence()
     osint_analysis = operations_brain.osint_collector.analyze_osint_patterns(intelligence)
     
-    print(f"\n🕵️  OSINT Intelligence Summary:")
+    print(f"\n[INTEL] OSINT Intelligence Summary:")
     print(f"   Whale Movements: {len(intelligence['whale_movements'])}")
     print(f"   Regulatory Alerts: {len(intelligence['regulatory_alerts'])}")
     print(f"   Scam Warnings: {len(intelligence['scam_warnings'])}")
@@ -1841,15 +1841,15 @@ def main():
     operations_brain.save_manipulation_report(manipulation_result)
     operations_brain.save_osint_report(intelligence, osint_analysis)
     
-    print(f"\n✅ All reports saved to logs/ directory")
-    print(f"\n🧠 To start continuous operations, run:")
+    print(f"\n[OK] All reports saved to logs/ directory")
+    print(f"\n[NEXT] To start continuous operations, run:")
     print(f"   operations_brain.continuous_operations()")
-    print(f"\n🛡️  Market Defense Systems:")
-    print(f"   • Whale monitoring: ACTIVE")
-    print(f"   • Manipulation detection: ACTIVE")
-    print(f"   • Scam detection: ACTIVE")
-    print(f"   • OSINT collection: ACTIVE")
-    print(f"   • Emergency protocols: ARMED")
+    print(f"\n[STATUS] Market Defense Systems:")
+    print(f"   - Whale monitoring: ACTIVE")
+    print(f"   - Manipulation detection: ACTIVE")
+    print(f"   - Scam detection: ACTIVE")
+    print(f"   - OSINT collection: ACTIVE")
+    print(f"   - Emergency protocols: ARMED")
 
 if __name__ == "__main__":
     main()

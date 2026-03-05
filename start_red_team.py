@@ -10,38 +10,38 @@ import signal
 import sys
 
 def signal_handler(sig, frame):
-    print('\n🛡️ Anti-AI Red Team shutting down gracefully...')
+    print('\n[ANTI-AI] Red Team shutting down gracefully...')
     sys.exit(0)
 
 def main():
     # Set up graceful shutdown
     signal.signal(signal.SIGINT, signal_handler)
     
-    print("🛡️ ANTI-AI RED TEAM & MARKET DEFENSE SYSTEM")
+    print("[ANTI-AI] RED TEAM & MARKET DEFENSE SYSTEM")
     print("=" * 60)
-    print("🚀 Initializing continuous operations...")
+    print("[BOOT] Initializing continuous operations...")
     
     # Initialize the brain
     operations_brain = ContinuousOperationsBrain()
     
-    print("✅ Operations brain online")
-    print("🔍 Starting continuous monitoring...")
-    print("📊 Real-time defense against:")
+    print("[OK] Operations brain online")
+    print("[SCAN] Starting continuous monitoring...")
+    print("[DEFENSE] Real-time defense against:")
     print("   • Market Makers manipulation")
     print("   • Hedge Fund coordinated attacks")
     print("   • Whale pump/dump schemes")
     print("   • Insider trading exploitation")
     print("   • Rug pull attempts")
     print("   • Scam and fraud detection")
-    print("\n🛡️ DEFENSE SYSTEMS ARMED")
+    print("\n[STATUS] DEFENSE SYSTEMS ARMED")
     print("Press Ctrl+C to stop monitoring\n")
     
     # Start continuous operations
     try:
         operations_brain.continuous_operations()
     except KeyboardInterrupt:
-        print('\n🛡️ Shutting down market defense system...')
-        print('✅ All monitoring stopped safely')
+        print('\n[ANTI-AI] Shutting down market defense system...')
+        print('[OK] All monitoring stopped safely')
 
 if __name__ == "__main__":
     main()
