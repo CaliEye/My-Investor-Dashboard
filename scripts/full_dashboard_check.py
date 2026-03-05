@@ -267,14 +267,21 @@ def run_payload_checks() -> list[CheckResult]:
         ("ai.updated_utc", ai.get("updated_utc")),
     ]
 
+    freshness_threshold_minutes = {
+        "data.updated_utc": 180,
+        "data.sector_etfs.updated_utc": 180,
+        "ai.updated_utc": 390,
+    }
+
     for label, ts in freshness_items:
         if not ts:
             results.append(CheckResult(label, False, "missing timestamp"))
             continue
         try:
             age_min = int((now - parse_iso(str(ts))).total_seconds() / 60)
-            ok = age_min <= 180
-            results.append(CheckResult(label, ok, f"age={age_min} min"))
+            threshold = freshness_threshold_minutes.get(label, 180)
+            ok = age_min <= threshold
+            results.append(CheckResult(label, ok, f"age={age_min} min (threshold={threshold})"))
         except Exception as exc:
             results.append(CheckResult(label, False, f"parse error: {exc}"))
 

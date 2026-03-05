@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-03-05T12:18:45.983463+00:00",
+  "updated_utc": "2026-03-05T17:27:47.332808+00:00",
   "regime": "Bear Market",
   "top_triggers": [
     "Fed tightening",
@@ -57,5 +57,265 @@
     "strength": 7,
     "note": "Positive news sentiment (+5)",
     "source": "Polygon"
+  },
+  "guard_refresh": {
+    "core_ai_preserved": true,
+    "reason": "low_quality_api_output_blocked",
+    "core_snapshot_preserved_at": "2026-03-05T17:25:40.757119+00:00"
+  },
+  "investor_behavior_intelligence": {
+    "phase": "crisis",
+    "phase_confidence": "low",
+    "state_metrics": {
+      "fear_greed": 28.0,
+      "btc_change_5d_pct": -2.1,
+      "confluence_score": 5
+    },
+    "crisis": {
+      "typical_investor_behavior": [
+        "Forced deleveraging and panic selling into support zones",
+        "Flight-to-safety toward cash, treasuries, and defensive factors",
+        "News-reactive overtrading and short-horizon decision compression"
+      ],
+      "capitalization_playbook": [
+        "Scale entries in tranches at pre-defined support; never all-in on first dip",
+        "Prioritize quality/liquidity assets and cut weak-conviction tails",
+        "Use volatility spikes to sell premium or hedge beta when confluence permits"
+      ]
+    },
+    "euphoria": {
+      "typical_investor_behavior": [
+        "FOMO chasing, leverage expansion, and momentum crowding",
+        "Narrative extrapolation (assuming recent gains persist indefinitely)",
+        "Risk underpricing and stop-discipline decay"
+      ],
+      "capitalization_playbook": [
+        "Trim winners into strength and rotate to asymmetric setups",
+        "Tighten invalidations and reduce leverage as crowding increases",
+        "Favor relative-strength leaders, avoid late low-quality breakouts"
+      ]
+    },
+    "current_behavioral_edge": "Behavioral edge favors patient accumulation + risk-defined hedges while crowd panics."
+  },
+  "analytics": {
+    "predictive": {
+      "horizon": "1-4 weeks",
+      "scenario_probabilities_pct": {
+        "bearish_continuation": 31.8,
+        "bullish_reversal": 36.4,
+        "range_mean_reversion": 31.8
+      },
+      "drivers": [
+        "Confluence dominant signal + score",
+        "Sentiment extremes (Fear & Greed)",
+        "Macro pressure from DXY and US10Y"
+      ]
+    },
+    "prescriptive": {
+      "primary_action": "Low conviction: preserve optionality, focus on prep and watchlists.",
+      "position_sizing_rule": "Scale 25/25/50 only after confluence gate and invalidation clarity.",
+      "risk_controls": [
+        "No all-in entries during crisis/euphoria transitions",
+        "Cut exposure if macro cascade triggers two or more stress nodes",
+        "Prefer liquid instruments when volatility regime is elevated"
+      ]
+    }
+  },
+  "market_pattern_library": [
+    {
+      "pattern": "Liquidity tightening risk-off",
+      "typical_causes": [
+        "Hawkish policy communication",
+        "Balance-sheet contraction / funding stress",
+        "Dollar strength and real-yield rise"
+      ],
+      "market_effects": [
+        "High-beta underperforms",
+        "Credit spreads widen",
+        "Volatility rises and breadth weakens"
+      ],
+      "investor_implication": "Favor defense/cash, reduce leverage, demand stronger setup quality."
+    },
+    {
+      "pattern": "Capitulation then reflex rally",
+      "typical_causes": [
+        "Positioning unwind",
+        "Forced liquidations",
+        "Extreme negative sentiment"
+      ],
+      "market_effects": [
+        "Sharp downside wick and volatility spike",
+        "Fast short-covering rebound",
+        "Dispersion between quality and low-quality rebounds"
+      ],
+      "investor_implication": "Use staged entries and prioritize quality assets over speculative laggards."
+    },
+    {
+      "pattern": "Late-cycle euphoria blow-off",
+      "typical_causes": [
+        "Narrative mania + leverage expansion",
+        "Chasing breakouts without breadth",
+        "Complacency on macro risk"
+      ],
+      "market_effects": [
+        "Momentum crowding",
+        "Higher correlation on drawdown",
+        "Violent mean-reversion risk"
+      ],
+      "investor_implication": "Harvest gains into strength and keep tight invalidation discipline."
+    }
+  ],
+  "macro_cascade_map": [
+    {
+      "macro_shock": "Hawkish Fed surprise",
+      "cascade_chain": [
+        "Front-end yields jump",
+        "USD appreciates",
+        "Liquidity tightens across risk assets",
+        "Growth/high-duration equities and crypto de-rate"
+      ],
+      "portfolio_impact": "Increase defense/cash, reduce duration risk and high-beta exposure."
+    },
+    {
+      "macro_shock": "Energy supply disruption",
+      "cascade_chain": [
+        "Oil/gas prices rise",
+        "Inflation expectations re-accelerate",
+        "Rate-cut expectations pushed out",
+        "Consumer discretionary margins compress"
+      ],
+      "portfolio_impact": "Prefer energy/defensive quality, avoid weak balance-sheet cyclicals."
+    },
+    {
+      "macro_shock": "Credit event / banking stress",
+      "cascade_chain": [
+        "Credit spreads widen",
+        "Funding risk reprices",
+        "Risk parity/levered books de-gross",
+        "Cross-asset volatility regime shifts higher"
+      ],
+      "portfolio_impact": "Hedge beta, prioritize liquidity, and wait for stress normalization before re-risking."
+    }
+  ],
+  "black_swan_intelligence": {
+    "probability_assessment": "low",
+    "active_stress_flags": [],
+    "protective_playbook": [
+      "Pre-define kill-switch levels for beta and leverage before event day",
+      "Raise cash buffer and reduce crowded high-beta exposures",
+      "Use hedges (index puts / inverse beta / vol overlays) when confluence turns risk-off",
+      "Prioritize liquidity-first exits over perfect pricing in shock windows"
+    ],
+    "capitalization_playbook": [
+      "Stage buy ladders into dislocation only after volatility starts normalizing",
+      "Rotate into relative-strength defensive leaders first, then cyclicals on confirmation",
+      "Exploit forced-liquidation overshoots with strict invalidation and position caps",
+      "Harvest mean-reversion gains quickly while uncertainty remains elevated"
+    ],
+    "risk_controls": {
+      "max_single_entry_pct": 25,
+      "max_total_deployment_during_shock_pct": 50,
+      "mandatory_confirmation": "Require confluence gate + stabilization signal before adding full risk"
+    }
+  },
+  "black_swan_bot_automation": {
+    "design_principles": [
+      "Automate downside protection first, upside capture second",
+      "Use deterministic triggers with human override",
+      "Rate-limit execution to avoid overreaction during microstructure noise"
+    ],
+    "bots": [
+      {
+        "name": "Volatility Circuit Breaker Bot",
+        "trigger": "VIX proxy spike + risk-off confluence + breadth deterioration",
+        "actions": [
+          "Auto-reduce beta exposure in tranches",
+          "Raise cash target to pre-set defensive threshold",
+          "Send priority alert with executed hedge summary"
+        ],
+        "goal": "Preserve gains during shock acceleration"
+      },
+      {
+        "name": "Liquidity Stress Sentinel",
+        "trigger": "USD surge + yield spike + widening cross-asset drawdown",
+        "actions": [
+          "Pause non-essential new entries",
+          "Enforce tighter stop/invalidation policy",
+          "Escalate to war-room mode with cascade diagnostics"
+        ],
+        "goal": "Prevent cascading portfolio damage"
+      },
+      {
+        "name": "Dislocation Opportunity Bot",
+        "trigger": "Capitulation metrics + stabilization confirmation",
+        "actions": [
+          "Deploy staged buy ladder into predefined zones",
+          "Favor high-liquidity quality assets first",
+          "Auto-log expected RR and risk budget before each tranche"
+        ],
+        "goal": "Capitalize on post-shock mean reversion"
+      }
+    ],
+    "automation_safety": {
+      "human_override_required_for_leverage": true,
+      "max_orders_per_hour": 4,
+      "hard_stop_on_data_quality_degradation": true
+    }
+  },
+  "war_market_history_playbook": {
+    "historical_patterns": [
+      {
+        "event_type": "War onset / surprise escalation",
+        "typical_market_response": [
+          "Initial risk-off gap and volatility spike",
+          "Energy/commodities and defense outperformance",
+          "Broad index drawdown followed by policy-driven stabilization"
+        ],
+        "drivers": [
+          "Uncertainty shock",
+          "Supply-chain and energy risk repricing",
+          "Flight-to-safety positioning"
+        ]
+      },
+      {
+        "event_type": "Prolonged conflict",
+        "typical_market_response": [
+          "High dispersion across sectors",
+          "Inflation/commodity sensitivity dominates",
+          "Frequent headline whipsaws"
+        ],
+        "drivers": [
+          "Fiscal/defense spending shifts",
+          "Commodity supply constraints",
+          "Policy-rate path uncertainty"
+        ]
+      },
+      {
+        "event_type": "War de-escalation / ending",
+        "typical_market_response": [
+          "Volatility compression and multiple expansion",
+          "Rotation from defensives to cyclicals/risk assets",
+          "Improved confidence and cross-border flow normalization"
+        ],
+        "drivers": [
+          "Risk premium unwind",
+          "Rebuild/recovery expectations",
+          "Lower macro uncertainty"
+        ]
+      }
+    ],
+    "war_start_investing_playbook": [
+      "Reduce leverage and tighten liquidity management immediately",
+      "Overweight resilient sectors (defense, energy, critical infrastructure) selectively",
+      "Avoid narrative-chasing; demand confirmation after initial shock",
+      "Keep dry powder for dislocation entries once volatility regime stabilizes"
+    ],
+    "war_ending_investing_playbook": [
+      "Gradually rotate from defensives into cyclical/recovery beneficiaries",
+      "Increase risk only as breadth and macro confirmations improve",
+      "Watch for inflation-growth rebalancing before full beta expansion",
+      "Capture re-rating opportunities while maintaining staggered exits"
+    ],
+    "execution_rule": "Treat war headlines as regime events: update scenario tree before placing discretionary risk."
   }
 }

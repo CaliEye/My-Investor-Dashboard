@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-05T14:31:24.076145+00:00",
+  "updated_utc": "2026-03-05T17:27:40.532635+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-05T18:31:24.076145+00:00",
+  "next_review_utc": "2026-03-05T21:27:40.532635+00:00",
   "crypto": {
-    "btc_usd": 72530.21,
-    "eth_usd": 2117.81,
-    "btc_price_formatted": "$72,530",
-    "eth_price_formatted": "$2,118",
+    "btc_usd": 71095.19,
+    "eth_usd": 2076.72,
+    "btc_price_formatted": "$71,095",
+    "eth_price_formatted": "$2,077",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -50,14 +50,14 @@
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "5.25%",
     "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
-    "dxy": "99.1",
+    "dxy": "99.3",
     "dxy_context": "Contained (reduced dollar pressure)",
     "us10y_yield": "4.14%",
     "us10y_context": "High (tight financial conditions)",
     "risk_level": 72,
     "risk_context": "High Risk (0-30: Low | 31-60: Moderate | 61-100: High)",
-    "spx": "6,843",
-    "spx_context": "Daily move -0.38% (live market snapshot)",
+    "spx": "6,807",
+    "spx_context": "Daily move -0.92% (live market snapshot)",
     "trigger_breakdown": [
       "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
       "Dollar: DXY holding above 103, pressure on risk assets",
@@ -90,33 +90,32 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-05T14:31:28.653205+00:00",
+    "updated_utc": "2026-03-05T17:27:44.486436+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
-        "price": 608.41,
-        "price_formatted": "$608.41",
-        "change_pct_day": -0.38,
-        "change_pct_5d": -0.14,
-        "volume": 3342194,
-        "volume_vs_20d": 0.05,
+        "price": 607.04,
+        "price_formatted": "$607.04",
+        "change_pct_day": -0.61,
+        "change_pct_5d": -0.36,
+        "volume": 43797544,
+        "volume_vs_20d": 0.63,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "SECURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "TECH / NASDAQ-100"
       },
       "defense": {
         "symbol": "ITA",
-        "price": 246.35,
-        "price_formatted": "$246.35",
-        "change_pct_day": -0.25,
-        "change_pct_5d": 1.45,
-        "volume": 75772,
-        "volume_vs_20d": 0.08,
-        "trend": "NEUTRAL / MIXED",
+        "price": 238.16,
+        "price_formatted": "$238.16",
+        "change_pct_day": -3.57,
+        "change_pct_5d": -1.92,
+        "volume": 765071,
+        "volume_vs_20d": 0.76,
+        "trend": "UNDER PRESSURE",
         "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
           "yahoo"
@@ -125,29 +124,28 @@
       },
       "metals": {
         "symbol": "GLD",
-        "price": 469.55,
-        "price_formatted": "$469.55",
-        "change_pct_day": -0.48,
-        "change_pct_5d": -1.66,
-        "volume": 849925,
-        "volume_vs_20d": 0.06,
-        "trend": "NEUTRAL / MIXED",
-        "fortress_status": "SECURE",
+        "price": 466.72,
+        "price_formatted": "$466.72",
+        "change_pct_day": -1.08,
+        "change_pct_5d": -2.25,
+        "volume": 6554505,
+        "volume_vs_20d": 0.48,
+        "trend": "UNDER PRESSURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "PRECIOUS METALS"
       },
       "broad": {
         "symbol": "VOO",
-        "price": 627.85,
-        "price_formatted": "$627.85",
-        "change_pct_day": -0.37,
-        "change_pct_5d": -0.96,
-        "volume": 952718,
-        "volume_vs_20d": 0.1,
-        "trend": "NEUTRAL / MIXED",
+        "price": 624.71,
+        "price_formatted": "$624.71",
+        "change_pct_day": -0.87,
+        "change_pct_5d": -1.46,
+        "volume": 4774117,
+        "volume_vs_20d": 0.48,
+        "trend": "UNDER PRESSURE",
         "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
           "yahoo"
@@ -163,31 +161,32 @@
         "ITA",
         "GLD"
       ],
-      "equal_weight_change_pct_day": -0.4,
+      "equal_weight_change_pct_day": -1.76,
       "leader": {
-        "symbol": "ITA",
-        "change_pct_day": -0.25,
+        "symbol": "QQQ",
+        "change_pct_day": -0.61,
         "trend": "NEUTRAL / MIXED"
       },
       "laggard": {
-        "symbol": "XLI",
-        "change_pct_day": -0.51,
-        "trend": "NEUTRAL / MIXED"
+        "symbol": "ITA",
+        "change_pct_day": -3.57,
+        "trend": "UNDER PRESSURE"
       },
       "regime_tilt": "DEFENSIVE STACK"
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-05T14:31:30.114325+00:00",
-    "confluence_score": 1,
+    "updated_utc": "2026-03-05T17:27:47.053315+00:00",
+    "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
-    "signal_count": 1,
+    "signal_count": 2,
     "signals": [
+      "Broad risk assets weakening (SPX/ETF breadth pressure)",
       "Macro regime flagged high risk"
     ],
-    "risk_posture": "RISK-ON",
-    "next_best_action": "No immediate stress signal; keep sizing disciplined and confluence-gated.",
+    "risk_posture": "MODERATE",
+    "next_best_action": "Small, staged positioning only if invalidation levels are predefined.",
     "hard_rule_reminder": "No new crypto risk until Oct/Nov 2026 unless confluence gate flips.",
     "watch_only_until": "2026-11-01"
   }

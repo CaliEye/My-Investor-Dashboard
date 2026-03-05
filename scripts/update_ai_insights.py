@@ -473,6 +473,424 @@ def calculate_confidence_score(chatgpt_result, market_data):
     
     return min(base_score, 10)
 
+
+def parse_float_safe(value, default=0.0):
+    """Parse numeric strings with symbols safely."""
+    if value is None:
+        return float(default)
+    if isinstance(value, (int, float)):
+        return float(value)
+
+    text = str(value).replace(',', '')
+    token = []
+    dot_seen = False
+    sign_allowed = True
+    for ch in text:
+        if ch in '+-' and sign_allowed:
+            token.append(ch)
+            sign_allowed = False
+            continue
+        sign_allowed = False
+        if ch.isdigit():
+            token.append(ch)
+            continue
+        if ch == '.' and not dot_seen:
+            dot_seen = True
+            token.append(ch)
+            continue
+        if token:
+            break
+
+    candidate = ''.join(token)
+    if not candidate or candidate in {'+', '-', '.', '+.', '-.'}:
+        return float(default)
+
+    try:
+        return float(candidate)
+    except ValueError:
+        return float(default)
+
+
+def infer_market_phase(market_data: dict, yahoo_data: dict, confluence_data: dict) -> str:
+    """Classify current behavioral phase for investor psychology mapping."""
+    fear_greed = float(market_data.get('sentiment', {}).get('fear_greed_index', 50) or 50)
+    vix_level = float(yahoo_data.get('vix_level', 18.0) or 18.0)
+    btc_5d = float(yahoo_data.get('btc_change_5d', 0.0) or 0.0)
+    signal = str(confluence_data.get('dominant_signal', 'neutral')).lower()
+
+    if fear_greed <= 30 or vix_level >= 25 or btc_5d <= -8:
+        return 'crisis'
+    if fear_greed >= 70 or (btc_5d >= 8 and signal == 'bullish'):
+        return 'euphoria'
+    if signal == 'bullish' and btc_5d > 0:
+        return 'recovery'
+    if signal == 'bearish' and btc_5d < 0:
+        return 'distribution'
+    return 'range'
+
+
+def build_investor_behavior_intelligence(market_data: dict, yahoo_data: dict, confluence_data: dict) -> dict:
+    """Behavioral finance intelligence for crisis/euphoria and monetization tactics."""
+    phase = infer_market_phase(market_data, yahoo_data, confluence_data)
+    fear_greed = float(market_data.get('sentiment', {}).get('fear_greed_index', 50) or 50)
+    btc_change = float(yahoo_data.get('btc_change_5d', 0.0) or 0.0)
+    confluence_score = int(confluence_data.get('confluence_score', 5) or 5)
+
+    crisis_behaviors = [
+        "Forced deleveraging and panic selling into support zones",
+        "Flight-to-safety toward cash, treasuries, and defensive factors",
+        "News-reactive overtrading and short-horizon decision compression",
+    ]
+    crisis_playbook = [
+        "Scale entries in tranches at pre-defined support; never all-in on first dip",
+        "Prioritize quality/liquidity assets and cut weak-conviction tails",
+        "Use volatility spikes to sell premium or hedge beta when confluence permits",
+    ]
+
+    euphoria_behaviors = [
+        "FOMO chasing, leverage expansion, and momentum crowding",
+        "Narrative extrapolation (assuming recent gains persist indefinitely)",
+        "Risk underpricing and stop-discipline decay",
+    ]
+    euphoria_playbook = [
+        "Trim winners into strength and rotate to asymmetric setups",
+        "Tighten invalidations and reduce leverage as crowding increases",
+        "Favor relative-strength leaders, avoid late low-quality breakouts",
+    ]
+
+    if phase == 'crisis':
+        current_edge = "Behavioral edge favors patient accumulation + risk-defined hedges while crowd panics."
+    elif phase == 'euphoria':
+        current_edge = "Behavioral edge favors distribution discipline while crowd overextends risk."
+    elif phase == 'recovery':
+        current_edge = "Behavioral edge favors selective re-risking in quality leaders after confirmation."
+    elif phase == 'distribution':
+        current_edge = "Behavioral edge favors defense, cash buffers, and short-bias tactical hedges."
+    else:
+        current_edge = "Behavioral edge favors mean-reversion discipline and patience until regime resolves."
+
+    conviction = "high" if confluence_score >= 8 else "moderate" if confluence_score >= 6 else "low"
+
+    return {
+        "phase": phase,
+        "phase_confidence": conviction,
+        "state_metrics": {
+            "fear_greed": fear_greed,
+            "btc_change_5d_pct": round(btc_change, 2),
+            "confluence_score": confluence_score,
+        },
+        "crisis": {
+            "typical_investor_behavior": crisis_behaviors,
+            "capitalization_playbook": crisis_playbook,
+        },
+        "euphoria": {
+            "typical_investor_behavior": euphoria_behaviors,
+            "capitalization_playbook": euphoria_playbook,
+        },
+        "current_behavioral_edge": current_edge,
+    }
+
+
+def build_predictive_prescriptive_analytics(market_data: dict, yahoo_data: dict, confluence_data: dict) -> dict:
+    """Generate predictive and prescriptive analytics for portfolio decisioning."""
+    signal = str(confluence_data.get('dominant_signal', 'neutral')).lower()
+    score = int(confluence_data.get('confluence_score', 5) or 5)
+    fear_greed = parse_float_safe(market_data.get('sentiment', {}).get('fear_greed_index', 50), 50.0)
+    dxy = parse_float_safe(market_data.get('macro', {}).get('dxy', 100), 100.0)
+    us10y = parse_float_safe(market_data.get('macro', {}).get('us10y_yield', 4), 4.0)
+
+    bearish_prob = 35
+    bullish_prob = 35
+    range_prob = 30
+
+    if signal == 'bearish':
+        bearish_prob += 20
+        bullish_prob -= 10
+    elif signal == 'bullish':
+        bullish_prob += 20
+        bearish_prob -= 10
+
+    if fear_greed <= 30:
+        range_prob += 5
+        bullish_prob += 5
+    if fear_greed >= 70:
+        bearish_prob += 10
+
+    if dxy >= 103 or us10y >= 4.2:
+        bearish_prob += 10
+        bullish_prob -= 5
+
+    total = max(1, bearish_prob + bullish_prob + range_prob)
+    probs = {
+        "bearish_continuation": round((bearish_prob / total) * 100, 1),
+        "bullish_reversal": round((bullish_prob / total) * 100, 1),
+        "range_mean_reversion": round((range_prob / total) * 100, 1),
+    }
+
+    if score >= 8 and signal == 'bullish':
+        primary_action = "Risk-on allowed: size into quality strength with strict invalidation."
+    elif score >= 8 and signal == 'bearish':
+        primary_action = "Risk-off priority: raise cash, hedge beta, avoid weak-breadth dip buys."
+    elif score >= 6:
+        primary_action = "Moderate conviction: keep smaller sizing, demand cross-asset confirmation."
+    else:
+        primary_action = "Low conviction: preserve optionality, focus on prep and watchlists."
+
+    return {
+        "predictive": {
+            "horizon": "1-4 weeks",
+            "scenario_probabilities_pct": probs,
+            "drivers": [
+                "Confluence dominant signal + score",
+                "Sentiment extremes (Fear & Greed)",
+                "Macro pressure from DXY and US10Y",
+            ],
+        },
+        "prescriptive": {
+            "primary_action": primary_action,
+            "position_sizing_rule": "Scale 25/25/50 only after confluence gate and invalidation clarity.",
+            "risk_controls": [
+                "No all-in entries during crisis/euphoria transitions",
+                "Cut exposure if macro cascade triggers two or more stress nodes",
+                "Prefer liquid instruments when volatility regime is elevated",
+            ],
+        },
+    }
+
+
+def build_market_pattern_library(market_data: dict) -> list[dict]:
+    """Typical market patterns, causes, and portfolio implications."""
+    return [
+        {
+            "pattern": "Liquidity tightening risk-off",
+            "typical_causes": [
+                "Hawkish policy communication",
+                "Balance-sheet contraction / funding stress",
+                "Dollar strength and real-yield rise",
+            ],
+            "market_effects": [
+                "High-beta underperforms",
+                "Credit spreads widen",
+                "Volatility rises and breadth weakens",
+            ],
+            "investor_implication": "Favor defense/cash, reduce leverage, demand stronger setup quality.",
+        },
+        {
+            "pattern": "Capitulation then reflex rally",
+            "typical_causes": [
+                "Positioning unwind",
+                "Forced liquidations",
+                "Extreme negative sentiment",
+            ],
+            "market_effects": [
+                "Sharp downside wick and volatility spike",
+                "Fast short-covering rebound",
+                "Dispersion between quality and low-quality rebounds",
+            ],
+            "investor_implication": "Use staged entries and prioritize quality assets over speculative laggards.",
+        },
+        {
+            "pattern": "Late-cycle euphoria blow-off",
+            "typical_causes": [
+                "Narrative mania + leverage expansion",
+                "Chasing breakouts without breadth",
+                "Complacency on macro risk",
+            ],
+            "market_effects": [
+                "Momentum crowding",
+                "Higher correlation on drawdown",
+                "Violent mean-reversion risk",
+            ],
+            "investor_implication": "Harvest gains into strength and keep tight invalidation discipline.",
+        },
+    ]
+
+
+def build_macro_cascade_map(market_data: dict) -> list[dict]:
+    """Map large macro shocks into cascading second-order effects and investment impacts."""
+    return [
+        {
+            "macro_shock": "Hawkish Fed surprise",
+            "cascade_chain": [
+                "Front-end yields jump",
+                "USD appreciates",
+                "Liquidity tightens across risk assets",
+                "Growth/high-duration equities and crypto de-rate",
+            ],
+            "portfolio_impact": "Increase defense/cash, reduce duration risk and high-beta exposure.",
+        },
+        {
+            "macro_shock": "Energy supply disruption",
+            "cascade_chain": [
+                "Oil/gas prices rise",
+                "Inflation expectations re-accelerate",
+                "Rate-cut expectations pushed out",
+                "Consumer discretionary margins compress",
+            ],
+            "portfolio_impact": "Prefer energy/defensive quality, avoid weak balance-sheet cyclicals.",
+        },
+        {
+            "macro_shock": "Credit event / banking stress",
+            "cascade_chain": [
+                "Credit spreads widen",
+                "Funding risk reprices",
+                "Risk parity/levered books de-gross",
+                "Cross-asset volatility regime shifts higher",
+            ],
+            "portfolio_impact": "Hedge beta, prioritize liquidity, and wait for stress normalization before re-risking.",
+        },
+    ]
+
+
+def build_black_swan_intelligence(market_data: dict, yahoo_data: dict, confluence_data: dict) -> dict:
+    """Black swan protection and capitalization framework."""
+    fear_greed = parse_float_safe(market_data.get('sentiment', {}).get('fear_greed_index', 50), 50.0)
+    vix_level = parse_float_safe(yahoo_data.get('vix_level', 18.0), 18.0)
+    score = int(confluence_data.get('confluence_score', 5) or 5)
+    signal = str(confluence_data.get('dominant_signal', 'neutral')).lower()
+
+    stress_flags = []
+    if vix_level >= 25:
+        stress_flags.append('volatility_spike')
+    if fear_greed <= 25:
+        stress_flags.append('sentiment_capitulation')
+    if signal == 'bearish' and score >= 7:
+        stress_flags.append('high_conviction_risk_off')
+
+    probability = 'elevated' if len(stress_flags) >= 2 else 'moderate' if len(stress_flags) == 1 else 'low'
+
+    return {
+        "probability_assessment": probability,
+        "active_stress_flags": stress_flags,
+        "protective_playbook": [
+            "Pre-define kill-switch levels for beta and leverage before event day",
+            "Raise cash buffer and reduce crowded high-beta exposures",
+            "Use hedges (index puts / inverse beta / vol overlays) when confluence turns risk-off",
+            "Prioritize liquidity-first exits over perfect pricing in shock windows",
+        ],
+        "capitalization_playbook": [
+            "Stage buy ladders into dislocation only after volatility starts normalizing",
+            "Rotate into relative-strength defensive leaders first, then cyclicals on confirmation",
+            "Exploit forced-liquidation overshoots with strict invalidation and position caps",
+            "Harvest mean-reversion gains quickly while uncertainty remains elevated",
+        ],
+        "risk_controls": {
+            "max_single_entry_pct": 25,
+            "max_total_deployment_during_shock_pct": 50,
+            "mandatory_confirmation": "Require confluence gate + stabilization signal before adding full risk",
+        },
+    }
+
+
+def build_black_swan_bot_automation() -> dict:
+    """Automation blueprints for capital preservation and opportunistic deployment."""
+    return {
+        "design_principles": [
+            "Automate downside protection first, upside capture second",
+            "Use deterministic triggers with human override",
+            "Rate-limit execution to avoid overreaction during microstructure noise",
+        ],
+        "bots": [
+            {
+                "name": "Volatility Circuit Breaker Bot",
+                "trigger": "VIX proxy spike + risk-off confluence + breadth deterioration",
+                "actions": [
+                    "Auto-reduce beta exposure in tranches",
+                    "Raise cash target to pre-set defensive threshold",
+                    "Send priority alert with executed hedge summary",
+                ],
+                "goal": "Preserve gains during shock acceleration",
+            },
+            {
+                "name": "Liquidity Stress Sentinel",
+                "trigger": "USD surge + yield spike + widening cross-asset drawdown",
+                "actions": [
+                    "Pause non-essential new entries",
+                    "Enforce tighter stop/invalidation policy",
+                    "Escalate to war-room mode with cascade diagnostics",
+                ],
+                "goal": "Prevent cascading portfolio damage",
+            },
+            {
+                "name": "Dislocation Opportunity Bot",
+                "trigger": "Capitulation metrics + stabilization confirmation",
+                "actions": [
+                    "Deploy staged buy ladder into predefined zones",
+                    "Favor high-liquidity quality assets first",
+                    "Auto-log expected RR and risk budget before each tranche",
+                ],
+                "goal": "Capitalize on post-shock mean reversion",
+            },
+        ],
+        "automation_safety": {
+            "human_override_required_for_leverage": True,
+            "max_orders_per_hour": 4,
+            "hard_stop_on_data_quality_degradation": True,
+        },
+    }
+
+
+def build_war_market_history_playbook() -> dict:
+    """Historical war-regime market behavior and investing playbook for onset vs ending phases."""
+    historical_patterns = [
+        {
+            "event_type": "War onset / surprise escalation",
+            "typical_market_response": [
+                "Initial risk-off gap and volatility spike",
+                "Energy/commodities and defense outperformance",
+                "Broad index drawdown followed by policy-driven stabilization",
+            ],
+            "drivers": [
+                "Uncertainty shock",
+                "Supply-chain and energy risk repricing",
+                "Flight-to-safety positioning",
+            ],
+        },
+        {
+            "event_type": "Prolonged conflict",
+            "typical_market_response": [
+                "High dispersion across sectors",
+                "Inflation/commodity sensitivity dominates",
+                "Frequent headline whipsaws",
+            ],
+            "drivers": [
+                "Fiscal/defense spending shifts",
+                "Commodity supply constraints",
+                "Policy-rate path uncertainty",
+            ],
+        },
+        {
+            "event_type": "War de-escalation / ending",
+            "typical_market_response": [
+                "Volatility compression and multiple expansion",
+                "Rotation from defensives to cyclicals/risk assets",
+                "Improved confidence and cross-border flow normalization",
+            ],
+            "drivers": [
+                "Risk premium unwind",
+                "Rebuild/recovery expectations",
+                "Lower macro uncertainty",
+            ],
+        },
+    ]
+
+    return {
+        "historical_patterns": historical_patterns,
+        "war_start_investing_playbook": [
+            "Reduce leverage and tighten liquidity management immediately",
+            "Overweight resilient sectors (defense, energy, critical infrastructure) selectively",
+            "Avoid narrative-chasing; demand confirmation after initial shock",
+            "Keep dry powder for dislocation entries once volatility regime stabilizes",
+        ],
+        "war_ending_investing_playbook": [
+            "Gradually rotate from defensives into cyclical/recovery beneficiaries",
+            "Increase risk only as breadth and macro confirmations improve",
+            "Watch for inflation-growth rebalancing before full beta expansion",
+            "Capture re-rating opportunities while maintaining staggered exits",
+        ],
+        "execution_rule": "Treat war headlines as regime events: update scenario tree before placing discretionary risk.",
+    }
+
 def main():
     """Main execution function - Multi-Source AI Confluence System"""
     print("Starting AI Confluence Master - Multi-Source Intelligence Update...")
@@ -537,7 +955,14 @@ def main():
             "btc_volume": yahoo_data['btc_volume']
         },
         "technical_analysis": alpha_vantage_result,
-        "sentiment_analysis": polygon_result
+        "sentiment_analysis": polygon_result,
+        "investor_behavior_intelligence": build_investor_behavior_intelligence(market_data, yahoo_data, confluence_data),
+        "analytics": build_predictive_prescriptive_analytics(market_data, yahoo_data, confluence_data),
+        "market_pattern_library": build_market_pattern_library(market_data),
+        "macro_cascade_map": build_macro_cascade_map(market_data),
+        "black_swan_intelligence": build_black_swan_intelligence(market_data, yahoo_data, confluence_data),
+        "black_swan_bot_automation": build_black_swan_bot_automation(),
+        "war_market_history_playbook": build_war_market_history_playbook()
     }
     
     output_path = Path('data/ai_insights.json')
@@ -553,7 +978,28 @@ def main():
             safe_print(f"  Existing quality score: {existing_quality['score']}/10")
         if new_quality['reasons']:
             safe_print("  Reasons: " + '; '.join(new_quality['reasons']))
-        safe_print("  Kept previous ai_insights.json unchanged")
+        if isinstance(existing_insights, dict):
+            protected_refresh = dict(existing_insights)
+            protected_refresh["updated_utc"] = datetime.now(timezone.utc).isoformat()
+            protected_refresh["guard_refresh"] = {
+                "core_ai_preserved": True,
+                "reason": "low_quality_api_output_blocked",
+                "core_snapshot_preserved_at": existing_insights.get("updated_utc"),
+            }
+            protected_refresh["investor_behavior_intelligence"] = build_investor_behavior_intelligence(market_data, yahoo_data, confluence_data)
+            protected_refresh["analytics"] = build_predictive_prescriptive_analytics(market_data, yahoo_data, confluence_data)
+            protected_refresh["market_pattern_library"] = build_market_pattern_library(market_data)
+            protected_refresh["macro_cascade_map"] = build_macro_cascade_map(market_data)
+            protected_refresh["black_swan_intelligence"] = build_black_swan_intelligence(market_data, yahoo_data, confluence_data)
+            protected_refresh["black_swan_bot_automation"] = build_black_swan_bot_automation()
+            protected_refresh["war_market_history_playbook"] = build_war_market_history_playbook()
+
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(protected_refresh, f, indent=2)
+
+            safe_print("  Core AI text preserved; deterministic intelligence modules refreshed")
+        else:
+            safe_print("  Kept previous ai_insights.json unchanged")
         return
 
     if output_path.exists():
