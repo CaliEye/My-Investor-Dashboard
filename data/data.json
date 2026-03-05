@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-05T17:27:40.532635+00:00",
+  "updated_utc": "2026-03-05T18:51:23.847444+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-05T21:27:40.532635+00:00",
+  "next_review_utc": "2026-03-05T22:51:23.847444+00:00",
   "crypto": {
-    "btc_usd": 71095.19,
-    "eth_usd": 2076.72,
-    "btc_price_formatted": "$71,095",
-    "eth_price_formatted": "$2,077",
+    "btc_usd": 70954.8,
+    "eth_usd": 2075.96,
+    "btc_price_formatted": "$70,955",
+    "eth_price_formatted": "$2,076",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -50,14 +50,14 @@
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "5.25%",
     "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
-    "dxy": "99.3",
+    "dxy": "99.2",
     "dxy_context": "Contained (reduced dollar pressure)",
     "us10y_yield": "4.14%",
     "us10y_context": "High (tight financial conditions)",
     "risk_level": 72,
     "risk_context": "High Risk (0-30: Low | 31-60: Moderate | 61-100: High)",
-    "spx": "6,807",
-    "spx_context": "Daily move -0.92% (live market snapshot)",
+    "spx": "6,779",
+    "spx_context": "Daily move -1.32% (live market snapshot)",
     "trigger_breakdown": [
       "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
       "Dollar: DXY holding above 103, pressure on risk assets",
@@ -90,31 +90,32 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-05T17:27:44.486436+00:00",
+    "updated_utc": "2026-03-05T18:51:27.872465+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
-        "price": 607.04,
-        "price_formatted": "$607.04",
-        "change_pct_day": -0.61,
-        "change_pct_5d": -0.36,
-        "volume": 43797544,
-        "volume_vs_20d": 0.63,
+        "price": 603.11,
+        "price_formatted": "$603.11",
+        "change_pct_day": -1.25,
+        "change_pct_5d": -1.01,
+        "volume": 60340550,
+        "volume_vs_20d": 0.86,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "TECH / NASDAQ-100"
       },
       "defense": {
         "symbol": "ITA",
-        "price": 238.16,
-        "price_formatted": "$238.16",
-        "change_pct_day": -3.57,
-        "change_pct_5d": -1.92,
-        "volume": 765071,
-        "volume_vs_20d": 0.76,
+        "price": 237.93,
+        "price_formatted": "$237.93",
+        "change_pct_day": -3.66,
+        "change_pct_5d": -2.02,
+        "volume": 1116991,
+        "volume_vs_20d": 1.09,
         "trend": "UNDER PRESSURE",
         "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
@@ -124,27 +125,28 @@
       },
       "metals": {
         "symbol": "GLD",
-        "price": 466.72,
-        "price_formatted": "$466.72",
-        "change_pct_day": -1.08,
-        "change_pct_5d": -2.25,
-        "volume": 6554505,
-        "volume_vs_20d": 0.48,
+        "price": 465.99,
+        "price_formatted": "$465.99",
+        "change_pct_day": -1.23,
+        "change_pct_5d": -2.41,
+        "volume": 8074239,
+        "volume_vs_20d": 0.59,
         "trend": "UNDER PRESSURE",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "PRECIOUS METALS"
       },
       "broad": {
         "symbol": "VOO",
-        "price": 624.71,
-        "price_formatted": "$624.71",
-        "change_pct_day": -0.87,
-        "change_pct_5d": -1.46,
-        "volume": 4774117,
-        "volume_vs_20d": 0.48,
+        "price": 622.17,
+        "price_formatted": "$622.17",
+        "change_pct_day": -1.27,
+        "change_pct_5d": -1.86,
+        "volume": 6195055,
+        "volume_vs_20d": 0.62,
         "trend": "UNDER PRESSURE",
         "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
@@ -161,22 +163,22 @@
         "ITA",
         "GLD"
       ],
-      "equal_weight_change_pct_day": -1.76,
+      "equal_weight_change_pct_day": -2.06,
       "leader": {
-        "symbol": "QQQ",
-        "change_pct_day": -0.61,
-        "trend": "NEUTRAL / MIXED"
+        "symbol": "GLD",
+        "change_pct_day": -1.23,
+        "trend": "UNDER PRESSURE"
       },
       "laggard": {
         "symbol": "ITA",
-        "change_pct_day": -3.57,
+        "change_pct_day": -3.66,
         "trend": "UNDER PRESSURE"
       },
       "regime_tilt": "DEFENSIVE STACK"
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-05T17:27:47.053315+00:00",
+    "updated_utc": "2026-03-05T18:51:32.260835+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
