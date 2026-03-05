@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-05T10:27:00.365127+00:00",
+  "updated_utc": "2026-03-05T12:28:27.055823+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-05T14:27:00.365127+00:00",
+  "next_review_utc": "2026-03-05T16:28:27.055823+00:00",
   "crypto": {
-    "btc_usd": 72995.27,
-    "eth_usd": 2135.68,
-    "btc_price_formatted": "$72,995",
-    "eth_price_formatted": "$2,136",
+    "btc_usd": 72883.33,
+    "eth_usd": 2131.98,
+    "btc_price_formatted": "$72,883",
+    "eth_price_formatted": "$2,132",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -50,7 +50,7 @@
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "5.25%",
     "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
-    "dxy": "98.9",
+    "dxy": "99.0",
     "dxy_context": "Contained (reduced dollar pressure)",
     "us10y_yield": "4.08%",
     "us10y_context": "High (tight financial conditions)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-05T10:27:04.257050+00:00",
+    "updated_utc": "2026-03-05T12:28:29.238167+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -132,10 +132,9 @@
         "volume": 9936500,
         "volume_vs_20d": 0.71,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "SECURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "PRECIOUS METALS"
       },
@@ -178,7 +177,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-05T10:27:06.173140+00:00",
+    "updated_utc": "2026-03-05T12:28:30.159936+00:00",
     "confluence_score": 1,
     "max_score": 5,
     "threshold_hit": false,
