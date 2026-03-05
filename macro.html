@@ -14,9 +14,9 @@
 </head>
 <body class="macro-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
-  <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">CyberSci-Dash v2</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+  <header class="px-6 py-4 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 border-b border-yellow-400 shadow-lg">
+    <h1 class="text-2xl lg:text-3xl font-orbitron tracking-widest text-yellow-400">CyberSci-Dash v2</h1>
+    <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-base font-orbitron tracking-wide">
       <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
       <a href="warroom.html" class="hover:text-pink-400" aria-label="War Room">War Room</a>
       <a href="macro.html" class="text-yellow-400 border-b-2 border-yellow-400 pb-1" aria-label="Macro">Macro</a>
@@ -85,13 +85,10 @@
           </div>
           <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow">
             <h3 class="text-lg font-orbitron text-cyan-300 mb-2">Global Macro News</h3>
-            <ul class="list-inside text-base space-y-1">
-              <li>• FOMC statement due next week</li>
-              <li>• China PMI signals contraction</li>
-              <li>• OPEC+ announces new cuts</li>
-              <li>• ECB hints at rate hold</li>
+            <ul id="global-macro-news-list" class="list-inside text-base space-y-1">
+              <li>• Building dynamic global macro watchlist...</li>
             </ul>
-            <div class="mt-2 text-xs text-gray-400">See <a href="https://www.cnbc.com/economy/" target="_blank" class="underline text-yellow-300">CNBC Economy</a> for more</div>
+            <div id="global-macro-news-status" class="mt-2 text-xs text-gray-400">Watchlist refreshes with dashboard data updates. See <a href="https://www.cnbc.com/economy/" target="_blank" class="underline text-yellow-300">CNBC Economy</a> for confirmation.</div>
           </div>
         </div>
       </div>
@@ -206,6 +203,26 @@
     </section>
   </main>
 
+  <section class="px-6 py-4 border-t border-yellow-400/50 bg-gray-900/80">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-xs text-gray-400 mb-2 tracking-wide">NAVIGATION SHORTCUTS</div>
+      <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-base font-orbitron tracking-wide">
+        <a href="index.html?view=summary" class="hover:text-cyan-400">Summary</a>
+        <a href="warroom.html" class="hover:text-pink-400">War Room</a>
+        <a href="macro.html" class="text-yellow-400 border-b border-yellow-400 pb-0.5">Macro</a>
+        <a href="crypto.html" class="hover:text-cyan-400">Crypto</a>
+        <a href="bots.html" class="hover:text-cyan-400">Bots</a>
+        <a href="sentiment.html" class="hover:text-cyan-400">Sentiment</a>
+        <a href="scenario.html" class="hover:text-cyan-400">Scenario Builder</a>
+        <a href="mindmap.html" class="hover:text-cyan-400">Mindmap</a>
+        <a href="goals.html" class="hover:text-cyan-400">Goals</a>
+        <a href="portfolio.html" class="hover:text-cyan-400">Portfolio</a>
+        <a href="insights.html" class="hover:text-cyan-400">Insights</a>
+        <a href="links.html" class="hover:text-cyan-400">Quick Links</a>
+      </nav>
+    </div>
+  </section>
+
   <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
     &copy; 2025 CyberSci-Dash. All rights reserved.
   </footer>
@@ -258,6 +275,40 @@
           statusEl.className = 'text-xl font-bold text-emerald-300';
           noteEl.textContent = 'No obvious API key/token patterns detected in frontend surface.';
         }
+      }
+    }
+
+    function updateGlobalMacroNews(data) {
+      const macro = data?.macro || {};
+      const listEl = document.getElementById('global-macro-news-list');
+      const statusEl = document.getElementById('global-macro-news-status');
+      if (!listEl) return;
+
+      const now = new Date();
+      const nextCpi = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 12, 13, 30));
+      if (nextCpi < now) nextCpi.setUTCMonth(nextCpi.getUTCMonth() + 1);
+      const daysToCpi = Math.max(0, Math.round((nextCpi - now) / (1000 * 60 * 60 * 24)));
+
+      const nextFomc = new Date(now);
+      nextFomc.setDate(now.getDate() + ((3 - now.getDay() + 7) % 7 || 7));
+      const daysToFomc = Math.max(0, Math.round((nextFomc - now) / (1000 * 60 * 60 * 24)));
+
+      const dxy = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const risk = Number(macro.risk_level || 0);
+
+      const items = [
+        `<strong>${daysToFomc <= 2 ? 'High Priority' : 'Watch'}</strong>: FOMC cadence points to ~${daysToFomc} day(s) until next policy read-through.`,
+        `<strong>${daysToCpi <= 1 ? 'High Priority' : 'Watch'}</strong>: CPI window in ~${daysToCpi} day(s) (estimated schedule).`,
+        `Dollar regime: DXY ${macro.dxy || 'N/A'} (${dxy >= 103 ? 'strong dollar risk pressure' : 'less dollar pressure'}).`,
+        `Rates regime: US10Y ${macro.us10y_yield || 'N/A'} (${us10y >= 4 ? 'tight financial conditions' : 'moderating conditions'}).`,
+        `Global posture: Macro risk ${macro.risk_level || 'N/A'}/100 (${risk >= 70 ? 'defensive bias' : risk >= 45 ? 'transition bias' : 'selective risk-on'}).`
+      ];
+
+      listEl.innerHTML = items.map((item) => `<li>• ${item}</li>`).join('');
+      if (statusEl) {
+        const updated = data?.updated_utc ? new Date(data.updated_utc).toLocaleString() : 'latest refresh';
+        statusEl.innerHTML = `Global macro watchlist refreshed from latest data at <strong>${updated}</strong>. See <a href="https://www.cnbc.com/economy/" target="_blank" class="underline text-yellow-300">CNBC Economy</a> for confirmation.`;
       }
     }
 
@@ -349,6 +400,7 @@
           `;
         }
 
+        updateGlobalMacroNews(d);
         updateMissionPanel(d);
         
       } catch (error) {

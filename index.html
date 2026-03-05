@@ -117,9 +117,9 @@
 </head>
 <body class="macro-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
-  <header class="px-6 py-4 flex justify-between items-center border-b border-matrix-green shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
+  <header class="px-6 py-4 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 border-b border-matrix-green shadow-lg">
+    <h1 class="text-2xl lg:text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
+    <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-base font-orbitron tracking-wide">
       <a href="index.html?view=summary" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Summary</a>
       <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright" aria-label="War Room">War Room</a>
       <a href="macro.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Macro">Macro</a>
@@ -132,7 +132,7 @@
       <a href="portfolio.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Portfolio">Portfolio</a>
       <a href="insights.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Insights">Insights</a>
       <a href="links.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Quick Links">Quick Links</a>
-      <a href="system_test.html" class="text-matrix-warning hover:text-matrix-bright text-xs" aria-label="System Test" title="Run system health check">⚡Test</a>
+      <a href="system_test.html" class="text-matrix-warning hover:text-matrix-bright text-xs" aria-label="System Test" title="Run system health check">Test</a>
     </nav>
   </header>
 
@@ -212,22 +212,27 @@
         <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">UNEMPLOYMENT</div>
           <div id="macro-unemployment" class="text-xl font-bold text-yellow-300">...</div>
+          <div id="macro-unemployment-note" class="text-xs text-gray-400 mt-1">...</div>
         </div>
         <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">FED FUNDS RATE</div>
           <div id="macro-fed-rate" class="text-xl font-bold text-yellow-300">...</div>
+          <div id="macro-fed-rate-note" class="text-xs text-gray-400 mt-1">...</div>
         </div>
         <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">US10Y YIELD</div>
           <div id="macro-us10y" class="text-xl font-bold text-yellow-300">...</div>
+          <div id="macro-us10y-note" class="text-xs text-gray-400 mt-1">...</div>
         </div>
         <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">S&P 500</div>
           <div id="macro-spx" class="text-xl font-bold text-yellow-300">...</div>
+          <div id="macro-spx-note" class="text-xs text-gray-400 mt-1">...</div>
         </div>
         <div class="p-4 rounded-xl border border-yellow-400/50 bg-gray-900/40">
           <div class="text-xs text-gray-400">USD (DXY)</div>
           <div id="macro-dxy" class="text-xl font-bold text-yellow-300">...</div>
+          <div id="macro-dxy-note" class="text-xs text-gray-400 mt-1">...</div>
         </div>
       </div>
 
@@ -423,6 +428,9 @@
             <div>USD Index:</div> <div id="usd-latest" class="font-bold text-cyan-300" aria-live="polite">...</div>
             <div>Fear &amp; Greed:</div> <div id="fg-latest" class="font-bold text-pink-400" aria-live="polite">...</div>
           </div>
+          <div id="overview-meaning-list" class="mt-3 text-xs text-gray-300 space-y-1">
+            <div>Loading quick meaning labels...</div>
+          </div>
           <div class="mt-4 grid md:grid-cols-2 gap-4">
             <div class="bg-gray-900 border border-green-500 rounded-xl p-4 shadow">
               <h3 class="font-orbitron text-lg text-green-300 mb-2">Crypto Risk</h3>
@@ -462,13 +470,10 @@
       </div>
       <div class="flex-1 bg-gray-800 border border-cyan-400 rounded-xl shadow p-6">
         <h2 class="text-xl font-orbitron text-cyan-400 mb-2">Market News</h2>
-        <ul class="list-inside text-base space-y-1">
-          <li>• CPI print due tomorrow</li>
-          <li>• FOMC meeting next Wednesday</li>
-          <li>• ETF decision calendar update pending official source confirmation</li>
-          <li>• Watch for BTC options expiry Friday</li>
+        <ul id="market-news-list" class="list-inside text-base space-y-1">
+          <li>• Building dynamic macro event watchlist...</li>
         </ul>
-        <div class="mt-2 text-gray-400 text-xs">News auto-updates every hour. <a href="macro.html" class="underline text-pink-400">See macro page for details &rarr;</a></div>
+        <div id="market-news-status" class="mt-2 text-gray-400 text-xs">Event watchlist refreshes with data updates. <a href="macro.html" class="underline text-pink-400">See macro page for details &rarr;</a></div>
       </div>
     </section>
 
@@ -513,6 +518,26 @@
       <a href="links.html" class="gate-controlled hud-action bg-green-500 hover:bg-green-700" aria-label="Quick Links">Quick Links</a>
     </section>
   </main>
+
+  <section class="px-6 py-4 border-t border-matrix-green/50 bg-gray-900/80">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-xs text-gray-400 mb-2 tracking-wide">NAVIGATION SHORTCUTS</div>
+      <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-base font-orbitron tracking-wide">
+        <a href="index.html?view=summary" class="text-matrix-bright border-b border-matrix-bright pb-0.5">Summary</a>
+        <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright">War Room</a>
+        <a href="macro.html" class="text-matrix-green hover:text-matrix-bright">Macro</a>
+        <a href="crypto.html" class="text-matrix-green hover:text-matrix-bright">Crypto (Watch-Only)</a>
+        <a href="bots.html" class="text-matrix-green hover:text-matrix-bright">Bots</a>
+        <a href="sentiment.html" class="text-matrix-green hover:text-matrix-bright">Sentiment</a>
+        <a href="scenario.html" class="text-matrix-green hover:text-matrix-bright">Scenario Builder</a>
+        <a href="mindmap.html" class="text-matrix-green hover:text-matrix-bright">Mindmap</a>
+        <a href="goals.html" class="text-matrix-green hover:text-matrix-bright">Goals</a>
+        <a href="portfolio.html" class="text-matrix-green hover:text-matrix-bright">Portfolio</a>
+        <a href="insights.html" class="text-matrix-green hover:text-matrix-bright">Insights</a>
+        <a href="links.html" class="text-matrix-green hover:text-matrix-bright">Quick Links</a>
+      </nav>
+    </div>
+  </section>
 
   <footer class="text-center text-gray-400 mt-8 mb-3 text-sm">
     &copy; 2025 CyberSci-Dash. All rights reserved.
@@ -842,6 +867,11 @@
       setText('macro-us10y', macro.us10y_yield || 'N/A');
       setText('macro-spx', macro.spx || 'N/A');
       setText('macro-dxy', macro.dxy || 'N/A');
+      setText('macro-unemployment-note', macro.unemployment_context || 'Labor trend context unavailable');
+      setText('macro-fed-rate-note', macro.fed_rate_context || 'Policy stance context unavailable');
+      setText('macro-us10y-note', macro.us10y_context || 'Rate pressure context unavailable');
+      setText('macro-spx-note', macro.spx_context || 'Broad market context unavailable');
+      setText('macro-dxy-note', macro.dxy_context || 'Dollar pressure context unavailable');
 
       const macroRisk = Number(macro.risk_level || 0);
       const fearGreed = Number(sentiment.fear_greed_index || 50);
@@ -862,17 +892,62 @@
         }
       }
 
-      const focusItems = [
-        `Jobs: ${macro.unemployment || 'N/A'} | ${macro.unemployment_context || 'Context unavailable'}`,
-        `Rates: Fed ${macro.fed_funds_rate || 'N/A'} | US10Y ${macro.us10y_yield || 'N/A'}`,
-        `Dollar Pressure: DXY ${macro.dxy || 'N/A'} (${dxyValue >= 103 ? 'elevated risk-off' : 'contained'})`,
-        `Broad Market: S&P ${macro.spx || 'N/A'} | Risk level ${macro.risk_level || 'N/A'}/100`,
-        `Sentiment: Fear & Greed ${sentiment.fear_greed_index || 'N/A'} (${fearGreed <= 30 ? 'capitulation watch' : 'neutral/greed drift'})`
-      ];
+      const crypto = data?.crypto || {};
+      const sectors = data?.sector_etfs?.sectors || {};
+      const sectorEntries = Object.entries(sectors)
+        .map(([name, details]) => ({
+          name,
+          symbol: details?.symbol || name.toUpperCase(),
+          day: Number(details?.change_pct_day),
+          week: Number(details?.change_pct_5d)
+        }))
+        .filter((entry) => Number.isFinite(entry.week));
+
+      const bestLong = sectorEntries.length
+        ? [...sectorEntries].sort((a, b) => b.week - a.week)[0]
+        : null;
+      const bestShort = sectorEntries.length
+        ? [...sectorEntries].sort((a, b) => a.week - b.week)[0]
+        : null;
+
+      const focusItems = [];
+      if (bestLong) {
+        const urgentLong = Number.isFinite(bestLong.day) && bestLong.day >= 1.2;
+        focusItems.push({
+          level: urgentLong ? 'high' : 'normal',
+          text: `${urgentLong ? 'URGENT LONG WATCH' : 'Long Watch'}: ${bestLong.symbol} (${bestLong.week.toFixed(2)}% 5d) ${urgentLong ? 'momentum accelerating today' : 'relative strength leader'}`
+        });
+      }
+      if (bestShort) {
+        const urgentShort = Number.isFinite(bestShort.day) && bestShort.day <= -1.2;
+        focusItems.push({
+          level: urgentShort ? 'high' : 'normal',
+          text: `${urgentShort ? 'URGENT SHORT WATCH' : 'Short / Hedge Watch'}: ${bestShort.symbol} (${bestShort.week.toFixed(2)}% 5d) ${urgentShort ? 'weakness accelerating today' : 'relative weakness candidate'}`
+        });
+      }
+      if (fearGreed <= 30 || Number(crypto.risk_level || 0) >= 78) {
+        focusItems.push({
+          level: 'high',
+          text: `Oversold Setup Watch: Fear & Greed ${fearGreed}/100 with crypto risk ${crypto.risk_level || 'N/A'}. Use staged entries only.`
+        });
+      }
+      if (fearGreed >= 75) {
+        focusItems.push({
+          level: 'high',
+          text: `Overbought Risk Watch: Fear & Greed ${fearGreed}/100. Tighten stops and reduce chase entries.`
+        });
+      }
+      focusItems.push({
+        level: 'normal',
+        text: `Business Cycle: ${crypto.cycle_status || 'No cycle status'} | Investing Season: ${macroRisk >= 70 ? 'Defensive season' : macroRisk >= 45 ? 'Transition season' : 'Selective risk-on season'}`
+      });
 
       const focusListEl = document.getElementById('macro-focus-list');
       if (focusListEl) {
-        focusListEl.innerHTML = focusItems.map(item => `<li>• ${item}</li>`).join('');
+        focusListEl.innerHTML = focusItems.map((item) => {
+          const classes = item.level === 'high' ? 'text-yellow-300 font-bold' : 'text-gray-200';
+          return `<li class="${classes}">• ${item.text}</li>`;
+        }).join('');
       }
 
       const actions = [];
@@ -897,8 +972,54 @@
         actionEl.innerHTML = actions.map(item => `<div class="border-l-2 border-red-400 pl-3">${item}</div>`).join('');
       }
 
+      const meaningEl = document.getElementById('overview-meaning-list');
+      if (meaningEl) {
+        const btcRisk = Number(crypto.risk_level || 0);
+        const riskState = btcRisk >= 75 ? 'HIGH RISK' : btcRisk >= 50 ? 'MEDIUM RISK' : 'LOW RISK';
+        const dxyState = dxyValue >= 103 ? 'USD STRONG (risk-pressure)' : dxyValue <= 99 ? 'USD SOFTER (risk-supportive)' : 'USD NEUTRAL';
+        const fgState = fearGreed <= 30 ? 'OVERSOLD / FEAR' : fearGreed >= 70 ? 'OVERBOUGHT / GREED' : 'BALANCED';
+        meaningEl.innerHTML = `
+          <div><strong>Crypto:</strong> ${riskState} • ${crypto.risk_context || 'context unavailable'}</div>
+          <div><strong>Dollar:</strong> ${dxyState}</div>
+          <div><strong>Sentiment:</strong> ${fgState} (${fearGreed}/100)</div>
+        `;
+      }
+
       updateSectorCommandGrid(data);
       updateEventPlaybookGrid(data, latestAIData);
+    }
+
+    function updateMarketNews(data) {
+      const macro = data?.macro || {};
+      const listEl = document.getElementById('market-news-list');
+      const statusEl = document.getElementById('market-news-status');
+      if (!listEl) return;
+
+      const now = new Date();
+      const nextCpi = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 12, 13, 30));
+      if (nextCpi < now) nextCpi.setUTCMonth(nextCpi.getUTCMonth() + 1);
+
+      const nextFomc = new Date(now);
+      nextFomc.setDate(now.getDate() + ((3 - now.getDay() + 7) % 7 || 7));
+
+      const daysToCpi = Math.max(0, Math.round((nextCpi - now) / (1000 * 60 * 60 * 24)));
+      const daysToFomc = Math.max(0, Math.round((nextFomc - now) / (1000 * 60 * 60 * 24)));
+
+      const dxy = Number.parseFloat((macro.dxy || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+      const us10y = Number.parseFloat((macro.us10y_yield || '0').toString().replace(/[^\d.-]/g, '')) || 0;
+
+      const items = [
+        `<strong>${daysToCpi <= 1 ? 'High Priority' : 'Watch'}</strong>: CPI window in ~${daysToCpi} day(s) (estimated calendar).`,
+        `<strong>${daysToFomc <= 2 ? 'High Priority' : 'Watch'}</strong>: FOMC statement cadence points to ~${daysToFomc} day(s).`,
+        `Dollar regime: DXY ${macro.dxy || 'N/A'} (${dxy >= 103 ? 'risk-off pressure' : 'contained pressure'}).`,
+        `Rates regime: US10Y ${macro.us10y_yield || 'N/A'} (${us10y >= 4 ? 'tight conditions' : 'easing pressure'}).`
+      ];
+
+      listEl.innerHTML = items.map((item) => `<li>• ${item}</li>`).join('');
+      if (statusEl) {
+        const updatedLabel = data.updated_utc ? new Date(data.updated_utc).toLocaleString() : 'latest refresh';
+        statusEl.innerHTML = `Event watchlist refreshed from latest data at <strong>${updatedLabel}</strong>.`;
+      }
     }
 
     function updateCycleContext(data) {
@@ -1174,6 +1295,7 @@
         }
 
         updateMacroCommandBrief(d);
+        updateMarketNews(d);
         updateCycleContext(d);
         updateMissionPanel(d, latestAIData);
         applyConfluenceGate();
