@@ -6,11 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Macro Market Intelligence - Economic research, charts, and key insights.">
   <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
 </head>
-<body class="bg-gray-900 text-white font-inter">
+<body class="macro-page bg-gray-900 text-white font-inter">
+  <div class="code-rain"></div>
   <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
     <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">CyberSci-Dash v2</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">
@@ -367,5 +370,7 @@
     
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
 </body>
 </html>

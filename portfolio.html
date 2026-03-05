@@ -6,10 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Track assets, accounts, bots, bills, and subscriptions.">
   <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-white font-inter">
+<body class="portfolio-page bg-gray-900 text-white font-inter">
+  <div class="code-rain"></div>
   <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg">
     <h1 class="text-3xl font-orbitron tracking-widest text-cyan-300">ENDGAME // Portfolio Command</h1>
     <nav class="space-x-5 text-sm md:text-base font-orbitron tracking-wide">
@@ -23,27 +26,27 @@
   </header>
 
   <main class="p-6 max-w-7xl mx-auto space-y-8">
-    <section class="rounded-2xl border-2 border-cyan-400 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-7 py-6">
-      <h2 class="text-2xl font-orbitron text-cyan-200 mb-2">Asset + Cashflow Tracker</h2>
+    <section class="hud-panel portfolio-overview">
+      <h2 class="text-2xl font-orbitron text-cyan-200 mb-2 matrix-important">Asset + Cashflow Tracker</h2>
       <p class="text-sm text-gray-300">Track hard assets, bank accounts, bots, bills, and subscriptions. Optional integration fields included for Origin AI/budget pipelines.</p>
     </section>
 
-    <section class="bg-gray-900 border border-yellow-500 rounded-xl p-5 shadow">
-      <h3 class="text-lg font-orbitron text-yellow-300 mb-3">Hard Property Target Tracker (2030)</h3>
+    <section class="hud-panel">
+      <h3 class="text-lg font-orbitron text-yellow-300 mb-3 matrix-important">Hard Property Target Tracker (2030)</h3>
       <div id="hard-targets" class="space-y-3"></div>
       <div id="hard-target-alert" class="mt-3 text-sm text-gray-300"></div>
     </section>
 
     <section class="grid md:grid-cols-3 gap-4">
-      <div class="p-4 rounded-lg bg-gray-900 border border-green-600">
+      <div class="hud-panel portfolio-value-display">
         <div class="text-xs text-gray-400">Total Assets</div>
-        <div id="total-assets" class="text-2xl font-bold text-green-300">$0.00</div>
+        <div id="total-assets" class="portfolio-value data-metric--large">$0.00</div>
       </div>
-      <div class="p-4 rounded-lg bg-gray-900 border border-red-600">
+      <div class="hud-panel">
         <div class="text-xs text-gray-400">Monthly Bills + Subs</div>
-        <div id="total-bills" class="text-2xl font-bold text-red-300">$0.00</div>
+        <div id="total-bills" class="data-metric data-metric--large data-metric--critical">$0.00</div>
       </div>
-      <div class="p-4 rounded-lg bg-gray-900 border border-yellow-600">
+      <div class="hud-panel">
         <div class="text-xs text-gray-400">Net Buffer (Assets - 12m Costs)</div>
         <div id="net-buffer" class="text-2xl font-bold text-yellow-300">$0.00</div>
       </div>
@@ -341,5 +344,7 @@
 
     render();
   </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
 </body>
 </html>

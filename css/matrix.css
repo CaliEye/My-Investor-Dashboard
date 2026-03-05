@@ -1,0 +1,455 @@
+/* =============================================== */
+/* === MATRIX INTELLIGENCE COMMAND CENTER === */
+/* === Full-Screen Background Theme System === */
+/* =============================================== */
+
+:root {
+  --bg-dark: #0a0e0f;
+  --bg-matrix: #040607;
+  --panel-dark: #0f1419;
+  --panel-matrix: #071012;
+  --border-primary: rgba(0, 255, 120, 0.25);
+  --border-secondary: rgba(0, 255, 120, 0.15);
+  --glow-primary: rgba(0, 255, 120, 0.35);
+  --glow-secondary: rgba(0, 255, 120, 0.20);
+  --text-primary: rgba(220, 255, 240, 0.95);
+  --text-secondary: rgba(200, 255, 220, 0.80);
+  --text-muted: rgba(180, 230, 200, 0.65);
+  --accent-matrix: #00FF78;
+  --accent-warning: #FFD166;
+  --accent-critical: #FF4757;
+  --accent-success: #2ED573;
+  --accent-info: #00D2FF;
+  --rain-opacity: 0.2;
+}
+
+/* === MATRIX CODE RAIN - FULL SCREEN BACKGROUND === */
+#matrix-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  opacity: var(--rain-opacity);
+  pointer-events: none;
+  background: transparent;
+}
+
+.code-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -5;
+  pointer-events: none;
+  overflow: hidden;
+  background: linear-gradient(135deg, 
+    rgba(0, 20, 10, 0.05) 0%, 
+    rgba(0, 40, 20, 0.03) 50%, 
+    rgba(0, 20, 10, 0.05) 100%);
+}
+
+/* === GLOBAL MATRIX THEME === */
+body {
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Source Code Pro', 'Courier New', monospace;
+  background: 
+    radial-gradient(ellipse at 20% 10%, rgba(0, 255, 102, 0.08), transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(0, 255, 102, 0.05), transparent 65%),
+    radial-gradient(ellipse at 50% 80%, rgba(0, 255, 102, 0.03), transparent 70%),
+    var(--bg-matrix);
+  color: var(--text-primary);
+  min-height: 100vh;
+  letter-spacing: 0.025em;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* === ENHANCED TYPOGRAPHY SYSTEM === */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', 'Rajdhani', 'IBM Plex Mono', monospace;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  text-shadow: 
+    0 0 5px rgba(0, 255, 102, 0.15),
+    0 0 10px rgba(0, 255, 102, 0.08);
+  font-weight: 600;
+}
+
+h1 { 
+  font-size: 2.5rem; 
+  text-shadow: 
+    0 0 8px rgba(0, 255, 102, 0.25),
+    0 0 15px rgba(0, 255, 102, 0.12);
+}
+h2 { 
+  font-size: 1.8rem;
+  text-shadow: 
+    0 0 6px rgba(0, 255, 102, 0.20),
+    0 0 12px rgba(0, 255, 102, 0.10);
+}
+h3 { 
+  font-size: 1.3rem;
+  text-shadow: 
+    0 0 5px rgba(0, 255, 102, 0.18);
+}
+h4 { 
+  font-size: 1.1rem;
+  text-shadow: 
+    0 0 4px rgba(0, 255, 102, 0.15);
+}
+
+/* === MATRIX GLOW CONTAINERS === */
+.matrix-glow {
+  border: 1px solid var(--border-primary);
+  box-shadow: 
+    0 0 15px var(--glow-secondary),
+    inset 0 0 20px rgba(0, 255, 120, 0.05);
+  background: rgba(7, 16, 18, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.matrix-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(0, 255, 120, 0.08), 
+    transparent);
+  animation: matrix-shine 3s ease-in-out infinite;
+}
+
+@keyframes matrix-shine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* === HIGHLY IMPORTANT TEXT EMPHASIS === */
+.matrix-important {
+  color: var(--accent-matrix);
+  font-weight: 700;
+  font-size: 1.15em;
+  text-shadow: 
+    0 0 8px rgba(0, 255, 120, 0.40),
+    0 0 15px rgba(0, 255, 120, 0.20);
+  letter-spacing: 0.05em;
+  display: inline-block;
+  animation: matrix-pulse 2s ease-in-out infinite alternate;
+}
+
+.matrix-critical {
+  color: var(--accent-critical);
+  font-weight: 900;
+  font-size: 1.25em;
+  text-shadow: 
+    0 0 10px rgba(255, 71, 87, 0.50),
+    0 0 20px rgba(255, 71, 87, 0.25);
+  letter-spacing: 0.08em;
+  animation: matrix-alert 1.5s ease-in-out infinite;
+}
+
+.matrix-success {
+  color: var(--accent-success);
+  font-weight: 700;
+  font-size: 1.2em;
+  text-shadow: 
+    0 0 8px rgba(46, 213, 115, 0.40),
+    0 0 15px rgba(46, 213, 115, 0.20);
+}
+
+@keyframes matrix-pulse {
+  0% { 
+    text-shadow: 
+      0 0 8px rgba(0, 255, 120, 0.40),
+      0 0 15px rgba(0, 255, 120, 0.20);
+  }
+  100% { 
+    text-shadow: 
+      0 0 12px rgba(0, 255, 120, 0.60),
+      0 0 25px rgba(0, 255, 120, 0.30);
+  }
+}
+
+@keyframes matrix-alert {
+  0%, 100% { 
+    text-shadow: 
+      0 0 10px rgba(255, 71, 87, 0.50),
+      0 0 20px rgba(255, 71, 87, 0.25);
+  }
+  50% { 
+    text-shadow: 
+      0 0 15px rgba(255, 71, 87, 0.70),
+      0 0 30px rgba(255, 71, 87, 0.35);
+  }
+}
+
+/* === NAVIGATION & HEADER ENHANCEMENTS === */
+header {
+  background: rgba(7, 16, 18, 0.95);
+  border-bottom: 2px solid var(--border-primary);
+  box-shadow: 
+    0 2px 15px var(--glow-secondary),
+    0 0 25px rgba(0, 255, 120, 0.08);
+  backdrop-filter: blur(15px);
+  position: relative;
+  z-index: 50;
+}
+
+nav a {
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  position: relative;
+  text-shadow: 0 0 3px rgba(0, 255, 120, 0.15);
+}
+
+nav a:hover {
+  color: var(--accent-matrix);
+  background: rgba(0, 255, 120, 0.08);
+  box-shadow: 
+    0 0 8px rgba(0, 255, 120, 0.25),
+    inset 0 0 10px rgba(0, 255, 120, 0.05);
+  text-shadow: 0 0 8px rgba(0, 255, 120, 0.40);
+}
+
+nav a.active {
+  color: var(--accent-matrix);
+  background: rgba(0, 255, 120, 0.12);
+  border: 1px solid var(--border-secondary);
+  box-shadow: 
+    0 0 10px rgba(0, 255, 120, 0.30),
+    inset 0 0 15px rgba(0, 255, 120, 0.08);
+}
+
+/* === PANEL & CARD SYSTEM === */
+.matrix-panel {
+  background: rgba(15, 20, 25, 0.90);
+  border: 1px solid var(--border-secondary);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.40),
+    0 0 15px var(--glow-secondary),
+    inset 0 0 20px rgba(0, 255, 120, 0.03);
+  backdrop-filter: blur(12px);
+  position: relative;
+}
+
+.matrix-card {
+  background: rgba(7, 16, 18, 0.85);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  box-shadow: 
+    0 2px 12px rgba(0, 0, 0, 0.35),
+    0 0 10px var(--glow-secondary);
+  transition: all 0.3s ease;
+}
+
+.matrix-card:hover {
+  border-color: var(--accent-matrix);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.50),
+    0 0 20px var(--glow-primary);
+  transform: translateY(-2px);
+}
+
+/* === PAGE-SPECIFIC VARIATIONS === */
+
+/* Macro Dashboard - Heavy Rain, Corporate Feel */
+.macro-page {
+  --rain-opacity: 0.3;
+}
+.macro-page .matrix-glow {
+  border-color: rgba(255, 209, 102, 0.25);
+  box-shadow: 
+    0 0 15px rgba(255, 209, 102, 0.15),
+    inset 0 0 20px rgba(255, 209, 102, 0.05);
+}
+.macro-page h1, .macro-page h2 {
+  color: #FFD166;
+  text-shadow: 
+    0 0 8px rgba(255, 209, 102, 0.25),
+    0 0 15px rgba(255, 209, 102, 0.12);
+}
+
+/* Bots Page - Bold Metrics, Tech Focus */
+.bots-page {
+  --rain-opacity: 0.25;
+}
+.bots-page .matrix-important {
+  font-size: 1.3em;
+  font-weight: 800;
+}
+.bots-page .performance-metric {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: var(--accent-success);
+  text-shadow: 
+    0 0 10px rgba(46, 213, 115, 0.40),
+    0 0 20px rgba(46, 213, 115, 0.20);
+}
+
+/* Crypto Page - Electric Blue Accents */
+.crypto-page {
+  --rain-opacity: 0.22;
+}
+.crypto-page .matrix-glow {
+  border-color: rgba(0, 210, 255, 0.25);
+  box-shadow: 
+    0 0 15px rgba(0, 210, 255, 0.15),
+    inset 0 0 20px rgba(0, 210, 255, 0.05);
+}
+.crypto-page .price-highlight {
+  color: var(--accent-info);
+  font-size: 1.25em;
+  font-weight: 700;
+  text-shadow: 
+    0 0 8px rgba(0, 210, 255, 0.40),
+    0 0 15px rgba(0, 210, 255, 0.20);
+}
+
+/* Portfolio Page - Success Green Theme */
+.portfolio-page {
+  --rain-opacity: 0.18;
+}
+.portfolio-page .portfolio-value {
+  color: var(--accent-success);
+  font-size: 2em;
+  font-weight: 900;
+  text-shadow: 
+    0 0 15px rgba(46, 213, 115, 0.50),
+    0 0 30px rgba(46, 213, 115, 0.25);
+  animation: matrix-pulse 3s ease-in-out infinite alternate;
+}
+
+/* Scenario Planning - Alert Orange/Red */
+.scenario-page {
+  --rain-opacity: 0.28;
+}
+.scenario-page .risk-metric {
+  color: var(--accent-warning);
+  font-size: 1.2em;
+  font-weight: 700;
+  text-shadow: 
+    0 0 8px rgba(255, 209, 102, 0.40),
+    0 0 15px rgba(255, 209, 102, 0.20);
+}
+
+/* Mind Map - Lighter Rain, Focus Mode */
+.mindmap-page {
+  --rain-opacity: 0.12;
+}
+.mindmap-page .node-text {
+  font-size: 1.1em;
+  font-weight: 600;
+  text-shadow: 
+    0 0 5px rgba(0, 255, 120, 0.25);
+}
+
+/* Goals Page - Motivational Highlight */
+.goals-page {
+  --rain-opacity: 0.20;
+}
+.goals-page .goal-target {
+  color: var(--accent-matrix);
+  font-size: 1.4em;
+  font-weight: 800;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 120, 0.50),
+    0 0 20px rgba(0, 255, 120, 0.25);
+}
+
+/* === DATA TABLES & METRICS === */
+.matrix-table {
+  background: rgba(7, 16, 18, 0.70);
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.matrix-table th {
+  background: rgba(0, 255, 120, 0.08);
+  color: var(--accent-matrix);
+  font-weight: 700;
+  text-shadow: 0 0 5px rgba(0, 255, 120, 0.25);
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.matrix-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+}
+
+.matrix-table tr:hover {
+  background: rgba(0, 255, 120, 0.05);
+}
+
+/* === STATUS INDICATORS === */
+.status-online {
+  color: var(--accent-success);
+  text-shadow: 0 0 8px rgba(46, 213, 115, 0.40);
+}
+
+.status-warning {
+  color: var(--accent-warning);
+  text-shadow: 0 0 8px rgba(255, 209, 102, 0.40);
+}
+
+.status-offline {
+  color: var(--accent-critical);
+  text-shadow: 0 0 8px rgba(255, 71, 87, 0.40);
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  :root {
+    --rain-opacity: 0.15;
+  }
+  
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.4rem; }
+  
+  .matrix-panel {
+    padding: 1rem;
+    margin: 0.5rem 0;
+  }
+  
+  .matrix-important {
+    font-size: 1.1em;
+  }
+}
+
+/* === SCROLLBAR STYLING === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-matrix);
+  box-shadow: 0 0 8px var(--glow-secondary);
+}

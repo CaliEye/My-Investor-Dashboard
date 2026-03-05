@@ -7,6 +7,8 @@
   <meta name="description" content="Investor Command HUD - Real-time market dashboard for actionable investing.">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/matrix-theme.css">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Rajdhani:wght@500;700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.ico">
@@ -14,6 +16,8 @@
   <script src="js/config.js"></script>
   <script src="js/data-manager.js"></script>
   <script src="js/matrix-rain.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
   <script>
     (function routeLanding() {
       const params = new URLSearchParams(window.location.search);
@@ -111,7 +115,8 @@
     }
   </style>
 </head>
-<body class="bg-gray-900 text-white font-inter">
+<body class="macro-page bg-gray-900 text-white font-inter">
+  <div class="code-rain"></div>
   <header class="px-6 py-4 flex justify-between items-center border-b border-matrix-green shadow-lg">
     <h1 class="text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">

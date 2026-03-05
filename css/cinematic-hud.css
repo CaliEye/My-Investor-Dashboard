@@ -1,0 +1,430 @@
+/* =============================================== */
+/* === CINEMATIC INVESTMENT COMMAND CENTER === */
+/* === Enhanced Data-First HUD System === */
+/* =============================================== */
+
+:root {
+  /* Enhanced Matrix Colors */
+  --matrix-primary: #00FF78;
+  --matrix-secondary: #00D2FF;
+  --matrix-warning: #FFD166;
+  --matrix-critical: #FF4757;
+  --matrix-success: #2ED573;
+  
+  /* Cinematic Atmosphere */
+  --bg-cinematic: linear-gradient(135deg, 
+    rgba(0, 20, 40, 0.95) 0%, 
+    rgba(0, 10, 20, 0.98) 50%, 
+    rgba(5, 25, 45, 0.95) 100%);
+  
+  /* HUD Elements */
+  --hud-panel: rgba(0, 30, 60, 0.85);
+  --hud-border: rgba(0, 255, 120, 0.3);
+  --hud-glow: 0 0 20px rgba(0, 255, 120, 0.15);
+  --hud-text: rgba(220, 255, 240, 0.95);
+  
+  /* Data Visualization */
+  --data-positive: #2ED573;
+  --data-negative: #FF4757;
+  --data-neutral: #FFD166;
+  --data-info: #00D2FF;
+  
+  /* Performance */
+  --animation-speed: 2s;
+  --glow-intensity: 0.25;
+}
+
+/* === CINEMATIC BACKGROUND SYSTEM === */
+.cinematic-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -15;
+  background: var(--bg-cinematic);
+}
+
+.cinematic-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(0, 255, 120, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 60%, rgba(0, 210, 255, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(255, 209, 102, 0.015) 0%, transparent 50%);
+  animation: atmosphericShift 20s ease-in-out infinite alternate;
+}
+
+@keyframes atmosphericShift {
+  0% { opacity: 0.6; transform: scale(1.0); }
+  100% { opacity: 1.0; transform: scale(1.05); }
+}
+
+/* === ENHANCED HUD PANELS === */
+.hud-panel {
+  background: var(--hud-panel);
+  border: 1px solid var(--hud-border);
+  border-radius: 6px;
+  backdrop-filter: blur(12px);
+  box-shadow: 
+    var(--hud-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.hud-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    var(--matrix-primary), 
+    transparent);
+  animation: hudScanline 4s ease-in-out infinite;
+}
+
+.hud-panel::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  bottom: 2px;
+  left: 2px;
+  border: 1px solid rgba(0, 255, 120, 0.05);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+@keyframes hudScanline {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.hud-panel:hover {
+  border-color: var(--matrix-primary);
+  box-shadow: 
+    0 0 30px rgba(0, 255, 120, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* === DATA VISUALIZATION ENHANCEMENTS === */
+.data-metric {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 1.4em;
+  text-shadow: 0 0 8px currentColor;
+  letter-spacing: 0.05em;
+  position: relative;
+  display: inline-block;
+}
+
+.data-metric--large {
+  font-size: 2.5em;
+  font-weight: 700;
+  animation: dataGlow 3s ease-in-out infinite alternate;
+}
+
+.data-metric--critical {
+  color: var(--data-negative);
+  animation: criticalPulse 1.5s ease-in-out infinite;
+}
+
+.data-metric--success {
+  color: var(--data-positive);
+}
+
+.data-metric--warning {
+  color: var(--data-neutral);
+}
+
+.data-metric--info {
+  color: var(--data-info);
+}
+
+@keyframes dataGlow {
+  0% { text-shadow: 0 0 8px currentColor; }
+  100% { text-shadow: 0 0 16px currentColor, 0 0 24px currentColor; }
+}
+
+@keyframes criticalPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* === ENHANCED PORTFOLIO DISPLAY === */
+.portfolio-overview {
+  background: var(--hud-panel);
+  border: 2px solid var(--hud-border);
+  border-radius: 8px;
+  padding: 2rem;
+  position: relative;
+  backdrop-filter: blur(15px);
+}
+
+.portfolio-overview::before {
+  content: 'PORTFOLIO STATUS';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: var(--bg-cinematic);
+  color: var(--matrix-primary);
+  font-size: 0.8em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0 10px;
+  border: 1px solid var(--hud-border);
+  border-radius: 3px;
+}
+
+.portfolio-value-display {
+  text-align: center;
+  padding: 1.5rem 0;
+  border: 1px solid rgba(0, 255, 120, 0.2);
+  border-radius: 6px;
+  background: rgba(0, 255, 120, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-value-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--matrix-primary),
+    transparent);
+  animation: valueHighlight 5s ease-in-out infinite;
+}
+
+@keyframes valueHighlight {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* === BOT STATUS INDICATORS === */
+.bot-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.bot-status-card {
+  background: var(--hud-panel);
+  border: 1px solid var(--hud-border);
+  border-radius: 6px;
+  padding: 1rem;
+  position: relative;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.bot-status-card::before {
+  content: attr(data-bot-name);
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background: var(--bg-cinematic);
+  color: var(--data-info);
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border: 1px solid var(--data-info);
+  border-radius: 2px;
+}
+
+.bot-performance-metric {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--data-positive);
+  text-shadow: 0 0 10px currentColor;
+  margin: 0.5rem 0;
+}
+
+.bot-status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.bot-status-indicator.online {
+  background: var(--data-positive);
+  box-shadow: 0 0 8px var(--data-positive);
+}
+
+.bot-status-indicator.warning {
+  background: var(--data-neutral);
+  box-shadow: 0 0 8px var(--data-neutral);
+}
+
+.bot-status-indicator.offline {
+  background: var(--data-negative);
+  box-shadow: 0 0 8px var(--data-negative);
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* === ALERT SYSTEM ENHANCEMENT === */
+.alert-panel {
+  background: rgba(255, 71, 87, 0.1);
+  border: 2px solid var(--data-negative);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+  position: relative;
+  animation: alertBreathe 2s ease-in-out infinite alternate;
+}
+
+.alert-panel::before {
+  content: '⚠ TRADING ALERT';
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: var(--bg-cinematic);
+  color: var(--data-negative);
+  font-size: 0.8em;
+  font-weight: 700;
+  padding: 0 8px;
+  border: 1px solid var(--data-negative);
+  border-radius: 3px;
+}
+
+@keyframes alertBreathe {
+  0% { box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); }
+  100% { box-shadow: 0 0 25px rgba(255, 71, 87, 0.5); }
+}
+
+/* === MARKET DATA TABLES === */
+.market-data-table {
+  background: var(--hud-panel);
+  border: 1px solid var(--hud-border);
+  border-radius: 6px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.market-data-table thead {
+  background: rgba(0, 255, 120, 0.08);
+}
+
+.market-data-table th {
+  color: var(--matrix-primary);
+  font-weight: 700;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+  padding: 1rem 0.75rem;
+  text-shadow: 0 0 5px currentColor;
+  border-right: 1px solid rgba(0, 255, 120, 0.1);
+}
+
+.market-data-table td {
+  padding: 0.75rem;
+  border-right: 1px solid rgba(0, 255, 120, 0.05);
+  border-bottom: 1px solid rgba(0, 255, 120, 0.05);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.market-data-table tr:hover {
+  background: rgba(0, 255, 120, 0.03);
+  cursor: pointer;
+}
+
+.price-change-positive {
+  color: var(--data-positive);
+  font-weight: 600;
+}
+
+.price-change-negative {
+  color: var(--data-negative);
+  font-weight: 600;
+}
+
+/* === SCENARIO PLANNING ENHANCEMENTS === */
+.scenario-risk-meter {
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(90deg, 
+    var(--data-positive) 0%, 
+    var(--data-neutral) 50%, 
+    var(--data-negative) 100%);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.risk-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 30px;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  transition: left 0.3s ease;
+}
+
+/* === GOAL TRACKING VISUAL === */
+.goal-progress-ring {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.goal-progress-ring svg {
+  transform: rotate(-90deg);
+}
+
+.goal-progress-ring .progress-circle {
+  fill: none;
+  stroke: var(--data-positive);
+  stroke-width: 8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px var(--data-positive));
+  animation: progressGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes progressGlow {
+  0% { filter: drop-shadow(0 0 8px var(--data-positive)); }
+  100% { filter: drop-shadow(0 0 16px var(--data-positive)); }
+}
+
+/* === RESPONSIVE ENHANCEMENTS === */
+@media (max-width: 768px) {
+  .data-metric--large {
+    font-size: 1.8em;
+  }
+  
+  .bot-status-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hud-panel {
+    padding: 1rem;
+  }
+}
