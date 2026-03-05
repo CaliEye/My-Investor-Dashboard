@@ -4,9 +4,9 @@
 ```
 [ ] PHASE 1: Hardware Foundation (2-4h)
 [ ] PHASE 2: Mira AI Glasses (1-2h) 
-[ ] PHASE 3: Investment Dashboard (3-4h)
+[ ] PHASE 3: Dashboard + TradingView (4-6h)
 [ ] PHASE 4: Mindmap & Portfolio (2-3h)
-[ ] PHASE 5: AI Bot Deployment (4-6h)
+[ ] PHASE 5: AI Tools + Bot Deployment (6-8h)
 [ ] PHASE 6: Revenue Generation (Ongoing)
 ```
 
@@ -27,19 +27,21 @@
 ### Phase Completion Gates:
 - **Phase 1:** "A9 computer fully operational and networked?"
 - **Phase 2:** "Mira glasses showing fortress dashboard?"
-- **Phase 3:** "All API keys working, 95%+ data reliability?"
+- **Phase 3:** "All API keys working, TradingView alerts flowing, 95%+ data reliability?"
 - **Phase 4:** "All accounts connected and updating real-time?"
-- **Phase 5:** "First bot deployed and profitable?"
+- **Phase 5:** "AI tools integrated, first bot deployed and profitable?"
 - **Phase 6:** "Consistent daily revenue achieved?"
 
 ## 🎯 SUCCESS METRICS WATCH
 
 | Metric | Target | Alert If |
 |--------|--------|----------|
-| Setup Time | 12-19 hours | >24 hours |
+| Setup Time | 15-25 hours | >30 hours |
 | System Uptime | 99.9% | <99% |
 | Data Reliability | 95%+ | <90% |
-| First Profit | Day 7 | Day 10+ |
+| TradingView Alerts | 100% delivery | <95% |
+| AI Tool Response | <5 sec | >10 sec |
+| First Profit | Day 10 | Day 14+ |
 | Drawdown | <20% | >15% |
 
 ## 🛑 DRIFT BLOCKERS
@@ -60,7 +62,7 @@
 ```
 Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6
    ↓         ↓         ↓         ↓         ↓         ↓
-Hardware   Mira     Dashboard Portfolio  Bots    Revenue
+Hardware   Mira   Dashboard+TV Portfolio AI+Bots  Revenue
 ```
 
 **NO SKIPPING ALLOWED** - Each phase builds on the previous

@@ -75,7 +75,16 @@
 - [ ] **Data Validation** - Verify multi-source confluence is working
 - [ ] **Reliability Check** - Confirm 95%+ data source reliability
 
-### 3.3 Dashboard Deployment
+### 3.3 TradingView Integration & Alerts
+- [ ] **TradingView Account** - Verify premium TradingView subscription active
+- [ ] **Webhook Setup** - Configure TradingView webhooks to dashboard endpoint
+- [ ] **Alert Templates** - Create standard alert format for bot signals
+- [ ] **Pine Script Upload** - Deploy custom indicators (mycryptomasterbot.pine)
+- [ ] **Alert Testing** - Test alert flow from TradingView to dashboard
+- [ ] **Confluence Integration** - Link TradingView alerts to confluence scoring
+- [ ] **Dispatch Logic** - Configure alert dispatch thresholds and filtering
+
+### 3.4 Dashboard Deployment
 - [ ] **Local Server** - Set up local web server for dashboard access
 - [ ] **Security Config** - Configure HTTPS and access controls
 - [ ] **Mobile Access** - Set up mobile-responsive access from all devices
@@ -129,7 +138,18 @@
 - [ ] **Backtesting** - Run comprehensive backtests on recommended strategies
 - [ ] **Correlation Analysis** - Ensure bot strategies are uncorrelated
 
-### 5.3 Bot Deployment Sequence
+### 5.3 AI Tools Integration & Configuration
+- [ ] **ChatGPT API** - Configure GPT-4 API for market analysis and regime detection
+- [ ] **Claude/Anthropic** - Set up Claude API for contrarian analysis and risk assessment
+- [ ] **Grok Integration** - Configure Grok API for real-time sentiment and news analysis
+- [ ] **Perplexity Setup** - Connect Perplexity for research and market intelligence
+- [ ] **AI Workflow Automation** - Set up AI analysis pipeline for morning briefings
+- [ ] **Custom Prompts** - Create standardized prompts for trading decision support
+- [ ] **AI Confluence Scoring** - Integrate AI insights into confluence calculation
+- [ ] **Lindy AI Training** - Upload trading rules and risk parameters to Lindy
+- [ ] **Voice Commands** - Configure AI voice commands for Mira glasses integration
+
+### 5.4 Bot Deployment Sequence
 - [ ] **Conservative Start** - Deploy 1st bot with minimal capital (Gold/Defense)
 - [ ] **Monitor Phase** - 24-48 hour observation period with manual oversight
 - [ ] **Scale Decision** - AI analysis of initial performance metrics
@@ -196,31 +216,37 @@
 |-------|----------|--------------|------------------|
 | **Phase 1** | 2-4 hours | None | A9 operational, network configured |
 | **Phase 2** | 1-2 hours | Phase 1 complete | Mira glasses integrated |
-| **Phase 3** | 3-4 hours | Phases 1-2 complete | Fortress dashboard operational |
+| **Phase 3** | 4-6 hours | Phases 1-2 complete | Dashboard + TradingView operational |
 | **Phase 4** | 2-3 hours | Phase 3 complete | All accounts connected |
-| **Phase 5** | 4-6 hours | Phase 4 complete | Bots deployed and profitable |
+| **Phase 5** | 6-8 hours | Phase 4 complete | AI tools + bots deployed |
 | **Phase 6** | Ongoing | Phase 5 complete | Consistent revenue generation |
 
-**TOTAL SETUP TIME:** 12-19 hours over 2-3 days  
-**REVENUE TARGET:** Positive cash flow by day 7
+**TOTAL SETUP TIME:** 15-25 hours over 3-4 days  
+**REVENUE TARGET:** Positive cash flow by day 10
 
 ---
 
 ## 📝 DAILY CHECKLIST (Post-Setup)
 
-### Morning Protocol (10 minutes)
+### Morning Protocol (15 minutes)
 - [ ] Check fortress system health (95%+ reliability required)
 - [ ] Review overnight bot performance and alerts
+- [ ] Process TradingView alerts and confluence scores
+- [ ] Run AI morning briefing (GPT-4 + Grok market analysis)
 - [ ] Analyze market regime changes via dashboard
 - [ ] Confirm all account connections active
 - [ ] Review risk exposure and position sizes
+- [ ] Check AI sentiment analysis for regime shifts
 
-### Evening Protocol (15 minutes)
+### Evening Protocol (20 minutes)
 - [ ] Review daily P&L across all strategies
-- [ ] Update mindmaps with new market insights
+- [ ] Analyze TradingView alert performance and accuracy
+- [ ] Update mindmaps with AI-generated insights
+- [ ] Review AI tools performance and accuracy
 - [ ] Check for system updates or security alerts
 - [ ] Backup critical data and configurations
-- [ ] Plan next day's market analysis priorities
+- [ ] Set up AI analysis for next day's markets
+- [ ] Plan next day's TradingView alert strategies
 
 ---
 
