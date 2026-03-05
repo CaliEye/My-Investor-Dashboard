@@ -141,6 +141,7 @@
 ### 5.3 AI Tools Integration & Configuration
 - [ ] **ChatGPT API** - Configure GPT-4 API for market analysis and regime detection
 - [ ] **Claude/Anthropic** - Set up Claude API for contrarian analysis and risk assessment
+- [ ] **Claude Code Integration** - Configure Claude for coding assistance, algorithm development, and debugging
 - [ ] **Grok Integration** - Configure Grok API for real-time sentiment and news analysis
 - [ ] **Perplexity Setup** - Connect Perplexity for research and market intelligence
 - [ ] **AI Workflow Automation** - Set up AI analysis pipeline for morning briefings
@@ -148,6 +149,7 @@
 - [ ] **AI Confluence Scoring** - Integrate AI insights into confluence calculation
 - [ ] **Lindy AI Training** - Upload trading rules and risk parameters to Lindy
 - [ ] **Voice Commands** - Configure AI voice commands for Mira glasses integration
+- [ ] **Claude Code Workspace** - Set up Claude for Pine Script optimization and bot algorithm enhancement
 
 ### 5.4 Bot Deployment Sequence
 - [ ] **Conservative Start** - Deploy 1st bot with minimal capital (Gold/Defense)
@@ -243,6 +245,7 @@
 - [ ] Analyze TradingView alert performance and accuracy
 - [ ] Update mindmaps with AI-generated insights
 - [ ] Review AI tools performance and accuracy
+- [ ] Use Claude Code to review and optimize trading algorithms
 - [ ] Check for system updates or security alerts
 - [ ] Backup critical data and configurations
 - [ ] Set up AI analysis for next day's markets
