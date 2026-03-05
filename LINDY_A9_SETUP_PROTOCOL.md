@@ -104,14 +104,25 @@
 - [ ] **Cross-Reference** - Link mindmaps to dashboard data sources
 - [ ] **Update Automation** - Configure real-time mindmap updates
 
-### 4.2 Portfolio Account Connections
+### 4.2 AI Agents & Computer Brains Integration
+- [ ] **AI Agent Taxonomy** - Create mindmap sections for different AI agent types
+- [ ] **Agent Capabilities Matrix** - Map AI agents to specific trading functions
+- [ ] **Brain Architecture** - Design computer brain hierarchy and decision flows
+- [ ] **Agent Interaction Protocols** - Define how AI agents communicate and collaborate
+- [ ] **Memory Systems** - Set up persistent memory for AI agents and learning
+- [ ] **Decision Trees** - Create mindmaps for AI-driven trading decision processes
+- [ ] **Agent Performance Tracking** - Map KPIs and success metrics for each AI agent
+- [ ] **Failure Recovery** - Document failover procedures and backup decision systems
+- [ ] **Learning Loops** - Configure continuous improvement cycles for AI agents
+
+### 4.3 Portfolio Account Connections
 - [ ] **Brokerage APIs** - Connect to primary trading accounts (list all)
 - [ ] **Bank Integrations** - Link checking/savings accounts via Plaid/Yodlee
 - [ ] **Crypto Exchanges** - Connect to Coinbase, Binance, etc.
 - [ ] **Alternative Assets** - Connect precious metals, real estate accounts
 - [ ] **Credit Monitoring** - Link credit cards and monitoring services
 
-### 4.3 Portfolio Visualization
+### 4.4 Portfolio Visualization
 - [ ] **Real-Time Sync** - Verify all accounts updating in real-time
 - [ ] **Performance Tracking** - Set up P&L calculations and attribution
 - [ ] **Risk Monitoring** - Configure position size and risk alerts
@@ -244,6 +255,7 @@
 - [ ] Review daily P&L across all strategies
 - [ ] Analyze TradingView alert performance and accuracy
 - [ ] Update mindmaps with AI-generated insights
+- [ ] Update AI agents and computer brains performance in mindmaps
 - [ ] Review AI tools performance and accuracy
 - [ ] Use Claude Code to review and optimize trading algorithms
 - [ ] Check for system updates or security alerts
