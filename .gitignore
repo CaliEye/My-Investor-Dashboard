@@ -51,6 +51,7 @@ build/
 # Reports and Data
 *.csv
 *.txt
+data/threat_intelligence.db
 
 # Alpha Vantage API Key (if stored in a file)
 alpha_vantage_key.txt
