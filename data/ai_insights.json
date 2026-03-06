@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-03-06T06:47:42.157418+00:00",
+  "updated_utc": "2026-03-06T07:05:56.533592+00:00",
   "regime": "Bearish Downturn",
   "top_triggers": [
     "Fed tightening schedule",
@@ -316,7 +316,7 @@
   "guard_refresh": {
     "core_ai_preserved": true,
     "reason": "low_quality_api_output_blocked",
-    "core_snapshot_preserved_at": "2026-03-06T06:20:50.424852+00:00"
+    "core_snapshot_preserved_at": "2026-03-06T06:47:42.157418+00:00"
   },
   "market_business_cycle_intelligence": {
     "cycle_layers": {
@@ -333,7 +333,7 @@
       "Sentiment extremes versus price structure"
     ],
     "cross_cycle_pressure": {
-      "dxy": 99.1,
+      "dxy": 99.0,
       "macro_risk": 72.0,
       "fear_greed": 28.0
     }
@@ -384,7 +384,7 @@
       "policy_rate": "5.25%",
       "inflation": "2.8%",
       "labor": "3.8%",
-      "dollar": "99.1",
+      "dollar": "99.0",
       "long_rate": "4.15%"
     },
     "micro_factors": {

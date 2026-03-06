@@ -250,10 +250,18 @@ def main() -> int:
         summary = ai_health.get("summary", {}) if isinstance(ai_health.get("summary"), dict) else {}
         providers_ok = int(summary.get("providers_ok", 0) or 0)
         providers_total = int(summary.get("providers_total", 0) or 0)
+        providers_configured = int(summary.get("providers_configured", 0) or 0)
+        providers_healthy_configured = int(summary.get("providers_healthy_configured", 0) or 0)
         core_ready = bool(summary.get("core_ready", False))
         notes.append(f"ai_connectivity={providers_ok}/{providers_total} providers healthy")
+        notes.append(
+            f"ai_goal_gate={providers_healthy_configured}/{providers_configured} configured healthy"
+        )
+        goal_ready = bool(summary.get("goal_aligned_ready", core_ready))
         if not core_ready:
             failures.append("AI confluence core providers unavailable")
+        elif not goal_ready:
+            failures.append("AI confluence resilience gate failed (configured providers unhealthy)")
 
     data = load_json(DATA_FILE)
     ai = load_json(AI_FILE)

@@ -1,6 +1,22 @@
 {
-  "updated_utc": "2026-03-06T06:47:42.187153+00:00",
+  "updated_utc": "2026-03-06T07:06:57.063584+00:00",
   "events": [
+    {
+      "created_utc": "2026-03-06T07:06:57.063062+00:00",
+      "status": "dispatch_unavailable",
+      "event_type": "MORNING_BRIEF",
+      "dispatch": {
+        "channel": "webhook",
+        "delivered": false,
+        "detail": "missing LINDY_WEBHOOK_URL/ENDGAME_ALERT_WEBHOOK_URL"
+      }
+    },
+    {
+      "created_utc": "2026-03-06T07:05:56.546208+00:00",
+      "status": "noop",
+      "reason": "No threshold/tier2 dispatch condition",
+      "source_updated_utc": "2026-03-06T07:05:56.541578+00:00"
+    },
     {
       "created_utc": "2026-03-06T06:47:42.186834+00:00",
       "status": "noop",

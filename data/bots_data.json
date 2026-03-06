@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-03-06T06:47:42.167119+00:00",
+  "updated_at": "2026-03-06T07:05:56.538617+00:00",
   "bots": [
     {
       "name": "Pionex Gold Grid Bot",
       "exchange": "Pionex",
       "strategy": "Gold ETF / XAU Trend-Grid",
       "status": "ACTIVE",
-      "weekly_pnl_pct": 13.36,
-      "weekly_pnl_usd": 1025.54,
+      "weekly_pnl_pct": 13.81,
+      "weekly_pnl_usd": 1060.08,
       "max_drawdown_pct": 0.5,
       "win_rate_pct": 63,
       "confluence_score": 7,
@@ -18,9 +18,9 @@
       "exchange": "Bybit",
       "strategy": "Regime + Momentum Filter",
       "status": "ACTIVE",
-      "weekly_pnl_pct": -0.79,
-      "weekly_pnl_usd": -7.9,
-      "max_drawdown_pct": 8.06,
+      "weekly_pnl_pct": -0.93,
+      "weekly_pnl_usd": -9.3,
+      "max_drawdown_pct": 8.24,
       "win_rate_pct": 57,
       "confluence_score": 7,
       "notes": "Performance improves when macro liquidity and breadth confirm risk-on."
@@ -30,8 +30,8 @@
       "exchange": "Broker API",
       "strategy": "LMT/RTX/NOC Relative Strength",
       "status": "PAPER",
-      "weekly_pnl_pct": 11.86,
-      "weekly_pnl_usd": 590.35,
+      "weekly_pnl_pct": 12.31,
+      "weekly_pnl_usd": 612.75,
       "max_drawdown_pct": 0.5,
       "win_rate_pct": 61,
       "confluence_score": 7,
@@ -72,6 +72,11 @@
     {
       "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
+      "summary": "Macro risk 72, crypto risk 78, basket move -1.41% processed."
+    },
+    {
+      "name": "Cross-Asset Confluence Drift Check",
+      "result": "PASS",
       "summary": "Macro risk 72, crypto risk 78, basket move -1.76% processed."
     },
     {
@@ -93,11 +98,6 @@
       "name": "Cross-Asset Confluence Drift Check",
       "result": "PASS",
       "summary": "Macro risk 72, crypto risk 78, basket move -1.43% processed."
-    },
-    {
-      "name": "Cross-Asset Confluence Drift Check",
-      "result": "PASS",
-      "summary": "Macro risk 72, crypto risk 78, basket move 0.82% processed."
     },
     {
       "name": "Cross-Asset Confluence Drift Check",

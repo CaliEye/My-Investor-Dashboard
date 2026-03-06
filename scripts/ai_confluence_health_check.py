@@ -179,14 +179,25 @@ def main() -> int:
 
     providers_ok = len([item for item in checks if item.get("ok")])
     providers_total = len(checks)
+    providers_configured = len([item for item in checks if item.get("status") not in {"missing_key"}])
+    providers_healthy_configured = len(
+        [item for item in checks if item.get("status") not in {"missing_key"} and item.get("ok")]
+    )
+    recommended_min_healthy = 2 if providers_configured >= 2 else 1
+    goal_aligned_ready = providers_healthy_configured >= recommended_min_healthy
 
     report = {
         "checked_at_utc": utc_now(),
         "summary": {
             "providers_ok": providers_ok,
             "providers_total": providers_total,
+            "providers_configured": providers_configured,
+            "providers_healthy_configured": providers_healthy_configured,
             "core_ready": core_ready,
             "core_policy": "At least one core provider (OpenAI, XAI, Yahoo) must be available",
+            "goal_aligned_ready": goal_aligned_ready,
+            "recommended_min_healthy": recommended_min_healthy,
+            "goal_policy": "If 2+ providers are configured, require at least 2 healthy for resilient confluence",
         },
         "providers": checks,
     }
@@ -198,14 +209,18 @@ def main() -> int:
     with MD_REPORT.open("a", encoding="utf-8") as fh:
         fh.write(f"\n## {report['checked_at_utc']}\n")
         fh.write(f"- Providers healthy: {providers_ok}/{providers_total}\n")
+        fh.write(f"- Configured healthy: {providers_healthy_configured}/{providers_configured}\n")
         fh.write(f"- Core readiness: {'PASS' if core_ready else 'FAIL'}\n")
+        fh.write(f"- Goal-aligned readiness: {'PASS' if goal_aligned_ready else 'FAIL'}\n")
         for item in checks:
             status = "PASS" if item.get("ok") else "FAIL"
             fh.write(f"- [{status}] {item.get('provider')}: {item.get('detail')}\n")
 
     print("AI Confluence Health Check")
     print(f"Providers healthy: {providers_ok}/{providers_total}")
+    print(f"Configured healthy: {providers_healthy_configured}/{providers_configured}")
     print(f"Core readiness: {'PASS' if core_ready else 'FAIL'}")
+    print(f"Goal-aligned readiness: {'PASS' if goal_aligned_ready else 'FAIL'}")
     for item in checks:
         status = "PASS" if item.get("ok") else "FAIL"
         print(f"[{status}] {item.get('provider')}: {item.get('detail')}")
