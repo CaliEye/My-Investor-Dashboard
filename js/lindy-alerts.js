@@ -1,305 +1,209 @@
-// ============================================================
-// Lindy Alert Watcher — CaliEye Investor Dashboard
-// v2.0 — Full pipeline integration
-//
-// What this does:
-//   1. Watches dashboard confluence score (MutationObserver)
-//   2. Ingests signals into SignalTally (72hr rolling window)
-//   3. Cross-references tally against decision gate before alerting
-//   4. Tier 2 black swan → fires webhook AND patches data.json via GitHub API
-//   5. Confluence threshold (score ≥3 from 2+ asset classes) → SMS via webhook
-//
-// SECURITY: Webhook URL loaded from config/lindy_config.json (gitignored)
-// GitHub token for data.json patching loaded from same config file.
-// Format: { "webhook_url": "...", "github_token": "...", "github_repo": "CaliEye/My-Investor-Dashboard" }
-// ============================================================
+/**
+* lindy-alerts.js v2.0
+* Intercepts TradingView signals, routes through SignalTally,
+* cross-references Decision Gate, fires webhook on confluence.
+* Patches data/data.json via GitHub API on Tier 2 black swan events.
+*/
 
-// ── Config ─────────────────────────────────────────────────
-let LINDY_WEBHOOK_URL  = null;
-let GITHUB_TOKEN       = null;
-let GITHUB_REPO        = 'CaliEye/My-Investor-Dashboard';
-let GITHUB_DATA_PATH   = 'data.json';
+(function () {
+ 'use strict';
 
-const ALERT_COOLDOWN_MS     = 5 * 60 * 1000;   // 5 min between standard alerts
-const TIER2_COOLDOWN_MS     = 60 * 60 * 1000;  // 1 hr between Tier 2 patches
-let lastAlertTime           = 0;
-let lastTier2PatchTime      = 0;
-let decisionGateCache       = null;
+ // ── CONFIG ──────────────────────────────────────────────────────────────────
+ const GITHUB_OWNER      = 'CaliEye';
+ const GITHUB_REPO       = 'My-Investor-Dashboard';
+ const GITHUB_DATA_PATH  = 'data/data.json';          // ← FIXED PATH
+ const LINDY_WEBHOOK     = 'https://public.lindy.ai/api/v1/webhooks/lindy/8b5fef48-2992-4ab8-b904-b16a9ca690b9';
 
-// ── Load Config ────────────────────────────────────────────
-async function loadLindyConfig() {
-try {
-  const res = await fetch('config/lindy_config.json');
-  if (res.ok) {
-    const cfg = await res.json();
-    LINDY_WEBHOOK_URL = cfg.webhook_url  || null;
-    GITHUB_TOKEN      = cfg.github_token || null;
-    GITHUB_REPO       = cfg.github_repo  || GITHUB_REPO;
-  }
-} catch (_) {
-  console.warn('[Lindy] Config not found — alerts and patching disabled.');
-}
-}
+ // Load PAT from config (injected at build time or via window.LINDY_CONFIG)
+ const GITHUB_TOKEN = (window.LINDY_CONFIG && window.LINDY_CONFIG.github_pat) || '';
 
-// ── Load Decision Gate from data.json ─────────────────────
-async function loadDecisionGate() {
-try {
-  const res = await fetch('data.json?t=' + Date.now());
-  if (res.ok) {
-    const data = await res.json();
-    decisionGateCache = data.decision_gate || data || null;
-    console.log('[Lindy] Decision gate loaded — regime:', decisionGateCache?.regime?.label || 'unknown');
-  }
-} catch (e) {
-  console.warn('[Lindy] Could not load decision gate:', e.message);
-}
-return decisionGateCache;
-}
+ // ── TIER DEFINITIONS ────────────────────────────────────────────────────────
+ const TIER2_KEYWORDS = [
+   'BTC >20%', 'unemployment >7%', 'emergency rate', 'DXY >108', 'DXY <98',
+   'gold >6000', 'S&P -5%', '10Y >5.5%', '10Y <3%', 'VIX >45',
+   'circuit breaker', 'bear market'
+ ];
 
-// ── Patch data.json via GitHub API (Tier 2 only) ──────────
-async function patchDataJson(tier2Label, direction, score) {
-if (!GITHUB_TOKEN) {
-  console.warn('[Lindy] No GitHub token — cannot patch data.json');
-  return false;
-}
+ // ── DECISION GATE CROSS-REFERENCE ───────────────────────────────────────────
+ async function crossRef(signal) {
+   try {
+     const res = await fetch(
+       `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/${GITHUB_DATA_PATH}`,
+       { cache: 'no-store' }
+     );
+     if (!res.ok) { console.warn('[LindyAlerts] crossRef fetch failed:', res.status); return true; }
+     const data = await res.json();
+     const gate = data.decision_gate || {};
+     // If gate says hold, suppress non-Tier2 alerts
+     if (gate.status === 'HOLD' && !signal.tier2) {
+       console.log('[LindyAlerts] Decision gate HOLD — suppressing Tier1 alert');
+       return false;
+     }
+     return true;
+   } catch (e) {
+     console.warn('[LindyAlerts] crossRef error:', e);
+     return true; // fail open
+   }
+ }
 
-const now = Date.now();
-if (now - lastTier2PatchTime < TIER2_COOLDOWN_MS) {
-  console.log('[Lindy] Tier 2 patch cooldown active — skipping.');
-  return false;
-}
+ // ── GITHUB DATA PATCH (Tier 2 only) ─────────────────────────────────────────
+ async function patchDataJson(signal) {
+   if (!GITHUB_TOKEN) { console.warn('[LindyAlerts] No GitHub PAT — skipping data patch'); return; }
+   try {
+     // 1. Get current SHA
+     const getRes = await fetch(
+       `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`,
+       { headers: { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' } }
+     );
+     if (!getRes.ok) { console.error('[LindyAlerts] SHA fetch failed:', getRes.status); return; }
+     const fileData = await getRes.json();
+     const sha = fileData.sha;
+     const current = JSON.parse(atob(fileData.content.replace(/\n/g, '')));
 
-try {
-  // 1. Get current file SHA
-  const metaRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`,
-    { headers: { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' } }
-  );
-  if (!metaRes.ok) throw new Error('Could not fetch data.json metadata');
-  const meta = await metaRes.json();
-  const currentSha = meta.sha;
+     // 2. Inject black swan event
+     if (!current.black_swan_events) current.black_swan_events = [];
+     current.black_swan_events.unshift({
+       timestamp: new Date().toISOString(),
+       asset: signal.asset,
+       signal: signal.signal,
+       direction: signal.direction,
+       score: signal.score
+     });
+     // Keep last 20
+     current.black_swan_events = current.black_swan_events.slice(0, 20);
 
-  // 2. Decode current content
-  const currentContent = JSON.parse(atob(meta.content.replace(/\n/g, '')));
+     // 3. Update decision gate
+     current.decision_gate = {
+       status: signal.direction === 'BEAR' ? 'HOLD' : 'ACTIVE',
+       last_updated: new Date().toISOString(),
+       trigger: signal.signal
+     };
 
-  // 3. Patch the decision_gate block
-  const timestamp = new Date().toISOString();
-  if (!currentContent.decision_gate) currentContent.decision_gate = {};
-  if (!currentContent.decision_gate.tier2_events) currentContent.decision_gate.tier2_events = [];
+     // 4. PUT back
+     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2))));
+     const putRes = await fetch(
+       `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`,
+       {
+         method: 'PUT',
+         headers: {
+           Authorization: `token ${GITHUB_TOKEN}`,
+           Accept: 'application/vnd.github.v3+json',
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({
+           message: `[Lindy] Black Swan: ${signal.asset} ${signal.signal}`,
+           content: encoded,
+           sha: sha
+         })
+       }
+     );
+     if (putRes.ok) {
+       console.log('[LindyAlerts] data/data.json patched successfully');
+     } else {
+       const err = await putRes.json();
+       console.error('[LindyAlerts] PUT failed:', putRes.status, err);
+     }
+   } catch (e) {
+     console.error('[LindyAlerts] patchDataJson error:', e);
+   }
+ }
 
-  currentContent.decision_gate.tier2_events.unshift({
-    timestamp,
-    label: tier2Label,
-    direction,
-    confluence_score: score,
-    auto_patched: true,
-  });
+ // ── WEBHOOK FIRE ────────────────────────────────────────────────────────────
+ async function fireWebhook(signal, score, level) {
+   const payload = {
+     source: 'lindy-alerts-dashboard',
+     timestamp: new Date().toISOString(),
+     asset: signal.asset,
+     signal: signal.signal,
+     direction: signal.direction,
+     score: score,
+     alert_level: level,
+     tier2: signal.tier2 || false
+   };
+   try {
+     await fetch(LINDY_WEBHOOK, {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify(payload)
+     });
+     console.log('[LindyAlerts] Webhook fired:', level, signal.asset);
+   } catch (e) {
+     console.error('[LindyAlerts] Webhook error:', e);
+   }
+ }
 
-  // Keep only last 10 Tier 2 events
-  currentContent.decision_gate.tier2_events = currentContent.decision_gate.tier2_events.slice(0, 10);
+ // ── SIGNAL INGESTION ─────────────────────────────────────────────────────────
+ async function ingestSignal(raw) {
+   const text = raw.toLowerCase();
 
-  // Update regime alert flag
-  currentContent.decision_gate.last_tier2_alert = timestamp;
-  currentContent.decision_gate.tier2_active = true;
+   // Detect Tier 2
+   const isTier2 = TIER2_KEYWORDS.some(kw => text.includes(kw.toLowerCase()));
 
-  // 4. Encode and push
-  const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(currentContent, null, 2))));
-  const pushRes = await fetch(
-    `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_DATA_PATH}`,
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `auto: Tier 2 black swan — ${tier2Label} [${timestamp}]`,
-        content: newContent,
-        sha: currentSha,
-      }),
-    }
-  );
+   const signal = {
+     asset: extractAsset(raw),
+     signal: raw,
+     direction: text.includes('bear') || text.includes('short') || text.includes('sell') ? 'BEAR' : 'BULL',
+     tier2: isTier2,
+     score: isTier2 ? 10 : 1
+   };
 
-  if (pushRes.ok) {
-    lastTier2PatchTime = now;
-    console.log('[Lindy] data.json patched — Tier 2 event recorded:', tier2Label);
-    return true;
-  } else {
-    const err = await pushRes.json();
-    console.error('[Lindy] GitHub push failed:', err.message);
-    return false;
-  }
-} catch (e) {
-  console.error('[Lindy] patchDataJson error:', e.message);
-  return false;
-}
-}
+   console.log('[LindyAlerts] Signal ingested:', signal);
 
-// ── Fire Webhook (SMS via Lindy) ───────────────────────────
-function fireWebhook(payload) {
-if (!LINDY_WEBHOOK_URL) {
-  console.warn('[Lindy] Webhook URL not configured — skipping.');
-  return;
-}
-fetch(LINDY_WEBHOOK_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(payload),
-})
-  .then(res => console.log('[Lindy] Webhook fired — status:', res.status))
-  .catch(err => console.error('[Lindy] Webhook failed:', err));
-}
+   // Tier 2 — bypass everything, fire immediately
+   if (isTier2) {
+     console.warn('[LindyAlerts] TIER 2 BLACK SWAN — bypassing all filters');
+     await patchDataJson(signal);
+     await fireWebhook(signal, 10, 'TIER2_BLACK_SWAN');
+     return;
+   }
 
-// ── Main Alert Logic ───────────────────────────────────────
-async function checkAndFireAlert(score, asset, signal, timeframe, notes, signalObj) {
-const now = Date.now();
+   // Tier 1 — run through tally + decision gate
+   if (window.SignalTally) {
+     const result = window.SignalTally.ingest(signal);
+     const score = result.score;
+     const allowed = await crossRef(signal);
 
-// Build signal object for tally ingestion
-const ingestObj = signalObj || {
-  asset: asset || 'DASHBOARD',
-  direction: notes && notes.includes('BULL') ? 'BULL' : notes && notes.includes('BEAR') ? 'BEAR' : 'UNKNOWN',
-  source: 'dashboard_observer',
-};
+     if (!allowed) return;
 
-// Ingest into tally engine
-let tally = null;
-if (window.SignalTally) {
-  tally = window.SignalTally.ingest(ingestObj);
-  if (!tally) tally = window.SignalTally.load();
-}
+     if (score >= 7) {
+       await fireWebhook(signal, score, 'PRE_CRISIS');
+     } else if (score >= 5) {
+       await fireWebhook(signal, score, 'ELEVATED_CONFLUENCE');
+     } else if (score >= 3) {
+       await fireWebhook(signal, score, 'CONFLUENCE');
+     } else {
+       console.log(`[LindyAlerts] Score ${score}/10 — below threshold, watching`);
+     }
+   }
+ }
 
-const tallyScore = tally ? tally.score : parseInt(score, 10);
-const tier2Fired = tally ? tally.tier2_fired : false;
+ // ── ASSET EXTRACTOR ──────────────────────────────────────────────────────────
+ function extractAsset(text) {
+   const assets = ['BTC', 'ETH', 'Gold', 'XAUUSD', 'SPY', 'QQQ', 'DXY', 'XLE', 'VIX', 'HYG', 'TLT', 'GLD', 'SLV'];
+   for (const a of assets) {
+     if (text.toUpperCase().includes(a.toUpperCase())) return a;
+   }
+   return 'UNKNOWN';
+ }
 
-// ── Tier 2: Immediate bypass — no cross-ref needed ────────
-if (tier2Fired) {
-  const tier2Signal = tally.signals.find(s => s.tier === 2);
-  const alertText = window.SignalTally
-    ? window.SignalTally.buildAlert(tally)
-    : `TIER 2 BLACK SWAN: ${asset} — ${signal}`;
+ // ── MUTATION OBSERVER (watches dashboard for new signal elements) ─────────────
+ const observer = new MutationObserver((mutations) => {
+   for (const mutation of mutations) {
+     for (const node of mutation.addedNodes) {
+       if (node.nodeType === 1) {
+         const text = node.textContent || '';
+         if (text.includes('TIER1') || text.includes('TIER2')) {
+           ingestSignal(text.trim());
+         }
+       }
+     }
+   }
+ });
 
-  console.log('[Lindy] TIER 2 BLACK SWAN — bypassing cross-ref, firing immediately');
+ observer.observe(document.body, { childList: true, subtree: true });
 
-  // Fire SMS webhook
-  fireWebhook({
-    tier: 2,
-    asset: asset || 'DASHBOARD',
-    signal: tier2Signal ? tier2Signal.label : signal,
-    confluence_score: tallyScore,
-    direction: ingestObj.direction,
-    alert_text: alertText,
-    timestamp: new Date().toISOString(),
-    notes: 'TIER 2 BLACK SWAN — immediate bypass',
-  });
+ // ── EXPOSE FOR MANUAL TESTING ────────────────────────────────────────────────
+ window.LindyAlerts = { ingestSignal, patchDataJson, fireWebhook, crossRef };
 
-  // Patch data.json
-  await patchDataJson(
-    tier2Signal ? tier2Signal.label : signal,
-    ingestObj.direction,
-    tallyScore
-  );
-
-  return;
-}
-
-// ── Tier 1: Cross-reference decision gate before alerting ─
-if (tallyScore < 3) {
-  console.log('[Lindy] Score below threshold (' + tallyScore + '/10) — watching.');
-  return;
-}
-
-if (now - lastAlertTime < ALERT_COOLDOWN_MS) {
-  console.log('[Lindy] Cooldown active — skipping alert.');
-  return;
-}
-
-// Load decision gate if not cached
-if (!decisionGateCache) await loadDecisionGate();
-
-// Cross-reference: both must agree
-const gateAgrees = window.SignalTally
-  ? window.SignalTally.crossRef(tally, decisionGateCache)
-  : true; // fallback: fire if no tally engine
-
-if (!gateAgrees) {
-  console.log('[Lindy] Decision gate disagrees with tally direction — holding alert. Score:', tallyScore);
-  return;
-}
-
-// Both agree — fire confluence alert
-lastAlertTime = now;
-const alertText = window.SignalTally
-  ? window.SignalTally.buildAlert(tally)
-  : `CONFLUENCE ALERT — Score: ${tallyScore}/10 | ${asset}: ${signal}`;
-
-console.log('[Lindy] Confluence confirmed — firing alert. Score:', tallyScore);
-
-fireWebhook({
-  tier: 1,
-  asset: asset || 'DASHBOARD',
-  signal: signal || 'confluence',
-  confluence_score: tallyScore,
-  direction: ingestObj.direction,
-  alert_text: alertText,
-  timestamp: new Date().toISOString(),
-  notes: notes || `Confluence score ${tallyScore}/10 — decision gate confirmed`,
-});
-}
-
-// ── MutationObserver — watches confluence score element ────
-function startLindyWatcher() {
-const selectors = [
-  '#confluence-score', '.confluence-score',
-  '[data-metric="confluence"]',
-  '#ai-confidence', '.ai-confidence',
-  '#score-value', '.score-value',
-];
-
-let targetEl = null;
-for (const sel of selectors) {
-  targetEl = document.querySelector(sel);
-  if (targetEl) { console.log('[Lindy] Watching element:', sel); break; }
-}
-
-if (!targetEl) {
-  console.warn('[Lindy] Score element not found — retrying in 3s...');
-  setTimeout(startLindyWatcher, 3000);
-  return;
-}
-
-const observer = new MutationObserver(() => {
-  const raw   = targetEl.textContent.trim().replace(/[^0-9.]/g, '');
-  const score = parseFloat(raw);
-  if (!isNaN(score)) {
-    checkAndFireAlert(score, 'DASHBOARD', 'confluence', 'multi', null, null);
-  }
-});
-
-observer.observe(targetEl, { childList: true, subtree: true, characterData: true });
-console.log('[Lindy] Watcher active — monitoring for confluence threshold');
-}
-
-// ── Init ───────────────────────────────────────────────────
-async function init() {
-await loadLindyConfig();
-await loadDecisionGate();
-startLindyWatcher();
-console.log('[Lindy] v2.0 initialized — tally + cross-ref + Tier2 patch active');
-}
-
-if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', init);
-} else {
-init();
-}
-
-// ── Public API ─────────────────────────────────────────────
-// Call this from any page to manually inject a TradingView signal:
-// LindyAlerts.injectSignal({ asset: 'GOLD', value: 3200, key_level_break: true, volume_confirmed: true, direction: 'BULL' })
-window.LindyAlerts = {
-injectSignal: (signalObj) => checkAndFireAlert(0, signalObj.asset, signalObj.label || '', 'manual', null, signalObj),
-loadGate:     loadDecisionGate,
-patchData:    patchDataJson,
-fireWebhook:  fireWebhook,
-};
+ console.log('[LindyAlerts v2.0] Loaded — watching for signals. Path: data/data.json');
+})();
