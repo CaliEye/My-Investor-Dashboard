@@ -1277,7 +1277,8 @@
         latestMarketData = d;
         systemHealth.dataConnection = true;
         systemHealth.lastUpdate = d.updated_utc;
-        
+        checkDataFreshness(d.updated_utc);
+
         const fmt = (x) => (x === null || x === undefined) ? "—" : x;
 
         // Market overview metrics

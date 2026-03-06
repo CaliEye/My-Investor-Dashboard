@@ -1,5 +1,5 @@
 {
-  "webhook_url": "https://public.lindy.ai/api/v1/webhooks/lindy/8b5fef48-2992-4ab8-b904-b16a9ca690b9",
+  "webhook_url": "YOUR_LINDY_WEBHOOK_URL_HERE",
   "github_token": "YOUR_GITHUB_PAT_HERE",
   "github_repo": "CaliEye/My-Investor-Dashboard"
 }

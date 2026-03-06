@@ -558,6 +558,19 @@ def main():
     data["decision_gate"] = build_decision_gate_payload(data, sector_etfs)
     data["data_stale"] = False  # Freshly written — cleared on every successful update
 
+    # Derive top-level bias from decision gate posture so it never stays stale
+    gate = data.get("decision_gate", {})
+    posture = gate.get("risk_posture", "")
+    if posture in ("DEFENSIVE", "WATCH-ONLY"):
+        data["bias"] = "Bearish"
+    elif posture == "RISK-ON":
+        data["bias"] = "Bullish"
+    else:
+        data["bias"] = "Neutral"
+
+    # Sync top-level triggers from live macro trigger_breakdown
+    data["triggers"] = data.get("macro", {}).get("trigger_breakdown", [])
+
     existing_data = read_existing_data()
     should_write, new_quality, existing_quality = should_write_market_payload(data, existing_data)
 

@@ -12,7 +12,8 @@
  const GITHUB_OWNER      = 'CaliEye';
  const GITHUB_REPO       = 'My-Investor-Dashboard';
  const GITHUB_DATA_PATH  = 'data/data.json';          // ← FIXED PATH
- const LINDY_WEBHOOK     = 'https://public.lindy.ai/api/v1/webhooks/lindy/8b5fef48-2992-4ab8-b904-b16a9ca690b9';
+ // Load webhook URL from local config (gitignored). Empty in production — prevents public spam.
+ const LINDY_WEBHOOK = (window.LINDY_CONFIG && window.LINDY_CONFIG.webhook_url) || '';
 
  // Load PAT from config (injected at build time or via window.LINDY_CONFIG)
  const GITHUB_TOKEN = (window.LINDY_CONFIG && window.LINDY_CONFIG.github_pat) || '';
@@ -120,6 +121,10 @@
      alert_level: level,
      tier2: signal.tier2 || false
    };
+   if (!LINDY_WEBHOOK) {
+     console.warn('[LindyAlerts] No webhook URL configured — alert suppressed. Add webhook_url to config/lindy_config.json');
+     return;
+   }
    try {
      await fetch(LINDY_WEBHOOK, {
        method: 'POST',
