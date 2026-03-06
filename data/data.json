@@ -1,20 +1,20 @@
 {
-  "updated_utc": "2026-03-06T07:05:49.449663+00:00",
+  "updated_utc": "2026-03-06T08:26:08.032620+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-06T11:05:49.449663+00:00",
+  "next_review_utc": "2026-03-06T12:26:08.032620+00:00",
   "crypto": {
-    "btc_usd": 70785.66,
-    "eth_usd": 2078.55,
-    "btc_price_formatted": "$70,786",
-    "eth_price_formatted": "$2,079",
+    "btc_usd": 70899.68,
+    "eth_usd": 2080.17,
+    "btc_price_formatted": "$70,900",
+    "eth_price_formatted": "$2,080",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
-    "cycle_status": "Post-halving correction — consolidating before Q4 2026 bull run window",
+    "cycle_status": "Post-halving correction \u2014 consolidating before Q4 2026 bull run window",
     "nvt_ratio": "Moderate",
     "whale_activity": "Distributing",
     "stablecoin_flows": "Outflow (selling pressure)",
@@ -38,7 +38,7 @@
       "Price Action: 37% below ATH - deep correction territory",
       "On-Chain: Whale distribution active, exchange inflows elevated",
       "Sentiment: Fear at 28/100, funding rates negative (shorts paying)",
-      "Cycle Position: Post-halving correction — Q4 2026 bull window target"
+      "Cycle Position: Post-halving correction \u2014 Q4 2026 bull window target"
     ]
   },
   "macro": {
@@ -49,7 +49,7 @@
     "gdp_growth": "2.1%",
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "4.25%",
-    "fed_rate_context": "Easing cycle (cut from 5.25% peak — still above neutral 2.5%)",
+    "fed_rate_context": "Easing cycle (cut from 5.25% peak \u2014 still above neutral 2.5%)",
     "dxy": "99.0",
     "dxy_context": "Contained (reduced dollar pressure)",
     "us10y_yield": "4.15%",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-06T07:05:53.742022+00:00",
+    "updated_utc": "2026-03-06T08:26:11.312900+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -178,7 +178,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-06T07:05:56.280920+00:00",
+    "updated_utc": "2026-03-06T08:26:13.421198+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
