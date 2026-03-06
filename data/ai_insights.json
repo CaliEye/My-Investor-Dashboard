@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-06T07:05:56.533592+00:00",
-  "regime": "Bearish Downturn",
+  "updated_utc": "2026-03-06T12:16:12.232169+00:00",
+  "regime": "Bear Market",
   "top_triggers": [
-    "Fed easing cycle underway — rate at 4.25% (cut from 5.25%), pace uncertain",
-    "DXY at 99.0 — reduced dollar pressure but fragile",
-    "Crypto market cap declining -35% from peak, whale distribution active"
+    "Fed tightening",
+    "DXY strength",
+    "Crypto market cap decline"
   ],
-  "invalidation": "BTC reclaims $85k resistance with volume and on-chain accumulation signals",
-  "contextual_guidance": "Current bearish regime with easing macro tailwinds not yet strong enough. No new crypto risk until Oct/Nov 2026 unless confluence gate flips. Monitor Fed easing pace and DXY for regime shift signals.",
-  "grok_counter": "The strongest counter-argument this week is the potential for a sudden institutional adoption spike, driven by unannounced ETF approvals or major corporate treasury allocations to BTC, which could catch the bearish crowd off guard. Fear at 28/100 with BTC at $70,900 historically precedes powerful recovery moves when macro headwinds ease.",
+  "invalidation": "BTC price recovery and stabilization",
+  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets or holding cash until market conditions improve. Monitor BTC price for potential recovery.",
+  "grok_counter": "The strongest counter-argument this week is the potential for a sudden bullish catalyst from institutional adoption, such as a major financial institution announcing Bitcoin integration or ETF approval progress. The crowd might be overlooking whispers of regulatory clarity or behind-the-scenes accumulation by whales, which could flip sentiment rapidly despite the current bearish consensus.",
   "confidence_score": 5,
-  "btc_price_snapshot": "$70,900",
-  "fear_greed_snapshot": 28,
+  "btc_price_snapshot": "N/A",
+  "fear_greed_snapshot": 50,
   "next_update": "6 hours",
   "confluence": {
     "score": 5,
@@ -39,10 +39,10 @@
     "note": "1B/1Be/1N sources"
   },
   "market_data": {
-    "btc_price": 70900,
+    "btc_price": 43200,
     "btc_change_5d": -2.1,
-    "spy_price": 626,
-    "spy_change_5d": -1.1,
+    "spy_price": 445,
+    "spy_change_5d": -1.5,
     "vix_level": 18.5,
     "btc_volume": 25000000
   },
@@ -313,11 +313,6 @@
     ],
     "execution_rule": "Treat war headlines as regime events: update scenario tree before placing discretionary risk."
   },
-  "guard_refresh": {
-    "core_ai_preserved": true,
-    "reason": "low_quality_api_output_blocked",
-    "core_snapshot_preserved_at": "2026-03-06T06:47:42.157418+00:00"
-  },
   "market_business_cycle_intelligence": {
     "cycle_layers": {
       "macro_environment": "late-cycle slowdown / risk-off",
@@ -333,7 +328,7 @@
       "Sentiment extremes versus price structure"
     ],
     "cross_cycle_pressure": {
-      "dxy": 99.0,
+      "dxy": 99.2,
       "macro_risk": 72.0,
       "fear_greed": 28.0
     }
@@ -384,7 +379,7 @@
       "policy_rate": "4.25%",
       "inflation": "2.8%",
       "labor": "3.8%",
-      "dollar": "99.0",
+      "dollar": "99.2",
       "long_rate": "4.15%"
     },
     "micro_factors": {
