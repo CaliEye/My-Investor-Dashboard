@@ -113,10 +113,12 @@
 
 .hud-panel:hover {
   border-color: var(--matrix-primary);
-  box-shadow: 
-    0 0 30px rgba(0, 255, 120, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  box-shadow:
+    0 0 20px rgba(0, 255, 120, 0.20),
+    0 0 40px rgba(0, 255, 120, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 0 20px rgba(0, 255, 120, 0.04);
+  transform: translateY(-1px);
 }
 
 /* === DATA VISUALIZATION ENHANCEMENTS === */

@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/cinematic-hud.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Rajdhani:wght@500;700&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="icon" href="images/favicon.ico">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <!-- Enhanced JavaScript modules -->
   <script src="js/config.js"></script>
   <script src="js/data-manager.js"></script>
@@ -825,32 +825,40 @@
       }
     }
     
-    function checkDataFreshness(lastUpdate) {
-      if (!lastUpdate) return 'No timestamp';
-      
+    function formatRelativeTime(lastUpdate) {
+      if (!lastUpdate) return { text: 'No timestamp', color: '#6b7280' };
       const now = new Date();
       const updated = new Date(lastUpdate);
-      const diffMinutes = Math.floor((now - updated) / (1000 * 60));
-      
-      let freshnessText, freshnessColor;
-      if (diffMinutes < 2) {
-        freshnessText = 'Live data';
-        freshnessColor = '#10b981';
-      } else if (diffMinutes < 10) {
-        freshnessText = `${diffMinutes}min old`;
-        freshnessColor = '#f59e0b';
+      const diffMin = Math.floor((now - updated) / 60000);
+      let text, color;
+      if (diffMin < 5) {
+        text = 'Live data';
+        color = '#10b981';
+      } else if (diffMin < 60) {
+        text = `Updated ${diffMin}m ago`;
+        color = '#10b981';
+      } else if (diffMin < 120) {
+        text = `Updated ${Math.floor(diffMin / 60)}h ago`;
+        color = '#10b981';
+      } else if (diffMin < 360) {
+        text = `Updated ${Math.floor(diffMin / 60)}h ago`;
+        color = '#f59e0b';
       } else {
-        freshnessText = `${diffMinutes}min old (stale)`;
-        freshnessColor = '#ef4444';
+        text = `Updated ${Math.floor(diffMin / 60)}h ago — may be stale`;
+        color = '#ef4444';
       }
-      
+      return { text, color };
+    }
+
+    function checkDataFreshness(lastUpdate) {
+      if (!lastUpdate) return 'No timestamp';
+      const { text, color } = formatRelativeTime(lastUpdate);
       const freshnessEl = document.getElementById('data-freshness');
       if (freshnessEl) {
-        freshnessEl.textContent = freshnessText;
-        freshnessEl.style.color = freshnessColor;
+        freshnessEl.textContent = text;
+        freshnessEl.style.color = color;
       }
-      
-      return freshnessText;
+      return text;
     }
 
     function updateMacroCommandBrief(data) {
@@ -1702,5 +1710,6 @@
   </script>
 
   <script src="js/lindy-alerts.js"></script>
+  <script src="js/transitions.js"></script>
 </body>
 </html>

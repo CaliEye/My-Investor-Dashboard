@@ -6,11 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Top Analyst Insights - Curated opinions, market wisdom, and actionable strategy from the best minds.">
   <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="icon" href="images/favicon.ico">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 </head>
-<body class="bg-gray-900 text-white font-inter">
+<body class="insights-page bg-gray-900 text-white font-inter">
+  <div class="code-rain"></div>
   <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
     <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">CyberSci-Dash v2</h1>
     <nav class="space-x-6 text-lg font-orbitron tracking-wide">
@@ -79,14 +82,16 @@
             <div class="text-center">
               <div class="text-sm text-gray-300 mb-2">Confidence Score (0-10)</div>
               <div id="ai-confidence-label" class="text-lg font-semibold text-emerald-300">High Confidence</div>
+              <div id="ai-source-badge" class="mt-2 inline-block px-2 py-1 text-xs font-mono rounded border border-gray-600 text-gray-400">SOURCES: —</div>
             </div>
           </div>
           
           <div class="bg-gray-900/60 border border-yellow-400/60 rounded-xl p-6">
             <h3 class="text-lg font-orbitron text-yellow-300 mb-4">Recommended Action</h3>
             <div id="ai-action-display" class="text-gray-100 leading-relaxed mb-4">Loading recommendations...</div>
-            <div class="text-xs text-gray-400 border-t border-gray-600 pt-3">
+            <div class="text-xs text-gray-400 border-t border-gray-600 pt-3 flex flex-wrap items-center gap-3">
               Last AI Update: <span id="ai-briefing-timestamp">—</span>
+              <span id="ai-data-age" class="font-mono text-green-400"></span>
             </div>
           </div>
         </div>
@@ -357,10 +362,46 @@
           }
         }
         
-        // Update timestamp
-        if (document.getElementById('ai-briefing-timestamp')) {
-          const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
+        // Update timestamp with live relative-time badge
+        if (document.getElementById('ai-briefing-timestamp') && ai.updated_utc) {
+          const updateTime = new Date(ai.updated_utc).toLocaleString();
           document.getElementById('ai-briefing-timestamp').textContent = updateTime;
+
+          function updateAgeDisplay() {
+            const ageEl = document.getElementById('ai-data-age');
+            if (!ageEl) return;
+            const diffMin = Math.floor((Date.now() - new Date(ai.updated_utc)) / 60000);
+            let text, color;
+            if (diffMin < 60) {
+              text = `Updated ${diffMin < 2 ? 'just now' : diffMin + 'm ago'}`;
+              color = '#10b981';
+            } else if (diffMin < 120) {
+              text = `Updated ${Math.floor(diffMin / 60)}h ago`;
+              color = '#10b981';
+            } else if (diffMin < 360) {
+              text = `Updated ${Math.floor(diffMin / 60)}h ago`;
+              color = '#f59e0b';
+            } else {
+              text = `Updated ${Math.floor(diffMin / 60)}h ago — may be stale`;
+              color = '#ef4444';
+            }
+            ageEl.textContent = text;
+            ageEl.style.color = color;
+          }
+          updateAgeDisplay();
+          if (window._ageInterval) clearInterval(window._ageInterval);
+          window._ageInterval = setInterval(updateAgeDisplay, 60000);
+        }
+
+        // Source count badge — shows how many AI providers contributed
+        const sourceBadge = document.getElementById('ai-source-badge');
+        if (sourceBadge) {
+          const sources = Array.isArray(ai.confluence?.sources) ? ai.confluence.sources : [];
+          const count = sources.length;
+          const healthy = sources.filter(s => s.signal && s.signal !== 'error').length;
+          sourceBadge.textContent = `SOURCES: ${healthy}/${count}`;
+          sourceBadge.style.borderColor = healthy >= 3 ? '#00FF78' : healthy >= 1 ? '#FFD166' : '#FF4757';
+          sourceBadge.style.color = healthy >= 3 ? '#00FF78' : healthy >= 1 ? '#FFD166' : '#FF4757';
         }
 
         const cycleLayers = ai.market_business_cycle_intelligence?.cycle_layers || {};
@@ -442,5 +483,7 @@
     // Load AI briefing on page load
     loadAIBriefing().catch(console.error);
   </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
 </body>
 </html>

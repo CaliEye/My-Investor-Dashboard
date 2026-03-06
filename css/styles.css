@@ -1,5 +1,20 @@
 /* === CyberSci-Dash v2 Custom Stylesheet === */
 
+/* === UNIFIED COLOR SYSTEM === */
+:root {
+  --color-primary: #00FF78;
+  --color-primary-dim: #006A2E;
+  --color-primary-bright: #39ff14;
+  --color-secondary: #00D2FF;
+  --color-gold: #FFD166;
+  --color-red: #FF4757;
+  --color-success: #2ED573;
+  --bg-void: #000000;
+  --bg-surface: #0a0e0f;
+  --bg-panel: #0f1419;
+  --bg-border: #1a2a1a;
+}
+
 /* === Global Styles === */
 body {
   font-family: 'Inter', 'Orbitron', Arial, sans-serif;
@@ -506,3 +521,32 @@ footer {
 .status-elevated { background-color: #dc2626; color: white; }
 .status-normal { background-color: #059669; color: white; }
 .status-warning { background-color: #d97706; color: white; }
+
+/* === PAGE TRANSITIONS === */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+body { animation: pageEnter 0.35s ease forwards; }
+
+body.page-exit {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* === CRT SCANLINE OVERLAY === */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}

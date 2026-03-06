@@ -56,6 +56,11 @@ data/threat_intelligence.db
 # Alpha Vantage API Key (if stored in a file)
 alpha_vantage_key.txt
 
-# Config files with real keys (use *.example.json as templates)
+# Config files with real keys (use *.example.* as templates)
 config/api_keys.json
 config/lindy_config.json
+config/alpha_vantage_key.js
+
+# CryptoCycleVault local secrets
+CryptoCycleVault/CryptoScripts/.env
+CryptoCycleVault/CryptoScripts/backend/.env

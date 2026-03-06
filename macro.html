@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/cinematic-hud.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="icon" href="images/favicon.ico">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 </head>
 <body class="macro-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
@@ -355,11 +355,20 @@
         if (document.getElementById("us10y-display")) {
           document.getElementById("us10y-display").textContent = fmt(d.macro.us10y_yield);
         }
+        if (document.getElementById("us10y-trend")) {
+          document.getElementById("us10y-trend").textContent = d.macro.us10y_context || '';
+        }
         if (document.getElementById("dxy-display")) {
           document.getElementById("dxy-display").textContent = fmt(d.macro.dxy);
         }
+        if (document.getElementById("dxy-trend")) {
+          document.getElementById("dxy-trend").textContent = d.macro.dxy_context || '';
+        }
         if (document.getElementById("spx-display")) {
           document.getElementById("spx-display").textContent = fmt(d.macro.spx);
+        }
+        if (document.getElementById("spx-trend")) {
+          document.getElementById("spx-trend").textContent = d.macro.spx_context || '';
         }
         
         // Macro data section
@@ -424,5 +433,6 @@
   </script>
   <script src="js/matrix.js"></script>
   <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
 </body>
 </html>

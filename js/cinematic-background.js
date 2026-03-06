@@ -40,6 +40,31 @@ class CinematicBackgroundManager {
         image: 'images/lab.jpg',
         overlay: 'rgba(0, 30, 30, 0.70)',
         atmosphere: 'motivational'
+      },
+      'warroom-page': {
+        image: 'images/hud2.jpg',
+        overlay: 'rgba(20, 0, 0, 0.75)',
+        atmosphere: 'alert'
+      },
+      'insights-page': {
+        image: 'images/hud3.jpg',
+        overlay: 'rgba(0, 20, 40, 0.80)',
+        atmosphere: 'corporate'
+      },
+      'sentiment-page': {
+        image: 'images/hud4.jpg',
+        overlay: 'rgba(0, 30, 60, 0.80)',
+        atmosphere: 'dynamic'
+      },
+      'links-page': {
+        image: 'images/outsidecool.jpg',
+        overlay: 'rgba(0, 20, 40, 0.75)',
+        atmosphere: 'focus'
+      },
+      'fortress-page': {
+        image: 'images/hud55.jpg',
+        overlay: 'rgba(0, 10, 20, 0.82)',
+        atmosphere: 'technical'
       }
     };
     
@@ -64,15 +89,20 @@ class CinematicBackgroundManager {
     
     // Initialize atmospheric effects
     this.initAtmosphereEffects(pageType);
-    
+
+    // Initialize parallax effect
+    this.initParallax();
+
     this.isInitialized = true;
     console.log(`[Cinematic] Background system active for: ${pageType}`);
   }
 
   detectPageType() {
     const body = document.body;
-    const classes = ['macro-page', 'bots-page', 'crypto-page', 'portfolio-page', 
-                    'scenario-page', 'mindmap-page', 'goals-page'];
+    const classes = ['macro-page', 'bots-page', 'crypto-page', 'portfolio-page',
+                    'scenario-page', 'mindmap-page', 'goals-page',
+                    'warroom-page', 'insights-page', 'sentiment-page',
+                    'links-page', 'fortress-page'];
     
     for (const className of classes) {
       if (body.classList.contains(className)) {
@@ -319,6 +349,16 @@ class CinematicBackgroundManager {
     
     this.backgroundContainer.appendChild(accent);
     this.atmosphereAnimations.push(accent);
+  }
+
+  initParallax() {
+    document.addEventListener('mousemove', (e) => {
+      if (!this.backgroundContainer) return;
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      this.backgroundContainer.style.backgroundPosition =
+        `calc(50% + ${x}px) calc(50% + ${y}px)`;
+    });
   }
 
   addSuccessHighlights(color, opacity) {

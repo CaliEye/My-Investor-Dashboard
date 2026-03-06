@@ -564,11 +564,25 @@
 
         const crypto = this.marketData.crypto || {};
         
-        // Update crypto prices
-        document.getElementById('btc-price').textContent = 
+        // Update crypto prices and market direction
+        document.getElementById('btc-price').textContent =
           crypto.btc_price_formatted || '$--,---';
-        document.getElementById('eth-price').textContent = 
+        document.getElementById('eth-price').textContent =
           crypto.eth_price_formatted || '$--,---';
+
+        const bias = (this.marketData.bias || '').toLowerCase();
+        const biasColor = bias === 'bearish' ? '#ff4757' : bias === 'bullish' ? '#00ff78' : '#FFD166';
+        const btcChangeEl = document.getElementById('btc-change');
+        if (btcChangeEl) {
+          btcChangeEl.textContent = this.marketData.bias || '—';
+          btcChangeEl.style.color = biasColor;
+        }
+        const ethChangeEl = document.getElementById('eth-change');
+        if (ethChangeEl) {
+          ethChangeEl.textContent = crypto.cycle_status ? crypto.cycle_status.split('—')[0].trim() : '—';
+          ethChangeEl.style.color = '#aaaaaa';
+          ethChangeEl.style.fontSize = '0.75rem';
+        }
 
         // Update sector grid
         const sectors = this.marketData.sector_etfs?.sectors || {};
@@ -701,9 +715,10 @@
         const sources = ['Yahoo Finance', 'Alpha Vantage', 'Polygon', 'CoinGecko'];
         const statusGrid = document.getElementById('source-status-grid');
         
+        const fortressSources = this.fortressData?.source_status || {};
         statusGrid.innerHTML = sources.map(source => {
-          // Simulated status - in real implementation, this would come from fortress data
-          const isActive = Math.random() > 0.1; // 90% uptime simulation
+          const sourceKey = source.toLowerCase().replace(' ', '_');
+          const isActive = fortressSources[sourceKey] !== false;
           return `
             <div class="text-center p-2 bg-gray-800 rounded">
               <div class="status-beacon ${isActive ? 'beacon-secure' : 'beacon-critical'}"></div>
@@ -805,5 +820,6 @@
       new FortressCommand();
     });
   </script>
+  <script src="js/transitions.js"></script>
 </body>
 </html>

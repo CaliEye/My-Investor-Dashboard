@@ -2,7 +2,9 @@
 // Author: CaliEye Copilot
 // Features: Chart switching, insights toggles, theme control, quick link add, simple local storage, dynamic tooltips, Alpha Vantage integration
 
-const ALPHA_VANTAGE_KEY = "ZGA6Y5FY790NO4QE"; // Your Alpha Vantage API Key
+// SECURITY: Key loaded from config/alpha_vantage_key.js (gitignored).
+// Copy config/alpha_vantage_key.example.js → config/alpha_vantage_key.js and set your key there.
+const ALPHA_VANTAGE_KEY = window.ALPHA_VANTAGE_KEY || '';
 
 document.addEventListener('DOMContentLoaded', function () {
   /* === 1. Chart Switching (my charts.html) === */

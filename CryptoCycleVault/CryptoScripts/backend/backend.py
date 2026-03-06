@@ -48,9 +48,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 fear_greed_url = "https://api.alternative.me/fng/?limit=1"
 coingecko_url = "https://api.coingecko.com/api/v3/global"
 
-# Alpha Vantage API Key
+# Alpha Vantage API Key — set via environment variable or .env file (never hardcode)
 import os
-ALPHA_VANTAGE_KEY = os.getenv("ALPHA_VANTAGE_KEY", "ZGA6Y5FY790NO4QE")  # Default key for development
+ALPHA_VANTAGE_KEY = os.getenv("ALPHA_VANTAGE_KEY")
 
 if not ALPHA_VANTAGE_KEY:
     logging.exception("Alpha Vantage API Key is required and not set. Set it as an environment variable 'ALPHA_VANTAGE_KEY'.")
