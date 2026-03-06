@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-06T12:26:36.551962+00:00",
+  "updated_utc": "2026-03-06T14:26:54.119591+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-06T16:26:36.551962+00:00",
+  "next_review_utc": "2026-03-06T18:26:54.119591+00:00",
   "crypto": {
-    "btc_usd": 70113.39,
-    "eth_usd": 2053.17,
-    "btc_price_formatted": "$70,113",
-    "eth_price_formatted": "$2,053",
+    "btc_usd": 68931.55,
+    "eth_usd": 2011.65,
+    "btc_price_formatted": "$68,932",
+    "eth_price_formatted": "$2,012",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Post-halving correction \u2014 consolidating before Q4 2026 bull run window",
@@ -52,7 +52,7 @@
     "fed_rate_context": "Easing cycle (cut from 5.25% peak \u2014 still above neutral 2.5%)",
     "dxy": "99.4",
     "dxy_context": "Contained (reduced dollar pressure)",
-    "us10y_yield": "4.15%",
+    "us10y_yield": "4.16%",
     "us10y_context": "High (tight financial conditions)",
     "risk_level": 72,
     "risk_context": "High Risk (0-30: Low | 31-60: Moderate | 61-100: High)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-06T12:26:39.408274+00:00",
+    "updated_utc": "2026-03-06T14:26:56.013240+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -147,10 +147,9 @@
         "volume": 12178100,
         "volume_vs_20d": 1.2,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "SECURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "BROAD MARKET"
       }
@@ -178,7 +177,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-06T12:26:40.697650+00:00",
+    "updated_utc": "2026-03-06T14:26:57.200676+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
