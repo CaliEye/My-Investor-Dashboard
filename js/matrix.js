@@ -180,9 +180,8 @@ class MatrixRain {
   }
 
   draw() {
-    // Create trailing effect with semi-transparent overlay
-    this.ctx.fillStyle = this.fadeColor;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // Clear canvas fully — background images show through between characters
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
     // Set text properties
     this.ctx.font = `${this.fontSize}px 'IBM Plex Mono', 'JetBrains Mono', monospace`;

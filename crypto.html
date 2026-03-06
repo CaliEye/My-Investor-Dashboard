@@ -396,9 +396,17 @@
 <nav>
   <a class="nav-brand" href="index.html">ENDGAME</a>
   <div class="nav-links">
-    <a href="index.html">WAR ROOM</a>
+    <a href="index.html">SUMMARY</a>
+    <a href="warroom.html">WAR ROOM</a>
+    <a href="macro.html">MACRO</a>
     <a href="crypto.html" class="active">CRYPTO</a>
+    <a href="bots.html">BOTS</a>
+    <a href="sentiment.html">SENTIMENT</a>
     <a href="scenario.html">SCENARIOS</a>
+    <a href="goals.html">GOALS</a>
+    <a href="portfolio.html">PORTFOLIO</a>
+    <a href="insights.html">INSIGHTS</a>
+    <a href="links.html">LINKS</a>
     <a href="#scan-log">SCAN LOG</a>
   </div>
   <span class="nav-label">CRYPTO COMMAND</span>
@@ -571,8 +579,16 @@
 
 <!-- FOOTER -->
 <footer class="container">
-  <span class="footer-brand">ENDGAME v1.0 — CRYPTO SUB-PAGE</span>
-  <a href="index.html">← RETURN TO WAR ROOM</a>
+  <span class="footer-brand">ENDGAME v1.0 — CRYPTO COMMAND</span>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;">
+    <a href="index.html">SUMMARY</a>
+    <a href="warroom.html">WAR ROOM</a>
+    <a href="macro.html">MACRO</a>
+    <a href="bots.html">BOTS</a>
+    <a href="sentiment.html">SENTIMENT</a>
+    <a href="scenario.html">SCENARIOS</a>
+    <a href="insights.html">INSIGHTS</a>
+  </div>
   <span class="footer-ts" id="last-updated">UPDATED: —</span>
 </footer>
 
@@ -687,6 +703,8 @@
           <span style="color:var(--text);font-size:12px;">${entry.note}</span>
         </div>`
       ).join('');
+    } else {
+      scanLog.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:10px 0;">No scan entries yet. Entries will appear here when signals are logged.</div>';
     }
 
     // Last updated

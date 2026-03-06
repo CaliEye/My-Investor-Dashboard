@@ -8,62 +8,62 @@ class CinematicBackgroundManager {
     this.backgrounds = {
       'macro-page': {
         image: 'images/lab.jpg',
-        overlay: 'rgba(0, 40, 80, 0.75)',
+        overlay: 'rgba(0, 10, 20, 0.55)',
         atmosphere: 'corporate'
       },
       'bots-page': {
         image: 'images/hud55.jpg',
-        overlay: 'rgba(0, 20, 40, 0.80)',
+        overlay: 'rgba(0, 5, 10, 0.55)',
         atmosphere: 'technical'
       },
       'crypto-page': {
         image: 'images/outsidecool.jpg',
-        overlay: 'rgba(0, 30, 60, 0.85)',
+        overlay: 'rgba(0, 10, 20, 0.60)',
         atmosphere: 'dynamic'
       },
       'portfolio-page': {
         image: 'images/hallway.jpg',
-        overlay: 'rgba(0, 25, 50, 0.75)',
+        overlay: 'rgba(0, 8, 15, 0.55)',
         atmosphere: 'stable'
       },
       'scenario-page': {
         image: 'images/bar.jpg',
-        overlay: 'rgba(40, 20, 0, 0.70)',
+        overlay: 'rgba(20, 8, 0, 0.55)',
         atmosphere: 'alert'
       },
       'mindmap-page': {
         image: 'images/green simple.jpg',
-        overlay: 'rgba(0, 20, 20, 0.60)',
+        overlay: 'rgba(0, 8, 8, 0.45)',
         atmosphere: 'focus'
       },
       'goals-page': {
         image: 'images/lab.jpg',
-        overlay: 'rgba(0, 30, 30, 0.70)',
+        overlay: 'rgba(0, 10, 10, 0.50)',
         atmosphere: 'motivational'
       },
       'warroom-page': {
         image: 'images/hud2.jpg',
-        overlay: 'rgba(20, 0, 0, 0.75)',
+        overlay: 'rgba(15, 0, 0, 0.55)',
         atmosphere: 'alert'
       },
       'insights-page': {
         image: 'images/hud3.jpg',
-        overlay: 'rgba(0, 20, 40, 0.80)',
+        overlay: 'rgba(0, 8, 18, 0.58)',
         atmosphere: 'corporate'
       },
       'sentiment-page': {
         image: 'images/hud4.jpg',
-        overlay: 'rgba(0, 30, 60, 0.80)',
+        overlay: 'rgba(0, 10, 20, 0.55)',
         atmosphere: 'dynamic'
       },
       'links-page': {
         image: 'images/outsidecool.jpg',
-        overlay: 'rgba(0, 20, 40, 0.75)',
+        overlay: 'rgba(0, 8, 15, 0.55)',
         atmosphere: 'focus'
       },
       'fortress-page': {
         image: 'images/hud55.jpg',
-        overlay: 'rgba(0, 10, 20, 0.82)',
+        overlay: 'rgba(0, 5, 10, 0.58)',
         atmosphere: 'technical'
       }
     };
@@ -89,9 +89,6 @@ class CinematicBackgroundManager {
     
     // Initialize atmospheric effects
     this.initAtmosphereEffects(pageType);
-
-    // Initialize parallax effect
-    this.initParallax();
 
     this.isInitialized = true;
     console.log(`[Cinematic] Background system active for: ${pageType}`);

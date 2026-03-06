@@ -45,20 +45,13 @@
   z-index: -5;
   pointer-events: none;
   overflow: hidden;
-  background: linear-gradient(135deg, 
-    rgba(0, 20, 10, 0.05) 0%, 
-    rgba(0, 40, 20, 0.03) 50%, 
-    rgba(0, 20, 10, 0.05) 100%);
+  background: transparent;
 }
 
 /* === GLOBAL MATRIX THEME === */
 body {
   font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Source Code Pro', 'Courier New', monospace;
-  background: 
-    radial-gradient(ellipse at 20% 10%, rgba(0, 255, 102, 0.08), transparent 60%),
-    radial-gradient(ellipse at 80% 30%, rgba(0, 255, 102, 0.05), transparent 65%),
-    radial-gradient(ellipse at 50% 80%, rgba(0, 255, 102, 0.03), transparent 70%),
-    var(--bg-matrix);
+  background: var(--bg-matrix);
   color: var(--text-primary);
   min-height: 100vh;
   letter-spacing: 0.025em;

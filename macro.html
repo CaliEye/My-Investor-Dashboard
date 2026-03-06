@@ -3,87 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Macro Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css"/>
+  <title>CyberSci-Dash v2 | Macro</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/matrix.css">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-white font-mono min-h-screen p-4">
+<body class="macro-page bg-gray-900 text-white font-mono min-h-screen">
+  <div class="code-rain"></div>
 
-  <!-- Matrix / Cinematic Background -->
-  <canvas id="matrix-canvas" class="fixed top-0 left-0 w-full h-full opacity-10 pointer-events-none z-0"></canvas>
+  <header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg relative z-50">
+    <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
+    <nav class="flex flex-wrap gap-4 text-sm font-orbitron tracking-wide">
+      <a href="index.html" class="hover:text-cyan-400 text-gray-300">Summary</a>
+      <a href="warroom.html" class="hover:text-pink-400 text-gray-300">War Room</a>
+      <a href="macro.html" class="text-cyan-400 border-b-2 border-cyan-400 pb-1">Macro</a>
+      <a href="crypto.html" class="hover:text-green-400 text-gray-300">Crypto</a>
+      <a href="bots.html" class="hover:text-yellow-400 text-gray-300">Bots</a>
+      <a href="sentiment.html" class="hover:text-pink-400 text-gray-300">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400 text-gray-300">Scenario Engine</a>
+      <a href="mindmap.html" class="hover:text-cyan-400 text-gray-300">Mindmap</a>
+      <a href="goals.html" class="hover:text-cyan-400 text-gray-300">Goals</a>
+      <a href="portfolio.html" class="hover:text-cyan-400 text-gray-300">Portfolio</a>
+      <a href="insights.html" class="hover:text-yellow-400 text-gray-300">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400 text-gray-300">Quick Links</a>
+    </nav>
+  </header>
 
-  <div class="relative z-10 max-w-5xl mx-auto">
+  <main class="relative z-10 max-w-5xl mx-auto p-6">
 
-    <!-- Header -->
     <div class="text-center mb-6">
-      <h1 class="text-3xl font-orbitron text-cyan-400 tracking-widest">📡 MACRO DASHBOARD</h1>
+      <h2 class="text-3xl font-orbitron text-cyan-400 tracking-widest">MACRO DASHBOARD</h2>
       <p class="text-gray-400 text-sm mt-1">Real-time macro risk monitoring — CaliEye Investor Suite</p>
+      <p class="text-xs text-gray-500 mt-1">Last update: <span id="macro-updated" class="text-cyan-500">loading...</span></p>
     </div>
 
     <!-- Macro Risk Indicator -->
-    <div class="bg-gray-800 border border-cyan-700 rounded-xl p-4 shadow mb-5" id="macro-risk-gauge">
-      <h3 class="text-lg font-orbitron text-cyan-300 mb-3">🌐 Macro Risk Indicator</h3>
+    <div class="hud-panel p-6 mb-5">
+      <h3 class="text-lg font-orbitron text-cyan-300 mb-3 matrix-important">MACRO RISK INDICATOR</h3>
       <div id="macro-risk-content">
         <div class="text-gray-500 text-sm">Loading macro risk data...</div>
       </div>
     </div>
 
-    <!-- ── Signal Tally Widget (Lindy Pipeline) ─────────────── -->
-    <div class="bg-gray-800 border border-cyan-500 rounded-xl p-4 shadow mb-5" id="signal-tally-container">
-      <h3 class="text-lg font-orbitron text-cyan-300 mb-3">⚡ Signal Tally — 72hr Window</h3>
+    <!-- Signal Tally Widget (Lindy Pipeline) -->
+    <div class="hud-panel p-6 mb-5">
+      <h3 class="text-lg font-orbitron text-cyan-300 mb-3 matrix-important">SIGNAL TALLY — 72hr Window</h3>
       <div id="signal-tally-widget">
         <div class="text-gray-500 text-sm">Waiting for signals...</div>
       </div>
     </div>
-    <!-- ── End Signal Tally Widget ──────────────────────────── -->
+
+    <!-- Key Metrics Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-5">
+      <div class="hud-panel p-5">
+        <div class="text-xs text-gray-400 tracking-widest uppercase mb-1">DXY Dollar Index</div>
+        <div id="dxy-value" class="text-3xl font-orbitron font-bold text-green-300">—</div>
+        <div id="dxy-context" class="text-xs text-gray-400 mt-2">Loading...</div>
+      </div>
+      <div class="hud-panel p-5">
+        <div class="text-xs text-gray-400 tracking-widest uppercase mb-1">10Y Treasury Yield</div>
+        <div id="us10y-value" class="text-3xl font-orbitron font-bold text-red-300">—</div>
+        <div id="us10y-context" class="text-xs text-gray-400 mt-2">Loading...</div>
+      </div>
+      <div class="hud-panel p-5">
+        <div class="text-xs text-gray-400 tracking-widest uppercase mb-1">Fed Funds Rate</div>
+        <div id="fed-rate-value" class="text-3xl font-orbitron font-bold text-yellow-300">—</div>
+        <div id="fed-rate-context" class="text-xs text-gray-400 mt-2">Loading...</div>
+      </div>
+      <div class="hud-panel p-5">
+        <div class="text-xs text-gray-400 tracking-widest uppercase mb-1">CPI (YoY)</div>
+        <div id="cpi-value" class="text-3xl font-orbitron font-bold text-orange-300">—</div>
+        <div id="cpi-context" class="text-xs text-gray-400 mt-2">Loading...</div>
+      </div>
+      <div class="hud-panel p-5">
+        <div class="text-xs text-gray-400 tracking-widest uppercase mb-1">GDP Growth</div>
+        <div id="gdp-value" class="text-3xl font-orbitron font-bold text-cyan-300">—</div>
+        <div id="gdp-context" class="text-xs text-gray-400 mt-2">Loading...</div>
+      </div>
+      <div class="hud-panel p-5">
+        <div class="text-xs text-gray-400 tracking-widest uppercase mb-1">S&P 500</div>
+        <div id="spx-value" class="text-3xl font-orbitron font-bold text-purple-300">—</div>
+        <div id="spx-context" class="text-xs text-gray-400 mt-2">Loading...</div>
+      </div>
+    </div>
 
     <!-- Fear & Greed Index -->
-    <div class="bg-gray-800 border border-yellow-600 rounded-xl p-4 shadow mb-5">
-      <h3 class="text-lg font-orbitron text-yellow-300 mb-3">😨 Fear &amp; Greed Index</h3>
+    <div class="hud-panel p-6 mb-5">
+      <h3 class="text-lg font-orbitron text-yellow-300 mb-3 matrix-important">FEAR &amp; GREED INDEX</h3>
       <div id="fear-greed-content">
         <div class="text-gray-500 text-sm">Loading...</div>
       </div>
     </div>
 
+    <!-- Risk Triggers -->
+    <div class="hud-panel p-6 mb-5">
+      <h3 class="text-lg font-orbitron text-red-300 mb-3 matrix-important">ACTIVE RISK TRIGGERS</h3>
+      <ul id="macro-triggers" class="space-y-2 text-sm text-gray-200">
+        <li class="text-gray-500">Loading triggers...</li>
+      </ul>
+    </div>
+
     <!-- Global M2 Money Supply -->
-    <div class="bg-gray-800 border border-purple-600 rounded-xl p-4 shadow mb-5">
-      <h3 class="text-lg font-orbitron text-purple-300 mb-3">💰 Global M2 Money Supply</h3>
+    <div class="hud-panel p-6 mb-5">
+      <h3 class="text-lg font-orbitron text-purple-300 mb-3 matrix-important">GLOBAL M2 MONEY SUPPLY</h3>
       <div id="m2-content">
-        <div class="text-gray-500 text-sm">Loading...</div>
-      </div>
-    </div>
-
-    <!-- DXY Dollar Index -->
-    <div class="bg-gray-800 border border-green-600 rounded-xl p-4 shadow mb-5">
-      <h3 class="text-lg font-orbitron text-green-300 mb-3">💵 DXY Dollar Index</h3>
-      <div id="dxy-content">
-        <div class="text-gray-500 text-sm">Loading...</div>
-      </div>
-    </div>
-
-    <!-- 10Y Treasury Yield -->
-    <div class="bg-gray-800 border border-red-600 rounded-xl p-4 shadow mb-5">
-      <h3 class="text-lg font-orbitron text-red-300 mb-3">📈 10Y Treasury Yield</h3>
-      <div id="treasury-content">
-        <div class="text-gray-500 text-sm">Loading...</div>
+        <p class="text-gray-400 text-sm">Global M2 data is not in the automated feed. Check <a href="https://fred.stlouisfed.org" target="_blank" class="text-cyan-400 underline">FRED (St. Louis Fed)</a> for the latest M2 figures. Rising M2 = liquidity expanding = risk-on tailwind. Declining M2 = tightening = headwind for crypto and equities.</p>
       </div>
     </div>
 
     <!-- Macro News Feed -->
-    <div class="bg-gray-800 border border-cyan-800 rounded-xl p-4 shadow mb-5">
-      <h3 class="text-lg font-orbitron text-cyan-300 mb-3">📰 Macro News Feed</h3>
+    <div class="hud-panel p-6 mb-5">
+      <h3 class="text-lg font-orbitron text-cyan-300 mb-3 matrix-important">MACRO CONTEXT SUMMARY</h3>
       <div id="macro-news-content">
-        <div class="text-gray-500 text-sm">Loading news...</div>
+        <div class="text-gray-500 text-sm">Loading context...</div>
       </div>
     </div>
 
-  </div><!-- end .relative -->
+  </main>
+
+  <footer class="border-t border-gray-700 mt-10 py-6 px-6 relative z-10">
+    <nav class="flex flex-wrap gap-4 justify-center text-sm font-orbitron tracking-wide text-gray-400">
+      <a href="index.html" class="hover:text-cyan-400">Summary</a>
+      <a href="warroom.html" class="hover:text-pink-400">War Room</a>
+      <a href="macro.html" class="text-cyan-400">Macro</a>
+      <a href="crypto.html" class="hover:text-green-400">Crypto</a>
+      <a href="bots.html" class="hover:text-yellow-400">Bots</a>
+      <a href="sentiment.html" class="hover:text-pink-400">Sentiment</a>
+      <a href="scenario.html" class="hover:text-cyan-400">Scenario Engine</a>
+      <a href="mindmap.html" class="hover:text-cyan-400">Mindmap</a>
+      <a href="goals.html" class="hover:text-cyan-400">Goals</a>
+      <a href="portfolio.html" class="hover:text-cyan-400">Portfolio</a>
+      <a href="insights.html" class="hover:text-yellow-400">Insights</a>
+      <a href="links.html" class="hover:text-cyan-400">Quick Links</a>
+    </nav>
+    <p class="text-center text-gray-600 mt-4 text-xs">&copy; 2025 CyberSci-Dash. All rights reserved.</p>
+  </footer>
 
   <script src="js/macro.js"></script>
   <script src="js/matrix.js"></script>
   <script src="js/cinematic-background.js"></script>
-  <!-- Lindy Signal Pipeline -->
   <script src="js/signal-tally.js"></script>
   <script src="js/lindy-alerts.js"></script>
   <script src="js/transitions.js"></script>

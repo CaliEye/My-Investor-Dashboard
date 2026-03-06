@@ -18,7 +18,7 @@
     rgba(5, 25, 45, 0.95) 100%);
   
   /* HUD Elements */
-  --hud-panel: rgba(0, 30, 60, 0.85);
+  --hud-panel: rgba(5, 12, 18, 0.88);
   --hud-border: rgba(0, 255, 120, 0.3);
   --hud-glow: 0 0 20px rgba(0, 255, 120, 0.15);
   --hud-text: rgba(220, 255, 240, 0.95);
@@ -42,6 +42,7 @@
   width: 100vw;
   height: 100vh;
   z-index: -15;
+  overflow: hidden;
   background: var(--bg-cinematic);
 }
 
@@ -238,18 +239,8 @@
 }
 
 .bot-status-card::before {
-  content: attr(data-bot-name);
-  position: absolute;
-  top: -8px;
-  left: 12px;
-  background: var(--bg-cinematic);
-  color: var(--data-info);
-  font-size: 0.7em;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 2px 8px;
-  border: 1px solid var(--data-info);
-  border-radius: 2px;
+  content: '';
+  /* Bot name label removed — displayed inside card instead */
 }
 
 .bot-performance-metric {
