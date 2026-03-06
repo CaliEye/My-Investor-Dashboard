@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-06T03:11:17.446061+00:00",
+  "updated_utc": "2026-03-06T04:50:13.800956+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-06T07:11:17.446061+00:00",
+  "next_review_utc": "2026-03-06T08:50:13.800956+00:00",
   "crypto": {
-    "btc_usd": 71228.0,
-    "eth_usd": 2085.35,
-    "btc_price_formatted": "$71,228",
-    "eth_price_formatted": "$2,085",
+    "btc_usd": 70573.23,
+    "eth_usd": 2069.84,
+    "btc_price_formatted": "$70,573",
+    "eth_price_formatted": "$2,070",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-06T03:11:20.307401+00:00",
+    "updated_utc": "2026-03-06T04:50:18.488049+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -132,9 +132,10 @@
         "volume": 11584515,
         "volume_vs_20d": 0.85,
         "trend": "UNDER PRESSURE",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "PRECIOUS METALS"
       },
@@ -147,10 +148,9 @@
         "volume": 12169050,
         "volume_vs_20d": 1.2,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "SECURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "BROAD MARKET"
       }
@@ -178,7 +178,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-06T03:11:21.391243+00:00",
+    "updated_utc": "2026-03-06T04:50:19.578174+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
