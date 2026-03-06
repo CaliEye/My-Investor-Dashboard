@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-03-06T12:16:12.232169+00:00",
+  "updated_utc": "2026-03-06T18:17:09.264192+00:00",
   "regime": "Bear Market",
   "top_triggers": [
     "Fed tightening",
@@ -7,8 +7,8 @@
     "Crypto market cap decline"
   ],
   "invalidation": "BTC price recovery and stabilization",
-  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets or holding cash until market conditions improve. Monitor BTC price for potential recovery.",
-  "grok_counter": "The strongest counter-argument this week is the potential for a sudden bullish catalyst from institutional adoption, such as a major financial institution announcing Bitcoin integration or ETF approval progress. The crowd might be overlooking whispers of regulatory clarity or behind-the-scenes accumulation by whales, which could flip sentiment rapidly despite the current bearish consensus.",
+  "contextual_guidance": "Given the bearish market and lack of recent portfolio actions, consider diversifying into defensive assets or holding cash. Monitor BTC for potential buying opportunities if market conditions improve.",
+  "grok_counter": "The strongest counter-argument this week is that Bitcoin could see a sudden bullish reversal driven by potential institutional buying or a positive regulatory development, such as clarity on a Bitcoin ETF approval. The crowd might be missing subtle signals of accumulation by large players in derivatives markets or underestimating the impact of macroeconomic shifts favoring risk assets.",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
   "fear_greed_snapshot": 50,
@@ -39,12 +39,12 @@
     "note": "1B/1Be/1N sources"
   },
   "market_data": {
-    "btc_price": 43200,
-    "btc_change_5d": -2.1,
-    "spy_price": 445,
-    "spy_change_5d": -1.5,
-    "vix_level": 18.5,
-    "btc_volume": 25000000
+    "btc_price": 68314.33,
+    "btc_change_5d": 0.0,
+    "spy_price": 6754.0,
+    "spy_change_5d": 0.0,
+    "vix_level": 0.0,
+    "btc_volume": 0
   },
   "technical_analysis": {
     "signal": "neutral",
@@ -63,7 +63,7 @@
     "phase_confidence": "low",
     "state_metrics": {
       "fear_greed": 28.0,
-      "btc_change_5d_pct": -2.1,
+      "btc_change_5d_pct": 0.0,
       "confluence_score": 5
     },
     "crisis": {
@@ -328,7 +328,7 @@
       "Sentiment extremes versus price structure"
     ],
     "cross_cycle_pressure": {
-      "dxy": 99.2,
+      "dxy": 99.0,
       "macro_risk": 72.0,
       "fear_greed": 28.0
     }
@@ -379,12 +379,12 @@
       "policy_rate": "4.25%",
       "inflation": "2.8%",
       "labor": "3.8%",
-      "dollar": "99.2",
+      "dollar": "99.0",
       "long_rate": "4.15%"
     },
     "micro_factors": {
-      "price_momentum_5d_btc": -2.1,
-      "market_volatility_proxy": 18.5,
+      "price_momentum_5d_btc": 0.0,
+      "market_volatility_proxy": 0.0,
       "sector_relative_strength": "DEFENSIVE STACK"
     },
     "decision_link": "Macro sets regime constraints; micro timing selects entries/exits inside that regime."
