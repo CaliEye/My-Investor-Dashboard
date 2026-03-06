@@ -2,16 +2,16 @@
   "updated_utc": "2026-03-06T07:05:56.533592+00:00",
   "regime": "Bearish Downturn",
   "top_triggers": [
-    "Fed tightening schedule",
-    "DXY strength",
-    "Crypto market cap trends"
+    "Fed easing cycle underway — rate at 4.25% (cut from 5.25%), pace uncertain",
+    "DXY at 99.0 — reduced dollar pressure but fragile",
+    "Crypto market cap declining -35% from peak, whale distribution active"
   ],
-  "invalidation": "BTC price stabilizes and shows signs of recovery",
-  "contextual_guidance": "Given the current bearish market and lack of recent portfolio actions, consider diversifying into defensive assets. Monitor the Fed's tightening schedule and DXY strength closely for potential market shifts.",
-  "grok_counter": "The strongest counter-argument this week is the potential for a sudden institutional adoption spike, driven by unannounced ETF approvals or major corporate treasury allocations to BTC, which could catch the bearish crowd off guard. The market may be overlooking quiet regulatory progress or insider moves that could flip sentiment rapidly despite the neutral Fear/Greed index.",
+  "invalidation": "BTC reclaims $85k resistance with volume and on-chain accumulation signals",
+  "contextual_guidance": "Current bearish regime with easing macro tailwinds not yet strong enough. No new crypto risk until Oct/Nov 2026 unless confluence gate flips. Monitor Fed easing pace and DXY for regime shift signals.",
+  "grok_counter": "The strongest counter-argument this week is the potential for a sudden institutional adoption spike, driven by unannounced ETF approvals or major corporate treasury allocations to BTC, which could catch the bearish crowd off guard. Fear at 28/100 with BTC at $70,900 historically precedes powerful recovery moves when macro headwinds ease.",
   "confidence_score": 5,
-  "btc_price_snapshot": "N/A",
-  "fear_greed_snapshot": 50,
+  "btc_price_snapshot": "$70,900",
+  "fear_greed_snapshot": 28,
   "next_update": "6 hours",
   "confluence": {
     "score": 5,
@@ -39,10 +39,10 @@
     "note": "1B/1Be/1N sources"
   },
   "market_data": {
-    "btc_price": 43200,
+    "btc_price": 70900,
     "btc_change_5d": -2.1,
-    "spy_price": 445,
-    "spy_change_5d": -1.5,
+    "spy_price": 626,
+    "spy_change_5d": -1.1,
     "vix_level": 18.5,
     "btc_volume": 25000000
   },
@@ -381,7 +381,7 @@
   },
   "macro_micro_economic_engine": {
     "macro_factors": {
-      "policy_rate": "5.25%",
+      "policy_rate": "4.25%",
       "inflation": "2.8%",
       "labor": "3.8%",
       "dollar": "99.0",
