@@ -474,10 +474,11 @@ def fetch_macro_market_inputs(existing_macro):
     try:
         cpi_yoy, cpi_date = fetch_cpi_yoy()
         macro["cpi"] = f"{cpi_yoy:.1f}%"
+        date_label = f" ({cpi_date})" if cpi_date else ""
         macro["cpi_context"] = (
-            f"Latest official CPI YoY ({cpi_date}) — above target"
+            f"Latest official CPI YoY{date_label} — above target"
             if cpi_yoy >= 2.5 else
-            f"Latest official CPI YoY ({cpi_date}) — near target"
+            f"Latest official CPI YoY{date_label} — near target"
         )
     except Exception:
         pass
