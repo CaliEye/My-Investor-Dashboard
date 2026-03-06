@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-06T00:54:31.171121+00:00",
+  "updated_utc": "2026-03-06T03:11:17.446061+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-06T04:54:31.171121+00:00",
+  "next_review_utc": "2026-03-06T07:11:17.446061+00:00",
   "crypto": {
-    "btc_usd": 70907.04,
-    "eth_usd": 2073.26,
-    "btc_price_formatted": "$70,907",
-    "eth_price_formatted": "$2,073",
+    "btc_usd": 71228.0,
+    "eth_usd": 2085.35,
+    "btc_price_formatted": "$71,228",
+    "eth_price_formatted": "$2,085",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -50,7 +50,7 @@
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "5.25%",
     "fed_rate_context": "Restrictive (well above neutral ~2.5% - tightening mode)",
-    "dxy": "99.1",
+    "dxy": "99.0",
     "dxy_context": "Contained (reduced dollar pressure)",
     "us10y_yield": "4.15%",
     "us10y_context": "High (tight financial conditions)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-06T00:54:32.951339+00:00",
+    "updated_utc": "2026-03-06T03:11:20.307401+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -147,9 +147,10 @@
         "volume": 12169050,
         "volume_vs_20d": 1.2,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "BROAD MARKET"
       }
@@ -177,7 +178,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-06T00:54:33.968841+00:00",
+    "updated_utc": "2026-03-06T03:11:21.391243+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,
