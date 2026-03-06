@@ -1,11 +1,27 @@
 // ============================================================
 // Lindy Alert Watcher — Auto-fires webhook on high conviction
-// Webhook: https://public.lindy.ai/api/v1/webhooks/lindy/8b5fef48-2992-4ab8-b904-b16a9ca690b9
 // Triggers when Confluence Score >= 8
 // Cooldown: 5 minutes between alerts
+//
+// SECURITY: Set LINDY_WEBHOOK_URL in config/lindy_config.json
+// (excluded from git via .gitignore) OR use a Cloudflare Worker
+// proxy so the real URL never appears in the public repo.
+// Format: { "webhook_url": "https://public.lindy.ai/..." }
 // ============================================================
 
-const LINDY_WEBHOOK_URL = 'https://public.lindy.ai/api/v1/webhooks/lindy/8b5fef48-2992-4ab8-b904-b16a9ca690b9';
+let LINDY_WEBHOOK_URL = null;
+
+async function loadLindyConfig() {
+  try {
+    const res = await fetch('config/lindy_config.json');
+    if (res.ok) {
+      const cfg = await res.json();
+      LINDY_WEBHOOK_URL = cfg.webhook_url || null;
+    }
+  } catch (_) {
+    // Config not present — alerts disabled until URL is configured
+  }
+}
 const ALERT_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 let lastAlertTime = 0;
 
@@ -16,6 +32,11 @@ function checkAndFireAlert(score, asset, signal, timeframe, notes) {
   const now = Date.now();
   if (now - lastAlertTime < ALERT_COOLDOWN_MS) {
     console.log('[Lindy] Cooldown active — skipping alert.');
+    return;
+  }
+
+  if (!LINDY_WEBHOOK_URL) {
+    console.warn('[Lindy] Webhook URL not configured — skipping alert. Add to config/lindy_config.json.');
     return;
   }
 
@@ -78,9 +99,14 @@ function startLindyWatcher() {
   console.log('[Lindy] Watcher active — monitoring for score >= 8');
 }
 
-// Start after DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', startLindyWatcher);
-} else {
+// Start after DOM is ready — load config first, then begin watching
+async function init() {
+  await loadLindyConfig();
   startLindyWatcher();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }

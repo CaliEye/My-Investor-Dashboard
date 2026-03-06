@@ -55,3 +55,7 @@ data/threat_intelligence.db
 
 # Alpha Vantage API Key (if stored in a file)
 alpha_vantage_key.txt
+
+# Config files with real keys (use *.example.json as templates)
+config/api_keys.json
+config/lindy_config.json

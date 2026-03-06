@@ -845,7 +845,7 @@
     const confluence = confRes.ok ? await confRes.json() : {};
 
     const regimeEl = document.getElementById('current-regime');
-    if (regimeEl) regimeEl.textContent = d.regime || 'UNKNOWN';
+    if (regimeEl) regimeEl.textContent = d.decision_gate?.risk_posture || d.bias?.toUpperCase() || 'UNKNOWN';
 
     const ts = d.updated_utc ? new Date(d.updated_utc).toUTCString() : '—';
     const tsEl = document.getElementById('last-updated');
@@ -871,7 +871,8 @@
       } else {
         gate.style.borderColor = 'var(--gold)';
         gate.style.color = 'var(--gold)';
-        gate.textContent = 'CONFLUENCE GATE: LOCKED — WAIT FOR STRONGER SIGNAL ALIGNMENT';
+        const hardRule = d.decision_gate?.hard_rule_reminder ? ` | ${d.decision_gate.hard_rule_reminder}` : '';
+        gate.textContent = `CONFLUENCE GATE: LOCKED — WAIT FOR STRONGER SIGNAL ALIGNMENT${hardRule}`;
       }
     }
 
