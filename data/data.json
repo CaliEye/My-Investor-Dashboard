@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-06T06:30:23.824567+00:00",
+  "updated_utc": "2026-03-06T06:47:35.187509+00:00",
   "bias": "Bearish",
   "triggers": [
     "Liquidity: Fed tightening accelerating",
     "Dollar: DXY strength crushing risk assets",
     "Breadth: Crypto market cap declining -35% from peak"
   ],
-  "next_review_utc": "2026-03-06T10:30:23.824567+00:00",
+  "next_review_utc": "2026-03-06T10:47:35.187509+00:00",
   "crypto": {
-    "btc_usd": 70476.98,
-    "eth_usd": 2069.75,
-    "btc_price_formatted": "$70,477",
-    "eth_price_formatted": "$2,070",
+    "btc_usd": 70643.52,
+    "eth_usd": 2075.56,
+    "btc_price_formatted": "$70,644",
+    "eth_price_formatted": "$2,076",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Year 3 Bear Market (75% through 4-year cycle)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-06T06:30:25.857750+00:00",
+    "updated_utc": "2026-03-06T06:47:39.322552+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -132,9 +132,10 @@
         "volume": 11632100,
         "volume_vs_20d": 0.85,
         "trend": "UNDER PRESSURE",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "PRECIOUS METALS"
       },
@@ -177,7 +178,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-06T06:30:26.599596+00:00",
+    "updated_utc": "2026-03-06T06:47:41.894161+00:00",
     "confluence_score": 2,
     "max_score": 5,
     "threshold_hit": false,

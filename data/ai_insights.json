@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-03-06T06:20:50.424852+00:00",
+  "updated_utc": "2026-03-06T06:47:42.157418+00:00",
   "regime": "Bearish Downturn",
   "top_triggers": [
     "Fed tightening schedule",
@@ -312,5 +312,99 @@
       "Capture re-rating opportunities while maintaining staggered exits"
     ],
     "execution_rule": "Treat war headlines as regime events: update scenario tree before placing discretionary risk."
+  },
+  "guard_refresh": {
+    "core_ai_preserved": true,
+    "reason": "low_quality_api_output_blocked",
+    "core_snapshot_preserved_at": "2026-03-06T06:20:50.424852+00:00"
+  },
+  "market_business_cycle_intelligence": {
+    "cycle_layers": {
+      "macro_environment": "late-cycle slowdown / risk-off",
+      "industry_rotation": "Defensive/quality leadership when dollar+risk pressure rise; cyclicals on de-escalation",
+      "commodity_cycle": "Energy/inflation shocks drive hard-asset outperformance; disinflation favors growth duration",
+      "individual_stock_cycle": "Quality balance sheets outperform in stress; high-beta recoveries dominate post-shock rebounds",
+      "bitcoin_cycle": "range-to-transition phase"
+    },
+    "cycle_signals_to_track": [
+      "Liquidity (policy stance, real yields, credit conditions)",
+      "Dollar regime (DXY trend and momentum)",
+      "Breadth and sector leadership persistence",
+      "Sentiment extremes versus price structure"
+    ],
+    "cross_cycle_pressure": {
+      "dxy": 99.1,
+      "macro_risk": 72.0,
+      "fear_greed": 28.0
+    }
+  },
+  "investor_frameworks_knowledge": {
+    "cycle_timing_frameworks": {
+      "loukas_style": [
+        "Map higher-timeframe cycle phase first, then execute lower-timeframe entries",
+        "Treat cycle lows/highs as probability zones, not exact timestamps",
+        "Use trend + momentum confirmation around expected turning windows"
+      ],
+      "cowen_style": [
+        "Favor risk-managed accumulation over emotional peak-chasing",
+        "Use valuation/risk bands and macro context to scale exposure",
+        "Focus on downside management during cycle uncertainty"
+      ]
+    },
+    "long_horizon_quality_framework": {
+      "buffett_style_principles": [
+        "Prefer durable moats, cash-flow quality, and strong capital allocation",
+        "Buy with margin-of-safety discipline instead of narrative momentum",
+        "Concentrate in highest-conviction quality when valuation allows"
+      ],
+      "application_to_current_stack": "Use quality filter + valuation discipline for core holdings, tactical overlays for cycle pivots."
+    }
+  },
+  "behavioral_participant_models": {
+    "typical_401k_behavior": {
+      "patterns": [
+        "Performance-chasing after prolonged rallies",
+        "Panic de-risking near drawdown lows",
+        "Slow re-entry after recoveries begin"
+      ],
+      "edge": "Track crowd lag: strongest opportunities often appear before default retirement flows rotate back in."
+    },
+    "investment_firm_behavior": {
+      "patterns": [
+        "Quarter-end window dressing and benchmark hugging",
+        "Risk-parity de-grossing during volatility spikes",
+        "Liquidity preference shifts during macro uncertainty"
+      ],
+      "edge": "Exploit forced positioning windows when flows become mechanical rather than thesis-driven."
+    },
+    "current_behavior_bias": "fear-heavy"
+  },
+  "macro_micro_economic_engine": {
+    "macro_factors": {
+      "policy_rate": "5.25%",
+      "inflation": "2.8%",
+      "labor": "3.8%",
+      "dollar": "99.1",
+      "long_rate": "4.15%"
+    },
+    "micro_factors": {
+      "price_momentum_5d_btc": -2.1,
+      "market_volatility_proxy": 18.5,
+      "sector_relative_strength": "DEFENSIVE STACK"
+    },
+    "decision_link": "Macro sets regime constraints; micro timing selects entries/exits inside that regime."
+  },
+  "technical_charting_mastery": {
+    "pattern_watchlist": [
+      "Compression / range resolution setup"
+    ],
+    "historical_principles": [
+      "Trend persistence until clear structure break",
+      "Volume/volatility expansion validates breakouts and breakdowns",
+      "Failed breakouts often mean-revert sharply in crowded regimes",
+      "Multi-timeframe alignment increases setup reliability"
+    ],
+    "near_term_structural_read": "Mixed structure; prioritize trigger-based execution over prediction.",
+    "execution_protocol": "Require structure break + confluence + invalidation before size escalation."
   }
 }

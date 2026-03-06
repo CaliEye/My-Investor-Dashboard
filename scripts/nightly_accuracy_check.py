@@ -31,6 +31,7 @@ LINDY_BRIEF_FILE = REPO_ROOT / "logs" / "lindy_morning_brief.txt"
 RESEARCH_REPORT_JSON = REPO_ROOT / "logs" / "overnight_research_report.json"
 RESEARCH_REPORT_MD = REPO_ROOT / "logs" / "overnight_research_report.md"
 DISPATCH_LOG_FILE = REPO_ROOT / "data" / "alert_dispatch_log.json"
+AI_HEALTH_REPORT_FILE = REPO_ROOT / "logs" / "ai_confluence_health_report.json"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -97,9 +98,20 @@ def run_overnight_research_pull() -> tuple[int, str]:
     return proc.returncode, output
 
 
+def run_ai_confluence_health_check() -> tuple[int, str]:
+    command = [sys.executable, str(REPO_ROOT / "scripts" / "ai_confluence_health_check.py")]
+    proc = subprocess.run(command, cwd=str(REPO_ROOT), capture_output=True, text=True)
+    output = (proc.stdout or "") + ("\n" + proc.stderr if proc.stderr else "")
+    return proc.returncode, output
+
+
 def load_latest_json(logs_dir: Path, pattern: str) -> dict[str, Any] | None:
     matches = sorted(logs_dir.glob(pattern), key=lambda p: p.stat().st_mtime)
     if not matches:
+        return None
+    try:
+        return load_json(matches[-1])
+    except (json.JSONDecodeError, OSError):
         return None
 
 
@@ -135,10 +147,6 @@ def post_webhook(url: str, payload: dict[str, Any]) -> tuple[bool, str]:
             return False, f"HTTP {status}"
     except (HTTPError, URLError, TimeoutError) as exc:
         return False, f"{type(exc).__name__}: {exc}"
-    try:
-        return load_json(matches[-1])
-    except (json.JSONDecodeError, OSError):
-        return None
 
 
 def build_lindy_brief(logs_dir: Path) -> str | None:
@@ -231,6 +239,22 @@ def main() -> int:
     else:
         notes.append("overnight_research_pull.py completed")
 
+    ai_health_return_code, ai_health_output = run_ai_confluence_health_check()
+    if ai_health_return_code != 0:
+        failures.append("ai_confluence_health_check.py failed")
+    else:
+        notes.append("ai_confluence_health_check.py completed")
+
+    ai_health = load_json(AI_HEALTH_REPORT_FILE) if AI_HEALTH_REPORT_FILE.exists() else {}
+    if isinstance(ai_health, dict):
+        summary = ai_health.get("summary", {}) if isinstance(ai_health.get("summary"), dict) else {}
+        providers_ok = int(summary.get("providers_ok", 0) or 0)
+        providers_total = int(summary.get("providers_total", 0) or 0)
+        core_ready = bool(summary.get("core_ready", False))
+        notes.append(f"ai_connectivity={providers_ok}/{providers_total} providers healthy")
+        if not core_ready:
+            failures.append("AI confluence core providers unavailable")
+
     data = load_json(DATA_FILE)
     ai = load_json(AI_FILE)
     confluence = load_json(CONFLUENCE_FILE)
@@ -296,6 +320,7 @@ def main() -> int:
         "full_dashboard_check_return_code": return_code,
         "anti_ai_red_team_return_code": red_team_return_code,
         "overnight_research_pull_return_code": research_return_code,
+        "ai_confluence_health_return_code": ai_health_return_code,
     }
 
     REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -344,6 +369,7 @@ def main() -> int:
     alert_lines.append(f"Fail Flag: {FAIL_FLAG_FILE}")
     alert_lines.append(f"Research JSON: {RESEARCH_REPORT_JSON}")
     alert_lines.append(f"Research MD: {RESEARCH_REPORT_MD}")
+    alert_lines.append(f"AI Health JSON: {AI_HEALTH_REPORT_FILE}")
 
     ALERT_TXT_FILE.parent.mkdir(parents=True, exist_ok=True)
     ALERT_TXT_FILE.write_text("\n".join(alert_lines) + "\n", encoding="utf-8")
@@ -413,6 +439,10 @@ def main() -> int:
     if research_output:
         print("\n--- overnight_research_pull.py output ---\n")
         print(research_output)
+
+    if ai_health_output:
+        print("\n--- ai_confluence_health_check.py output ---\n")
+        print(ai_health_output)
 
     return 0 if report["ok"] else 1
 
