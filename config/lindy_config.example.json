@@ -1,7 +1,5 @@
 {
-  "webhook_url": "https://public.lindy.ai/api/v1/webhooks/lindy/YOUR_WEBHOOK_ID_HERE",
-  "notes": {
-    "setup": "Copy this file to lindy_config.json (gitignored) and paste your real Lindy webhook URL.",
-    "proxy": "For extra security, deploy a Cloudflare Worker proxy and point webhook_url at your worker instead of the direct Lindy URL."
-  }
+  "webhook_url": "https://public.lindy.ai/api/v1/webhooks/lindy/8b5fef48-2992-4ab8-b904-b16a9ca690b9",
+  "github_token": "YOUR_GITHUB_PAT_HERE",
+  "github_repo": "CaliEye/My-Investor-Dashboard"
 }
