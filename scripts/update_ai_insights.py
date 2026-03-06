@@ -891,6 +891,155 @@ def build_war_market_history_playbook() -> dict:
         "execution_rule": "Treat war headlines as regime events: update scenario tree before placing discretionary risk.",
     }
 
+
+def build_market_business_cycle_intelligence(market_data: dict, yahoo_data: dict) -> dict:
+    """Multi-layer cycle engine: macro, industry, commodity, equity, and bitcoin context."""
+    macro_risk = parse_float_safe(market_data.get('macro', {}).get('risk_level', 50), 50.0)
+    btc_change = parse_float_safe(yahoo_data.get('btc_change_5d', 0), 0.0)
+    fear_greed = parse_float_safe(market_data.get('sentiment', {}).get('fear_greed_index', 50), 50.0)
+    dxy = parse_float_safe(market_data.get('macro', {}).get('dxy', 100), 100.0)
+
+    if macro_risk >= 70:
+        business_cycle = 'late-cycle slowdown / risk-off'
+    elif macro_risk >= 45:
+        business_cycle = 'mid-cycle transition'
+    else:
+        business_cycle = 'early-cycle / risk-on expansion'
+
+    if btc_change <= -6 and fear_greed <= 30:
+        bitcoin_cycle = 'capitulation-to-accumulation window'
+    elif btc_change >= 6 and fear_greed >= 65:
+        bitcoin_cycle = 'euphoric expansion / distribution risk'
+    else:
+        bitcoin_cycle = 'range-to-transition phase'
+
+    return {
+        "cycle_layers": {
+            "macro_environment": business_cycle,
+            "industry_rotation": "Defensive/quality leadership when dollar+risk pressure rise; cyclicals on de-escalation",
+            "commodity_cycle": "Energy/inflation shocks drive hard-asset outperformance; disinflation favors growth duration",
+            "individual_stock_cycle": "Quality balance sheets outperform in stress; high-beta recoveries dominate post-shock rebounds",
+            "bitcoin_cycle": bitcoin_cycle,
+        },
+        "cycle_signals_to_track": [
+            "Liquidity (policy stance, real yields, credit conditions)",
+            "Dollar regime (DXY trend and momentum)",
+            "Breadth and sector leadership persistence",
+            "Sentiment extremes versus price structure",
+        ],
+        "cross_cycle_pressure": {
+            "dxy": dxy,
+            "macro_risk": macro_risk,
+            "fear_greed": fear_greed,
+        },
+    }
+
+
+def build_investor_frameworks_knowledge(market_data: dict) -> dict:
+    """Framework synthesis inspired by well-known investor styles and cycle thinkers."""
+    return {
+        "cycle_timing_frameworks": {
+            "loukas_style": [
+                "Map higher-timeframe cycle phase first, then execute lower-timeframe entries",
+                "Treat cycle lows/highs as probability zones, not exact timestamps",
+                "Use trend + momentum confirmation around expected turning windows",
+            ],
+            "cowen_style": [
+                "Favor risk-managed accumulation over emotional peak-chasing",
+                "Use valuation/risk bands and macro context to scale exposure",
+                "Focus on downside management during cycle uncertainty",
+            ],
+        },
+        "long_horizon_quality_framework": {
+            "buffett_style_principles": [
+                "Prefer durable moats, cash-flow quality, and strong capital allocation",
+                "Buy with margin-of-safety discipline instead of narrative momentum",
+                "Concentrate in highest-conviction quality when valuation allows",
+            ],
+            "application_to_current_stack": "Use quality filter + valuation discipline for core holdings, tactical overlays for cycle pivots.",
+        },
+    }
+
+
+def build_behavioral_participant_models(market_data: dict) -> dict:
+    """Behavior models for retail retirement flows and institutional playbooks."""
+    fear_greed = parse_float_safe(market_data.get('sentiment', {}).get('fear_greed_index', 50), 50.0)
+    return {
+        "typical_401k_behavior": {
+            "patterns": [
+                "Performance-chasing after prolonged rallies",
+                "Panic de-risking near drawdown lows",
+                "Slow re-entry after recoveries begin",
+            ],
+            "edge": "Track crowd lag: strongest opportunities often appear before default retirement flows rotate back in.",
+        },
+        "investment_firm_behavior": {
+            "patterns": [
+                "Quarter-end window dressing and benchmark hugging",
+                "Risk-parity de-grossing during volatility spikes",
+                "Liquidity preference shifts during macro uncertainty",
+            ],
+            "edge": "Exploit forced positioning windows when flows become mechanical rather than thesis-driven.",
+        },
+        "current_behavior_bias": "fear-heavy" if fear_greed <= 35 else "greed-heavy" if fear_greed >= 70 else "balanced",
+    }
+
+
+def build_macro_micro_economic_engine(market_data: dict, yahoo_data: dict) -> dict:
+    """Macro + micro economic factor map for scenario-aware investing."""
+    return {
+        "macro_factors": {
+            "policy_rate": market_data.get('macro', {}).get('fed_funds_rate'),
+            "inflation": market_data.get('macro', {}).get('cpi'),
+            "labor": market_data.get('macro', {}).get('unemployment'),
+            "dollar": market_data.get('macro', {}).get('dxy'),
+            "long_rate": market_data.get('macro', {}).get('us10y_yield'),
+        },
+        "micro_factors": {
+            "price_momentum_5d_btc": yahoo_data.get('btc_change_5d'),
+            "market_volatility_proxy": yahoo_data.get('vix_level'),
+            "sector_relative_strength": market_data.get('sector_etfs', {}).get('basket', {}).get('regime_tilt'),
+        },
+        "decision_link": "Macro sets regime constraints; micro timing selects entries/exits inside that regime.",
+    }
+
+
+def build_technical_charting_mastery(market_data: dict, yahoo_data: dict, confluence_data: dict) -> dict:
+    """Heuristic chart-pattern engine informed by classic market-structure principles."""
+    btc_5d = parse_float_safe(yahoo_data.get('btc_change_5d', 0), 0.0)
+    vix = parse_float_safe(yahoo_data.get('vix_level', 18.0), 18.0)
+    signal = str(confluence_data.get('dominant_signal', 'neutral')).lower()
+    score = int(confluence_data.get('confluence_score', 5) or 5)
+
+    pattern_watch = []
+    if btc_5d <= -6:
+        pattern_watch.append('Capitulation wick / panic flush setup')
+    if btc_5d >= 6:
+        pattern_watch.append('Momentum extension / blow-off risk')
+    if vix >= 24:
+        pattern_watch.append('Volatility expansion regime')
+    if not pattern_watch:
+        pattern_watch.append('Compression / range resolution setup')
+
+    if signal == 'bullish' and score >= 7:
+        near_term_read = 'Upside continuation risk is elevated if breadth confirms.'
+    elif signal == 'bearish' and score >= 7:
+        near_term_read = 'Downside continuation risk is elevated; avoid anticipatory catches.'
+    else:
+        near_term_read = 'Mixed structure; prioritize trigger-based execution over prediction.'
+
+    return {
+        "pattern_watchlist": pattern_watch,
+        "historical_principles": [
+            "Trend persistence until clear structure break",
+            "Volume/volatility expansion validates breakouts and breakdowns",
+            "Failed breakouts often mean-revert sharply in crowded regimes",
+            "Multi-timeframe alignment increases setup reliability",
+        ],
+        "near_term_structural_read": near_term_read,
+        "execution_protocol": "Require structure break + confluence + invalidation before size escalation.",
+    }
+
 def main():
     """Main execution function - Multi-Source AI Confluence System"""
     print("Starting AI Confluence Master - Multi-Source Intelligence Update...")
@@ -962,7 +1111,12 @@ def main():
         "macro_cascade_map": build_macro_cascade_map(market_data),
         "black_swan_intelligence": build_black_swan_intelligence(market_data, yahoo_data, confluence_data),
         "black_swan_bot_automation": build_black_swan_bot_automation(),
-        "war_market_history_playbook": build_war_market_history_playbook()
+        "war_market_history_playbook": build_war_market_history_playbook(),
+        "market_business_cycle_intelligence": build_market_business_cycle_intelligence(market_data, yahoo_data),
+        "investor_frameworks_knowledge": build_investor_frameworks_knowledge(market_data),
+        "behavioral_participant_models": build_behavioral_participant_models(market_data),
+        "macro_micro_economic_engine": build_macro_micro_economic_engine(market_data, yahoo_data),
+        "technical_charting_mastery": build_technical_charting_mastery(market_data, yahoo_data, confluence_data)
     }
     
     output_path = Path('data/ai_insights.json')
@@ -993,6 +1147,11 @@ def main():
             protected_refresh["black_swan_intelligence"] = build_black_swan_intelligence(market_data, yahoo_data, confluence_data)
             protected_refresh["black_swan_bot_automation"] = build_black_swan_bot_automation()
             protected_refresh["war_market_history_playbook"] = build_war_market_history_playbook()
+            protected_refresh["market_business_cycle_intelligence"] = build_market_business_cycle_intelligence(market_data, yahoo_data)
+            protected_refresh["investor_frameworks_knowledge"] = build_investor_frameworks_knowledge(market_data)
+            protected_refresh["behavioral_participant_models"] = build_behavioral_participant_models(market_data)
+            protected_refresh["macro_micro_economic_engine"] = build_macro_micro_economic_engine(market_data, yahoo_data)
+            protected_refresh["technical_charting_mastery"] = build_technical_charting_mastery(market_data, yahoo_data, confluence_data)
 
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(protected_refresh, f, indent=2)

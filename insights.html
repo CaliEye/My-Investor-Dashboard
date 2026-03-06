@@ -93,6 +93,84 @@
       </div>
     </section>
 
+    <section class="mb-10 rounded-2xl border-2 border-cyan-400 shadow-cyan-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-cyan-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-cyan-300 mb-5 tracking-widest">Cycle + Macro Intelligence Engine</h2>
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="bg-gray-900/60 border border-cyan-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-cyan-300 mb-3">Market & Business Cycles</h3>
+          <ul id="cycle-layer-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading cycle layers...</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900/60 border border-blue-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-blue-300 mb-3">Macro → Micro Engine</h3>
+          <ul id="macro-micro-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading macro/micro factors...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-10 rounded-2xl border-2 border-red-400 shadow-red-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-red-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-red-300 mb-5 tracking-widest">Black Swan Defense & Opportunity</h2>
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-gray-900/60 border border-red-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-red-300 mb-3">Protection Playbook</h3>
+          <ul id="black-swan-protect-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading protection plan...</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900/60 border border-yellow-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-yellow-300 mb-3">Capitalization Playbook</h3>
+          <ul id="black-swan-cap-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading opportunity plan...</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900/60 border border-orange-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-orange-300 mb-3">Automation Bots</h3>
+          <ul id="black-swan-bot-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading automation blueprints...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-10 rounded-2xl border-2 border-purple-400 shadow-purple-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-purple-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-purple-300 mb-5 tracking-widest">War Regime + Behavioral Playbooks</h2>
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="bg-gray-900/60 border border-purple-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-purple-300 mb-3">War Start vs War End Investing</h3>
+          <ul id="war-playbook-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading war playbooks...</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900/60 border border-pink-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-pink-300 mb-3">401k + Institutional Behavior</h3>
+          <ul id="participant-model-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading participant behavior models...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-10 rounded-2xl border-2 border-emerald-400 shadow-emerald-400/30 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900 px-8 py-8">
+      <h2 class="text-2xl font-orbitron text-emerald-300 mb-5 tracking-widest">Frameworks + Technical Mastery</h2>
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="bg-gray-900/60 border border-emerald-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-emerald-300 mb-3">Investor Framework Knowledge</h3>
+          <ul id="framework-knowledge-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading framework synthesis...</li>
+          </ul>
+        </div>
+        <div class="bg-gray-900/60 border border-green-400/50 rounded-xl p-5">
+          <h3 class="font-orbitron text-green-300 mb-3">Charting Mastery Engine</h3>
+          <ul id="chart-mastery-list" class="space-y-2 text-sm text-gray-200">
+            <li>Loading technical pattern intelligence...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- INSIGHTS HUD HERO -->
     <section class="mb-10 rounded-2xl border-2 border-yellow-400 shadow-yellow-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 px-8 py-8">
       <h2 class="text-2xl font-orbitron text-yellow-300 mb-5 tracking-widest">🧠 Market Insights from Top Minds</h2>
@@ -185,6 +263,16 @@
   </footer>
 
   <script>
+    function renderBulletList(elementId, items, emptyText = 'No data available') {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      if (!Array.isArray(items) || items.length === 0) {
+        el.innerHTML = `<li>${emptyText}</li>`;
+        return;
+      }
+      el.innerHTML = items.map(item => `<li>• ${item}</li>`).join('');
+    }
+
     async function loadAIBriefing() {
       try {
         const res = await fetch('./data/ai_insights.json', { cache: 'no-store' });
@@ -274,6 +362,69 @@
           const updateTime = ai.updated_utc ? new Date(ai.updated_utc).toLocaleString() : 'Unknown';
           document.getElementById('ai-briefing-timestamp').textContent = updateTime;
         }
+
+        const cycleLayers = ai.market_business_cycle_intelligence?.cycle_layers || {};
+        renderBulletList('cycle-layer-list', [
+          `Macro: ${cycleLayers.macro_environment || 'N/A'}`,
+          `Industry: ${cycleLayers.industry_rotation || 'N/A'}`,
+          `Commodities: ${cycleLayers.commodity_cycle || 'N/A'}`,
+          `Stocks: ${cycleLayers.individual_stock_cycle || 'N/A'}`,
+          `Bitcoin: ${cycleLayers.bitcoin_cycle || 'N/A'}`,
+        ]);
+
+        const macroMicro = ai.macro_micro_economic_engine || {};
+        const macroFactors = macroMicro.macro_factors || {};
+        const microFactors = macroMicro.micro_factors || {};
+        renderBulletList('macro-micro-list', [
+          `Macro factors: Fed ${macroFactors.policy_rate || 'N/A'}, CPI ${macroFactors.inflation || 'N/A'}, Unemployment ${macroFactors.labor || 'N/A'}`,
+          `Dollar & rates: DXY ${macroFactors.dollar || 'N/A'}, US10Y ${macroFactors.long_rate || 'N/A'}`,
+          `Micro timing: BTC 5D ${microFactors.price_momentum_5d_btc ?? 'N/A'}, VIX proxy ${microFactors.market_volatility_proxy ?? 'N/A'}`,
+          `${macroMicro.decision_link || 'Macro sets context, micro times execution.'}`,
+        ]);
+
+        const swan = ai.black_swan_intelligence || {};
+        renderBulletList('black-swan-protect-list', swan.protective_playbook || [], 'Protection playbook unavailable');
+        renderBulletList('black-swan-cap-list', swan.capitalization_playbook || [], 'Capitalization playbook unavailable');
+
+        const bots = ai.black_swan_bot_automation?.bots || [];
+        renderBulletList(
+          'black-swan-bot-list',
+          bots.map(bot => `${bot.name}: ${bot.goal}`),
+          'Automation blueprints unavailable'
+        );
+
+        const warPlaybook = ai.war_market_history_playbook || {};
+        renderBulletList('war-playbook-list', [
+          ...(warPlaybook.war_start_investing_playbook || []).slice(0, 3).map(item => `War start: ${item}`),
+          ...(warPlaybook.war_ending_investing_playbook || []).slice(0, 3).map(item => `War ending: ${item}`),
+        ], 'War playbook unavailable');
+
+        const participants = ai.behavioral_participant_models || {};
+        const p401k = participants.typical_401k_behavior?.patterns || [];
+        const firms = participants.investment_firm_behavior?.patterns || [];
+        renderBulletList('participant-model-list', [
+          ...p401k.slice(0, 2).map(item => `401k: ${item}`),
+          ...firms.slice(0, 2).map(item => `Firms: ${item}`),
+          `Current bias: ${participants.current_behavior_bias || 'N/A'}`,
+        ], 'Participant behavior models unavailable');
+
+        const frameworks = ai.investor_frameworks_knowledge || {};
+        const loukas = frameworks.cycle_timing_frameworks?.loukas_style || [];
+        const cowen = frameworks.cycle_timing_frameworks?.cowen_style || [];
+        const buffett = frameworks.long_horizon_quality_framework?.buffett_style_principles || [];
+        renderBulletList('framework-knowledge-list', [
+          ...loukas.slice(0, 1).map(item => `Cycle timing: ${item}`),
+          ...cowen.slice(0, 1).map(item => `Risk bands: ${item}`),
+          ...buffett.slice(0, 1).map(item => `Quality/value: ${item}`),
+          frameworks.long_horizon_quality_framework?.application_to_current_stack || 'Framework application unavailable',
+        ], 'Framework knowledge unavailable');
+
+        const charting = ai.technical_charting_mastery || {};
+        renderBulletList('chart-mastery-list', [
+          ...(charting.pattern_watchlist || []).slice(0, 3),
+          charting.near_term_structural_read || 'No structural read available',
+          charting.execution_protocol || 'No execution protocol available',
+        ], 'Charting mastery unavailable');
         
       } catch (error) {
         console.error('Error loading AI briefing:', error);

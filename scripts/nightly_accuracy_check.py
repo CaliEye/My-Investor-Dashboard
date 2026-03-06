@@ -8,11 +8,14 @@ Exit code 0 only when all accuracy checks pass.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -27,6 +30,7 @@ ALERT_TXT_FILE = REPO_ROOT / "logs" / "nightly_accuracy_alert.txt"
 LINDY_BRIEF_FILE = REPO_ROOT / "logs" / "lindy_morning_brief.txt"
 RESEARCH_REPORT_JSON = REPO_ROOT / "logs" / "overnight_research_report.json"
 RESEARCH_REPORT_MD = REPO_ROOT / "logs" / "overnight_research_report.md"
+DISPATCH_LOG_FILE = REPO_ROOT / "data" / "alert_dispatch_log.json"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -97,6 +101,40 @@ def load_latest_json(logs_dir: Path, pattern: str) -> dict[str, Any] | None:
     matches = sorted(logs_dir.glob(pattern), key=lambda p: p.stat().st_mtime)
     if not matches:
         return None
+
+
+def append_dispatch_log(entry: dict[str, Any]) -> None:
+    payload = {"updated_utc": None, "events": []}
+    if DISPATCH_LOG_FILE.exists():
+        try:
+            payload = load_json(DISPATCH_LOG_FILE)
+        except Exception:
+            payload = {"updated_utc": None, "events": []}
+
+    events = payload.get("events") if isinstance(payload.get("events"), list) else []
+    events.insert(0, entry)
+    payload["updated_utc"] = datetime.now(timezone.utc).isoformat()
+    payload["events"] = events[:120]
+    DISPATCH_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with DISPATCH_LOG_FILE.open("w", encoding="utf-8") as fh:
+        json.dump(payload, fh, indent=2)
+
+
+def post_webhook(url: str, payload: dict[str, Any]) -> tuple[bool, str]:
+    req = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlopen(req, timeout=12) as response:
+            status = int(getattr(response, "status", 200))
+            if 200 <= status < 300:
+                return True, f"HTTP {status}"
+            return False, f"HTTP {status}"
+    except (HTTPError, URLError, TimeoutError) as exc:
+        return False, f"{type(exc).__name__}: {exc}"
     try:
         return load_json(matches[-1])
     except (json.JSONDecodeError, OSError):
@@ -315,6 +353,45 @@ def main() -> int:
         LINDY_BRIEF_FILE.write_text(brief, encoding="utf-8")
         print("\n--- Lindy Morning Brief ---\n")
         print(brief)
+
+        webhook_url = os.getenv("LINDY_WEBHOOK_URL") or os.getenv("ENDGAME_ALERT_WEBHOOK_URL")
+        if webhook_url:
+            delivery_payload = {
+                "asset": "LINDY-MORNING-BRIEF",
+                "priority": "HIGH",
+                "signal": "brief",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "brief": brief,
+                "source": "nightly_accuracy_check.py",
+            }
+            delivered, detail = post_webhook(webhook_url, delivery_payload)
+            notes.append(f"brief_dispatch={'ok' if delivered else 'failed'} ({detail})")
+            append_dispatch_log(
+                {
+                    "created_utc": datetime.now(timezone.utc).isoformat(),
+                    "status": "delivered" if delivered else "dispatch_failed",
+                    "event_type": "MORNING_BRIEF",
+                    "dispatch": {
+                        "channel": "webhook",
+                        "delivered": delivered,
+                        "detail": detail,
+                    },
+                }
+            )
+        else:
+            notes.append("brief_dispatch=not_configured (missing webhook env)")
+            append_dispatch_log(
+                {
+                    "created_utc": datetime.now(timezone.utc).isoformat(),
+                    "status": "dispatch_unavailable",
+                    "event_type": "MORNING_BRIEF",
+                    "dispatch": {
+                        "channel": "webhook",
+                        "delivered": False,
+                        "detail": "missing LINDY_WEBHOOK_URL/ENDGAME_ALERT_WEBHOOK_URL",
+                    },
+                }
+            )
     else:
         if LINDY_BRIEF_FILE.exists():
             LINDY_BRIEF_FILE.unlink()
