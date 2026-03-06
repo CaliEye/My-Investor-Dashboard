@@ -555,6 +555,7 @@ def main():
     data["next_review_utc"] = (now + timedelta(hours=4)).isoformat()
     data["sector_etfs"] = sector_etfs
     data["decision_gate"] = build_decision_gate_payload(data, sector_etfs)
+    data["data_stale"] = False  # Freshly written — cleared on every successful update
 
     existing_data = read_existing_data()
     should_write, new_quality, existing_quality = should_write_market_payload(data, existing_data)

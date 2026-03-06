@@ -179,12 +179,35 @@ def main() -> int:
 
     providers_ok = len([item for item in checks if item.get("ok")])
     providers_total = len(checks)
+    # Providers with keys set (configured), regardless of health
     providers_configured = len([item for item in checks if item.get("status") not in {"missing_key"}])
+    # Providers with missing keys (not set up at all)
+    providers_missing_key = len([item for item in checks if item.get("status") == "missing_key"])
+    # Providers configured AND responding healthy
     providers_healthy_configured = len(
         [item for item in checks if item.get("status") not in {"missing_key"} and item.get("ok")]
     )
-    recommended_min_healthy = 2 if providers_configured >= 2 else 1
+
+    # Threshold: require at least 2 healthy configured providers for genuine resilience.
+    # If only 1 is configured, allow gate to pass (better than halting) but flag a resilience warning.
+    recommended_min_healthy = max(2, providers_configured) if providers_configured >= 2 else 1
     goal_aligned_ready = providers_healthy_configured >= recommended_min_healthy
+
+    # Resilience: < 3 configured providers means thin redundancy — surface this as a warning
+    resilience_warning = providers_configured < 3
+    resilience_warning_message = (
+        f"Only {providers_configured}/{providers_total} providers configured. "
+        f"{providers_missing_key} providers have missing API keys. "
+        "Add OPENAI_API_KEY, XAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, "
+        "PERPLEXITY_API_KEY, ALPHA_VANTAGE_API_KEY, POLYGON_API_KEY to GitHub Secrets "
+        "for full multi-AI confluence resilience."
+        if resilience_warning else ""
+    )
+
+    # List which providers need keys
+    missing_key_providers = [
+        item.get("provider") for item in checks if item.get("status") == "missing_key"
+    ]
 
     report = {
         "checked_at_utc": utc_now(),
@@ -192,12 +215,16 @@ def main() -> int:
             "providers_ok": providers_ok,
             "providers_total": providers_total,
             "providers_configured": providers_configured,
+            "providers_missing_key": providers_missing_key,
             "providers_healthy_configured": providers_healthy_configured,
             "core_ready": core_ready,
             "core_policy": "At least one core provider (OpenAI, XAI, Yahoo) must be available",
             "goal_aligned_ready": goal_aligned_ready,
             "recommended_min_healthy": recommended_min_healthy,
-            "goal_policy": "If 2+ providers are configured, require at least 2 healthy for resilient confluence",
+            "goal_policy": "Require at least 2 configured providers to be healthy for resilient confluence",
+            "resilience_warning": resilience_warning,
+            "resilience_warning_message": resilience_warning_message,
+            "missing_key_providers": missing_key_providers,
         },
         "providers": checks,
     }
@@ -210,19 +237,27 @@ def main() -> int:
         fh.write(f"\n## {report['checked_at_utc']}\n")
         fh.write(f"- Providers healthy: {providers_ok}/{providers_total}\n")
         fh.write(f"- Configured healthy: {providers_healthy_configured}/{providers_configured}\n")
+        fh.write(f"- Missing key (unconfigured): {providers_missing_key}\n")
         fh.write(f"- Core readiness: {'PASS' if core_ready else 'FAIL'}\n")
         fh.write(f"- Goal-aligned readiness: {'PASS' if goal_aligned_ready else 'FAIL'}\n")
+        if resilience_warning:
+            fh.write(f"- RESILIENCE WARNING: {resilience_warning_message}\n")
+        if missing_key_providers:
+            fh.write(f"- Needs GitHub Secrets: {', '.join(missing_key_providers)}\n")
         for item in checks:
-            status = "PASS" if item.get("ok") else "FAIL"
+            status = "PASS" if item.get("ok") else ("UNCONFIGURED" if item.get("status") == "missing_key" else "FAIL")
             fh.write(f"- [{status}] {item.get('provider')}: {item.get('detail')}\n")
 
     print("AI Confluence Health Check")
     print(f"Providers healthy: {providers_ok}/{providers_total}")
     print(f"Configured healthy: {providers_healthy_configured}/{providers_configured}")
+    print(f"Missing key (unconfigured): {providers_missing_key}")
     print(f"Core readiness: {'PASS' if core_ready else 'FAIL'}")
     print(f"Goal-aligned readiness: {'PASS' if goal_aligned_ready else 'FAIL'}")
+    if resilience_warning:
+        print(f"RESILIENCE WARNING: {resilience_warning_message}")
     for item in checks:
-        status = "PASS" if item.get("ok") else "FAIL"
+        status = "PASS" if item.get("ok") else ("UNCONFIGURED" if item.get("status") == "missing_key" else "FAIL")
         print(f"[{status}] {item.get('provider')}: {item.get('detail')}")
 
     return 0 if core_ready else 1

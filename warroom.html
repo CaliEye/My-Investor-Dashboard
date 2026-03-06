@@ -75,6 +75,15 @@
         </ul>
       </div>
     </section>
+
+    <!-- AI Confluence Health Status -->
+    <section class="mb-8 rounded-2xl border border-gray-600 bg-gray-900 px-6 py-5">
+      <h3 class="font-orbitron text-gray-300 mb-4 tracking-wide text-sm">AI CONFLUENCE HEALTH</h3>
+      <div id="confluence-health" class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <div class="text-gray-500">Loading...</div>
+      </div>
+      <div id="confluence-resilience-warning" class="mt-3 hidden text-xs text-amber-400 border border-amber-700 rounded p-2"></div>
+    </section>
   </main>
 
   <footer class="border-t border-gray-700 mt-10 py-6 px-6">
@@ -94,6 +103,45 @@
     </nav>
     <p class="text-center text-gray-600 mt-4 text-xs">&copy; 2025 CyberSci-Dash. All rights reserved.</p>
   </footer>
+  <script>
+    (async function loadConfluenceHealth() {
+      try {
+        const res = await fetch('./logs/ai_confluence_health_report.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Report not found');
+        const report = await res.json();
+        const s = report.summary || {};
+        const providers = report.providers || [];
+
+        const statusColor = (p) => {
+          if (p.ok) return 'text-green-300';
+          if (p.status === 'missing_key') return 'text-gray-500';
+          return 'text-red-300';
+        };
+        const statusLabel = (p) => {
+          if (p.ok) return 'LIVE';
+          if (p.status === 'missing_key') return 'NO KEY';
+          return 'ERROR';
+        };
+
+        document.getElementById('confluence-health').innerHTML = providers.map(p => `
+          <div class="bg-gray-800 rounded p-2">
+            <div class="font-semibold ${statusColor(p)} uppercase tracking-wide">${p.provider.replace('_', ' ')}</div>
+            <div class="${statusColor(p)} font-mono">${statusLabel(p)}</div>
+            <div class="text-gray-600 truncate">${p.detail || ''}</div>
+          </div>
+        `).join('');
+
+        if (s.resilience_warning && s.resilience_warning_message) {
+          const warn = document.getElementById('confluence-resilience-warning');
+          warn.textContent = s.resilience_warning_message;
+          warn.classList.remove('hidden');
+        }
+      } catch (e) {
+        document.getElementById('confluence-health').innerHTML =
+          '<div class="text-gray-600 text-xs col-span-4">Health report unavailable — run ai_confluence_health_check.py to generate.</div>';
+      }
+    })();
+  </script>
   <script src="js/transitions.js"></script>
 </body>
 </html>

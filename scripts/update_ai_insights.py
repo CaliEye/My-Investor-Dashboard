@@ -154,14 +154,38 @@ def get_yahoo_finance_data():
         }
     except Exception as e:
         print(f"Yahoo Finance error: {e}")
-        return {
-            "btc_price": 43200,
-            "btc_change_5d": -2.1,
-            "spy_price": 445,
-            "spy_change_5d": -1.5,
-            "vix_level": 18.5,
-            "btc_volume": 25000000
-        }
+        # Fall back to most-recently committed data.json rather than stale hardcoded values
+        try:
+            data_path = Path(__file__).parent.parent / "data" / "data.json"
+            with open(data_path, "r", encoding="utf-8") as f:
+                d = json.load(f)
+            crypto = d.get("crypto", {})
+            macro = d.get("macro", {})
+            # btc_usd is the correct field name; spx is a formatted string like "6,831"
+            btc_price = float(crypto.get("btc_usd", 0) or 0)
+            spx_raw = str(macro.get("spx", "0")).replace(",", "").strip()
+            spy_price = float(spx_raw) if spx_raw else 0.0
+            vix_raw = str(macro.get("vix", "0")).replace(",", "").strip()
+            vix = float(vix_raw) if vix_raw else 0.0
+            print(f"Yahoo Finance fallback: using data.json values (BTC={btc_price}, SPX={spy_price})")
+            return {
+                "btc_price": btc_price,
+                "btc_change_5d": 0.0,
+                "spy_price": spy_price,
+                "spy_change_5d": 0.0,
+                "vix_level": vix,
+                "btc_volume": 0
+            }
+        except Exception as fallback_err:
+            print(f"Fallback data.json read also failed: {fallback_err}")
+            return {
+                "btc_price": 0,
+                "btc_change_5d": 0.0,
+                "spy_price": 0,
+                "spy_change_5d": 0.0,
+                "vix_level": 0.0,
+                "btc_volume": 0
+            }
 
 def get_alpha_vantage_analysis(btc_price):
     """Get technical analysis from Alpha Vantage"""
