@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-07T04:42:55.830299+00:00",
+  "updated_utc": "2026-03-07T06:26:00.513628+00:00",
   "bias": "Bullish",
   "triggers": [
     "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
     "Dollar: DXY at 99.0, reduced pressure on risk assets",
     "Breadth: S&P 500 breadth deteriorating, 65% above 50-DMA"
   ],
-  "next_review_utc": "2026-03-07T08:42:55.830299+00:00",
+  "next_review_utc": "2026-03-07T10:26:00.513628+00:00",
   "crypto": {
-    "btc_usd": 68114.84,
-    "eth_usd": 1978.29,
-    "btc_price_formatted": "$68,115",
-    "eth_price_formatted": "$1,978",
+    "btc_usd": 67945.2,
+    "eth_usd": 1975.96,
+    "btc_price_formatted": "$67,945",
+    "eth_price_formatted": "$1,976",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Post-halving correction \u2014 consolidating before Q4 2026 bull run window",
@@ -50,7 +50,7 @@
     "gdp_context": "Moderate (healthy but slowing from 3%+ peak)",
     "fed_funds_rate": "4.25%",
     "fed_rate_context": "Easing cycle (cut from 5.25% peak \u2014 still above neutral 2.5%)",
-    "dxy": "98.9",
+    "dxy": "99.0",
     "dxy_context": "Contained (reduced dollar pressure)",
     "us10y_yield": "4.13%",
     "us10y_context": "High (tight financial conditions)",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-07T04:43:00.217931+00:00",
+    "updated_utc": "2026-03-07T06:26:02.594696+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -98,8 +98,8 @@
         "price_formatted": "$599.75",
         "change_pct_day": -1.5,
         "change_pct_5d": -1.24,
-        "volume": 83945081,
-        "volume_vs_20d": 1.19,
+        "volume": 86221800,
+        "volume_vs_20d": 1.22,
         "trend": "UNDER PRESSURE",
         "fortress_status": "SECURE",
         "data_sources": [
@@ -114,8 +114,8 @@
         "price_formatted": "$242.20",
         "change_pct_day": 0.9,
         "change_pct_5d": -0.62,
-        "volume": 2040099,
-        "volume_vs_20d": 1.81,
+        "volume": 2097700,
+        "volume_vs_20d": 1.86,
         "trend": "MOMENTUM BUILD",
         "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
@@ -132,10 +132,9 @@
         "volume": 10453800,
         "volume_vs_20d": 0.77,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "SECURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "PRECIOUS METALS"
       },
@@ -178,7 +177,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-07T04:43:03.101725+00:00",
+    "updated_utc": "2026-03-07T06:26:03.495538+00:00",
     "confluence_score": 1,
     "max_score": 5,
     "threshold_hit": false,
@@ -226,10 +225,10 @@
       "asset": "Bitcoin / BTC",
       "asset_key": "btc",
       "bot_type": "DCA",
-      "confidence": 81,
+      "confidence": 82,
       "status": "STRONG_BUY",
-      "action": "Accumulate Bitcoin / BTC \u2014 weekly RSI 23 (oversold), Fear zone",
-      "signal": "RSI D:50 W:23 | Trend W:Down M:Neutral | Fear",
+      "action": "Accumulate Bitcoin / BTC \u2014 weekly RSI 22 (oversold), Fear zone",
+      "signal": "RSI D:50 W:22 | Trend W:Down M:Neutral | Fear",
       "risk": 78,
       "timeframe": "Weekly DCA, monitor for trend reversal confirmation",
       "page": "crypto.html",
@@ -440,7 +439,7 @@
         "label": "USD / DXY",
         "cycle": "Topping",
         "risk": 45,
-        "rsi_daily": 71.3,
+        "rsi_daily": 73.4,
         "rsi_weekly": 46.8,
         "trend_weekly": "Neutral",
         "trend_monthly": "Neutral",
@@ -476,8 +475,8 @@
         "label": "Bitcoin / BTC",
         "cycle": "Post-Halving",
         "risk": 78,
-        "rsi_daily": 50.2,
-        "rsi_weekly": 22.6,
+        "rsi_daily": 49.9,
+        "rsi_weekly": 22.3,
         "trend_weekly": "Down",
         "trend_monthly": "Neutral",
         "sentiment": "Fear",
@@ -488,8 +487,8 @@
         "label": "Ethereum / ETH",
         "cycle": "Bear Phase",
         "risk": 82,
-        "rsi_daily": 50.5,
-        "rsi_weekly": 23.9,
+        "rsi_daily": 50.4,
+        "rsi_weekly": 23.8,
         "trend_weekly": "Down",
         "trend_monthly": "Neutral",
         "sentiment": "Extreme Fear",
@@ -537,7 +536,7 @@
         "cycle": "Bear Phase",
         "risk": 62,
         "rsi_daily": 94.4,
-        "rsi_weekly": 87.0,
+        "rsi_weekly": 86.9,
         "trend_weekly": "Up",
         "trend_monthly": "Neutral",
         "sentiment": "Fear",
