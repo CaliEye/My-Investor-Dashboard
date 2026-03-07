@@ -1,14 +1,14 @@
 {
-  "updated_utc": "2026-03-07T06:15:06.632705+00:00",
+  "updated_utc": "2026-03-07T12:12:51.096565+00:00",
   "regime": "Late Cycle Bullish",
   "top_triggers": [
     "Fed balance sheet contracting",
     "DXY at 99.0",
     "S&P 500 breadth deteriorating"
   ],
-  "invalidation": "DXY falling below 98.0",
-  "contextual_guidance": "Given the lack of recent portfolio actions, consider diversifying into risk assets due to reduced pressure from the dollar. Monitor the S&P 500 breadth for potential market downturn signals.",
-  "grok_counter": "The strongest counter-argument this week is the potential for a sudden regulatory crackdown, especially with whispers of stricter U.S. policies on crypto taxation and compliance gaining traction. The crowd might be overlooking how quickly sentiment can shift if major exchanges or institutions face legal hurdles, triggering a sharp sell-off despite the bullish consensus.",
+  "invalidation": "DXY falling below 98.5",
+  "contextual_guidance": "Given the lack of recent commands, consider diversifying the portfolio to include more risk assets due to reduced pressure. Monitor the S&P 500 breadth closely for further deterioration.",
+  "grok_counter": "The strongest counter-argument this week is the potential for regulatory crackdowns, particularly in major markets like the US or EU, which could spook investors despite the bullish sentiment. The crowd might be underestimating the impact of sudden policy shifts or negative headlines around crypto taxation or bans, especially with ongoing global economic uncertainty.",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
   "fear_greed_snapshot": 50,
@@ -39,7 +39,7 @@
     "note": "2B/0Be/1N sources"
   },
   "market_data": {
-    "btc_price": 68114.84,
+    "btc_price": 67978.83,
     "btc_change_5d": 0.0,
     "spy_price": 6740.0,
     "spy_change_5d": 0.0,
@@ -328,7 +328,7 @@
       "Sentiment extremes versus price structure"
     ],
     "cross_cycle_pressure": {
-      "dxy": 98.9,
+      "dxy": 99.0,
       "macro_risk": 72.0,
       "fear_greed": 28.0
     }
@@ -379,7 +379,7 @@
       "policy_rate": "4.25%",
       "inflation": "2.8%",
       "labor": "3.8%",
-      "dollar": "98.9",
+      "dollar": "99.0",
       "long_rate": "4.13%"
     },
     "micro_factors": {
