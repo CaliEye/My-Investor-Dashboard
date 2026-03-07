@@ -463,6 +463,100 @@ footer {
   margin-top: 0.5rem;
 }
 
+/* ======================================================
+   ENDGAME NAV — Consistent navigation across all pages
+   ====================================================== */
+.endgame-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 24px;
+  border-bottom: 1px solid #39ff14;
+  background: #000000;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.endgame-nav .nav-brand {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: #39ff14 !important;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  flex-shrink: 0;
+}
+.endgame-nav .nav-brand:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+.endgame-nav .nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+.endgame-nav .nav-links a {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888888 !important;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  transition: color 0.2s;
+}
+.endgame-nav .nav-links a:hover {
+  color: #39ff14 !important;
+  text-decoration: none !important;
+}
+.endgame-nav .nav-links a.active {
+  color: #d4af37 !important;
+  border-bottom: 1px solid #d4af37 !important;
+  padding-bottom: 2px !important;
+}
+.endgame-nav .nav-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #ff4444;
+  flex-shrink: 0;
+}
+/* Sub-nav row for grouped pages (bots, fortress) */
+.endgame-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 5px 24px;
+  background: #050505;
+  border-bottom: 1px solid #1a1a1a;
+}
+.endgame-subnav a {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #555555 !important;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  transition: color 0.2s;
+}
+.endgame-subnav a:hover {
+  color: #39ff14 !important;
+  text-decoration: none !important;
+}
+.endgame-subnav a.active {
+  color: #FFD166 !important;
+}
+
 /* High risk pulsing animation */
 .risk-gauge-container:has([class*="78"]),
 .risk-gauge-container:has([class*="72"]) {

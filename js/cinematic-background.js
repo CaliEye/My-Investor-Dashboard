@@ -150,36 +150,9 @@ class CinematicBackgroundManager {
     console.log(`[Cinematic] Background set: ${config.image} with ${config.atmosphere} atmosphere`);
   }
 
-  initAtmosphereEffects(pageType) {
-    // Clear existing effects
+  initAtmosphereEffects(_pageType) {
+    // Atmosphere overlay animations disabled — clean background only
     this.clearAtmosphereEffects();
-    
-    const config = this.backgrounds[pageType];
-    if (!config) return;
-    
-    switch (config.atmosphere) {
-      case 'corporate':
-        this.addCorporateEffects();
-        break;
-      case 'technical':
-        this.addTechnicalEffects();
-        break;
-      case 'dynamic':
-        this.addDynamicEffects();
-        break;
-      case 'stable':
-        this.addStableEffects();
-        break;
-      case 'alert':
-        this.addAlertEffects();
-        break;
-      case 'focus':
-        this.addFocusEffects();
-        break;
-      case 'motivational':
-        this.addMotivationalEffects();
-        break;
-    }
   }
 
   addCorporateEffects() {

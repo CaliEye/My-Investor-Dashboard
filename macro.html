@@ -14,23 +14,92 @@
 <body class="macro-page bg-gray-900 text-white font-mono min-h-screen">
 <div class="code-rain"></div>
 
-<header class="px-6 py-4 flex justify-between items-center border-b border-cyan-400 shadow-lg relative z-50">
-  <h1 class="text-3xl font-orbitron tracking-widest text-cyan-400">CyberSci-Dash v2</h1>
-  <nav class="flex flex-wrap gap-4 text-sm font-orbitron tracking-wide">
-    <a href="index.html" class="hover:text-cyan-400 text-gray-300">Summary</a>
-    <a href="warroom.html" class="hover:text-pink-400 text-gray-300">War Room</a>
-    <a href="macro.html" class="text-cyan-400 border-b-2 border-cyan-400 pb-1">Macro</a>
-    <a href="crypto.html" class="hover:text-green-400 text-gray-300">Crypto</a>
-    <a href="bots.html" class="hover:text-yellow-400 text-gray-300">Bots</a>
-    <a href="sentiment.html" class="hover:text-pink-400 text-gray-300">Sentiment</a>
-    <a href="scenario.html" class="hover:text-cyan-400 text-gray-300">Scenario Engine</a>
-    <a href="mindmap.html" class="hover:text-cyan-400 text-gray-300">Mindmap</a>
-    <a href="goals.html" class="hover:text-cyan-400 text-gray-300">Goals</a>
-    <a href="portfolio.html" class="hover:text-cyan-400 text-gray-300">Portfolio</a>
-    <a href="insights.html" class="hover:text-yellow-400 text-gray-300">Insights</a>
-    <a href="links.html" class="hover:text-cyan-400 text-gray-300">Quick Links</a>
-  </nav>
-</header>
+<nav class="endgame-nav">
+  <a class="nav-brand" href="index.html">ENDGAME</a>
+  <div class="nav-links">
+    <a href="index.html">SUMMARY</a>
+    <a href="warroom.html">WAR ROOM</a>
+    <a href="macro.html" class="active">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">SECTORS</a>
+    <a href="bots.html">BOTS</a>
+    <a href="sentiment.html">SENTIMENT</a>
+    <a href="scenario.html">SCENARIOS</a>
+    <a href="goals.html">GOALS</a>
+    <a href="portfolio.html">PORTFOLIO</a>
+    <a href="insights.html">INSIGHTS</a>
+    <a href="links.html">LINKS</a>
+    <a href="mindmap.html">MINDMAP</a>
+    <a href="my charts.html">CHARTS</a>
+  </div>
+  <span class="nav-label">MACRO INTEL</span>
+</nav>
+
+  <!-- MACRO HERO -->
+  <div class="sector-hero" id="macro-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Macro Intelligence</div>
+        <div class="sector-price" style="color:#00D2FF;text-shadow:0 0 24px #00D2FF;" id="macro-hero-posture">DEFENSIVE</div>
+        <div class="sector-change">
+          Risk Posture · <span id="macro-hero-risk-label" style="color:#f59e0b;">ELEVATED</span>
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Business Cycle</div>
+        <div class="sector-cycle-value" id="macro-hero-cycle">LATE BULL</div>
+        <div class="sector-cycle-context" id="macro-hero-cycle-ctx">Fed tightening cycle, elevated inflation, slowing growth signal late-cycle conditions.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Risk Level</div>
+        <div class="sector-risk-value" id="macro-hero-risk" style="color:#f59e0b;">68</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+      </div>
+    </div>
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">DXY Index</div>
+        <div class="sector-metric-value" id="macro-hero-dxy" style="color:#ffe066;">—</div>
+        <div class="sector-metric-sub" id="macro-hero-dxy-sub">DOLLAR STRENGTH</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">10Y Yield</div>
+        <div class="sector-metric-value" id="macro-hero-10y" style="color:#FF4757;">—</div>
+        <div class="sector-metric-sub">TREASURY RATE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Fed Rate</div>
+        <div class="sector-metric-value" id="macro-hero-fed" style="color:#ffe066;">—</div>
+        <div class="sector-metric-sub">POLICY RATE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">CPI YoY</div>
+        <div class="sector-metric-value" id="macro-hero-cpi" style="color:#FF4757;">—</div>
+        <div class="sector-metric-sub">INFLATION</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">GDP Growth</div>
+        <div class="sector-metric-value" id="macro-hero-gdp" style="color:#39ff14;">—</div>
+        <div class="sector-metric-sub">REAL GROWTH</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">S&amp;P 500</div>
+        <div class="sector-metric-value" id="macro-hero-spx" style="color:#00D2FF;">—</div>
+        <div class="sector-metric-sub">EQUITY INDEX</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Policy Mode</div>
+        <div class="sector-metric-value" id="macro-hero-policy" style="color:#FF4757;">QT</div>
+        <div class="sector-metric-sub">MONETARY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bot Opportunities -->
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px 24px;">
+    <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+    <div id="bot-opp-container" data-sector="macro"></div>
+  </div>
 
 <main class="relative z-10 max-w-5xl mx-auto p-6">
 
@@ -142,6 +211,40 @@
   <p class="text-center text-gray-600 mt-4 text-xs">&copy; 2025 CyberSci-Dash. All rights reserved.</p>
 </footer>
 
+<script src="js/live-refresh.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('./data/data.json', { cache: 'no-store' });
+      const d = await res.json();
+      const m = d.macro || {};
+      const gate = d.decision_gate || {};
+      const ai = d.asset_intelligence || {};
+      const riskColor = r => r < 40 ? '#39ff14' : r < 60 ? '#ffe066' : r < 75 ? '#f59e0b' : '#FF4757';
+      const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+      const posture = gate.risk_posture || d.regime || 'DEFENSIVE';
+      const postureColor = posture === 'RISK-ON' ? '#39ff14' : posture === 'DEFENSIVE' ? '#FF4757' : '#ffe066';
+      setEl('macro-hero-posture', posture, postureColor);
+      const riskLevel = gate.risk_level || m.risk_level || 65;
+      setEl('macro-hero-risk', riskLevel, riskColor(riskLevel));
+      const rl = riskLevel >= 70 ? 'HIGH RISK' : riskLevel >= 50 ? 'ELEVATED' : riskLevel >= 30 ? 'MODERATE' : 'LOW RISK';
+      const rlColor = riskColor(riskLevel);
+      setEl('macro-hero-risk-label', rl, rlColor);
+      const cycle = (ai.macro_cycle || m.business_cycle || 'LATE BULL').toUpperCase();
+      setEl('macro-hero-cycle', cycle);
+      setEl('macro-hero-cycle-ctx', ai.macro_cycle_context || gate.brief || m.context || '');
+      if (m.dxy != null) { setEl('macro-hero-dxy', m.dxy.toFixed ? m.dxy.toFixed(1) : m.dxy, m.dxy > 104 ? '#FF4757' : m.dxy < 100 ? '#39ff14' : '#ffe066'); setEl('macro-hero-dxy-sub', m.dxy_context || 'DOLLAR STRENGTH'); }
+      if (m.us10y_yield != null) { setEl('macro-hero-10y', m.us10y_yield + '%', m.us10y_yield > 4.5 ? '#FF4757' : '#ffe066'); }
+      if (m.fed_funds_rate != null) { setEl('macro-hero-fed', m.fed_funds_rate + '%', '#ffe066'); }
+      if (m.cpi_yoy != null) { setEl('macro-hero-cpi', m.cpi_yoy + '%', m.cpi_yoy > 3.5 ? '#FF4757' : m.cpi_yoy < 2.5 ? '#39ff14' : '#ffe066'); }
+      if (m.gdp_growth != null) { setEl('macro-hero-gdp', m.gdp_growth + '%', m.gdp_growth > 2 ? '#39ff14' : m.gdp_growth < 0 ? '#FF4757' : '#ffe066'); }
+      if (m.spx_level) { setEl('macro-hero-spx', m.spx_level, '#00D2FF'); }
+      const policy = ai.monetary_policy || (m.fed_policy || 'QT');
+      const policyColor = policy === 'QE' ? '#39ff14' : policy === 'QT' ? '#FF4757' : '#ffe066';
+      setEl('macro-hero-policy', policy, policyColor);
+    } catch(e) { console.warn('Macro hero load failed:', e); }
+  });
+</script>
 <script src="js/macro.js"></script>
 <script src="js/matrix.js"></script>
 <script src="js/cinematic-background.js"></script>

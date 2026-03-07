@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/endgame-theme.css" />
   <link rel="stylesheet" href="css/matrix.css" />
   <link rel="stylesheet" href="css/cinematic-hud.css" />
@@ -393,13 +394,14 @@
 <div id="loading-overlay">LOADING CRYPTO COMMAND...</div>
 
 <!-- NAV -->
-<nav>
+<nav class="endgame-nav">
   <a class="nav-brand" href="index.html">ENDGAME</a>
   <div class="nav-links">
     <a href="index.html">SUMMARY</a>
     <a href="warroom.html">WAR ROOM</a>
     <a href="macro.html">MACRO</a>
     <a href="crypto.html" class="active">CRYPTO</a>
+    <a href="tech.html">SECTORS</a>
     <a href="bots.html">BOTS</a>
     <a href="sentiment.html">SENTIMENT</a>
     <a href="scenario.html">SCENARIOS</a>
@@ -407,10 +409,77 @@
     <a href="portfolio.html">PORTFOLIO</a>
     <a href="insights.html">INSIGHTS</a>
     <a href="links.html">LINKS</a>
-    <a href="#scan-log">SCAN LOG</a>
+    <a href="mindmap.html">MINDMAP</a>
+    <a href="my charts.html">CHARTS</a>
   </div>
   <span class="nav-label">CRYPTO COMMAND</span>
 </nav>
+
+<!-- CRYPTO HERO -->
+<div class="sector-hero" style="--sector-accent:#d4af37;">
+  <div class="sector-hero-top">
+    <div class="sector-title-block">
+      <div class="sector-name">Crypto Command</div>
+      <div class="sector-price" style="color:#d4af37;text-shadow:0 0 24px #d4af37;" id="crypto-hero-btc">$—</div>
+      <div class="sector-change">
+        BTC · <span id="crypto-hero-btc-change" style="color:#39ff14;">+0.0%</span> · <span id="crypto-hero-cycle" style="color:#d4af37;">ACCUMULATION</span>
+      </div>
+    </div>
+    <div class="sector-cycle-block">
+      <div class="sector-cycle-label">Cycle Phase</div>
+      <div class="sector-cycle-value" id="crypto-hero-cycle-phase">BULL CYCLE</div>
+      <div class="sector-cycle-context" id="crypto-hero-cycle-ctx">Post-halving accumulation phase. Oct/Nov 2026 target window. Watch-only until confluence gate flips.</div>
+    </div>
+    <div class="sector-risk-block">
+      <div class="sector-risk-label">Risk Level</div>
+      <div class="sector-risk-value" id="crypto-hero-risk" style="color:#f59e0b;">55</div>
+      <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+    </div>
+  </div>
+  <div class="sector-metrics-strip">
+    <div class="sector-metric">
+      <div class="sector-metric-label">BTC Price</div>
+      <div class="sector-metric-value" id="crypto-strip-btc" style="color:#d4af37;">—</div>
+      <div class="sector-metric-sub">LIVE</div>
+    </div>
+    <div class="sector-metric">
+      <div class="sector-metric-label">ETH Price</div>
+      <div class="sector-metric-value" id="crypto-strip-eth" style="color:#39ff14;">—</div>
+      <div class="sector-metric-sub">LIVE</div>
+    </div>
+    <div class="sector-metric">
+      <div class="sector-metric-label">BTC RSI Daily</div>
+      <div class="sector-metric-value" id="crypto-strip-rsi-d" style="color:#ffe066;">—</div>
+      <div class="sector-metric-sub" id="crypto-strip-rsi-d-label">SIGNAL</div>
+    </div>
+    <div class="sector-metric">
+      <div class="sector-metric-label">BTC RSI Weekly</div>
+      <div class="sector-metric-value" id="crypto-strip-rsi-w" style="color:#ffe066;">—</div>
+      <div class="sector-metric-sub" id="crypto-strip-rsi-w-label">SIGNAL</div>
+    </div>
+    <div class="sector-metric">
+      <div class="sector-metric-label">Fear &amp; Greed</div>
+      <div class="sector-metric-value" id="crypto-strip-fg" style="color:#FF4757;">—</div>
+      <div class="sector-metric-sub" id="crypto-strip-fg-label">SENTIMENT</div>
+    </div>
+    <div class="sector-metric">
+      <div class="sector-metric-label">BTC Dominance</div>
+      <div class="sector-metric-value" id="crypto-strip-dom" style="color:#00D2FF;">—</div>
+      <div class="sector-metric-sub">MARKET SHARE</div>
+    </div>
+    <div class="sector-metric">
+      <div class="sector-metric-label">Target Window</div>
+      <div class="sector-metric-value" style="color:#d4af37;">OCT/NOV</div>
+      <div class="sector-metric-sub">2026 BULL RUN</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bot Opportunities -->
+<div class="container" style="padding-top:16px;padding-bottom:8px;">
+  <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+  <div id="bot-opp-container" data-sector="crypto"></div>
+</div>
 
 <!-- PAGE HEADER -->
 <div class="page-header container">
@@ -723,6 +792,40 @@
     overlay.classList.add('hidden');
   }
 })();
+</script>
+<script src="js/live-refresh.js"></script>
+<script>
+  // Crypto hero data binding
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('./data/data.json', { cache: 'no-store' });
+      const d = await res.json();
+      const c = d.crypto || {};
+      const s = d.sentiment || {};
+      const ai = (d.asset_intelligence && d.asset_intelligence.assets) || {};
+      const btcAi = ai.btc || {};
+      const riskColor = r => r < 40 ? '#39ff14' : r < 60 ? '#ffe066' : r < 75 ? '#f59e0b' : '#FF4757';
+      const rsiColor = r => r < 30 ? '#39ff14' : r < 45 ? '#ffe066' : r < 55 ? '#888' : r < 70 ? '#f59e0b' : '#FF4757';
+      const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+      if (c.btc_price_formatted) setEl('crypto-hero-btc', c.btc_price_formatted);
+      if (c.btc_price_formatted) setEl('crypto-strip-btc', c.btc_price_formatted);
+      if (c.eth_price_formatted) setEl('crypto-strip-eth', c.eth_price_formatted);
+      const btcPct = c.btc_change_pct_day;
+      if (btcPct != null) { const col = btcPct >= 0 ? '#39ff14' : '#FF4757'; setEl('crypto-hero-btc-change', (btcPct > 0 ? '+' : '') + btcPct + '%', col); }
+      const cycle = (c.cycle_status || btcAi.cycle || 'ACCUMULATION').toUpperCase();
+      setEl('crypto-hero-cycle', cycle);
+      setEl('crypto-hero-cycle-phase', cycle);
+      if (c.cycle_context) setEl('crypto-hero-cycle-ctx', c.cycle_context);
+      const risk = c.risk_level || 55;
+      setEl('crypto-hero-risk', risk, riskColor(risk));
+      const rsiD = btcAi.rsi_daily; const rsiW = btcAi.rsi_weekly;
+      if (rsiD) { setEl('crypto-strip-rsi-d', rsiD, rsiColor(rsiD)); setEl('crypto-strip-rsi-d-label', btcAi.rsi_label_daily || '—'); }
+      if (rsiW) { setEl('crypto-strip-rsi-w', rsiW, rsiColor(rsiW)); setEl('crypto-strip-rsi-w-label', btcAi.rsi_label_weekly || '—'); }
+      const fg = s.fear_greed_index; const fgLabel = s.fear_greed_label || '';
+      if (fg != null) { const fgCol = fg < 25 ? '#FF4757' : fg < 45 ? '#f59e0b' : fg < 55 ? '#ffe066' : fg < 75 ? '#39ff14' : '#00ff99'; setEl('crypto-strip-fg', fg, fgCol); setEl('crypto-strip-fg-label', fgLabel); }
+      if (c.btc_dominance) setEl('crypto-strip-dom', c.btc_dominance);
+    } catch(e) { console.warn('Crypto hero data load failed:', e); }
+  });
 </script>
 <script src="js/matrix.js"></script>
 <script src="js/cinematic-background.js"></script>

@@ -14,19 +14,26 @@
 </head>
 <body class="insights-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
-  <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">CyberSci-Dash v2</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
-      <a href="warroom.html" class="hover:text-pink-400" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="hover:text-yellow-400" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="hover:text-green-400" aria-label="Crypto">Crypto</a>
-      <a href="sentiment.html" class="hover:text-pink-400" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="text-yellow-400 border-b-2 border-yellow-400 pb-1" aria-label="Insights">Insights</a>
-      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
-    </nav>
-  </header>
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html" class="active">INSIGHTS</a>
+      <a href="links.html">LINKS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label">AI INSIGHTS</span>
+  </nav>
 
   <main class="p-6 max-w-5xl mx-auto">
     <!-- AI INTELLIGENCE BRIEFING CARD -->
@@ -68,21 +75,29 @@
         <!-- Confidence & Action -->
         <div class="space-y-6">
           <div class="bg-gray-900/60 border border-emerald-400/60 rounded-xl p-6">
-            <h3 class="text-lg font-orbitron text-emerald-300 mb-4">Signal Confidence</h3>
-            <div class="flex items-center justify-center mb-4">
-              <div id="ai-confidence-gauge" class="relative">
-                <div class="w-32 h-32 rounded-full border-4 border-gray-600 relative">
-                  <div id="ai-confidence-fill" class="absolute inset-0 rounded-full"></div>
-                  <div class="absolute inset-3 bg-gray-900 rounded-full flex items-center justify-center">
-                    <span id="ai-confidence-value" class="text-3xl font-bold text-emerald-300">7</span>
-                  </div>
-                </div>
+            <h3 class="text-xs font-orbitron text-gray-500 mb-5 tracking-widest" style="letter-spacing:4px;">SIGNAL CONFIDENCE</h3>
+
+            <!-- Hero confidence display -->
+            <div class="flex flex-col items-center mb-5">
+              <!-- SVG arc gauge -->
+              <div style="position:relative; width:180px; height:100px; overflow:hidden; margin-bottom:-10px;">
+                <svg viewBox="0 0 180 100" width="180" height="100" style="overflow:visible;">
+                  <!-- Track arc -->
+                  <path d="M 15 95 A 75 75 0 0 1 165 95" fill="none" stroke="#1a2a1a" stroke-width="12" stroke-linecap="round"/>
+                  <!-- Fill arc (updated by JS) -->
+                  <path id="ai-conf-arc" d="M 15 95 A 75 75 0 0 1 165 95" fill="none" stroke="#39ff14" stroke-width="12" stroke-linecap="round"
+                        stroke-dasharray="235.6" stroke-dashoffset="235.6"
+                        style="filter:drop-shadow(0 0 6px #39ff14); transition: stroke-dashoffset 1s ease, stroke 0.5s ease;"/>
+                </svg>
               </div>
+              <!-- Big number -->
+              <div id="ai-confidence-value" style="font-family:'Orbitron',monospace; font-size:3.5rem; font-weight:900; line-height:1; color:#39ff14; text-shadow:0 0 30px #39ff14; letter-spacing:2px;">—</div>
+              <div id="ai-confidence-label" style="font-family:'Orbitron',monospace; font-size:0.6rem; letter-spacing:4px; color:#555; margin-top:0.25rem;">CONFIDENCE</div>
             </div>
-            <div class="text-center">
-              <div class="text-sm text-gray-300 mb-2">Confidence Score (0-10)</div>
-              <div id="ai-confidence-label" class="text-lg font-semibold text-emerald-300">High Confidence</div>
-              <div id="ai-source-badge" class="mt-2 inline-block px-2 py-1 text-xs font-mono rounded border border-gray-600 text-gray-400">SOURCES: —</div>
+
+            <!-- Source status badges -->
+            <div id="ai-source-row" class="flex flex-wrap gap-2 justify-center mt-4">
+              <span id="ai-source-badge" class="sbadge sbadge--grey">SOURCES: —</span>
             </div>
           </div>
           
@@ -319,31 +334,45 @@
           document.getElementById('ai-grok-display').textContent = ai.grok_counter || 'No alternative view available';
         }
         
-        // Update confidence score and gauge
+        // Update confidence score — hero arc gauge
         if (document.getElementById('ai-confidence-value')) {
-          const score = ai.confidence_score || 0;
-          document.getElementById('ai-confidence-value').textContent = score;
-          
-          // Update gauge visual
-          const percentage = (score / 10) * 360;
-          const fill = document.getElementById('ai-confidence-fill');
-          if (fill) {
-            let color;
-            if (score <= 3) color = '#ef4444'; // red
-            else if (score <= 6) color = '#f59e0b'; // yellow
-            else color = '#10b981'; // green
-            
-            fill.style.background = `conic-gradient(${color} 0deg, ${color} ${percentage}deg, #374151 ${percentage}deg, #374151 360deg)`;
+          // Score may be 0-10 or 0-100 — normalise to 0-100 pct
+          const rawScore = ai.confidence_score || ai.confluence?.confidence_score || 0;
+          const pct = rawScore > 10 ? rawScore : rawScore * 10;
+          const score10 = rawScore > 10 ? rawScore / 10 : rawScore;
+
+          // Color by pct
+          const color = pct >= 70 ? '#39ff14' : pct >= 45 ? '#FFD166' : '#FF4757';
+
+          // Display value
+          document.getElementById('ai-confidence-value').textContent = Math.round(pct) + '%';
+          document.getElementById('ai-confidence-value').style.color = color;
+          document.getElementById('ai-confidence-value').style.textShadow = `0 0 30px ${color}`;
+
+          // SVG arc: total arc path length ≈ 235.6, offset from full = fill amount hidden
+          const arcLen = 235.6;
+          const offset = arcLen * (1 - pct / 100);
+          const arc = document.getElementById('ai-conf-arc');
+          if (arc) {
+            arc.style.strokeDashoffset = offset;
+            arc.style.stroke = color;
+            arc.style.filter = `drop-shadow(0 0 8px ${color})`;
           }
-          
-          // Update confidence label
+
+          // Label
           if (document.getElementById('ai-confidence-label')) {
-            let label;
-            if (score <= 3) label = 'Low Confidence';
-            else if (score <= 6) label = 'Moderate Confidence';
-            else label = 'High Confidence';
-            
+            const label = pct >= 70 ? 'HIGH CONFIDENCE' : pct >= 45 ? 'MODERATE' : 'LOW CONFIDENCE';
             document.getElementById('ai-confidence-label').textContent = label;
+            document.getElementById('ai-confidence-label').style.color = color;
+          }
+
+          // Source badge
+          const sources = ai.confluence?.sources || ai.sources || [];
+          const srcCount = Array.isArray(sources) ? sources.length : (typeof sources === 'number' ? sources : 1);
+          const srcBadge = document.getElementById('ai-source-badge');
+          if (srcBadge) {
+            srcBadge.textContent = `SOURCES: ${srcCount}/8`;
+            srcBadge.className = 'sbadge ' + (srcCount >= 3 ? 'sbadge--green' : srcCount >= 2 ? 'sbadge--amber' : 'sbadge--red');
           }
         }
         

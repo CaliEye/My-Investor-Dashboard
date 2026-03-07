@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ENERGY COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #FF6B35; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(255,107,53,0.25); }
+    .card.accent { border-color: rgba(255,107,53,0.3); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #FF6B35; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #FF6B35; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #1a0a00; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .driver-item { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #0a0a0a; font-size: 0.78rem; }
+    .driver-dot { width: 5px; height: 5px; border-radius: 50%; background: #FF6B35; margin-top: 0.45rem; flex-shrink: 0; box-shadow: 0 0 5px #FF6B35; }
+    .threat-dot { background: #FF4757; box-shadow: 0 0 5px #FF4757; }
+    .income-dot { background: #FFD700; box-shadow: 0 0 5px #FFD700; }
+  </style>
+</head>
+<body class="energy-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:#FF6B35;">ENERGY COMMAND</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">TECH</a>
+    <a href="energy.html" class="active">ENERGY</a>
+    <a href="bonds.html">BONDS</a>
+    <a href="realestate.html">REAL ESTATE</a>
+    <a href="passiveincome.html">PASSIVE INCOME</a>
+  </div>
+
+  <!-- SECTOR HERO -->
+  <div class="sector-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Energy Sector</div>
+        <div class="sector-price" style="color:#FF6B35;text-shadow:0 0 24px #FF6B35;" id="energy-hero-price">$88.50</div>
+        <div class="sector-change">
+          XLE <span id="energy-change" style="color:#39ff14;">+0.3%</span> today · WTI Crude
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Cycle Phase</div>
+        <div class="sector-cycle-value" id="energy-hero-cycle">BEAR PHASE</div>
+        <div class="sector-cycle-context" id="energy-hero-context">OPEC+ cuts vs demand slowdown. Risk-off environment suppressing oil prices.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Risk Level</div>
+        <div class="sector-risk-value" id="energy-hero-risk" style="color:#f59e0b;">62</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+      </div>
+    </div>
+
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">RSI Daily</div>
+        <div class="sector-metric-value" id="energy-rsi-d" style="color:#ffe066;">40</div>
+        <div class="sector-metric-sub" id="energy-rsi-d-label">WEAKENING</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">RSI Weekly</div>
+        <div class="sector-metric-value" id="energy-rsi-w" style="color:#39ff14;">37</div>
+        <div class="sector-metric-sub" id="energy-rsi-w-label">OVERSOLD</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Trend Weekly</div>
+        <div class="sector-metric-value" style="color:#FF4757;">↓ Down</div>
+        <div class="sector-metric-sub">DIRECTIONAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Trend Monthly</div>
+        <div class="sector-metric-value" style="color:#FF4757;">↓ Down</div>
+        <div class="sector-metric-sub">DIRECTIONAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">WTI Support</div>
+        <div class="sector-metric-value" style="color:#39ff14;">$72</div>
+        <div class="sector-metric-sub">CRUDE OIL KEY</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">WTI Resistance</div>
+        <div class="sector-metric-value" style="color:#FF4757;">$90</div>
+        <div class="sector-metric-sub">CRUDE OIL KEY</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Sentiment</div>
+        <div class="sector-metric-value" style="color:#00D2FF;">Fear</div>
+        <div class="sector-metric-sub">CROWD POSITIONING</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <section>
+      <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+      <div id="bot-opp-container" data-sector="energy"></div>
+    </section>
+
+    <section>
+      <div class="section-title">Key Metrics</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">XLE Price</div>
+          <div class="card-value" id="energy-price">$88.50</div>
+          <div class="card-sub" id="energy-change-card">Daily: +0.3%</div>
+        </div>
+        <div class="card">
+          <div class="card-label">OPEC+ Status</div>
+          <div class="card-value" style="font-size:16px;color:#FFD166;">CUTTING</div>
+          <div class="card-sub">Supply discipline ongoing — 2M bpd cuts maintained</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Demand Outlook</div>
+          <div class="card-value" style="font-size:16px;color:#FF4757;">SLOWING</div>
+          <div class="card-sub">China recovery disappointing, global growth slowing</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Geopolitical Risk</div>
+          <div class="card-value" style="font-size:16px;color:#FFD166;">ELEVATED</div>
+          <div class="card-sub">Middle East + Russia/Ukraine = spike risk premium</div>
+        </div>
+        <div class="card">
+          <div class="card-label">XOM / CVX Yield</div>
+          <div class="card-value" style="font-size:24px;color:#FFD700;">3.5%</div>
+          <div class="card-sub">Dividend income with commodity exposure</div>
+        </div>
+        <div class="card">
+          <div class="card-label">USD Correlation</div>
+          <div class="card-value" style="font-size:16px;color:#FF4757;">INVERSE</div>
+          <div class="card-sub">Strong USD suppresses oil — watch DXY breakdowns</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">Key Drivers &amp; Threats</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF6B35;letter-spacing:3px;margin-bottom:0.75rem;">BULL DRIVERS</div>
+          <div class="driver-item"><div class="driver-dot"></div><span>OPEC+ production discipline — supply management keeping floor</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Geopolitical risk premium — one escalation = spike to $100+</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>China recovery — if demand picks up, oil rerates fast</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Historically oversold weekly RSI — contrarian entry building</span></div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF4757;letter-spacing:3px;margin-bottom:0.75rem;">THREATS &amp; RISKS</div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Global recession destroying demand (biggest risk)</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>EV transition accelerating oil demand destruction long-term</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>OPEC+ member quota cheating — supply discipline fragile</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>USD strength — every 1% DXY rise = ~1% oil headwind</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title" style="color:#FFD700;">Passive Income &amp; Bot Strategy</div>
+      <div class="grid-2">
+        <div class="card" style="border-color:rgba(255,215,0,0.3);">
+          <div class="card-label">Income Strategy</div>
+          <div class="card-value" style="font-size:16px;color:#FFD700;">DIVIDENDS</div>
+          <div class="card-sub">XOM + CVX — 3-4% yield, inflation hedge, buyback programs</div>
+        </div>
+        <div class="card" style="border-color:rgba(255,107,53,0.3);">
+          <div class="card-label">Bot Entry Trigger</div>
+          <div class="card-value" style="font-size:16px;color:#FF6B35;">RSI W &gt; 45</div>
+          <div class="card-sub">Wait for weekly RSI to break above 45 — trend reversal signal</div>
+        </div>
+        <div class="card" style="border-color:rgba(255,107,53,0.2);">
+          <div class="card-label">Current Bot Status</div>
+          <div class="card-value" style="font-size:16px;color:#888;">WATCH</div>
+          <div class="card-sub">Oversold but downtrend intact — no entry until momentum confirms</div>
+        </div>
+        <div class="card" style="border-color:rgba(255,215,0,0.2);">
+          <div class="card-label">Target Entry</div>
+          <div class="card-value" style="font-size:24px;color:#FFD166;">$72-78</div>
+          <div class="card-sub">WTI crude — major support zone, high risk/reward for energy DCA</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · ENERGY COMMAND</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('./data/data.json', { cache: 'no-store' });
+        const d = await res.json();
+        const s = d.sectors?.energy || {};
+        const ai = d.asset_intelligence?.assets?.oil || {};
+        const fmtChange = v => v != null ? (v > 0 ? '+' : '') + v + '%' : '—';
+        const riskColor = r => r < 40 ? '#39ff14' : r < 60 ? '#FFD166' : r < 75 ? '#f59e0b' : '#FF4757';
+        const rsiColor = r => r < 30 ? '#39ff14' : r < 45 ? '#ffe066' : r < 55 ? '#888' : r < 70 ? '#f59e0b' : '#FF4757';
+        const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+        if (s.price_formatted) setEl('energy-hero-price', s.price_formatted);
+        if (s.change_pct_day != null) { const c = s.change_pct_day >= 0 ? '#39ff14' : '#FF4757'; setEl('energy-change', fmtChange(s.change_pct_day), c); }
+        if (s.cycle) setEl('energy-hero-cycle', s.cycle.toUpperCase());
+        if (s.cycle_context) setEl('energy-hero-context', s.cycle_context);
+        if (s.risk != null) setEl('energy-hero-risk', s.risk, riskColor(s.risk));
+        const rD = s.rsi_daily || ai.rsi_daily; const rW = s.rsi_weekly || ai.rsi_weekly;
+        if (rD) { setEl('energy-rsi-d', rD, rsiColor(rD)); setEl('energy-rsi-d-label', s.rsi_label_daily || ai.rsi_label_daily); }
+        if (rW) { setEl('energy-rsi-w', rW, rsiColor(rW)); setEl('energy-rsi-w-label', s.rsi_label_weekly || ai.rsi_label_weekly); }
+        if (s.price_formatted) setEl('energy-price', s.price_formatted);
+        if (s.change_pct_day != null) setEl('energy-change-card', 'Daily: ' + fmtChange(s.change_pct_day));
+      } catch(e) { console.warn('Energy data load failed:', e); }
+    });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TECH COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #00D2FF; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(0,210,255,0.25); }
+    .card.accent { border-color: rgba(0,210,255,0.3); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #00D2FF; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #00D2FF; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #0d1a1a; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .driver-item { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #0a0a0a; font-size: 0.78rem; }
+    .driver-dot { width: 5px; height: 5px; border-radius: 50%; background: #00D2FF; margin-top: 0.45rem; flex-shrink: 0; box-shadow: 0 0 5px #00D2FF; }
+    .threat-dot { background: #FF4757; box-shadow: 0 0 5px #FF4757; }
+    .income-dot { background: #FFD700; box-shadow: 0 0 5px #FFD700; }
+  </style>
+</head>
+<body class="tech-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:#00D2FF;">TECH COMMAND</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html" class="active">TECH</a>
+    <a href="energy.html">ENERGY</a>
+    <a href="bonds.html">BONDS</a>
+    <a href="realestate.html">REAL ESTATE</a>
+    <a href="passiveincome.html">PASSIVE INCOME</a>
+  </div>
+
+  <!-- SECTOR HERO -->
+  <div class="sector-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Technology Sector</div>
+        <div class="sector-price" id="tech-hero-price">$599.75</div>
+        <div class="sector-change">
+          QQQ <span id="tech-change" style="color:#FF4757;">-1.5%</span> today
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Cycle Phase</div>
+        <div class="sector-cycle-value" id="tech-hero-cycle">CORRECTION</div>
+        <div class="sector-cycle-context" id="tech-hero-context">AI capex secular bull, rate sensitivity causing correction. Watch earnings monetization.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Risk Level</div>
+        <div class="sector-risk-value" id="tech-hero-risk" style="color:#f59e0b;">72</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+      </div>
+    </div>
+
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">RSI Daily</div>
+        <div class="sector-metric-value" id="tech-rsi-d" style="color:#ffe066;">38</div>
+        <div class="sector-metric-sub" id="tech-rsi-d-label">WEAKENING</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">RSI Weekly</div>
+        <div class="sector-metric-value" id="tech-rsi-w" style="color:#ffe066;">42</div>
+        <div class="sector-metric-sub" id="tech-rsi-w-label">WEAKENING</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Trend Weekly</div>
+        <div class="sector-metric-value" id="tech-trend-w" style="color:#FF4757;">↓ Down</div>
+        <div class="sector-metric-sub">DIRECTIONAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Trend Monthly</div>
+        <div class="sector-metric-value" id="tech-trend-m" style="color:#888;">→ Neutral</div>
+        <div class="sector-metric-sub">DIRECTIONAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Support</div>
+        <div class="sector-metric-value" style="color:#39ff14;">$565</div>
+        <div class="sector-metric-sub">QQQ KEY LEVEL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Resistance</div>
+        <div class="sector-metric-value" style="color:#FF4757;">$640</div>
+        <div class="sector-metric-sub">QQQ KEY LEVEL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Sentiment</div>
+        <div class="sector-metric-value" id="tech-hero-sentiment" style="color:#00D2FF;">Fear</div>
+        <div class="sector-metric-sub">CROWD POSITIONING</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- BOT OPPORTUNITY -->
+    <section>
+      <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+      <div id="bot-opp-container" data-sector="tech"></div>
+    </section>
+
+    <!-- KEY METRICS -->
+    <section>
+      <div class="section-title">Key Metrics</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">QQQ Price</div>
+          <div class="card-value" id="tech-price">$599.75</div>
+          <div class="card-sub" id="tech-change-card">Daily: -1.5%</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Nasdaq 100 Level</div>
+          <div class="card-value" style="color:#e8e8e8;" id="tech-ndx">Loading...</div>
+          <div class="card-sub">Tech benchmark</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Top Holding</div>
+          <div class="card-value" style="font-size:18px;color:#FFD166;">AAPL/MSFT/NVDA</div>
+          <div class="card-sub">Mega-cap dominance ~45% weight</div>
+        </div>
+        <div class="card">
+          <div class="card-label">AI Capex Cycle</div>
+          <div class="card-value" style="font-size:18px;color:#39ff14;">SECULAR BULL</div>
+          <div class="card-sub">MSFT/GOOGL/AMZN AI spending accelerating</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Earnings Outlook</div>
+          <div class="card-value" style="font-size:16px;color:#FFD166;" id="tech-earnings">WATCH</div>
+          <div class="card-sub">AI revenue monetization being tested</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Rate Sensitivity</div>
+          <div class="card-value" style="font-size:16px;color:#FF4757;">HIGH</div>
+          <div class="card-sub">QQQ -30% in 2022 rate hike cycle</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY DRIVERS -->
+    <section>
+      <div class="section-title">Key Drivers &amp; Threats</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#00D2FF;letter-spacing:3px;margin-bottom:0.75rem;">BULL DRIVERS</div>
+          <div id="tech-drivers">
+            <div class="driver-item"><div class="driver-dot"></div><span>AI infrastructure spending — secular tailwind (MSFT, NVDA, GOOGL)</span></div>
+            <div class="driver-item"><div class="driver-dot"></div><span>Rate cuts incoming — every 25bps cut lifts QQQ multiple</span></div>
+            <div class="driver-item"><div class="driver-dot"></div><span>Earnings beats historically drive re-rating in tech</span></div>
+            <div class="driver-item"><div class="driver-dot"></div><span>AI monetization ramping — cloud + SaaS revenue acceleration</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF4757;letter-spacing:3px;margin-bottom:0.75rem;">THREATS &amp; RISKS</div>
+          <div id="tech-threats">
+            <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Fed rate hold extending — compression of growth multiples</span></div>
+            <div class="driver-item"><div class="driver-dot threat-dot"></div><span>AI capex scrutiny — DeepSeek disruption risk to NVDA revenue</span></div>
+            <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Antitrust regulatory pressure on mega-cap (DOJ/FTC)</span></div>
+            <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Concentration risk — top 7 stocks = 45% of index weight</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSIVE INCOME ANGLE -->
+    <section>
+      <div class="section-title" style="color:#FFD700;">Passive Income &amp; Bot Strategy</div>
+      <div class="grid-2">
+        <div class="card" style="border-color:rgba(255,215,0,0.3);">
+          <div class="card-label">Income Strategy</div>
+          <div class="card-value" style="font-size:16px;color:#FFD700;">COVERED CALLS</div>
+          <div class="card-sub">Sell weekly/monthly calls on QQQ position for premium income</div>
+        </div>
+        <div class="card" style="border-color:rgba(255,215,0,0.3);">
+          <div class="card-label">Dividend Plays</div>
+          <div class="card-value" style="font-size:16px;color:#FFD700;">MSFT / AAPL</div>
+          <div class="card-sub">Tech dividend growers — small but growing yield with buybacks</div>
+        </div>
+        <div class="card" style="border-color:rgba(0,210,255,0.2);">
+          <div class="card-label">Bot Type Recommended</div>
+          <div class="card-value" style="font-size:16px;color:#00D2FF;">DCA BOT</div>
+          <div class="card-sub">Bi-weekly accumulation during correction — RSI 38, room to fall further</div>
+        </div>
+        <div class="card" style="border-color:rgba(0,210,255,0.2);">
+          <div class="card-label">Entry Trigger</div>
+          <div class="card-value" style="font-size:16px;color:#FFD166;">RSI W &lt; 35</div>
+          <div class="card-sub">Wait for weekly RSI below 35 for higher confidence DCA entry</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · TECH COMMAND</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('./data/data.json', { cache: 'no-store' });
+        const d = await res.json();
+        const s = d.sectors?.tech || {};
+        const ai = d.asset_intelligence?.assets?.tech || {};
+
+        const fmtChange = v => v != null ? (v > 0 ? '+' : '') + v + '%' : '—';
+        const rsiColor  = r => r < 30 ? '#39ff14' : r < 45 ? '#ffe066' : r < 55 ? '#888' : r < 70 ? '#f59e0b' : '#FF4757';
+        const trendArrow = t => t === 'Up' ? '↑' : t === 'Down' ? '↓' : '→';
+        const trendColor = t => t === 'Up' ? '#39ff14' : t === 'Down' ? '#FF4757' : '#888';
+        const riskColor  = r => r < 40 ? '#39ff14' : r < 60 ? '#FFD166' : r < 75 ? '#f59e0b' : '#FF4757';
+
+        if (s.price_formatted) document.getElementById('tech-hero-price').textContent = s.price_formatted;
+        if (s.change_pct_day != null) {
+          const chg = fmtChange(s.change_pct_day);
+          const col = s.change_pct_day >= 0 ? '#39ff14' : '#FF4757';
+          const el = document.getElementById('tech-change');
+          if (el) { el.textContent = chg; el.style.color = col; }
+        }
+        if (s.cycle)    document.getElementById('tech-hero-cycle').textContent    = s.cycle.toUpperCase();
+        if (s.cycle_context) document.getElementById('tech-hero-context').textContent = s.cycle_context;
+        if (s.risk != null) {
+          const el = document.getElementById('tech-hero-risk');
+          if (el) { el.textContent = s.risk; el.style.color = riskColor(s.risk); }
+        }
+        if (s.sentiment) {
+          const el = document.getElementById('tech-hero-sentiment');
+          if (el) el.textContent = s.sentiment;
+        }
+
+        const rsiD = s.rsi_daily || ai.rsi_daily;
+        const rsiW = s.rsi_weekly || ai.rsi_weekly;
+        const tW   = s.trend_weekly || ai.trend_weekly;
+        const tM   = s.trend_monthly || ai.trend_monthly;
+        const rdlbl = s.rsi_label_daily || ai.rsi_label_daily || '—';
+        const rwlbl = s.rsi_label_weekly || ai.rsi_label_weekly || '—';
+
+        const setMetric = (id, val, color) => { const e = document.getElementById(id); if (e && val != null) { e.textContent = val; if (color) e.style.color = color; } };
+        setMetric('tech-rsi-d', rsiD, rsiD ? rsiColor(rsiD) : null);
+        setMetric('tech-rsi-d-label', rdlbl);
+        setMetric('tech-rsi-w', rsiW, rsiW ? rsiColor(rsiW) : null);
+        setMetric('tech-rsi-w-label', rwlbl);
+        if (tW) setMetric('tech-trend-w', trendArrow(tW) + ' ' + tW, trendColor(tW));
+        if (tM) setMetric('tech-trend-m', trendArrow(tM) + ' ' + tM, trendColor(tM));
+
+        if (s.price_formatted) setMetric('tech-price', s.price_formatted);
+        if (s.change_pct_day != null) setMetric('tech-change-card', 'Daily: ' + fmtChange(s.change_pct_day));
+      } catch(e) { console.warn('Tech data load failed:', e); }
+    });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

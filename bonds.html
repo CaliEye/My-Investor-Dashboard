@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BONDS COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #4A9EFF; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(74,158,255,0.25); }
+    .card.accent { border-color: rgba(74,158,255,0.35); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #4A9EFF; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #4A9EFF; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #00091a; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .driver-item { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #0a0a0a; font-size: 0.78rem; }
+    .driver-dot { width: 5px; height: 5px; border-radius: 50%; background: #4A9EFF; margin-top: 0.45rem; flex-shrink: 0; box-shadow: 0 0 5px #4A9EFF; }
+    .threat-dot { background: #FF4757; box-shadow: 0 0 5px #FF4757; }
+  </style>
+</head>
+<body class="bonds-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:#4A9EFF;">BONDS COMMAND</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">TECH</a>
+    <a href="energy.html">ENERGY</a>
+    <a href="bonds.html" class="active">BONDS</a>
+    <a href="realestate.html">REAL ESTATE</a>
+    <a href="passiveincome.html">PASSIVE INCOME</a>
+  </div>
+
+  <!-- SECTOR HERO -->
+  <div class="sector-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Fixed Income / Bonds</div>
+        <div class="sector-price" style="color:#4A9EFF;text-shadow:0 0 24px #4A9EFF;" id="bonds-hero-yield">4.13%</div>
+        <div class="sector-change">
+          10Y Yield · TLT <span id="bonds-tlt-change" style="color:#39ff14;">+0.5%</span> today
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Cycle Phase</div>
+        <div class="sector-cycle-value" id="bonds-hero-cycle">TRANSITION</div>
+        <div class="sector-cycle-context" id="bonds-hero-context">Fed cutting slowly. Yield curve normalizing from inversion. Long duration still risky.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Risk Level</div>
+        <div class="sector-risk-value" id="bonds-hero-risk" style="color:#FFD166;">55</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+      </div>
+    </div>
+
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">10Y Yield</div>
+        <div class="sector-metric-value" id="bonds-10y" style="color:#FF4757;">4.13%</div>
+        <div class="sector-metric-sub">TIGHT CONDITIONS</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">3M T-Bill Yield</div>
+        <div class="sector-metric-value" id="bonds-3m" style="color:#39ff14;">5.2%</div>
+        <div class="sector-metric-sub">INCOME OPPORTUNITY</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Fed Funds Rate</div>
+        <div class="sector-metric-value" id="bonds-fed-rate" style="color:#FFD166;">4.25%</div>
+        <div class="sector-metric-sub">EASING CYCLE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Yield Curve</div>
+        <div class="sector-metric-value" id="bonds-curve" style="color:#FFD166;font-size:0.75rem;">NORMALIZING</div>
+        <div class="sector-metric-sub">2Y-10Y SPREAD</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">TLT RSI Daily</div>
+        <div class="sector-metric-value" id="bonds-rsi-d" style="color:#888;">50</div>
+        <div class="sector-metric-sub" id="bonds-rsi-d-label">NEUTRAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">TLT RSI Weekly</div>
+        <div class="sector-metric-value" id="bonds-rsi-w" style="color:#888;">52</div>
+        <div class="sector-metric-sub" id="bonds-rsi-w-label">NEUTRAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Safe Haven Signal</div>
+        <div class="sector-metric-value" style="color:#4A9EFF;font-size:0.9rem;">MODERATE</div>
+        <div class="sector-metric-sub">FLIGHT TO SAFETY</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- T-BILL OPPORTUNITY HERO — This is the ACTIVE income opportunity -->
+    <section style="background:rgba(74,158,255,0.04);border:1px solid rgba(74,158,255,0.15);border-radius:4px;padding:1.5rem;margin-top:1.5rem;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.5rem;letter-spacing:4px;color:#39ff14;margin-bottom:0.75rem;">// ACTIVE INCOME OPPORTUNITY</div>
+      <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.45rem;color:#444;letter-spacing:3px;margin-bottom:0.3rem;">3-MONTH T-BILL YIELD</div>
+          <div style="font-family:'Orbitron',monospace;font-size:3rem;font-weight:900;color:#39ff14;text-shadow:0 0 20px #39ff14;line-height:1;" id="bonds-tbill-big">5.2%</div>
+          <div style="font-size:0.65rem;color:#555;font-style:italic;margin-top:0.3rem;">Risk-free government backed — zero credit risk</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:0.82rem;color:#cccccc;line-height:1.6;margin-bottom:0.75rem;">
+            T-bills currently yield more than most dividend stocks with zero risk.
+            3-month rollovers = 5%+ annually while waiting for better risk-on opportunities.
+          </div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <span style="font-family:'Orbitron',monospace;font-size:0.5rem;padding:0.2rem 0.6rem;border:1px solid rgba(57,255,20,0.4);color:#39ff14;border-radius:2px;">ACTIVE — START NOW</span>
+            <span style="font-family:'Orbitron',monospace;font-size:0.5rem;padding:0.2rem 0.6rem;border:1px solid #333;color:#555;border-radius:2px;">CONFIDENCE: 85%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+      <div id="bot-opp-container" data-sector="bonds"></div>
+    </section>
+
+    <section>
+      <div class="section-title">Key Metrics</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">10Y Treasury</div>
+          <div class="card-value" id="bonds-10y-card">4.13%</div>
+          <div class="card-sub">High by historical standards — TLT price pressure</div>
+        </div>
+        <div class="card accent">
+          <div class="card-label">T-Bill 3 Month</div>
+          <div class="card-value" style="color:#39ff14;" id="bonds-3m-card">5.2%</div>
+          <div class="card-sub">Best risk-free yield since 2007 — use this NOW</div>
+        </div>
+        <div class="card">
+          <div class="card-label">TLT Price</div>
+          <div class="card-value" style="color:#e8e8e8;" id="bonds-tlt-price">$88.20</div>
+          <div class="card-sub">Long bond ETF — price rises when yields fall</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Fed Path</div>
+          <div class="card-value" style="font-size:16px;color:#FFD166;">CUTTING SLOW</div>
+          <div class="card-sub">2-3 cuts expected in 2026 — TLT appreciation ahead</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Duration Risk</div>
+          <div class="card-value" style="font-size:16px;color:#f59e0b;">ELEVATED</div>
+          <div class="card-sub">Long bonds lose ~8% per 1% yield rise</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Inflation (CPI)</div>
+          <div class="card-value" style="font-size:24px;color:#f59e0b;" id="bonds-cpi">2.8%</div>
+          <div class="card-sub">Above 2% target — limiting Fed cut speed</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">Rate Path &amp; Strategy</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#4A9EFF;letter-spacing:3px;margin-bottom:0.75rem;">BULL CASE FOR BONDS</div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Fed cuts accelerate — each cut = TLT price appreciation of ~2-4%</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Recession fear spikes — flight to safety crushes yields</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Inflation continues falling toward 2% — unlocks more cuts</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Short duration T-bills: 5%+ risk-free income RIGHT NOW</span></div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF4757;letter-spacing:3px;margin-bottom:0.75rem;">BEAR CASE / RISKS</div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Stagflation — inflation stays high, cuts impossible</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>US fiscal deficit — massive Treasury supply suppressing prices</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Foreign CB diversification away from USD bonds (China, Japan)</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>US credit rating downgrade risk — Moody's watch negative</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title" style="color:#FFD700;">Income Strategy — Your 2030 Plan</div>
+      <div class="grid-2">
+        <div class="card" style="border-color:rgba(255,215,0,0.4);">
+          <div class="card-label">Strategy 1 — Immediate</div>
+          <div class="card-value" style="font-size:16px;color:#FFD700;">T-BILL LADDER</div>
+          <div class="card-sub">3-month rollovers at 5.2% — compound this until better opportunities emerge. No market risk.</div>
+        </div>
+        <div class="card" style="border-color:rgba(74,158,255,0.3);">
+          <div class="card-label">Strategy 2 — When Fed Cuts</div>
+          <div class="card-value" style="font-size:16px;color:#4A9EFF;">BUY TLT</div>
+          <div class="card-sub">When Fed signals 3+ cuts, buy TLT for price appreciation. Target: yield drops to 3% = TLT ~$110+.</div>
+        </div>
+        <div class="card" style="border-color:rgba(74,158,255,0.2);">
+          <div class="card-label">Bot Type</div>
+          <div class="card-value" style="font-size:16px;color:#4A9EFF;">INCOME BOT</div>
+          <div class="card-sub">Auto-roll T-bills monthly. When yield drops below 3.5%, rotate to TLT momentum bot.</div>
+        </div>
+        <div class="card" style="border-color:rgba(255,215,0,0.2);">
+          <div class="card-label">I-Bond Consideration</div>
+          <div class="card-value" style="font-size:14px;color:#FFD166;">INFLATION HEDGE</div>
+          <div class="card-sub">I-bonds: inflation-adjusted, $10k/year limit. Good for capital preservation layer.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · BONDS COMMAND</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('./data/data.json', { cache: 'no-store' });
+        const d = await res.json();
+        const s = d.sectors?.bonds || {};
+        const m = d.macro || {};
+        const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+        const rsiColor = r => r < 30 ? '#39ff14' : r < 45 ? '#ffe066' : r < 55 ? '#888' : r < 70 ? '#f59e0b' : '#FF4757';
+
+        setEl('bonds-hero-yield', m.us10y_yield || s.us10y_yield);
+        if (s.change_pct_day != null) setEl('bonds-tlt-change', (s.change_pct_day > 0 ? '+' : '') + s.change_pct_day + '%', s.change_pct_day >= 0 ? '#39ff14' : '#FF4757');
+        if (s.cycle) setEl('bonds-hero-cycle', s.cycle.toUpperCase());
+        if (s.cycle_context) setEl('bonds-hero-context', s.cycle_context);
+        setEl('bonds-10y', m.us10y_yield || s.us10y_yield);
+        setEl('bonds-3m', s.tbill_3m_yield || '5.2%', '#39ff14');
+        setEl('bonds-tbill-big', s.tbill_3m_yield || '5.2%');
+        setEl('bonds-fed-rate', m.fed_funds_rate);
+        setEl('bonds-curve', s.yield_curve || 'Normalizing');
+        setEl('bonds-cpi', m.cpi);
+        if (s.rsi_daily) { setEl('bonds-rsi-d', s.rsi_daily, rsiColor(s.rsi_daily)); setEl('bonds-rsi-d-label', s.rsi_label_daily); }
+        if (s.rsi_weekly) { setEl('bonds-rsi-w', s.rsi_weekly, rsiColor(s.rsi_weekly)); setEl('bonds-rsi-w-label', s.rsi_label_weekly); }
+        if (s.price_formatted) setEl('bonds-tlt-price', s.price_formatted);
+        setEl('bonds-10y-card', m.us10y_yield);
+        setEl('bonds-3m-card', s.tbill_3m_yield || '5.2%');
+      } catch(e) { console.warn('Bonds data load failed:', e); }
+    });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

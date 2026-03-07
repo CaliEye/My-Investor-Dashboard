@@ -117,30 +117,35 @@
 </head>
 <body class="macro-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
-  <header class="px-6 py-4 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 border-b border-matrix-green shadow-lg">
-    <h1 class="text-2xl lg:text-3xl font-orbitron tracking-widest text-matrix-bright">ENDGAME // Investment Command Center</h1>
-    <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm md:text-base font-orbitron tracking-wide">
-      <a href="index.html?view=summary" class="text-matrix-bright border-b-2 border-matrix-bright pb-1" aria-label="Dashboard">Summary</a>
-      <a href="warroom.html" class="text-matrix-green hover:text-matrix-bright" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Crypto">Crypto (Watch-Only)</a>
-      <a href="bots.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Bots">Bots</a>
-      <a href="sentiment.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="mindmap.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Mindmap">Mindmap</a>
-      <a href="goals.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Goals">Goals</a>
-      <a href="portfolio.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Portfolio">Portfolio</a>
-      <a href="insights.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Insights">Insights</a>
-      <a href="links.html" class="text-matrix-green hover:text-matrix-bright" aria-label="Quick Links">Quick Links</a>
-      <a href="system_test.html" class="text-matrix-warning hover:text-matrix-bright text-xs" aria-label="System Test" title="Run system health check">Test</a>
-    </nav>
-  </header>
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="links.html">LINKS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label">COMMAND CENTER</span>
+  </nav>
 
   <!-- System Connection Status -->
   <div id="connection-status" class="connection-status status-loading">
     <div class="status-dot" style="background: #f59e0b;"></div>
     <span>Connecting...</span>
   </div>
+
+  <!-- Market State Hero — populated by renderMarketHero() -->
+  <section id="market-hero" class="market-hero" style="display:none;"></section>
 
   <main class="p-6 max-w-7xl mx-auto">
     <!-- Priority-First Decision Deck -->
@@ -861,6 +866,240 @@
       return text;
     }
 
+    function renderMarketHero(d, aiData) {
+      const hero = document.getElementById('market-hero');
+      if (!hero) return;
+
+      const posture   = (d.decision_gate?.risk_posture || 'NEUTRAL').toUpperCase();
+      const bias      = d.bias || 'Neutral';
+      const riskLevel = d.macro?.risk_level ?? 50;
+      const fg        = d.sentiment?.fear_greed_index ?? '—';
+      const fgLabel   = d.sentiment?.fear_greed_label || '';
+      const btcPrice  = d.crypto?.btc_price_formatted || (d.crypto?.btc_usd ? '$' + Number(d.crypto.btc_usd).toLocaleString() : '—');
+      const btcChange = d.crypto?.btc_change_24h_pct != null ? (d.crypto.btc_change_24h_pct > 0 ? '+' : '') + d.crypto.btc_change_24h_pct + '%' : '—';
+      const dxy       = d.macro?.dxy ?? '—';
+      const signalCount = d.decision_gate?.signal_count ?? d.decision_gate?.signals_active ?? '—';
+      const aiConf    = aiData?.confluence?.confidence_score ?? aiData?.confidence_score ?? aiData?.summary?.confidence_score ?? null;
+      const confDisp  = aiConf != null ? Math.round(aiConf) + '%' : '—';
+
+      // Posture CSS class
+      const postureClass = posture === 'RISK-ON' ? 'posture-risk-on'
+                         : posture === 'DEFENSIVE' ? 'posture-defensive'
+                         : posture === 'WATCH-ONLY' ? 'posture-watch'
+                         : 'posture-neutral';
+
+      // Bias pill class
+      const biasClass = bias === 'Bullish' ? 'bias-bullish'
+                      : bias === 'Bearish' ? 'bias-bearish'
+                      : 'bias-neutral';
+
+      // Risk level color
+      const riskColor = riskLevel >= 70 ? '#FF4757' : riskLevel >= 50 ? '#FFD166' : '#39ff14';
+
+      // BTC change color
+      const btcColor = btcChange.startsWith('+') ? '#39ff14' : btcChange.startsWith('-') ? '#FF4757' : '#e8e8e8';
+
+      // F&G color
+      const fgNum = parseFloat(fg);
+      const fgColor = !isNaN(fgNum) ? (fgNum >= 75 ? '#FF4757' : fgNum >= 55 ? '#FFD166' : fgNum >= 40 ? '#e8e8e8' : fgNum >= 25 ? '#00D2FF' : '#39ff14') : '#e8e8e8';
+
+      // Alert tags from triggers
+      const triggers = Array.isArray(d.triggers) ? d.triggers : [];
+      const alertHTML = triggers.slice(0, 4).map(t => {
+        const text = typeof t === 'string' ? t : (t.label || t.name || JSON.stringify(t));
+        const short = text.length > 40 ? text.slice(0, 38) + '…' : text;
+        const cls = posture === 'DEFENSIVE' ? 'tag-risk' : posture === 'WATCH-ONLY' ? 'tag-caution' : 'tag-ok';
+        return `<span class="hero-alert-tag ${cls}">${short}</span>`;
+      }).join('') || '<span class="hero-alert-tag tag-neutral">NO ACTIVE TRIGGERS</span>';
+
+      hero.innerHTML = `
+        <div class="market-hero-top">
+          <div class="hero-posture-block">
+            <div class="hero-posture-label">Current Market Posture</div>
+            <div class="hero-posture-value ${postureClass}">${posture}</div>
+            <div class="hero-bias-pill ${biasClass}">${bias.toUpperCase()} BIAS</div>
+          </div>
+          <div class="hero-confidence-block">
+            <div class="hero-confidence-label">AI Confluence Score</div>
+            <div class="hero-confidence-value">${confDisp}</div>
+            <div class="hero-confidence-sub">MULTI-AI WEIGHTED</div>
+          </div>
+        </div>
+
+        <div class="hero-metric-strip">
+          <div class="hero-metric">
+            <div class="hero-metric-label">Bitcoin</div>
+            <div class="hero-metric-value">${btcPrice}</div>
+            <div class="hero-metric-sub" style="color:${btcColor}">${btcChange} 24h</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-label">Fear &amp; Greed</div>
+            <div class="hero-metric-value" style="color:${fgColor}">${fg}</div>
+            <div class="hero-metric-sub">${fgLabel}</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-label">Risk Level</div>
+            <div class="hero-metric-value" style="color:${riskColor}">${riskLevel}<span style="font-size:0.6em;color:#444">/100</span></div>
+            <div class="hero-metric-sub">MACRO COMPOSITE</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-label">DXY</div>
+            <div class="hero-metric-value">${dxy}</div>
+            <div class="hero-metric-sub">US DOLLAR INDEX</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-label">Active Signals</div>
+            <div class="hero-metric-value">${signalCount}</div>
+            <div class="hero-metric-sub">CONFLUENCE GATE</div>
+          </div>
+        </div>
+
+        <div class="hero-alert-strip">
+          ${alertHTML}
+        </div>
+
+        ${renderCycleRow(d)}
+        ${renderAssetTable(d)}
+      `;
+
+      hero.style.display = 'block';
+    }
+
+    function renderCycleRow(d) {
+      const ai = d.asset_intelligence || {};
+      const cycleName   = ai.macro_cycle || '—';
+      const cyclePhase  = ai.macro_cycle_phase || 3;
+      const cycleCtx    = ai.macro_cycle_context || '';
+      const policy      = (ai.monetary_policy || 'QT').toUpperCase();
+      const policyCtx   = ai.monetary_policy_context || '';
+      const fedRate     = d.macro?.fed_funds_rate || '—';
+      const gdp         = d.macro?.gdp_growth || '—';
+      const cpi         = d.macro?.cpi || '—';
+
+      const phaseNames  = ['','Early Bull','Mid Bull','Late Bull','Early Bear','Bear','Late Bear'];
+      const policyClass = policy === 'QE' ? 'policy-qe' : policy === 'QT' ? 'policy-qt' : 'policy-neutral';
+
+      // 6 phase dots
+      const dots = [1,2,3,4,5,6].map(i => {
+        const cls = i === cyclePhase ? `active phase-${i}` : i < cyclePhase ? 'past' : '';
+        const label = phaseNames[i];
+        return `<div class="hero-cycle-dot ${cls}" title="${label}"></div>`;
+      }).join('');
+
+      return `
+        <div class="hero-divider"></div>
+        <div class="hero-cycle-row">
+          <div>
+            <div class="hero-cycle-label">Macro Business Cycle</div>
+            <div class="hero-cycle-phase">${cycleName.toUpperCase()}</div>
+            <div class="hero-cycle-dots">${dots}</div>
+            <div class="hero-cycle-context">Phase ${cyclePhase}/6 · CPI ${cpi} · GDP ${gdp} · ${cycleCtx}</div>
+          </div>
+          <div>
+            <div class="hero-policy-label">Monetary Policy</div>
+            <div class="hero-policy-value ${policyClass}">${policy}</div>
+            <div class="hero-policy-detail">
+              Fed Rate: ${fedRate}<br>
+              ${policyCtx || (policy === 'QT' ? 'Balance sheet contracting — liquidity draining' : 'Balance sheet expanding — liquidity injecting')}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderAssetTable(d) {
+      const ai = d.asset_intelligence || {};
+      const assets = ai.assets || {};
+
+      // RSI label + class
+      const rsiInfo = (val) => {
+        if (val == null || val === '—') return { label: '—', cls: 'rsi-neutral', num: '—' };
+        const n = parseFloat(val);
+        if (isNaN(n)) return { label: '—', cls: 'rsi-neutral', num: '—' };
+        const label = n < 30 ? 'OVERSOLD' : n < 45 ? 'WEAKENING' : n < 55 ? 'NEUTRAL' : n < 70 ? 'ELEVATED' : 'OVERBOUGHT';
+        const cls   = n < 30 ? 'rsi-oversold' : n < 45 ? 'rsi-weakening' : n < 55 ? 'rsi-neutral' : n < 70 ? 'rsi-elevated' : 'rsi-overbought';
+        return { label, cls, num: Math.round(n) };
+      };
+
+      const trendInfo = (t) => {
+        const s = (t || '').toLowerCase();
+        if (s === 'up')   return { arrow: '↑', cls: 'trend-up' };
+        if (s === 'down') return { arrow: '↓', cls: 'trend-down' };
+        return { arrow: '→', cls: 'trend-neutral' };
+      };
+
+      const riskClass = (r) => {
+        if (r == null) return 'risk-med';
+        const n = parseFloat(r);
+        if (n < 40) return 'risk-low';
+        if (n < 60) return 'risk-med';
+        if (n < 75) return 'risk-high';
+        return 'risk-crit';
+      };
+
+      const sentClass = (s) => {
+        const lower = (s || '').toLowerCase();
+        if (lower.includes('extreme fear')) return 'sent-xfear';
+        if (lower.includes('fear'))         return 'sent-fear';
+        if (lower.includes('extreme greed')) return 'sent-xgreed';
+        if (lower.includes('greed'))        return 'sent-greed';
+        if (lower.includes('bull'))         return 'sent-bullish';
+        if (lower.includes('bear'))         return 'sent-bearish';
+        return 'sent-neutral';
+      };
+
+      const order = ['dxy','gold','silver','btc','eth','spx','tech','bonds','oil'];
+      const rows = order.map(key => {
+        const a = assets[key];
+        if (!a) return '';
+        const rd = rsiInfo(a.rsi_daily ?? a.rsi_daily);
+        const rw = rsiInfo(a.rsi_weekly);
+        const tw = trendInfo(a.trend_weekly);
+        const tm = trendInfo(a.trend_monthly);
+        const rc = riskClass(a.risk);
+        const sc = sentClass(a.sentiment);
+        const riskVal = a.risk != null ? a.risk : '—';
+        return `
+          <tr>
+            <td>
+              <div class="asset-name">${a.label || key.toUpperCase()}</div>
+            </td>
+            <td><span class="asset-cycle-tag">${a.cycle || '—'}</span></td>
+            <td><span class="asset-risk-num ${rc}">${riskVal}</span></td>
+            <td>
+              <div class="rsi-cell">
+                <div class="rsi-daily"><span class="rsi-period-label">D</span><span class="${rd.cls}">${rd.num} ${rd.label}</span></div>
+                <div class="rsi-weekly"><span class="rsi-period-label">W</span><span class="${rw.cls}">${rw.num} ${rw.label}</span></div>
+              </div>
+            </td>
+            <td>
+              <div class="trend-cell">
+                <span class="${tw.cls}">${tw.arrow} W: ${a.trend_weekly || '—'}</span>
+                <span class="${tm.cls}">${tm.arrow} M: ${a.trend_monthly || '—'}</span>
+              </div>
+            </td>
+            <td><span class="sentiment-cell ${sc}">${a.sentiment || '—'}</span></td>
+          </tr>`;
+      }).join('');
+
+      return `
+        <div class="hero-divider"></div>
+        <div style="overflow-x:auto;">
+          <table class="hero-asset-table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Cycle Phase</th>
+                <th>Risk</th>
+                <th>RSI Daily / Weekly</th>
+                <th>Trend W / M</th>
+                <th>Sentiment</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
     function updateMacroCommandBrief(data) {
       const macro = data?.macro || {};
       const sentiment = data?.sentiment || {};
@@ -1303,6 +1542,7 @@
           document.getElementById("nextReview").textContent = new Date(d.next_review_utc).toLocaleString();
         }
 
+        renderMarketHero(d, latestAIData);
         updateMacroCommandBrief(d);
         updateMarketNews(d);
         updateCycleContext(d);
@@ -1442,7 +1682,8 @@
         if (!res.ok) throw new Error(`AI HTTP ${res.status}`);
         const ai = await res.json();
         latestAIData = ai;
-        
+        refreshHeroIfReady();
+
         // Update ChatGPT analysis section
         if (document.getElementById('chatgpt-analysis')) {
           const regime = ai.regime || 'No regime available';
@@ -1593,7 +1834,14 @@
         }
       }
     }
-    
+
+    // If AI loads after market data, refresh the hero confidence score
+    async function refreshHeroIfReady() {
+      if (latestMarketData && latestAIData) {
+        renderMarketHero(latestMarketData, latestAIData);
+      }
+    }
+
     // === AUTO-REFRESH SYSTEM === 
     // Refresh data every 30 seconds for live updates
     let autoRefreshInterval;

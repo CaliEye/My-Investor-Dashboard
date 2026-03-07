@@ -13,19 +13,47 @@
 </head>
 <body class="bots-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
-  <header class="px-6 py-4 flex justify-between items-center border-b border-yellow-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-yellow-400">ENDGAME // Bot Command</h1>
-    <nav class="space-x-5 text-sm md:text-base font-orbitron tracking-wide">
-      <a href="index.html" class="hover:text-cyan-400">Dashboard</a>
-      <a href="macro.html" class="hover:text-cyan-400">Macro</a>
-      <a href="crypto.html" class="hover:text-cyan-400">Crypto</a>
-      <a href="scenario.html" class="hover:text-cyan-400">Scenario</a>
-      <a href="bots.html" class="text-yellow-400 border-b-2 border-yellow-400 pb-1">Bots</a>
-      <a href="mindmap.html" class="hover:text-cyan-400">Mindmap</a>
-      <a href="goals.html" class="hover:text-cyan-400">Goals</a>
-      <a href="portfolio.html" class="hover:text-cyan-400">Portfolio</a>
-    </nav>
-  </header>
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html" class="active">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="links.html">LINKS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label">BOT COMMAND</span>
+  </nav>
+  <div class="endgame-subnav">
+    <a href="bots.html" class="active">BOTS CLASSIC</a>
+    <a href="bots-enhanced.html">FORTRESS BOTS</a>
+    <a href="fortress-command.html">FORTRESS COMMAND</a>
+  </div>
+
+  <!-- CROSS-SECTOR BOT OPPORTUNITY DASHBOARD -->
+  <div style="max-width:1200px;margin:0 auto;padding:24px 24px 0;">
+    <div style="font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:4px;color:#39ff14;text-transform:uppercase;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid #0a1a0a;">
+      CROSS-SECTOR BOT OPPORTUNITIES
+    </div>
+    <div style="font-size:10px;color:#555;margin-bottom:16px;font-family:'JetBrains Mono',monospace;">
+      Live signal scan across all asset classes — DCA · MOMENTUM · HEDGE · INCOME bots
+    </div>
+    <div id="all-bot-opportunities" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:8px;">
+      <div style="color:#444;font-size:11px;padding:12px;font-family:'JetBrains Mono',monospace;">Scanning opportunities...</div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:#0a0a00;border:1px solid #1a1a00;font-size:9px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#555;">
+      RULE: No bot entry unless Confluence Gate = RISK-ON · All signals are watch-only in DEFENSIVE posture
+    </div>
+  </div>
 
   <main class="p-6 max-w-7xl mx-auto space-y-8">
     <section class="hud-panel portfolio-overview">
@@ -98,6 +126,47 @@
     <p class="text-center text-gray-600 mt-4 text-xs">&copy; 2025 CyberSci-Dash. All rights reserved.</p>
   </footer>
 
+  <script src="js/live-refresh.js"></script>
+  <script>
+  // Render all cross-sector bot opportunities
+  (async function() {
+    try {
+      const res = await fetch('./data/data.json', { cache: 'no-store' });
+      const d = await res.json();
+      const opps = d.bot_opportunities || [];
+      const gate = d.decision_gate || {};
+      const posture = gate.risk_posture || 'DEFENSIVE';
+      const container = document.getElementById('all-bot-opportunities');
+      if (!opps.length) { container.innerHTML = '<div style="color:#444;font-size:11px;padding:12px;font-family:\'JetBrains Mono\',monospace;">No opportunities detected — market conditions unfavorable</div>'; return; }
+      const typeColor = t => t === 'DCA' ? '#39ff14' : t === 'MOMENTUM' ? '#00D2FF' : t === 'HEDGE' ? '#FF4757' : t === 'INCOME' ? '#FFD700' : '#888';
+      const statusColor = s => s === 'WATCH' ? '#888' : s === 'READY' ? '#39ff14' : s === 'ACTIVE' ? '#00D2FF' : '#ffe066';
+      const confColor = c => c >= 75 ? '#39ff14' : c >= 60 ? '#ffe066' : c >= 45 ? '#f59e0b' : '#FF4757';
+      container.innerHTML = opps.map(opp => {
+        const tc = typeColor(opp.bot_type); const sc = statusColor(opp.status); const cc = confColor(opp.confidence);
+        const barW = Math.min(100, opp.confidence || 0);
+        const blocked = posture === 'DEFENSIVE' && opp.status !== 'WATCH';
+        return `<div style="background:#0a0a0a;border:1px solid ${blocked ? '#1a0000' : '#1a1a0a'};padding:16px;border-radius:2px;transition:border-color 0.2s;position:relative;" onmouseenter="this.style.borderColor='${tc}33'" onmouseleave="this.style.borderColor='${blocked ? '#1a0000' : '#1a1a0a'}'">
+          ${blocked ? '<div style="position:absolute;top:8px;right:8px;font-size:8px;font-family:\'Orbitron\',monospace;letter-spacing:2px;color:#FF4757;border:1px solid #FF475722;padding:2px 6px;">LOCKED</div>' : ''}
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:${tc};border:1px solid ${tc}44;padding:2px 7px;">${opp.bot_type}</span>
+            <span style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:${sc};">${opp.status}</span>
+          </div>
+          <div style="font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">${opp.asset}</div>
+          <div style="font-size:10px;color:#666;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">${opp.sector ? opp.sector.toUpperCase() : ''} · ${opp.timeframe || ''}</div>
+          <div style="font-size:11px;color:#aaa;margin-bottom:10px;font-family:'JetBrains Mono',monospace;line-height:1.5;">${opp.action || ''}</div>
+          <div style="margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:9px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">CONFIDENCE</span>
+              <span style="font-size:11px;font-family:'Orbitron',monospace;font-weight:700;color:${cc};">${opp.confidence}%</span>
+            </div>
+            <div style="height:3px;background:#0f0f0f;border-radius:1px;"><div style="height:3px;width:${barW}%;background:${cc};transition:width 1s ease;border-radius:1px;"></div></div>
+          </div>
+          <div style="font-size:9px;color:#555;margin-top:8px;font-family:'JetBrains Mono',monospace;">${opp.signal || ''}</div>
+        </div>`;
+      }).join('');
+    } catch(e) { console.warn('Bot opp load failed:', e); }
+  })();
+  </script>
   <script>
     function fmtNum(value, digits = 2) {
       return Number(value).toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });

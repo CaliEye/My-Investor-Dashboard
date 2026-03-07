@@ -6,28 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Investor War Room - Major decisions, crisis playbook, and real-time alerts.">
   <link rel="stylesheet" href="css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/cinematic-hud.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 </head>
 <body class="bg-gray-950 text-white font-inter">
-  <header class="px-6 py-4 flex justify-between items-center border-b border-pink-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-pink-400">CyberSci-Dash v2</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html?view=summary" class="hover:text-cyan-400" aria-label="Dashboard">Summary</a>
-      <a href="warroom.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="hover:text-cyan-400" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="hover:text-cyan-400" aria-label="Crypto">Crypto</a>
-      <a href="bots.html" class="hover:text-cyan-400" aria-label="Bots">Bots</a>
-      <a href="sentiment.html" class="hover:text-cyan-400" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Engine">Scenario Engine</a>
-      <a href="mindmap.html" class="hover:text-cyan-400" aria-label="Mindmap">Mindmap</a>
-      <a href="goals.html" class="hover:text-cyan-400" aria-label="Goals">Goals</a>
-      <a href="portfolio.html" class="hover:text-cyan-400" aria-label="Portfolio">Portfolio</a>
-      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
-      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
-    </nav>
-  </header>
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html" class="active">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="links.html">LINKS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label">WAR ROOM</span>
+  </nav>
+
+  <!-- Live posture banner -->
+  <div id="wr-posture-banner" style="display:none; padding:0.6rem 1.5rem; font-family:'Orbitron',monospace; font-size:0.65rem; font-weight:700; letter-spacing:3px; border-bottom:1px solid #222; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+    <span style="color:#444;">CURRENT POSTURE</span>
+    <span id="wr-posture-val" style="font-size:1.1rem; letter-spacing:4px;">—</span>
+    <span id="wr-bias-val" style="color:#888; font-size:0.6rem; letter-spacing:2px;"></span>
+    <span style="flex:1;"></span>
+    <span id="wr-risk-level" style="color:#555; font-size:0.6rem;"></span>
+    <span id="wr-signal-count" style="color:#555; font-size:0.6rem;"></span>
+  </div>
 
   <main class="p-6 max-w-6xl mx-auto">
     <section class="mb-8 rounded-2xl border-2 border-pink-400 shadow-pink-400/30 shadow-xl bg-gradient-to-br from-gray-950 via-gray-900 to-pink-900 px-8 py-7">
@@ -36,49 +50,97 @@
     </section>
 
     <section class="mb-10 grid md:grid-cols-2 gap-6">
-      <div class="bg-gray-900 border border-red-500 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-red-300 mb-3 tracking-wide">1) CRISIS DETECTOR (SIGNALS ONLY)</h3>
-        <ul class="list-inside list-disc text-sm space-y-2 text-gray-200">
-          <li>DXY &gt; 108 with trend persistence</li>
-          <li>Credit stress widening (HYG/JNK or spreads)</li>
-          <li>Volatility break (VIX proxy spike)</li>
-          <li>Liquidity shock (rates up + risk breadth down)</li>
-          <li>Confluence gate threshold status from command center</li>
-        </ul>
-        <div class="mt-4 text-xs text-gray-400">Escalate only when 2+ independent signals confirm. Single prints are noise.</div>
+      <div class="cmd-panel cmd-panel--red">
+        <h3 class="font-orbitron text-red-300 mb-4 tracking-wide text-sm">1) CRISIS DETECTOR</h3>
+        <div class="space-y-1">
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">DXY &gt; 108 with trend persistence</div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Credit stress widening (HYG/JNK or spreads)</div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Volatility break (VIX proxy spike)</div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Liquidity shock (rates up + risk breadth down)</div>
+          </div>
+          <div class="signal-item signal-item--grey">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Confluence gate threshold — see command center</div>
+          </div>
+        </div>
+        <div class="mt-4 text-xs text-gray-500" style="font-style:italic;">Escalate only when 2+ independent signals confirm. Single prints are noise.</div>
       </div>
 
-      <div class="bg-gray-900 border border-yellow-500 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-yellow-300 mb-3 tracking-wide">2) IMMEDIATE STEPS (CAPITAL PRESERVATION)</h3>
-        <ul class="list-inside list-disc text-sm space-y-2 text-gray-200">
-          <li>Reduce gross exposure and remove leverage first</li>
-          <li>Increase cash and treasury-quality buffers</li>
-          <li>Pause new risk until confluence gate reopens</li>
-          <li>Tighten invalidation levels on remaining positions</li>
-          <li>Log decision, timestamp, and trigger evidence</li>
-        </ul>
+      <div class="cmd-panel cmd-panel--amber">
+        <h3 class="font-orbitron text-yellow-300 mb-4 tracking-wide text-sm">2) IMMEDIATE STEPS — CAPITAL PRESERVATION</h3>
+        <div class="space-y-1">
+          <div class="signal-item signal-item--red">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Reduce gross exposure and remove leverage first</div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Increase cash and treasury-quality buffers</div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Pause new risk until confluence gate reopens</div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Tighten invalidation levels on remaining positions</div>
+          </div>
+          <div class="signal-item signal-item--grey">
+            <div class="signal-dot"></div>
+            <div class="signal-text">Log decision, timestamp, and trigger evidence</div>
+          </div>
+        </div>
       </div>
 
-      <div class="bg-gray-900 border border-cyan-500 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-cyan-300 mb-3 tracking-wide">3) SCENARIO JUMP LINK (UPDATE MATRIX)</h3>
-        <p class="text-sm text-gray-200 mb-4">When crisis detector confirms a break, update scenario probabilities before any new tactical move.</p>
-        <a href="scenario.html" class="inline-block underline text-cyan-300 font-bold">Open Scenario Engine →</a>
-        <div class="mt-4 text-xs text-gray-400">Rule: macro leads, scenario matrix updates first, execution second.</div>
+      <div class="cmd-panel cmd-panel--cyan">
+        <h3 class="font-orbitron text-cyan-300 mb-4 tracking-wide text-sm">3) SCENARIO MATRIX — UPDATE FIRST</h3>
+        <p class="text-sm text-gray-300 mb-4">When crisis detector confirms a break, update scenario probabilities before any new tactical move.</p>
+        <a href="scenario.html" class="inline-flex items-center gap-2 font-orbitron text-xs text-cyan-300 border border-cyan-700 px-4 py-2 rounded hover:bg-cyan-900 hover:border-cyan-400 transition-colors" style="letter-spacing:2px;">OPEN SCENARIO ENGINE →</a>
+        <div class="mt-4 text-xs text-gray-500" style="font-style:italic;">Rule: macro leads, scenario matrix updates first, execution second.</div>
       </div>
 
-      <div class="bg-gray-900 border border-amber-500 rounded-xl p-6 shadow">
-        <h3 class="font-orbitron text-amber-300 mb-3 tracking-wide">4) VERIFICATION SOURCES (TIERED)</h3>
-        <ul class="space-y-3 text-sm text-gray-200">
-          <li><span class="font-bold text-emerald-300">Tier 1:</span> Official releases, central banks, government/statistical agencies, primary filings.</li>
-          <li><span class="font-bold text-cyan-300">Tier 2:</span> Reputable terminals/outlets used for speed and cross-checking.</li>
-          <li><span class="font-bold text-red-300">Tier 3:</span> Social feeds <strong>OFF by default</strong>; enable only during confirmed breaks for supplemental verification.</li>
-        </ul>
+      <div class="cmd-panel" style="border-color:rgba(251,191,36,0.3)">
+        <h3 class="font-orbitron text-amber-300 mb-4 tracking-wide text-sm">4) VERIFICATION SOURCES — TIERED</h3>
+        <div class="space-y-3 text-sm">
+          <div class="signal-item signal-item--green">
+            <div class="signal-dot"></div>
+            <div>
+              <div class="signal-text" style="color:#7aff5a; font-weight:600; font-size:0.75rem; font-family:'Orbitron',monospace; letter-spacing:1px;">TIER 1 — PRIMARY</div>
+              <div class="signal-text text-gray-300 text-xs mt-1">Official releases, central banks, government agencies, primary filings</div>
+            </div>
+          </div>
+          <div class="signal-item signal-item--amber">
+            <div class="signal-dot"></div>
+            <div>
+              <div class="signal-text" style="color:#ffe066; font-weight:600; font-size:0.75rem; font-family:'Orbitron',monospace; letter-spacing:1px;">TIER 2 — TERMINALS</div>
+              <div class="signal-text text-gray-300 text-xs mt-1">Reputable terminals and outlets for speed and cross-checking</div>
+            </div>
+          </div>
+          <div class="signal-item signal-item--red">
+            <div class="signal-dot"></div>
+            <div>
+              <div class="signal-text" style="color:#ff8088; font-weight:600; font-size:0.75rem; font-family:'Orbitron',monospace; letter-spacing:1px;">TIER 3 — SOCIAL (OFF BY DEFAULT)</div>
+              <div class="signal-text text-gray-300 text-xs mt-1">Enable only during confirmed breaks for supplemental verification only</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- AI Confluence Health Status -->
-    <section class="mb-8 rounded-2xl border border-gray-600 bg-gray-900 px-6 py-5">
-      <h3 class="font-orbitron text-gray-300 mb-4 tracking-wide text-sm">AI CONFLUENCE HEALTH</h3>
+    <section class="mb-8 cmd-panel" style="border-color:#1a2a1a;">
+      <h3 class="font-orbitron text-gray-400 mb-4 tracking-wide text-xs" style="letter-spacing:4px;">AI CONFLUENCE HEALTH</h3>
       <div id="confluence-health" class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
         <div class="text-gray-500">Loading...</div>
       </div>
@@ -103,6 +165,36 @@
     </nav>
     <p class="text-center text-gray-600 mt-4 text-xs">&copy; 2025 CyberSci-Dash. All rights reserved.</p>
   </footer>
+  <script>
+    (async function loadPostureBanner() {
+      try {
+        const res = await fetch('./data/data.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const d = await res.json();
+        const posture   = (d.decision_gate?.risk_posture || 'NEUTRAL').toUpperCase();
+        const bias      = d.bias || 'Neutral';
+        const riskLevel = d.macro?.risk_level ?? '—';
+        const signals   = d.decision_gate?.signal_count ?? d.decision_gate?.signals_active ?? '—';
+
+        const postureEl = document.getElementById('wr-posture-val');
+        const biasEl    = document.getElementById('wr-bias-val');
+        const riskEl    = document.getElementById('wr-risk-level');
+        const sigEl     = document.getElementById('wr-signal-count');
+        const banner    = document.getElementById('wr-posture-banner');
+
+        const postureColor = posture === 'RISK-ON' ? '#39ff14'
+                           : posture === 'DEFENSIVE' ? '#FF4757'
+                           : posture === 'WATCH-ONLY' ? '#f59e0b'
+                           : '#FFD166';
+
+        if (postureEl) { postureEl.textContent = posture; postureEl.style.color = postureColor; postureEl.style.textShadow = `0 0 12px ${postureColor}`; }
+        if (biasEl)    { biasEl.textContent = bias.toUpperCase() + ' BIAS'; }
+        if (riskEl)    { riskEl.textContent = `RISK ${riskLevel}/100`; }
+        if (sigEl)     { sigEl.textContent = `${signals} SIGNAL${signals !== 1 ? 'S' : ''} ACTIVE`; }
+        if (banner)    { banner.style.display = 'flex'; }
+      } catch(e) { /* silent — banner stays hidden */ }
+    })();
+  </script>
   <script>
     (async function loadConfluenceHealth() {
       try {

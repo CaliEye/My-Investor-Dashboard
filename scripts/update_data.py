@@ -540,6 +540,386 @@ def build_decision_gate_payload(existing_data, sector_etfs):
     }
 
 
+def fetch_price_multi_source(symbol, api_keys=None, existing_price=0.0):
+    """
+    Multi-source price fetch with waterfall fallback:
+    Yahoo Finance → Finnhub → Polygon → Twelve Data → FMP → Alpha Vantage
+    Returns best available price and the source used.
+    """
+    keys = api_keys or {}
+    price = existing_price
+    source = "existing"
+
+    # 1. Yahoo Finance (no key, most reliable for broad market)
+    try:
+        t = yf.Ticker(symbol)
+        h = t.history(period="2d", interval="1d", auto_adjust=True)
+        if not h.empty and "Close" in h:
+            p = float(h["Close"].dropna().iloc[-1])
+            if p > 0:
+                return p, "yahoo"
+    except Exception:
+        pass
+
+    # 2. Finnhub (requires FINNHUB_API_KEY)
+    finnhub_key = keys.get("FINNHUB_API_KEY") or os.getenv("FINNHUB_API_KEY")
+    if finnhub_key:
+        try:
+            r = requests.get(
+                f"https://finnhub.io/api/v1/quote?symbol={symbol}&token={finnhub_key}",
+                timeout=6
+            )
+            if r.ok:
+                data = r.json()
+                p = float(data.get("c", 0))
+                if p > 0:
+                    return p, "finnhub"
+        except Exception:
+            pass
+
+    # 3. Polygon.io (requires POLYGON_API_KEY)
+    polygon_key = keys.get("POLYGON_API_KEY") or os.getenv("POLYGON_API_KEY")
+    if polygon_key:
+        try:
+            # Convert yfinance symbol format to Polygon format
+            poly_sym = symbol.replace("-USD", "X:").replace("^", "I:") if "-USD" in symbol or "^" in symbol else symbol
+            r = requests.get(
+                f"https://api.polygon.io/v2/last/trade/{poly_sym}?apiKey={polygon_key}",
+                timeout=6
+            )
+            if r.ok:
+                data = r.json()
+                p = float(data.get("results", {}).get("p", 0))
+                if p > 0:
+                    return p, "polygon"
+        except Exception:
+            pass
+
+    # 4. Twelve Data (requires TWELVE_DATA_API_KEY)
+    twelve_key = keys.get("TWELVE_DATA_API_KEY") or os.getenv("TWELVE_DATA_API_KEY")
+    if twelve_key:
+        try:
+            r = requests.get(
+                f"https://api.twelvedata.com/price?symbol={symbol}&apikey={twelve_key}",
+                timeout=6
+            )
+            if r.ok:
+                data = r.json()
+                p = float(data.get("price", 0))
+                if p > 0:
+                    return p, "twelve_data"
+        except Exception:
+            pass
+
+    # 5. Financial Modeling Prep (requires FMP_API_KEY)
+    fmp_key = keys.get("FMP_API_KEY") or os.getenv("FMP_API_KEY")
+    if fmp_key:
+        try:
+            r = requests.get(
+                f"https://financialmodelingprep.com/api/v3/quote-short/{symbol}?apikey={fmp_key}",
+                timeout=6
+            )
+            if r.ok:
+                data = r.json()
+                if data and isinstance(data, list):
+                    p = float(data[0].get("price", 0))
+                    if p > 0:
+                        return p, "fmp"
+        except Exception:
+            pass
+
+    return price, source
+
+
+def compute_bot_opportunities(data):
+    """
+    Derive bot opportunities from asset_intelligence RSI/trend/sentiment data.
+    Writes fresh opportunities replacing any that are now stale.
+    """
+    ai = data.get("asset_intelligence", {})
+    assets = ai.get("assets", {})
+    existing_opps = {o["id"]: o for o in data.get("bot_opportunities", [])}
+    opportunities = []
+
+    # Existing manually-curated opportunities that stay unless overridden
+    preserved_ids = {"bonds_yield"}  # always keep the T-bill income opportunity
+
+    def opp_status(confidence):
+        if confidence >= 80: return "STRONG_BUY"
+        if confidence >= 65: return "BUY"
+        if confidence >= 50: return "ACCUMULATE"
+        if confidence >= 35: return "WATCH"
+        return "AVOID"
+
+    for key, asset in assets.items():
+        rsi_d = asset.get("rsi_daily") or 50
+        rsi_w = asset.get("rsi_weekly") or 50
+        risk   = asset.get("risk") or 50
+        trend_w = (asset.get("trend_weekly") or "Neutral").lower()
+        trend_m = (asset.get("trend_monthly") or "Neutral").lower()
+        sentiment = (asset.get("sentiment") or "Neutral").lower()
+        label = asset.get("label", key.upper())
+
+        # DCA Bot: Weekly RSI oversold + fear sentiment
+        if rsi_w < 40 and ("fear" in sentiment or "bear" in sentiment):
+            base_conf = 55
+            base_conf += max(0, (40 - rsi_w) * 1.5)   # more oversold = higher conf
+            base_conf += 10 if "extreme" in sentiment else 0
+            base_conf += 5 if trend_m == "up" else 0    # monthly uptrend = better
+            base_conf = min(88, base_conf)
+            opp_id = f"{key}_dca"
+            opportunities.append({
+                "id": opp_id,
+                "asset": label,
+                "asset_key": key,
+                "bot_type": "DCA",
+                "confidence": round(base_conf),
+                "status": opp_status(base_conf),
+                "action": f"Accumulate {label} — weekly RSI {round(rsi_w)} (oversold), {asset.get('sentiment','fear')} zone",
+                "signal": f"RSI D:{round(rsi_d)} W:{round(rsi_w)} | Trend W:{asset.get('trend_weekly','—')} M:{asset.get('trend_monthly','—')} | {asset.get('sentiment','—')}",
+                "risk": risk,
+                "timeframe": "Weekly DCA, monitor for trend reversal confirmation",
+                "page": f"{key}.html" if key in ("tech","energy","bonds","realestate") else ("crypto.html" if key in ("btc","eth") else "macro.html"),
+                "sector": key if key in ("tech","energy","bonds","realestate") else ("crypto" if key in ("btc","eth") else "macro")
+            })
+
+        # MOMENTUM Bot: RSI weekly 50-65, uptrend confirmed W+M
+        elif 50 <= rsi_w <= 65 and trend_w == "up" and trend_m == "up":
+            base_conf = 60
+            base_conf += max(0, (65 - rsi_w) * 0.8)   # room to run = higher conf
+            base_conf += 10 if "bull" in sentiment else 0
+            base_conf = min(85, base_conf)
+            opp_id = f"{key}_momentum"
+            opportunities.append({
+                "id": opp_id,
+                "asset": label,
+                "asset_key": key,
+                "bot_type": "MOMENTUM",
+                "confidence": round(base_conf),
+                "status": opp_status(base_conf),
+                "action": f"Ride momentum — {label} trending up W+M, RSI has room",
+                "signal": f"RSI D:{round(rsi_d)} W:{round(rsi_w)} | Up trend confirmed | {asset.get('sentiment','—')}",
+                "risk": risk,
+                "timeframe": "Trail stop on weekly close below 8-week SMA",
+                "page": f"{key}.html" if key in ("tech","energy","bonds","realestate") else ("crypto.html" if key in ("btc","eth") else "macro.html"),
+                "sector": key if key in ("tech","energy","bonds","realestate") else ("crypto" if key in ("btc","eth") else "macro")
+            })
+
+        # HEDGE/STOP signal: RSI weekly overbought + greed
+        elif rsi_w > 70 and ("greed" in sentiment or "bull" in sentiment):
+            opp_id = f"{key}_hedge"
+            opportunities.append({
+                "id": opp_id,
+                "asset": label,
+                "asset_key": key,
+                "bot_type": "HEDGE",
+                "confidence": round(min(80, 50 + (rsi_w - 70) * 1.5)),
+                "status": "CAUTION",
+                "action": f"Tighten stops on {label} — RSI overbought, consider reducing position",
+                "signal": f"RSI D:{round(rsi_d)} W:{round(rsi_w)} | {asset.get('sentiment','—')} zone | High risk",
+                "risk": risk,
+                "timeframe": "Reduce position size, do not add",
+                "page": "macro.html",
+                "sector": "macro"
+            })
+
+    # Always include T-bill income opportunity (preserved)
+    for pid in preserved_ids:
+        if pid in existing_opps:
+            opportunities.append(existing_opps[pid])
+
+    # Sort by confidence descending
+    opportunities.sort(key=lambda x: x.get("confidence", 0), reverse=True)
+    return opportunities
+
+
+def fetch_sector_data(existing_data):
+    """
+    Update sector prices from yfinance and recompute RSI for each sector proxy.
+    Preserves all manually-set context fields.
+    """
+    existing_sectors = existing_data.get("sectors", {})
+    sector_proxies = {
+        "tech":        "QQQ",
+        "energy":      "XLE",
+        "bonds":       "TLT",
+        "realestate":  "VNQ",
+    }
+
+    updated = dict(existing_sectors)
+    for key, symbol in sector_proxies.items():
+        sect = dict(existing_sectors.get(key, {}))
+        try:
+            t = yf.Ticker(symbol)
+            hist = t.history(period="90d", interval="1d", auto_adjust=True)
+            if hist.empty:
+                continue
+            closes = hist["Close"].dropna().tolist()
+            price = closes[-1]
+            prev  = closes[-2] if len(closes) > 1 else price
+            change_pct = round((price - prev) / prev * 100, 2) if prev > 0 else 0.0
+
+            weekly = t.history(period="52wk", interval="1wk", auto_adjust=True)
+            w_closes = weekly["Close"].dropna().tolist() if not weekly.empty else []
+
+            rsi_d = compute_rsi(closes, 14)
+            rsi_w = compute_rsi(w_closes, 14)
+
+            sect["price"] = round(price, 2)
+            sect["price_formatted"] = f"${price:,.2f}"
+            sect["change_pct_day"] = change_pct
+            if rsi_d: sect["rsi_daily"] = rsi_d; sect["rsi_label_daily"] = rsi_label(rsi_d)
+            if rsi_w: sect["rsi_weekly"] = rsi_w; sect["rsi_label_weekly"] = rsi_label(rsi_w)
+            sect["trend_weekly"] = trend_label(w_closes[-16:] if len(w_closes) >= 16 else w_closes)
+            monthly = t.history(period="1y", interval="1mo", auto_adjust=True)
+            m_closes = monthly["Close"].dropna().tolist() if not monthly.empty else []
+            sect["trend_monthly"] = trend_label(m_closes[-6:] if len(m_closes) >= 6 else m_closes)
+
+        except Exception as e:
+            logger.warning(f"Sector data fetch failed for {symbol}: {e}")
+
+        updated[key] = sect
+
+    return updated
+
+
+def compute_rsi(closes, period=14):
+    """Compute RSI from a list/series of closing prices."""
+    import pandas as pd
+    s = pd.Series(closes).dropna()
+    if len(s) < period + 1:
+        return None
+    delta = s.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.rolling(window=period).mean()
+    avg_loss = loss.rolling(window=period).mean()
+    rs = avg_gain / avg_loss.replace(0, float('nan'))
+    rsi = 100 - (100 / (1 + rs))
+    val = rsi.dropna().iloc[-1]
+    return round(float(val), 1) if not pd.isna(val) else None
+
+
+def rsi_label(rsi):
+    if rsi is None: return "—"
+    if rsi < 30: return "OVERSOLD"
+    if rsi < 45: return "WEAKENING"
+    if rsi < 55: return "NEUTRAL"
+    if rsi < 70: return "ELEVATED"
+    return "OVERBOUGHT"
+
+
+def trend_label(closes_series):
+    """Weekly trend: compare last close to 8-period SMA."""
+    import pandas as pd
+    s = pd.Series(closes_series).dropna()
+    if len(s) < 8:
+        return "Neutral"
+    sma = s.tail(8).mean()
+    last = s.iloc[-1]
+    pct_diff = (last - sma) / sma * 100
+    if pct_diff > 2: return "Up"
+    if pct_diff < -2: return "Down"
+    return "Neutral"
+
+
+def fetch_asset_rsi(symbol, existing=None):
+    """Fetch daily + weekly RSI and trends for a yfinance symbol."""
+    try:
+        ticker = yf.Ticker(symbol)
+        daily = ticker.history(period="60d", interval="1d", auto_adjust=True)
+        weekly = ticker.history(period="52wk", interval="1wk", auto_adjust=True)
+        if daily.empty or weekly.empty:
+            return existing or {}
+        d_closes = daily["Close"].dropna().tolist()
+        w_closes = weekly["Close"].dropna().tolist()
+        rsi_d = compute_rsi(d_closes, 14)
+        rsi_w = compute_rsi(w_closes, 14)
+        trend_w = trend_label(w_closes[-16:] if len(w_closes) >= 16 else w_closes)
+        # Monthly trend: compare last close to 6-month avg
+        monthly = ticker.history(period="1y", interval="1mo", auto_adjust=True)
+        m_closes = monthly["Close"].dropna().tolist()
+        trend_m = trend_label(m_closes[-6:] if len(m_closes) >= 6 else m_closes)
+        return {
+            "rsi_daily": rsi_d,
+            "rsi_weekly": rsi_w,
+            "trend_weekly": trend_w,
+            "trend_monthly": trend_m,
+        }
+    except Exception as e:
+        logger.warning(f"Asset RSI fetch failed for {symbol}: {e}")
+        return existing or {}
+
+
+def fetch_asset_intelligence(existing_data):
+    """Compute RSI, trends, and derive macro cycle context for all tracked assets."""
+    existing_ai = existing_data.get("asset_intelligence", {})
+    existing_assets = existing_ai.get("assets", {})
+
+    asset_symbols = {
+        "dxy":   "DX-Y.NYB",
+        "gold":  "GLD",
+        "silver":"SLV",
+        "btc":   "BTC-USD",
+        "eth":   "ETH-USD",
+        "spx":   "^GSPC",
+        "tech":  "QQQ",
+        "bonds": "TLT",
+        "oil":   "CL=F",
+    }
+
+    updated_assets = dict(existing_assets)
+    for key, symbol in asset_symbols.items():
+        fetched = fetch_asset_rsi(symbol, existing_assets.get(key, {}))
+        if key not in updated_assets:
+            updated_assets[key] = {}
+        updated_assets[key].update(fetched)
+        if fetched.get("rsi_daily"):
+            updated_assets[key]["rsi_label_daily"] = rsi_label(fetched["rsi_daily"])
+        if fetched.get("rsi_weekly"):
+            updated_assets[key]["rsi_label_weekly"] = rsi_label(fetched["rsi_weekly"])
+
+    # Derive macro cycle phase from existing gate + macro data
+    macro = existing_data.get("macro", {})
+    gate = existing_data.get("decision_gate", {})
+    posture = gate.get("risk_posture", "NEUTRAL")
+    risk_lvl = macro.get("risk_level", 50)
+
+    if posture == "RISK-ON" and risk_lvl < 50:
+        cycle, phase = "Mid Bull", 2
+    elif posture == "RISK-ON" and risk_lvl < 65:
+        cycle, phase = "Late Bull", 3
+    elif posture in ("WATCH-ONLY",) or (posture == "RISK-ON" and risk_lvl >= 65):
+        cycle, phase = "Early Bear", 4
+    elif posture == "DEFENSIVE" and risk_lvl >= 70:
+        cycle, phase = "Bear", 5
+    elif posture == "DEFENSIVE" and risk_lvl < 70:
+        cycle, phase = "Late Bear", 6
+    else:
+        cycle, phase = existing_ai.get("macro_cycle", "Late Bull"), existing_ai.get("macro_cycle_phase", 3)
+
+    # Derive policy from trigger text
+    triggers = existing_data.get("triggers", [])
+    policy = existing_ai.get("monetary_policy", "QT")
+    for t in triggers:
+        t_lower = str(t).lower()
+        if "qe" in t_lower or "expanding" in t_lower or "easing" in t_lower:
+            policy = "QE"
+            break
+        if "qt" in t_lower or "tightening" in t_lower or "contracting" in t_lower:
+            policy = "QT"
+            break
+
+    return {
+        "macro_cycle": cycle,
+        "macro_cycle_phase": phase,
+        "macro_cycle_context": existing_ai.get("macro_cycle_context", ""),
+        "monetary_policy": policy,
+        "monetary_policy_context": existing_ai.get("monetary_policy_context", ""),
+        "assets": updated_assets,
+    }
+
+
 def main():
     data = read_existing_data()
     now = datetime.now(timezone.utc)
@@ -556,6 +936,9 @@ def main():
     data["next_review_utc"] = (now + timedelta(hours=4)).isoformat()
     data["sector_etfs"] = sector_etfs
     data["decision_gate"] = build_decision_gate_payload(data, sector_etfs)
+    data["asset_intelligence"] = fetch_asset_intelligence(data)
+    data["sectors"] = fetch_sector_data(data)
+    data["bot_opportunities"] = compute_bot_opportunities(data)
     data["data_stale"] = False  # Freshly written — cleared on every successful update
 
     # Derive top-level bias from decision gate posture so it never stays stale

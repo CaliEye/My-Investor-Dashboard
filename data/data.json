@@ -191,5 +191,208 @@
     "hard_rule_reminder": "No new crypto risk until Oct/Nov 2026 unless confluence gate flips.",
     "watch_only_until": "2026-11-01"
   },
-  "data_stale": false
+  "data_stale": false,
+  "bot_opportunities": [
+    {
+      "id": "btc_dca", "asset": "Bitcoin", "asset_key": "btc", "bot_type": "DCA",
+      "confidence": 72, "status": "BUY",
+      "action": "Accumulate weekly — post-halving cycle historically bottoms here",
+      "signal": "RSI weekly 35 (oversold), Fear & Greed 28, post-halving correction phase",
+      "risk": 78, "timeframe": "Weekly DCA, 6-12 month horizon", "page": "crypto.html", "sector": "crypto"
+    },
+    {
+      "id": "eth_dca", "asset": "Ethereum", "asset_key": "eth", "bot_type": "DCA",
+      "confidence": 65, "status": "BUY",
+      "action": "Small weekly accumulation — ETH lags then outperforms BTC in bull run",
+      "signal": "RSI weekly 28 (extreme oversold), ETH/BTC ratio near key support",
+      "risk": 82, "timeframe": "Weekly DCA, 12-month horizon", "page": "crypto.html", "sector": "crypto"
+    },
+    {
+      "id": "gold_momentum", "asset": "Gold / GLD", "asset_key": "gold", "bot_type": "MOMENTUM",
+      "confidence": 78, "status": "STRONG_BUY",
+      "action": "Ride the bull run — gold in macro tailwind vs QT + geopolitical risk",
+      "signal": "RSI weekly 67 (elevated, not overbought), uptrend confirmed W+M, safe haven demand",
+      "risk": 32, "timeframe": "Monthly position, trailing stop", "page": "macro.html", "sector": "macro"
+    },
+    {
+      "id": "tech_dca_qqq", "asset": "Nasdaq / QQQ", "asset_key": "tech", "bot_type": "DCA",
+      "confidence": 58, "status": "ACCUMULATE",
+      "action": "Begin small DCA into correction — AI capex cycle intact long term",
+      "signal": "RSI daily 38 (weakening toward oversold), -15% from ATH, AI secular trend intact",
+      "risk": 72, "timeframe": "Bi-weekly DCA, 6-month horizon", "page": "tech.html", "sector": "tech"
+    },
+    {
+      "id": "oil_watch", "asset": "Oil / WTI", "asset_key": "oil", "bot_type": "WATCH",
+      "confidence": 45, "status": "WATCH",
+      "action": "Monitor — wait for RSI weekly > 45 before entry",
+      "signal": "RSI weekly 37 (oversold), downtrend intact, OPEC+ wildcard risk",
+      "risk": 62, "timeframe": "Wait for trend reversal confirmation", "page": "energy.html", "sector": "energy"
+    },
+    {
+      "id": "bonds_yield", "asset": "T-Bills / Short Duration", "asset_key": "bonds", "bot_type": "INCOME",
+      "confidence": 85, "status": "ACTIVE",
+      "action": "T-bill ladder 3-month rollovers — 5%+ yield, zero risk, beats inflation",
+      "signal": "Fed funds 4.25%, T-bill yield 5.2% — risk-free income while waiting for market setup",
+      "risk": 10, "timeframe": "Ongoing until rates drop below 3%", "page": "bonds.html", "sector": "bonds"
+    }
+  ],
+  "sectors": {
+    "tech": {
+      "name": "Technology", "proxy": "QQQ", "accent": "#00D2FF",
+      "price": 599.75, "price_formatted": "$599.75", "change_pct_day": -1.5,
+      "cycle": "Correction", "cycle_context": "AI capex secular bull, rate sensitivity causing correction. Watch earnings.",
+      "risk": 72, "rsi_daily": 38, "rsi_weekly": 42,
+      "rsi_label_daily": "WEAKENING", "rsi_label_weekly": "WEAKENING",
+      "trend_weekly": "Down", "trend_monthly": "Neutral", "sentiment": "Fear",
+      "support": "$565", "resistance": "$640",
+      "key_drivers": ["AI infrastructure spending — secular tailwind", "Rate sensitivity — QQQ fell 30%+ in 2022", "Earnings season — AI revenue monetization tested", "Mega-cap concentration — top 7 = 45% of QQQ"],
+      "threats": ["Fed rate hold extending", "AI capex scrutiny — DeepSeek disruption", "Regulatory antitrust pressure"],
+      "passive_income_angle": "Covered calls on QQQ, MSFT/AAPL dividends"
+    },
+    "energy": {
+      "name": "Energy", "proxy": "XLE", "accent": "#FF6B35",
+      "price": 88.5, "price_formatted": "$88.50", "change_pct_day": 0.3,
+      "cycle": "Bear Phase", "cycle_context": "OPEC+ cuts vs demand slowdown. Risk-off suppressing oil prices.",
+      "risk": 62, "rsi_daily": 40, "rsi_weekly": 37,
+      "rsi_label_daily": "WEAKENING", "rsi_label_weekly": "OVERSOLD",
+      "trend_weekly": "Down", "trend_monthly": "Down", "sentiment": "Fear",
+      "support": "$72 WTI", "resistance": "$90 WTI",
+      "key_drivers": ["OPEC+ production discipline", "China recovery demand", "Geopolitical risk premium", "USD strength pressure"],
+      "threats": ["Global recession demand destruction", "EV transition", "OPEC+ quota cheating"],
+      "passive_income_angle": "XOM/CVX high-yield dividends 3-4%"
+    },
+    "bonds": {
+      "name": "Fixed Income", "proxy": "TLT", "accent": "#4A9EFF",
+      "price": 88.2, "price_formatted": "$88.20", "change_pct_day": 0.5,
+      "cycle": "Transition", "cycle_context": "Fed cutting slowly. Yield curve normalizing from inversion.",
+      "risk": 55, "rsi_daily": 50, "rsi_weekly": 52,
+      "rsi_label_daily": "NEUTRAL", "rsi_label_weekly": "NEUTRAL",
+      "trend_weekly": "Neutral", "trend_monthly": "Neutral", "sentiment": "Neutral",
+      "us10y_yield": "4.13%", "tbill_3m_yield": "5.2%", "yield_curve": "Normalizing",
+      "key_drivers": ["Fed rate path — each cut = TLT price rise", "Inflation trajectory", "Flight to safety demand", "US fiscal deficit supply pressure"],
+      "threats": ["Stagflation scenario", "US credit rating pressure", "Foreign CB diversification"],
+      "passive_income_angle": "T-bill 3-month rollovers 5.2% — zero risk income now"
+    },
+    "realestate": {
+      "name": "Real Estate", "proxy": "VNQ", "accent": "#9B59B6",
+      "price": 82.5, "price_formatted": "$82.50", "change_pct_day": -0.4,
+      "cycle": "Rate-Pressured", "cycle_context": "High rates crushing REIT valuations. Wait for rate pivot before deploying.",
+      "risk": 65, "rsi_daily": 42, "rsi_weekly": 44,
+      "rsi_label_daily": "WEAKENING", "rsi_label_weekly": "WEAKENING",
+      "trend_weekly": "Down", "trend_monthly": "Neutral", "sentiment": "Fear",
+      "mortgage_rate": "6.8%", "cap_rate_spread": "Compressed",
+      "key_drivers": ["Mortgage rates 6.8% — affordability crisis", "Supply shortage in key metros structural", "Rate cut expectations", "Commercial RE stress"],
+      "threats": ["Rates elevated longer", "CRE defaults spreading", "Remote work destroying office values"],
+      "passive_income_angle": "Physical land (Priority #2 hard property). REITs for income exposure while saving for physical."
+    },
+    "passive_income": {
+      "name": "Passive Income", "accent": "#FFD700",
+      "streams": [
+        {"name": "Bitcoin DCA Stack", "type": "Hard Asset", "status": "BUILDING", "yield_type": "Appreciation", "confidence": 72, "action": "Weekly DCA bot — accumulate at fear lows"},
+        {"name": "T-Bill Ladder", "type": "Fixed Income", "status": "ACTIVE", "yield_type": "Interest", "yield_rate": "5.2%", "confidence": 85, "action": "3-month T-bill rollovers while rates elevated"},
+        {"name": "Gold / GLD Position", "type": "Hard Asset", "status": "ACTIVE", "yield_type": "Appreciation", "confidence": 78, "action": "Hold + add on pullbacks — momentum opportunity"},
+        {"name": "Energy Dividends", "type": "Dividend", "status": "WATCH", "yield_type": "Dividend", "yield_rate": "3.5%", "confidence": 58, "action": "Accumulate XOM/CVX when oil RSI oversold weekly"},
+        {"name": "Land Acquisition Fund", "type": "Hard Property", "status": "PLANNING", "yield_type": "Appreciation + Rent", "confidence": 90, "action": "Accumulate capital — 2026-2027 land purchase target"}
+      ]
+    }
+  },
+  "asset_intelligence": {
+    "macro_cycle": "Late Bull",
+    "macro_cycle_phase": 3,
+    "macro_cycle_context": "Expansion slowing — watch for peak signals",
+    "monetary_policy": "QT",
+    "monetary_policy_context": "Balance sheet contracting, rate cuts begun slowly",
+    "assets": {
+      "dxy": {
+        "label": "USD / DXY",
+        "cycle": "Topping",
+        "risk": 45,
+        "rsi_daily": 48,
+        "rsi_weekly": 44,
+        "trend_weekly": "Down",
+        "trend_monthly": "Down",
+        "sentiment": "Neutral"
+      },
+      "gold": {
+        "label": "Gold / GLD",
+        "cycle": "Bull Run",
+        "risk": 32,
+        "rsi_daily": 63,
+        "rsi_weekly": 67,
+        "trend_weekly": "Up",
+        "trend_monthly": "Up",
+        "sentiment": "Bullish"
+      },
+      "silver": {
+        "label": "Silver / SLV",
+        "cycle": "Lagging",
+        "risk": 48,
+        "rsi_daily": 52,
+        "rsi_weekly": 50,
+        "trend_weekly": "Neutral",
+        "trend_monthly": "Up",
+        "sentiment": "Neutral"
+      },
+      "btc": {
+        "label": "Bitcoin / BTC",
+        "cycle": "Post-Halving",
+        "risk": 78,
+        "rsi_daily": 38,
+        "rsi_weekly": 35,
+        "trend_weekly": "Down",
+        "trend_monthly": "Down",
+        "sentiment": "Fear"
+      },
+      "eth": {
+        "label": "Ethereum / ETH",
+        "cycle": "Bear Phase",
+        "risk": 82,
+        "rsi_daily": 32,
+        "rsi_weekly": 28,
+        "trend_weekly": "Down",
+        "trend_monthly": "Down",
+        "sentiment": "Extreme Fear"
+      },
+      "spx": {
+        "label": "S&P 500",
+        "cycle": "Late Bull",
+        "risk": 68,
+        "rsi_daily": 42,
+        "rsi_weekly": 50,
+        "trend_weekly": "Down",
+        "trend_monthly": "Up",
+        "sentiment": "Fear"
+      },
+      "tech": {
+        "label": "Nasdaq / QQQ",
+        "cycle": "Correction",
+        "risk": 72,
+        "rsi_daily": 38,
+        "rsi_weekly": 42,
+        "trend_weekly": "Down",
+        "trend_monthly": "Neutral",
+        "sentiment": "Fear"
+      },
+      "bonds": {
+        "label": "Bonds / 10Y",
+        "cycle": "Transition",
+        "risk": 55,
+        "rsi_daily": 50,
+        "rsi_weekly": 52,
+        "trend_weekly": "Neutral",
+        "trend_monthly": "Neutral",
+        "sentiment": "Neutral"
+      },
+      "oil": {
+        "label": "Oil / WTI",
+        "cycle": "Bear Phase",
+        "risk": 62,
+        "rsi_daily": 40,
+        "rsi_weekly": 37,
+        "trend_weekly": "Down",
+        "trend_monthly": "Down",
+        "sentiment": "Fear"
+      }
+    }
+  }
 }

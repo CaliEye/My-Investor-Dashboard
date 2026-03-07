@@ -14,53 +14,82 @@
 </head>
 <body class="sentiment-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
-  <header class="px-6 py-4 flex justify-between items-center border-b border-pink-400 shadow-lg">
-    <h1 class="text-3xl font-orbitron tracking-widest text-pink-400">CyberSci-Dash v2</h1>
-    <nav class="space-x-6 text-lg font-orbitron tracking-wide">
-      <a href="index.html" class="hover:text-cyan-400" aria-label="Dashboard">Dashboard</a>
-      <a href="warroom.html" class="hover:text-pink-400" aria-label="War Room">War Room</a>
-      <a href="macro.html" class="hover:text-yellow-400" aria-label="Macro">Macro</a>
-      <a href="crypto.html" class="hover:text-green-400" aria-label="Crypto">Crypto</a>
-      <a href="sentiment.html" class="text-pink-400 border-b-2 border-pink-400 pb-1" aria-label="Sentiment">Sentiment</a>
-      <a href="scenario.html" class="hover:text-cyan-400" aria-label="Scenario Builder">Scenario Builder</a>
-      <a href="insights.html" class="hover:text-cyan-400" aria-label="Insights">Insights</a>
-      <a href="links.html" class="hover:text-cyan-400" aria-label="Quick Links">Quick Links</a>
-    </nav>
-  </header>
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html" class="active">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="links.html">LINKS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label">SENTIMENT HUB</span>
+  </nav>
 
   <main class="p-6 max-w-7xl mx-auto">
     <!-- SENTIMENT HUD HERO -->
     <section class="mb-10 rounded-2xl border-2 border-pink-400 shadow-pink-400/40 shadow-xl bg-gradient-to-br from-gray-900 via-gray-800 to-pink-900 px-8 py-8">
-      <h2 class="text-2xl font-orbitron text-pink-300 mb-5 tracking-widest">📊 Sentiment Overview</h2>
-      <div class="grid md:grid-cols-2 gap-10">
-        <div>
-          <ul class="space-y-2 text-lg">
-            <li><span class="font-bold text-yellow-300">Fear &amp; Greed Index:</span> <span id="fg-value">...</span></li>
-            <li><span class="font-bold text-green-300">BTC Sentiment:</span> <span id="btc-sentiment">...</span></li>
-            <li><span class="font-bold text-blue-400">ETH Sentiment:</span> <span id="eth-sentiment">...</span></li>
-            <li><span class="font-bold text-cyan-400">Altcoin Sentiment:</span> <span id="alt-sentiment">...</span></li>
-            <li><span class="font-bold text-pink-400">Options Skew:</span> <span id="options-skew">...</span></li>
-          </ul>
-          <div class="mt-5 text-xs text-gray-300 italic">
-            Sentiment scores update in real time. <br>
-            <span class="text-pink-300">NOTE:</span> Extreme sentiment often signals turning points.
+      <h2 class="text-xs font-orbitron text-gray-500 mb-6 tracking-widest" style="letter-spacing:4px;">SENTIMENT OVERVIEW</h2>
+
+      <div class="grid md:grid-cols-2 gap-10 items-start">
+        <!-- Fear & Greed Arc Gauge -->
+        <div class="flex flex-col items-center">
+          <div style="position:relative; width:220px; height:120px; overflow:hidden; margin-bottom:-8px;">
+            <svg viewBox="0 0 220 120" width="220" height="120" style="overflow:visible;">
+              <path d="M 18 110 A 92 92 0 0 1 202 110" fill="none" stroke="#1a0a0a" stroke-width="18" stroke-linecap="round"/>
+              <path id="fg-arc" d="M 18 110 A 92 92 0 0 1 202 110" fill="none" stroke="#FF4757" stroke-width="18" stroke-linecap="round"
+                    stroke-dasharray="288.5" stroke-dashoffset="288.5"
+                    style="transition: stroke-dashoffset 1.2s ease, stroke 0.5s ease; filter:drop-shadow(0 0 8px #FF4757);"/>
+              <line x1="18"  y1="110" x2="26"  y2="103" stroke="#2a1a1a" stroke-width="2"/>
+              <line x1="110" y1="18"  x2="110" y2="28"  stroke="#2a1a1a" stroke-width="2"/>
+              <line x1="202" y1="110" x2="194" y2="103" stroke="#2a1a1a" stroke-width="2"/>
+            </svg>
+          </div>
+          <div id="fg-value" style="font-family:'Orbitron',monospace; font-size:4rem; font-weight:900; line-height:1; color:#FF4757; text-shadow:0 0 30px #FF4757; letter-spacing:2px; transition:color 0.5s, text-shadow 0.5s;">—</div>
+          <div id="fg-label-display" style="font-family:'Orbitron',monospace; font-size:0.65rem; letter-spacing:4px; margin-top:0.4rem; color:#888;">FEAR &amp; GREED INDEX</div>
+          <div style="display:flex; justify-content:space-between; width:220px; margin-top:0.6rem;">
+            <span style="font-family:'IBM Plex Mono'; font-size:0.5rem; color:#FF4757; letter-spacing:1px;">FEAR</span>
+            <span style="font-family:'IBM Plex Mono'; font-size:0.5rem; color:#FFD166; letter-spacing:1px;">NEUTRAL</span>
+            <span style="font-family:'IBM Plex Mono'; font-size:0.5rem; color:#39ff14; letter-spacing:1px;">GREED</span>
           </div>
         </div>
-        <div>
-          <div class="bg-gray-800 border border-pink-500 rounded-xl p-4 shadow mb-5">
-            <h3 class="text-lg font-orbitron text-pink-300 mb-2">Liquidation Heatmap</h3>
-            <img src="images/hud4.jpg" alt="Liquidation Heatmap" class="w-full max-w-xs rounded-lg shadow-lg mb-2">
-            <div class="text-xs text-gray-400">Major liquidation levels and crowd leverage clusters.</div>
+
+        <!-- Sentiment metrics -->
+        <div class="space-y-2">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.55rem 0; border-bottom:1px solid #1a1a1a;">
+            <span style="font-family:'Orbitron',monospace; font-size:0.55rem; color:#666; letter-spacing:2px;">BTC SENTIMENT</span>
+            <span id="btc-sentiment" style="font-family:'JetBrains Mono'; font-size:0.9rem; color:#FFD166;">—</span>
           </div>
-          <div class="bg-gray-800 border border-yellow-500 rounded-xl p-4 shadow">
-            <h3 class="text-lg font-orbitron text-yellow-300 mb-2">Greed &amp; Fear Extremes</h3>
-            <ul class="list-inside text-base space-y-1">
-              <li>• <span class="font-bold text-green-400">BTC:</span> <span id="fg-btc-extreme">...</span></li>
-              <li>• <span class="font-bold text-blue-400">ETH:</span> <span id="fg-eth-extreme">...</span></li>
-              <li>• <span class="font-bold text-pink-400">Altcoins:</span> <span id="fg-alt-extreme">...</span></li>
-            </ul>
-            <div class="mt-2 text-xs text-gray-400">Are we at crowd euphoria or panic?</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.55rem 0; border-bottom:1px solid #1a1a1a;">
+            <span style="font-family:'Orbitron',monospace; font-size:0.55rem; color:#666; letter-spacing:2px;">ETH SENTIMENT</span>
+            <span id="eth-sentiment" style="font-family:'JetBrains Mono'; font-size:0.9rem; color:#00D2FF;">—</span>
           </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.55rem 0; border-bottom:1px solid #1a1a1a;">
+            <span style="font-family:'Orbitron',monospace; font-size:0.55rem; color:#666; letter-spacing:2px;">ALTCOIN SENTIMENT</span>
+            <span id="alt-sentiment" style="font-family:'JetBrains Mono'; font-size:0.9rem; color:#ff6b9d;">—</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.55rem 0; border-bottom:1px solid #1a1a1a;">
+            <span style="font-family:'Orbitron',monospace; font-size:0.55rem; color:#666; letter-spacing:2px;">OPTIONS SKEW</span>
+            <span id="options-skew" style="font-family:'JetBrains Mono'; font-size:0.9rem; color:#e8e8e8;">—</span>
+          </div>
+          <div style="margin-top:0.75rem; padding:0.75rem; background:rgba(255,71,87,0.04); border:1px solid rgba(255,71,87,0.15); border-radius:4px;">
+            <div style="font-family:'Orbitron',monospace; font-size:0.5rem; color:#555; letter-spacing:3px; margin-bottom:0.5rem;">EXTREMES READING</div>
+            <div style="display:flex; gap:1.5rem; flex-wrap:wrap; font-size:0.82rem;">
+              <span><span style="color:#FFD166; font-family:'Orbitron',monospace; font-size:0.55rem; letter-spacing:1px;">BTC</span> <span id="fg-btc-extreme" style="color:#e8e8e8; font-family:'JetBrains Mono';">—</span></span>
+              <span><span style="color:#00D2FF; font-family:'Orbitron',monospace; font-size:0.55rem; letter-spacing:1px;">ETH</span> <span id="fg-eth-extreme" style="color:#e8e8e8; font-family:'JetBrains Mono';">—</span></span>
+              <span><span style="color:#ff6b9d; font-family:'Orbitron',monospace; font-size:0.55rem; letter-spacing:1px;">ALTS</span> <span id="fg-alt-extreme" style="color:#e8e8e8; font-family:'JetBrains Mono';">—</span></span>
+            </div>
+          </div>
+          <div class="text-xs text-gray-600 italic mt-2">Extreme sentiment signals turning points — not trade signals.</div>
         </div>
       </div>
     </section>
@@ -134,8 +163,29 @@
 
         const fmt = (x) => (x === null || x === undefined) ? "—" : x;
 
+        // Fear & Greed arc gauge
+        const fgRaw = d.sentiment?.fear_greed_index;
+        const fgNum = parseFloat(fgRaw);
+        if (!isNaN(fgNum)) {
+          const fgColor = fgNum >= 75 ? '#FF4757' : fgNum >= 60 ? '#f59e0b' : fgNum >= 45 ? '#FFD166' : fgNum >= 30 ? '#00D2FF' : '#39ff14';
+          const fgEl = document.getElementById('fg-value');
+          if (fgEl) { fgEl.textContent = Math.round(fgNum); fgEl.style.color = fgColor; fgEl.style.textShadow = `0 0 30px ${fgColor}`; }
+          const arc = document.getElementById('fg-arc');
+          if (arc) {
+            const arcLen = 288.5;
+            arc.style.strokeDashoffset = arcLen * (1 - fgNum / 100);
+            arc.style.stroke = fgColor;
+            arc.style.filter = `drop-shadow(0 0 8px ${fgColor})`;
+          }
+          const labelEl = document.getElementById('fg-label-display');
+          if (labelEl) {
+            const lbl = fgNum >= 75 ? 'EXTREME GREED' : fgNum >= 60 ? 'GREED' : fgNum >= 45 ? 'NEUTRAL' : fgNum >= 25 ? 'FEAR' : 'EXTREME FEAR';
+            labelEl.textContent = lbl; labelEl.style.color = fgColor;
+          }
+        }
+
         // Sentiment overview data
-        if (document.getElementById("fg-value")) document.getElementById("fg-value").textContent = fmt(d.sentiment.fear_greed_index);
+        if (document.getElementById("fg-value") && isNaN(fgNum)) document.getElementById("fg-value").textContent = fmt(d.sentiment.fear_greed_index);
         if (document.getElementById("btc-sentiment")) document.getElementById("btc-sentiment").textContent = fmt(d.sentiment.btc_sentiment);
         if (document.getElementById("eth-sentiment")) document.getElementById("eth-sentiment").textContent = fmt(d.sentiment.eth_sentiment);
         if (document.getElementById("alt-sentiment")) document.getElementById("alt-sentiment").textContent = fmt(d.sentiment.alt_sentiment);

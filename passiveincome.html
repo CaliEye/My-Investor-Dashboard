@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PASSIVE INCOME — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #FFD700; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(255,215,0,0.25); }
+    .card.accent { border-color: rgba(255,215,0,0.4); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #FFD700; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #FFD700; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #1a1400; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .stream-card {
+      background: rgba(5,4,0,0.97);
+      border: 1px solid #1a1400;
+      border-radius: 4px;
+      padding: 1.2rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .stream-card:hover { border-color: rgba(255,215,0,0.3); box-shadow: 0 0 12px rgba(255,215,0,0.06); }
+    .stream-status-active   { color: #39ff14; border-color: rgba(57,255,20,0.4); background: rgba(57,255,20,0.06); }
+    .stream-status-building { color: #00D2FF; border-color: rgba(0,210,255,0.4); background: rgba(0,210,255,0.06); }
+    .stream-status-planning { color: #9B59B6; border-color: rgba(155,89,182,0.4); background: rgba(155,89,182,0.06); }
+    .stream-status-watch    { color: #f59e0b; border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.06); }
+  </style>
+</head>
+<body class="passiveincome-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:#FFD700;">PASSIVE INCOME</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">TECH</a>
+    <a href="energy.html">ENERGY</a>
+    <a href="bonds.html">BONDS</a>
+    <a href="realestate.html">REAL ESTATE</a>
+    <a href="passiveincome.html" class="active">PASSIVE INCOME</a>
+  </div>
+
+  <!-- INCOME HERO -->
+  <div class="sector-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Passive Income Engine</div>
+        <div class="sector-price" style="color:#FFD700;text-shadow:0 0 24px #FFD700;font-size:2rem;" id="income-hero-tbill">5.2%</div>
+        <div class="sector-change">
+          Best risk-free yield · T-Bill 3M · <span style="color:#39ff14;">ACTIVE NOW</span>
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Income Mission Status</div>
+        <div class="sector-cycle-value" style="color:#FFD700;">BUILDING</div>
+        <div class="sector-cycle-context">Multiple streams in development. T-bills active. BTC DCA accumulating. Land capital building. 2030 target: fully passive.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Best Opp. Confidence</div>
+        <div class="sector-risk-value" style="color:#39ff14;" id="income-hero-conf">85%</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">T-BILLS</div>
+      </div>
+    </div>
+
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">T-Bill 3M Yield</div>
+        <div class="sector-metric-value" style="color:#39ff14;" id="income-tbill">5.2%</div>
+        <div class="sector-metric-sub">RISK-FREE NOW</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">BTC DCA Status</div>
+        <div class="sector-metric-value" style="color:#00D2FF;font-size:0.9rem;">ACCUMULATING</div>
+        <div class="sector-metric-sub">POST-HALVING ZONE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Gold Status</div>
+        <div class="sector-metric-value" style="color:#FFD700;font-size:0.9rem;">BULL RUN</div>
+        <div class="sector-metric-sub">MOMENTUM ACTIVE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Energy Divs</div>
+        <div class="sector-metric-value" style="color:#f59e0b;font-size:0.9rem;">WATCH</div>
+        <div class="sector-metric-sub">3.5% WHEN READY</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Land Fund</div>
+        <div class="sector-metric-value" style="color:#9B59B6;font-size:0.9rem;">PLANNING</div>
+        <div class="sector-metric-sub">2026-27 TARGET</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Business Income</div>
+        <div class="sector-metric-value" style="color:#9B59B6;font-size:0.9rem;">BUILDING</div>
+        <div class="sector-metric-sub">ACTIVE PURSUIT</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">4yr Clock</div>
+        <div class="sector-metric-value" style="color:#FF4757;font-size:0.9rem;" id="income-clock">—</div>
+        <div class="sector-metric-sub">MONTHS TO 2030</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- ALL BOT OPPORTUNITIES (cross-sector) -->
+    <section>
+      <div class="bot-opp-header" style="color:#FFD700;">All Current Opportunities — Cross-Sector</div>
+      <div id="bot-opp-container"></div>
+    </section>
+
+    <!-- INCOME STREAMS -->
+    <section>
+      <div class="section-title">Active Income Streams</div>
+      <div id="income-streams-container" class="grid-2">
+        <!-- populated by JS -->
+        <div class="stream-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+            <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:#e8e8e8;">T-BILL LADDER</div>
+            <span style="font-family:'Orbitron',monospace;font-size:0.45rem;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid;" class="stream-status-active">ACTIVE</span>
+          </div>
+          <div style="font-size:1.8rem;font-family:'Orbitron',monospace;font-weight:900;color:#39ff14;margin-bottom:0.3rem;">5.2%</div>
+          <div style="font-size:0.72rem;color:#888;margin-bottom:0.4rem;">3-month T-bill rollovers — government backed, zero credit risk, income NOW</div>
+          <div style="font-size:0.6rem;color:#444;font-style:italic;">Action: Roll every 3 months. Hold until yield drops below 3.5%.</div>
+        </div>
+
+        <div class="stream-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+            <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:#e8e8e8;">BITCOIN DCA STACK</div>
+            <span style="font-family:'Orbitron',monospace;font-size:0.45rem;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid;" class="stream-status-building">BUILDING</span>
+          </div>
+          <div style="font-size:1.2rem;font-family:'Orbitron',monospace;font-weight:900;color:#00D2FF;margin-bottom:0.3rem;" id="income-btc-price">Loading...</div>
+          <div style="font-size:0.72rem;color:#888;margin-bottom:0.4rem;">Weekly DCA — accumulate in fear zone, hold through bull run to Oct/Nov 2026</div>
+          <div style="font-size:0.6rem;color:#444;font-style:italic;">RSI weekly oversold. Post-halving historically accumulation phase.</div>
+        </div>
+
+        <div class="stream-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+            <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:#e8e8e8;">GOLD / GLD POSITION</div>
+            <span style="font-family:'Orbitron',monospace;font-size:0.45rem;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid;" class="stream-status-active">ACTIVE</span>
+          </div>
+          <div style="font-size:1.2rem;font-family:'Orbitron',monospace;font-weight:900;color:#FFD700;margin-bottom:0.3rem;" id="income-gold-price">Loading...</div>
+          <div style="font-size:0.72rem;color:#888;margin-bottom:0.4rem;">Ride the bull run — gold macro tailwind from QT + geopolitical risk premium</div>
+          <div style="font-size:0.6rem;color:#444;font-style:italic;">RSI elevated but not overbought. Uptrend confirmed W+M. Add on pullbacks.</div>
+        </div>
+
+        <div class="stream-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+            <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:#e8e8e8;">ENERGY DIVIDENDS</div>
+            <span style="font-family:'Orbitron',monospace;font-size:0.45rem;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid;" class="stream-status-watch">WATCH</span>
+          </div>
+          <div style="font-size:1.8rem;font-family:'Orbitron',monospace;font-weight:900;color:#f59e0b;margin-bottom:0.3rem;">3.5%</div>
+          <div style="font-size:0.72rem;color:#888;margin-bottom:0.4rem;">XOM + CVX dividends with commodity exposure — wait for oil RSI weekly > 45</div>
+          <div style="font-size:0.6rem;color:#444;font-style:italic;">Energy oversold but downtrend intact. Patience for trend reversal.</div>
+        </div>
+
+        <div class="stream-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+            <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:#e8e8e8;">LAND ACQUISITION</div>
+            <span style="font-family:'Orbitron',monospace;font-size:0.45rem;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid;" class="stream-status-planning">PLANNING</span>
+          </div>
+          <div style="font-size:1.1rem;font-family:'Orbitron',monospace;font-weight:700;color:#9B59B6;margin-bottom:0.3rem;">2026-2027</div>
+          <div style="font-size:0.72rem;color:#888;margin-bottom:0.4rem;">Accumulate capital now — deploy into physical land when rates cut and crypto bull provides capital</div>
+          <div style="font-size:0.6rem;color:#444;font-style:italic;">Priority #2 hard property. Target: low-cost country or strategic rural land.</div>
+        </div>
+
+        <div class="stream-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+            <div style="font-family:'Orbitron',monospace;font-size:0.7rem;font-weight:700;color:#e8e8e8;">OWNED BUSINESS</div>
+            <span style="font-family:'Orbitron',monospace;font-size:0.45rem;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid;" class="stream-status-building">BUILDING</span>
+          </div>
+          <div style="font-size:1.1rem;font-family:'Orbitron',monospace;font-weight:700;color:#a78bfa;margin-bottom:0.3rem;">IN PROGRESS</div>
+          <div style="font-size:0.72rem;color:#888;margin-bottom:0.4rem;">Launch and operate at least one owned business — critical for cash flow and identity</div>
+          <div style="font-size:0.6rem;color:#444;font-style:italic;">Owned income > employment income. Build leverage through business ownership.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2030 COUNTDOWN -->
+    <section>
+      <div class="section-title">2030 Freedom Mission Progress</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">Clock Start</div>
+          <div class="card-value" style="font-size:18px;">MARCH 2026</div>
+          <div class="card-sub">4-year window. Pre-singularity positioning.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Hard Property Priority #1</div>
+          <div class="card-value" style="font-size:16px;color:#f59e0b;">BITCOIN</div>
+          <div class="card-sub">DCA accumulating. Bull run target Oct/Nov 2026.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Hard Property Priority #2</div>
+          <div class="card-value" style="font-size:16px;color:#9B59B6;">LAND</div>
+          <div class="card-sub">Capital accumulation phase. Deploy 2026-2027.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Income Goal</div>
+          <div class="card-value" style="font-size:14px;color:#FFD700;">FULLY PASSIVE</div>
+          <div class="card-sub">Multiple streams flowing before 2030. T-bills → dividends → rent → business.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Protection Layer</div>
+          <div class="card-value" style="font-size:14px;color:#888;">PRIVACY FIRST</div>
+          <div class="card-sub">Identity protection + asset diversification across jurisdictions.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Ultimate Goal</div>
+          <div class="card-value" style="font-size:12px;color:#39ff14;">FREEDOM BY 2030</div>
+          <div class="card-sub">Do what I want, when I want. Low-cost country. AI-controlled operations.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · PASSIVE INCOME ENGINE</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 2030 countdown
+      const months2030 = Math.ceil((new Date('2030-01-01') - new Date()) / (1000 * 60 * 60 * 24 * 30.44));
+      const clockEl = document.getElementById('income-clock');
+      if (clockEl) clockEl.textContent = months2030 + 'mo';
+
+      try {
+        const res = await fetch('./data/data.json', { cache: 'no-store' });
+        const d = await res.json();
+        const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+
+        const tbill = d.sectors?.bonds?.tbill_3m_yield || '5.2%';
+        setEl('income-hero-tbill', tbill);
+        setEl('income-tbill', tbill);
+
+        const btcFmt = d.crypto?.btc_price_formatted || (d.crypto?.btc_usd ? '$' + Math.round(d.crypto.btc_usd).toLocaleString() : null);
+        if (btcFmt) setEl('income-btc-price', btcFmt);
+
+        const goldFmt = d.sector_etfs?.sectors?.metals?.price_formatted;
+        if (goldFmt) setEl('income-gold-price', goldFmt + ' (GLD)');
+
+        // Best confidence score from bot_opportunities
+        const opps = d.bot_opportunities || [];
+        if (opps.length) {
+          const best = opps.reduce((a, b) => b.confidence > a.confidence ? b : a);
+          setEl('income-hero-conf', best.confidence + '%');
+        }
+      } catch(e) { console.warn('Passive income data load failed:', e); }
+    });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

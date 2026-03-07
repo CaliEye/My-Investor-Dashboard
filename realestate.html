@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>REAL ESTATE COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #9B59B6; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(155,89,182,0.25); }
+    .card.accent { border-color: rgba(155,89,182,0.35); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #9B59B6; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #9B59B6; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #0d0018; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .driver-item { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #0a0a0a; font-size: 0.78rem; }
+    .driver-dot { width: 5px; height: 5px; border-radius: 50%; background: #9B59B6; margin-top: 0.45rem; flex-shrink: 0; box-shadow: 0 0 5px #9B59B6; }
+    .threat-dot { background: #FF4757; box-shadow: 0 0 5px #FF4757; }
+    .goal-dot { background: #FFD700; box-shadow: 0 0 5px #FFD700; }
+  </style>
+</head>
+<body class="realestate-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:#9B59B6;">REAL ESTATE</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">TECH</a>
+    <a href="energy.html">ENERGY</a>
+    <a href="bonds.html">BONDS</a>
+    <a href="realestate.html" class="active">REAL ESTATE</a>
+    <a href="passiveincome.html">PASSIVE INCOME</a>
+  </div>
+
+  <!-- ENDGAME PRIORITY BANNER -->
+  <div style="background:rgba(255,215,0,0.06);border-bottom:1px solid rgba(255,215,0,0.2);padding:0.6rem 2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <span style="font-family:'Orbitron',monospace;font-size:0.5rem;font-weight:700;letter-spacing:3px;color:#FFD700;">ENDGAME PRIORITY #2</span>
+    <span style="font-size:0.72rem;color:#888;">Land &amp; Housing — Hard Property acquisition target. Accumulate capital now, deploy 2026-2027.</span>
+    <a href="goals.html" style="font-family:'Orbitron',monospace;font-size:0.45rem;color:#FFD700;border:1px solid rgba(255,215,0,0.4);padding:0.15rem 0.5rem;border-radius:2px;text-decoration:none;letter-spacing:2px;">VIEW GOALS →</a>
+  </div>
+
+  <!-- SECTOR HERO -->
+  <div class="sector-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Real Estate / REITs</div>
+        <div class="sector-price" style="color:#9B59B6;text-shadow:0 0 24px #9B59B6;" id="re-hero-price">$82.50</div>
+        <div class="sector-change">
+          VNQ <span id="re-change" style="color:#FF4757;">-0.4%</span> today
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Cycle Phase</div>
+        <div class="sector-cycle-value" id="re-hero-cycle">RATE-PRESSURED</div>
+        <div class="sector-cycle-context" id="re-hero-context">High rates crushing REIT valuations. Wait for confirmed rate pivot before major deployment.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Risk Level</div>
+        <div class="sector-risk-value" id="re-hero-risk" style="color:#f59e0b;">65</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+      </div>
+    </div>
+
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">VNQ RSI Daily</div>
+        <div class="sector-metric-value" id="re-rsi-d" style="color:#ffe066;">42</div>
+        <div class="sector-metric-sub" id="re-rsi-d-label">WEAKENING</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">VNQ RSI Weekly</div>
+        <div class="sector-metric-value" id="re-rsi-w" style="color:#ffe066;">44</div>
+        <div class="sector-metric-sub" id="re-rsi-w-label">WEAKENING</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Mortgage Rate</div>
+        <div class="sector-metric-value" id="re-mortgage" style="color:#FF4757;">6.8%</div>
+        <div class="sector-metric-sub">30-YEAR FIXED</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">10Y Yield</div>
+        <div class="sector-metric-value" id="re-10y" style="color:#FF4757;">4.13%</div>
+        <div class="sector-metric-sub">REIT DISCOUNT RATE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">VNQ Trend W</div>
+        <div class="sector-metric-value" style="color:#FF4757;">↓ Down</div>
+        <div class="sector-metric-sub">DIRECTIONAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Cap Rate Spread</div>
+        <div class="sector-metric-value" style="color:#FF4757;font-size:0.9rem;">COMPRESSED</div>
+        <div class="sector-metric-sub">REIT VALUATION</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Land Strategy</div>
+        <div class="sector-metric-value" style="color:#FFD700;font-size:0.75rem;">ACCUMULATE</div>
+        <div class="sector-metric-sub">CAPITAL 2026-27</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- HARD PROPERTY MISSION BLOCK -->
+    <section style="background:rgba(155,89,182,0.04);border:1px solid rgba(155,89,182,0.15);border-radius:4px;padding:1.5rem;margin-top:1.5rem;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.5rem;letter-spacing:4px;color:#FFD700;margin-bottom:0.75rem;">// HARD PROPERTY — 2030 ENDGAME MISSION</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.45rem;color:#444;letter-spacing:3px;margin-bottom:0.3rem;">PRIORITY STACK</div>
+          <div style="font-size:0.8rem;color:#ccc;line-height:1.8;">
+            <div style="color:#FFD700;">① Bitcoin — accumulating now</div>
+            <div style="color:#9B59B6;">② Land — target 2026-2027</div>
+            <div style="color:#888;">③ Houses — target 2027-2028</div>
+            <div style="color:#555;">④ Art / Metals — diversification</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.45rem;color:#444;letter-spacing:3px;margin-bottom:0.3rem;">LAND ACQUISITION THESIS</div>
+          <div style="font-size:0.78rem;color:#888;line-height:1.6;">Land is finite supply, hard to confiscate, low overhead. Buy when rates peak and housing market stress forces motivated sellers. Target: low-cost country or rural strategic land.</div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.45rem;color:#444;letter-spacing:3px;margin-bottom:0.3rem;">OPTIMAL ENTRY WINDOW</div>
+          <div style="font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:#9B59B6;margin-bottom:0.3rem;">2026 — 2027</div>
+          <div style="font-size:0.7rem;color:#555;font-style:italic;">When rate cuts materialize + crypto bull run provides capital</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+      <div id="bot-opp-container" data-sector="realestate"></div>
+      <!-- Static opportunity since bot_opportunities doesn't have realestate sector -->
+      <div style="background:rgba(5,12,8,0.95);border:1px solid rgba(155,89,182,0.2);border-radius:4px;padding:1rem 1.2rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <span style="font-family:'Orbitron',monospace;font-size:0.5rem;font-weight:700;letter-spacing:2px;padding:0.15rem 0.5rem;border-radius:2px;color:#FFD700;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);">SAVINGS BOT</span>
+            <span style="font-family:'Orbitron',monospace;font-size:0.75rem;font-weight:700;color:#e8e8e8;">Land Acquisition Fund</span>
+          </div>
+          <span style="font-family:'Orbitron',monospace;font-size:0.55rem;padding:0.15rem 0.6rem;border-radius:2px;color:#FFD700;border:1px solid rgba(255,215,0,0.4);">ACTIVE — HIGH PRIORITY</span>
+        </div>
+        <div style="font-size:0.8rem;color:#cccccc;margin-bottom:0.4rem;">Auto-save capital for land purchase — compound T-bill income into acquisition fund</div>
+        <div style="font-size:0.65rem;color:#555;font-family:'IBM Plex Mono',monospace;">Confidence: 90% | T-bills at 5.2% while saving | Target deployment: 2026-2027 | Priority #2 Hard Asset</div>
+        <div style="height:3px;background:#1a1a1a;border-radius:2px;overflow:hidden;margin-top:0.4rem;"><div style="height:100%;width:90%;background:#FFD700;"></div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">Market Conditions</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">VNQ Price</div>
+          <div class="card-value" id="re-price">$82.50</div>
+          <div class="card-sub">REIT index proxy — rate sensitive</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Mortgage Rate</div>
+          <div class="card-value" style="color:#FF4757;" id="re-mortgage-card">6.8%</div>
+          <div class="card-sub">30Y fixed — affordability crisis level</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Housing Sentiment</div>
+          <div class="card-value" style="font-size:16px;color:#f59e0b;">PRESSURED</div>
+          <div class="card-sub">Buyers on sidelines waiting for rate relief</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Commercial RE</div>
+          <div class="card-value" style="font-size:14px;color:#FF4757;">STRESS</div>
+          <div class="card-sub">Office sector distress spreading — avoid CRE exposure</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Supply Shortage</div>
+          <div class="card-value" style="font-size:14px;color:#39ff14;">STRUCTURAL</div>
+          <div class="card-sub">Housing supply shortage in key metros — price floor</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Rate Cut Impact</div>
+          <div class="card-value" style="font-size:14px;color:#9B59B6;">HIGH</div>
+          <div class="card-sub">Each 25bps cut = ~2% REIT valuation lift, mortgage relief</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">2030 Land &amp; Property Strategy</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FFD700;letter-spacing:3px;margin-bottom:0.75rem;">ACQUISITION PRIORITIES</div>
+          <div class="driver-item"><div class="driver-dot goal-dot"></div><span>Raw land in low-cost country — minimal overhead, hard asset, scarce supply</span></div>
+          <div class="driver-item"><div class="driver-dot goal-dot"></div><span>Rural/agricultural land — natural resource exposure, food security</span></div>
+          <div class="driver-item"><div class="driver-dot goal-dot"></div><span>High-utility housing — rental income generating, inflation hedge</span></div>
+          <div class="driver-item"><div class="driver-dot goal-dot"></div><span>REITs now for exposure while saving capital for physical</span></div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF4757;letter-spacing:3px;margin-bottom:0.75rem;">THREATS TO AVOID</div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Commercial real estate — office sector apocalypse ongoing</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Highly leveraged mortgage in a rate spike environment</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Overpriced urban markets — bubble risk still present</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Buying before capital from crypto bull run (patience required)</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · REAL ESTATE COMMAND</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('./data/data.json', { cache: 'no-store' });
+        const d = await res.json();
+        const s = d.sectors?.realestate || {};
+        const m = d.macro || {};
+        const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+        const rsiColor = r => r < 30 ? '#39ff14' : r < 45 ? '#ffe066' : r < 55 ? '#888' : r < 70 ? '#f59e0b' : '#FF4757';
+        const fmtChange = v => v != null ? (v > 0 ? '+' : '') + v + '%' : '—';
+        const riskColor = r => r < 40 ? '#39ff14' : r < 60 ? '#FFD166' : r < 75 ? '#f59e0b' : '#FF4757';
+
+        if (s.price_formatted) setEl('re-hero-price', s.price_formatted);
+        if (s.change_pct_day != null) setEl('re-change', fmtChange(s.change_pct_day), s.change_pct_day >= 0 ? '#39ff14' : '#FF4757');
+        if (s.cycle) setEl('re-hero-cycle', s.cycle.toUpperCase());
+        if (s.cycle_context) setEl('re-hero-context', s.cycle_context);
+        if (s.risk != null) setEl('re-hero-risk', s.risk, riskColor(s.risk));
+        if (s.rsi_daily) { setEl('re-rsi-d', s.rsi_daily, rsiColor(s.rsi_daily)); setEl('re-rsi-d-label', s.rsi_label_daily); }
+        if (s.rsi_weekly) { setEl('re-rsi-w', s.rsi_weekly, rsiColor(s.rsi_weekly)); setEl('re-rsi-w-label', s.rsi_label_weekly); }
+        if (s.mortgage_rate) { setEl('re-mortgage', s.mortgage_rate); setEl('re-mortgage-card', s.mortgage_rate); }
+        setEl('re-10y', m.us10y_yield);
+        if (s.price_formatted) setEl('re-price', s.price_formatted);
+      } catch(e) { console.warn('Real estate data load failed:', e); }
+    });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>
