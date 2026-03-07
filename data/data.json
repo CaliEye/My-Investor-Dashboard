@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-06T22:24:52.123339+00:00",
-  "bias": "Bearish",
+  "updated_utc": "2026-03-07T00:48:28.267582+00:00",
+  "bias": "Bullish",
   "triggers": [
-    "Liquidity: Fed tightening accelerating",
-    "Dollar: DXY strength crushing risk assets",
-    "Breadth: Crypto market cap declining -35% from peak"
+    "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
+    "Dollar: DXY at 99.0, reduced pressure on risk assets",
+    "Breadth: S&P 500 breadth deteriorating, 65% above 50-DMA"
   ],
-  "next_review_utc": "2026-03-07T02:24:52.123339+00:00",
+  "next_review_utc": "2026-03-07T04:48:28.267582+00:00",
   "crypto": {
-    "btc_usd": 68343.95,
-    "eth_usd": 1984.75,
-    "btc_price_formatted": "$68,344",
-    "eth_price_formatted": "$1,985",
+    "btc_usd": 68284.99,
+    "eth_usd": 1980.74,
+    "btc_price_formatted": "$68,285",
+    "eth_price_formatted": "$1,981",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Post-halving correction \u2014 consolidating before Q4 2026 bull run window",
@@ -90,7 +90,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-06T22:24:54.633185+00:00",
+    "updated_utc": "2026-03-07T00:48:31.423636+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -132,9 +132,10 @@
         "volume": 10063601,
         "volume_vs_20d": 0.75,
         "trend": "NEUTRAL / MIXED",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "PRECIOUS METALS"
       },
@@ -147,10 +148,9 @@
         "volume": 9680498,
         "volume_vs_20d": 0.97,
         "trend": "UNDER PRESSURE",
-        "fortress_status": "SECURE",
+        "fortress_status": "VERIFY_REQUIRED",
         "data_sources": [
-          "yahoo",
-          "alpha_vantage"
+          "yahoo"
         ],
         "label": "BROAD MARKET"
       }
@@ -178,7 +178,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-06T22:24:55.512640+00:00",
+    "updated_utc": "2026-03-07T00:48:32.656419+00:00",
     "confluence_score": 1,
     "max_score": 5,
     "threshold_hit": false,
