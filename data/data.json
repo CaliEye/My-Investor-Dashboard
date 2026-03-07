@@ -1,17 +1,17 @@
 {
-  "updated_utc": "2026-03-07T08:25:02.685661+00:00",
+  "updated_utc": "2026-03-07T10:23:59.412858+00:00",
   "bias": "Bullish",
   "triggers": [
     "Liquidity: Fed balance sheet contracting (-2.1% QoQ)",
     "Dollar: DXY at 99.0, reduced pressure on risk assets",
     "Breadth: S&P 500 breadth deteriorating, 65% above 50-DMA"
   ],
-  "next_review_utc": "2026-03-07T12:25:02.685661+00:00",
+  "next_review_utc": "2026-03-07T14:23:59.412858+00:00",
   "crypto": {
-    "btc_usd": 67943.62,
-    "eth_usd": 1985.06,
-    "btc_price_formatted": "$67,944",
-    "eth_price_formatted": "$1,985",
+    "btc_usd": 67978.83,
+    "eth_usd": 1985.51,
+    "btc_price_formatted": "$67,979",
+    "eth_price_formatted": "$1,986",
     "total_market_cap": "$1.6T",
     "btc_dominance": "58.7%",
     "cycle_status": "Post-halving correction \u2014 consolidating before Q4 2026 bull run window",
@@ -91,7 +91,7 @@
     "oi_status": "SUPPORT TEST"
   },
   "sector_etfs": {
-    "updated_utc": "2026-03-07T08:25:04.642871+00:00",
+    "updated_utc": "2026-03-07T10:24:01.792566+00:00",
     "sectors": {
       "tech": {
         "symbol": "QQQ",
@@ -148,9 +148,10 @@
         "volume": 9722300,
         "volume_vs_20d": 0.97,
         "trend": "UNDER PRESSURE",
-        "fortress_status": "VERIFY_REQUIRED",
+        "fortress_status": "SECURE",
         "data_sources": [
-          "yahoo"
+          "yahoo",
+          "alpha_vantage"
         ],
         "label": "BROAD MARKET"
       }
@@ -178,7 +179,7 @@
     }
   },
   "decision_gate": {
-    "updated_utc": "2026-03-07T08:25:05.652331+00:00",
+    "updated_utc": "2026-03-07T10:24:03.038821+00:00",
     "confluence_score": 1,
     "max_score": 5,
     "threshold_hit": false,
@@ -226,7 +227,7 @@
       "asset": "Bitcoin / BTC",
       "asset_key": "btc",
       "bot_type": "DCA",
-      "confidence": 82,
+      "confidence": 81,
       "status": "STRONG_BUY",
       "action": "Accumulate Bitcoin / BTC \u2014 weekly RSI 22 (oversold), Fear zone",
       "signal": "RSI D:50 W:22 | Trend W:Down M:Neutral | Fear",
@@ -477,7 +478,7 @@
         "cycle": "Post-Halving",
         "risk": 78,
         "rsi_daily": 49.9,
-        "rsi_weekly": 22.3,
+        "rsi_weekly": 22.4,
         "trend_weekly": "Down",
         "trend_monthly": "Neutral",
         "sentiment": "Fear",
@@ -547,18 +548,18 @@
     }
   },
   "wyckoff": {
-    "last_updated": "2026-03-07T08:25:10.812323+00:00",
+    "last_updated": "2026-03-07T10:24:08.184636+00:00",
     "assets": {
       "btc": {
         "phase": "ACCUMULATION",
-        "confidence": 81,
+        "confidence": 71,
         "range_high": 72710.5781,
         "range_low": 64080.043,
-        "range_position": 0.448,
-        "vol_ratio": 1.257,
-        "rsi": 45.8,
-        "sma20": 67640.8277,
-        "sma50": 74739.4029,
+        "range_position": 0.452,
+        "vol_ratio": 1.26,
+        "rsi": 45.9,
+        "sma20": 67642.5879,
+        "sma50": 74740.107,
         "spring_detected": true,
         "utad_detected": true,
         "trending_up": false,
@@ -567,20 +568,20 @@
         "alert_type": "SPRING",
         "label": "Bitcoin",
         "symbol": "BTC-USD",
-        "message": "\u26a1 SPRING DETECTED \u2014 Bitcoin | Wyckoff Accumulation Phase C. Price tested below support and recovered. Smart money defended the low. Potential markup imminent. RSI 45.8 | Vol ratio 1.26x | Confidence 81%",
+        "message": "\u26a1 SPRING DETECTED \u2014 Bitcoin | Wyckoff Accumulation Phase C. Price tested below support and recovered. Smart money defended the low. Potential markup imminent. RSI 45.9 | Vol ratio 1.26x | Confidence 71%",
         "asset_key": "btc",
-        "updated": "2026-03-07T08:25:08.970158+00:00"
+        "updated": "2026-03-07T10:24:06.572736+00:00"
       },
       "eth": {
         "phase": "ACCUMULATION",
         "confidence": 68,
         "range_high": 2126.5054,
         "range_low": 1852.9695,
-        "range_position": 0.483,
-        "vol_ratio": 1.105,
+        "range_position": 0.485,
+        "vol_ratio": 1.101,
         "rsi": 44.8,
-        "sma20": 1979.4794,
-        "sma50": 2300.5644,
+        "sma20": 1979.5017,
+        "sma50": 2300.5733,
         "spring_detected": true,
         "utad_detected": true,
         "trending_up": false,
@@ -591,7 +592,7 @@
         "symbol": "ETH-USD",
         "message": "\u26a1 SPRING DETECTED \u2014 Ethereum | Wyckoff Accumulation Phase C. Price tested below support and recovered. Smart money defended the low. Potential markup imminent. RSI 44.8 | Vol ratio 1.10x | Confidence 68%",
         "asset_key": "eth",
-        "updated": "2026-03-07T08:25:09.074836+00:00"
+        "updated": "2026-03-07T10:24:06.608284+00:00"
       },
       "gold": {
         "phase": "MARKUP",
@@ -613,7 +614,7 @@
         "symbol": "GLD",
         "message": "\ud83d\udcc8 MARKUP \u2014 Gold / GLD | Trending up. RSI 54.6. Ride the trend, watch for distribution near highs.",
         "asset_key": "gold",
-        "updated": "2026-03-07T08:25:09.148669+00:00"
+        "updated": "2026-03-07T10:24:06.644763+00:00"
       },
       "silver": {
         "phase": "ACCUMULATION",
@@ -635,7 +636,7 @@
         "symbol": "SLV",
         "message": "\ud83d\udfe2 ACCUMULATION \u2014 Silver / SLV | Smart money loading. Vol demand 0.81x supply. RSI 49.1 (basing). Building cause for markup. Confidence 33%",
         "asset_key": "silver",
-        "updated": "2026-03-07T08:25:09.223508+00:00"
+        "updated": "2026-03-07T10:24:06.711742+00:00"
       },
       "spx": {
         "phase": "RANGING",
@@ -657,7 +658,7 @@
         "symbol": "SPY",
         "message": "\u2b1c RANGING \u2014 S&P 500 / SPY | No clear Wyckoff signal. RSI 38.5. Monitor for breakout or breakdown.",
         "asset_key": "spx",
-        "updated": "2026-03-07T08:25:09.460163+00:00"
+        "updated": "2026-03-07T10:24:06.859107+00:00"
       },
       "tech": {
         "phase": "RANGING",
@@ -679,7 +680,7 @@
         "symbol": "QQQ",
         "message": "\u2b1c RANGING \u2014 Nasdaq-100 / QQQ | No clear Wyckoff signal. RSI 43.1. Monitor for breakout or breakdown.",
         "asset_key": "tech",
-        "updated": "2026-03-07T08:25:09.519614+00:00"
+        "updated": "2026-03-07T10:24:06.953543+00:00"
       },
       "bonds": {
         "phase": "DISTRIBUTION",
@@ -701,7 +702,7 @@
         "symbol": "TLT",
         "message": "\ud83d\udd34 DISTRIBUTION \u2014 Long Bonds / TLT | Smart money unloading. Supply 1.24x demand. RSI 47.2 (elevated). Risk of markdown increasing. Confidence 46%",
         "asset_key": "bonds",
-        "updated": "2026-03-07T08:25:09.602284+00:00"
+        "updated": "2026-03-07T10:24:07.077616+00:00"
       },
       "oil": {
         "phase": "MARKUP",
@@ -723,7 +724,7 @@
         "symbol": "USO",
         "message": "\ud83d\udcc8 MARKUP \u2014 Oil / USO | Trending up. RSI 89.3. Ride the trend, watch for distribution near highs.",
         "asset_key": "oil",
-        "updated": "2026-03-07T08:25:09.667194+00:00"
+        "updated": "2026-03-07T10:24:07.143487+00:00"
       },
       "defense": {
         "phase": "DISTRIBUTION",
@@ -745,7 +746,7 @@
         "symbol": "ITA",
         "message": "\ud83d\udd34 DISTRIBUTION \u2014 Defense / ITA | Smart money unloading. Supply 1.01x demand. RSI 54.2 (elevated). Risk of markdown increasing. Confidence 50%",
         "asset_key": "defense",
-        "updated": "2026-03-07T08:25:09.724621+00:00"
+        "updated": "2026-03-07T10:24:07.202814+00:00"
       },
       "lmt": {
         "phase": "MARKUP",
@@ -767,7 +768,7 @@
         "symbol": "LMT",
         "message": "\ud83d\udcc8 MARKUP \u2014 Lockheed Martin | Trending up. RSI 63.8. Ride the trend, watch for distribution near highs.",
         "asset_key": "lmt",
-        "updated": "2026-03-07T08:25:09.952441+00:00"
+        "updated": "2026-03-07T10:24:07.449891+00:00"
       },
       "rtx": {
         "phase": "DISTRIBUTION",
@@ -789,7 +790,7 @@
         "symbol": "RTX",
         "message": "\ud83d\udd34 DISTRIBUTION \u2014 RTX Corp | Smart money unloading. Supply 0.90x demand. RSI 60.0 (elevated). Risk of markdown increasing. Confidence 53%",
         "asset_key": "rtx",
-        "updated": "2026-03-07T08:25:10.190234+00:00"
+        "updated": "2026-03-07T10:24:07.734846+00:00"
       },
       "noc": {
         "phase": "MARKUP",
@@ -811,7 +812,7 @@
         "symbol": "NOC",
         "message": "\ud83d\udcc8 MARKUP \u2014 Northrop Grumman | Trending up. RSI 63.6. Ride the trend, watch for distribution near highs.",
         "asset_key": "noc",
-        "updated": "2026-03-07T08:25:10.515120+00:00"
+        "updated": "2026-03-07T10:24:07.962232+00:00"
       },
       "antimony": {
         "phase": "RANGING",
@@ -833,7 +834,7 @@
         "symbol": "REMX",
         "message": "\u2b1c RANGING \u2014 Antimony / Strategic Metals (REMX) | No clear Wyckoff signal. RSI 50.2. Monitor for breakout or breakdown.",
         "asset_key": "antimony",
-        "updated": "2026-03-07T08:25:10.658884+00:00"
+        "updated": "2026-03-07T10:24:08.067772+00:00"
       },
       "miners": {
         "phase": "RANGING",
@@ -855,7 +856,7 @@
         "symbol": "GDX",
         "message": "\u2b1c RANGING \u2014 Gold Miners / GDX | No clear Wyckoff signal. RSI 46.0. Monitor for breakout or breakdown.",
         "asset_key": "miners",
-        "updated": "2026-03-07T08:25:10.812263+00:00"
+        "updated": "2026-03-07T10:24:08.184575+00:00"
       }
     },
     "active_alerts": [
@@ -863,11 +864,11 @@
         "asset_key": "btc",
         "asset": "Bitcoin",
         "phase": "ACCUMULATION",
-        "confidence": 81,
+        "confidence": 71,
         "alert_type": "SPRING",
-        "message": "\u26a1 SPRING DETECTED \u2014 Bitcoin | Wyckoff Accumulation Phase C. Price tested below support and recovered. Smart money defended the low. Potential markup imminent. RSI 45.8 | Vol ratio 1.26x | Confidence 81%",
-        "rsi": 45.8,
-        "vol_ratio": 1.257
+        "message": "\u26a1 SPRING DETECTED \u2014 Bitcoin | Wyckoff Accumulation Phase C. Price tested below support and recovered. Smart money defended the low. Potential markup imminent. RSI 45.9 | Vol ratio 1.26x | Confidence 71%",
+        "rsi": 45.9,
+        "vol_ratio": 1.26
       },
       {
         "asset_key": "eth",
@@ -877,12 +878,12 @@
         "alert_type": "SPRING",
         "message": "\u26a1 SPRING DETECTED \u2014 Ethereum | Wyckoff Accumulation Phase C. Price tested below support and recovered. Smart money defended the low. Potential markup imminent. RSI 44.8 | Vol ratio 1.10x | Confidence 68%",
         "rsi": 44.8,
-        "vol_ratio": 1.105
+        "vol_ratio": 1.101
       }
     ],
     "alert_count": 2
   },
-  "indicators_last_updated": "2026-03-07T08:25:11.115047+00:00",
+  "indicators_last_updated": "2026-03-07T10:24:08.413940+00:00",
   "indicators_asset_count": 15,
   "active_alerts": [
     {
@@ -903,7 +904,7 @@
       "action": "CAUTION: Oil / USO $108.77 \u2014 5 overbought signals. Tighten stops. Reduce position. Do NOT add.",
       "risk_level": 75,
       "timeframe": "3-10 days",
-      "fired_utc": "2026-03-07T08:25:11.117265+00:00",
+      "fired_utc": "2026-03-07T10:24:08.416172+00:00",
       "setup": "overbought_warning",
       "action_detail": "Reduce position by 25-50%"
     },
@@ -924,7 +925,7 @@
       "action": "WATCH FOR ENTRY: S&P 500 / SPY $672.38 \u2014 4 oversold signals confluent. Wait for first green candle confirmation before adding.",
       "risk_level": 48,
       "timeframe": "1-5 days",
-      "fired_utc": "2026-03-07T08:25:11.117171+00:00",
+      "fired_utc": "2026-03-07T10:24:08.416093+00:00",
       "setup": "oversold_reversal",
       "entry_trigger": "First close above prior day high"
     },
@@ -945,7 +946,7 @@
       "action": "DEFENSIVE SIGNAL: S&P 500 / SPY \u2014 4 bearish trend signals. Do NOT add. Evaluate stops.",
       "risk_level": 85,
       "timeframe": "1-4 weeks",
-      "fired_utc": "2026-03-07T08:25:11.117183+00:00"
+      "fired_utc": "2026-03-07T10:24:08.416102+00:00"
     },
     {
       "id": "qqq_TREND_BREAK_20260307",
@@ -964,7 +965,44 @@
       "action": "DEFENSIVE SIGNAL: Nasdaq / QQQ \u2014 4 bearish trend signals. Do NOT add. Evaluate stops.",
       "risk_level": 85,
       "timeframe": "1-4 weeks",
-      "fired_utc": "2026-03-07T08:25:11.117203+00:00"
+      "fired_utc": "2026-03-07T10:24:08.416118+00:00"
+    },
+    {
+      "id": "rtx_OVERBOUGHT_WARNING_20260307",
+      "key": "rtx",
+      "label": "Raytheon RTX",
+      "category": "defense",
+      "alert_type": "OVERBOUGHT_WARNING",
+      "severity": "HIGH",
+      "confidence": 69,
+      "signals": [
+        "BB %B 0.90 (near upper band)",
+        "CCI 100.6 > 100 (overbought)",
+        "Wyckoff: DISTRIBUTION phase active"
+      ],
+      "action": "CAUTION: Raytheon RTX $209.76 \u2014 3 overbought signals. Tighten stops. Reduce position. Do NOT add.",
+      "risk_level": 75,
+      "timeframe": "3-10 days",
+      "fired_utc": "2026-03-07T10:24:08.416218+00:00",
+      "setup": "overbought_warning",
+      "action_detail": "Reduce position by 25-50%"
+    },
+    {
+      "id": "gold_MOMENTUM_SHIFT_20260307",
+      "key": "gold",
+      "label": "Gold / GLD",
+      "category": "metals",
+      "alert_type": "MOMENTUM_SHIFT",
+      "severity": "MEDIUM",
+      "confidence": 60,
+      "signals": [
+        "MACD bearish cross (line < signal)",
+        "Wyckoff: MARKUP phase confirmed"
+      ],
+      "action": "EARLY BULL SIGNAL: Gold / GLD \u2014 momentum shifting. Watch for confirmation before acting.",
+      "risk_level": 50,
+      "timeframe": "3-7 days",
+      "fired_utc": "2026-03-07T10:24:08.416052+00:00"
     },
     {
       "id": "silver_MOMENTUM_SHIFT_20260307",
@@ -981,7 +1019,7 @@
       "action": "EARLY BEAR SIGNAL: Silver / SLV \u2014 momentum shifting. Watch for confirmation before acting.",
       "risk_level": 50,
       "timeframe": "3-7 days",
-      "fired_utc": "2026-03-07T08:25:11.117141+00:00"
+      "fired_utc": "2026-03-07T10:24:08.416071+00:00"
     },
     {
       "id": "dxy_MOMENTUM_SHIFT_20260307",
@@ -998,8 +1036,59 @@
       "action": "EARLY BULL SIGNAL: USD / DXY \u2014 momentum shifting. Watch for confirmation before acting.",
       "risk_level": 50,
       "timeframe": "3-7 days",
-      "fired_utc": "2026-03-07T08:25:11.117242+00:00"
+      "fired_utc": "2026-03-07T10:24:08.416152+00:00"
+    },
+    {
+      "id": "oil_MOMENTUM_SHIFT_20260307",
+      "key": "oil",
+      "label": "Oil / USO",
+      "category": "energy",
+      "alert_type": "MOMENTUM_SHIFT",
+      "severity": "MEDIUM",
+      "confidence": 60,
+      "signals": [
+        "MACD bullish cross (line 5.7342 > signal 3.5259)",
+        "Wyckoff: MARKUP phase confirmed"
+      ],
+      "action": "EARLY BULL SIGNAL: Oil / USO \u2014 momentum shifting. Watch for confirmation before acting.",
+      "risk_level": 50,
+      "timeframe": "3-7 days",
+      "fired_utc": "2026-03-07T10:24:08.416185+00:00"
+    },
+    {
+      "id": "lmt_MOMENTUM_SHIFT_20260307",
+      "key": "lmt",
+      "label": "Lockheed LMT",
+      "category": "defense",
+      "alert_type": "MOMENTUM_SHIFT",
+      "severity": "MEDIUM",
+      "confidence": 60,
+      "signals": [
+        "MACD bearish cross (line < signal)",
+        "Wyckoff: MARKUP phase confirmed"
+      ],
+      "action": "EARLY BULL SIGNAL: Lockheed LMT \u2014 momentum shifting. Watch for confirmation before acting.",
+      "risk_level": 50,
+      "timeframe": "3-7 days",
+      "fired_utc": "2026-03-07T10:24:08.416205+00:00"
+    },
+    {
+      "id": "noc_MOMENTUM_SHIFT_20260307",
+      "key": "noc",
+      "label": "Northrop NOC",
+      "category": "defense",
+      "alert_type": "MOMENTUM_SHIFT",
+      "severity": "MEDIUM",
+      "confidence": 60,
+      "signals": [
+        "MACD bullish cross (line 23.0335 > signal 22.2108)",
+        "Wyckoff: MARKUP phase confirmed"
+      ],
+      "action": "EARLY BULL SIGNAL: Northrop NOC \u2014 momentum shifting. Watch for confirmation before acting.",
+      "risk_level": 50,
+      "timeframe": "3-7 days",
+      "fired_utc": "2026-03-07T10:24:08.416233+00:00"
     }
   ],
-  "alert_count": 6
+  "alert_count": 11
 }
