@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CHENZZO — BUSINESS COMMAND</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --biz-accent: #9B59B6; --biz-gold: #FFD700; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+    .biz-hero {
+      background: linear-gradient(135deg, #050005 0%, #0a0015 50%, #05000a 100%);
+      border-bottom: 1px solid rgba(155,89,182,0.3);
+      padding: 40px 32px 32px;
+    }
+    .biz-hero-title {
+      font-family: 'Orbitron', monospace; font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900; color: #9B59B6; letter-spacing: 8px;
+      text-shadow: 0 0 40px rgba(155,89,182,0.5);
+      margin-bottom: 4px;
+    }
+    .biz-hero-sub {
+      font-family: 'Orbitron', monospace; font-size: 9px;
+      letter-spacing: 4px; color: #555; margin-bottom: 24px;
+    }
+    .biz-mission {
+      font-size: 12px; color: #888; line-height: 1.8; max-width: 700px;
+      border-left: 2px solid rgba(155,89,182,0.4); padding-left: 16px;
+    }
+    .biz-status-bar {
+      display: flex; gap: 32px; flex-wrap: wrap; margin-top: 24px;
+      padding-top: 24px; border-top: 1px solid rgba(155,89,182,0.15);
+    }
+    .biz-stat { display: flex; flex-direction: column; gap: 4px; }
+    .biz-stat-label { font-size: 8px; font-family: 'Orbitron', monospace; letter-spacing: 2px; color: #444; }
+    .biz-stat-value { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 700; color: #9B59B6; }
+
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #9B59B6; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #1a001a; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+
+    .card { background: #080008; border: 1px solid #1a001a; padding: 20px; border-radius: 3px; transition: all 0.2s; }
+    .card:hover { border-color: rgba(155,89,182,0.3); box-shadow: 0 0 12px rgba(155,89,182,0.08); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #333; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #9B59B6; line-height: 1; }
+    .card-sub { font-size: 11px; color: #444; margin-top: 6px; }
+
+    /* Formation checklist */
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 14px; background: #050005; border: 1px solid #1a001a;
+    }
+    .check-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .check-done  { color: #39ff14; }
+    .check-todo  { color: #333; }
+    .check-next  { color: #FFD700; }
+    .check-text  { font-size: 11px; line-height: 1.5; color: #aaa; }
+    .check-text strong { color: #ccc; display: block; margin-bottom: 2px; font-size: 12px; }
+    .check-tag {
+      display: inline-block; font-family: 'Orbitron', monospace; font-size: 7px;
+      letter-spacing: 1px; padding: 2px 6px; border-radius: 2px;
+      margin-left: 8px; vertical-align: middle;
+    }
+    .tag-done     { color: #39ff14; border: 1px solid rgba(57,255,20,0.4); }
+    .tag-next     { color: #FFD700; border: 1px solid rgba(255,215,0,0.4); }
+    .tag-pending  { color: #555; border: 1px solid #222; }
+
+    /* Revenue stream tracker */
+    .revenue-stream {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; border: 1px solid #1a001a; background: #050005;
+      margin-bottom: 8px; gap: 12px;
+    }
+    .rs-left { display: flex; flex-direction: column; gap: 4px; }
+    .rs-name { font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700; color: #e8e8e8; }
+    .rs-desc { font-size: 10px; color: #555; }
+    .rs-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .rs-revenue { font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700; color: #9B59B6; }
+    .rs-status { font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 1px; padding: 2px 8px; border-radius: 2px; }
+    .rs-active   { color: #39ff14; border: 1px solid rgba(57,255,20,0.4); }
+    .rs-building { color: #00D2FF; border: 1px solid rgba(0,210,255,0.4); }
+    .rs-planning { color: #9B59B6; border: 1px solid rgba(155,89,182,0.4); }
+
+    /* AI stack */
+    .ai-tool {
+      display: flex; gap: 12px; padding: 12px 14px;
+      border: 1px solid #1a001a; background: #050005; margin-bottom: 8px;
+    }
+    .ai-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+    .ai-info { flex: 1; }
+    .ai-name { font-family: 'Orbitron', monospace; font-size: 11px; color: #ccc; font-weight: 700; margin-bottom: 3px; }
+    .ai-purpose { font-size: 10px; color: #555; line-height: 1.5; }
+
+    /* Income scaling */
+    .scaling-track { display: flex; flex-direction: column; gap: 16px; }
+    .scaling-tier {
+      background: #050005; border: 1px solid #1a001a; padding: 16px;
+      position: relative; overflow: hidden;
+    }
+    .scaling-tier.current { border-color: rgba(255,215,0,0.4); }
+    .scaling-tier.future  { opacity: 0.7; }
+    .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .tier-label { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; }
+    .tier-amount { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 900; }
+    .tier-bar-track { height: 4px; background: #0a000a; border-radius: 2px; margin-bottom: 6px; }
+    .tier-bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+    .tier-meaning { font-size: 10px; color: #555; line-height: 1.5; }
+  </style>
+</head>
+<body class="chenzzo-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:#9B59B6;">CHENZZO COMMAND</span>
+  </nav>
+
+  <!-- BUSINESS HERO -->
+  <div class="biz-hero">
+    <div class="biz-hero-title">CHENZZO</div>
+    <div class="biz-hero-sub">COLORADO LLC · FOUNDED 2026 · AI-POWERED INVESTMENT INTELLIGENCE COMPANY</div>
+    <div class="biz-mission">
+      ChenzO is the business backbone of the Endgame investment system. An AI-driven financial intelligence company using the dashboard as its operating brain. Mission: generate passive income through data, automation, and disciplined compounding — before the singularity window closes in 2030.
+    </div>
+    <div class="biz-status-bar">
+      <div class="biz-stat">
+        <span class="biz-stat-label">Formation Status</span>
+        <span class="biz-stat-value" id="biz-formation-status" style="color:#FFD700;">IN PROGRESS</span>
+      </div>
+      <div class="biz-stat">
+        <span class="biz-stat-label">Monthly Revenue</span>
+        <span class="biz-stat-value" id="biz-monthly-rev" style="color:#9B59B6;">$0</span>
+      </div>
+      <div class="biz-stat">
+        <span class="biz-stat-label">Target (Phase 1)</span>
+        <span class="biz-stat-value" style="color:#FFD700;">$2,000 / mo</span>
+      </div>
+      <div class="biz-stat">
+        <span class="biz-stat-label">Invested Capital</span>
+        <span class="biz-stat-value" style="color:#FF4757;">$2,000</span>
+      </div>
+      <div class="biz-stat">
+        <span class="biz-stat-label">Days to 2030</span>
+        <span class="biz-stat-value" id="biz-days-remaining" style="color:#FF4757;">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- FORMATION CHECKLIST -->
+    <section>
+      <div class="section-title">Colorado LLC Formation Checklist</div>
+      <ul class="checklist">
+        <li>
+          <span class="check-icon check-done">✓</span>
+          <div class="check-text">
+            <strong>Choose Business Name <span class="check-tag tag-done">DONE</span></strong>
+            "ChenzO" — check availability at Colorado SOS business search. Unique name = no conflict.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-next">→</span>
+          <div class="check-text">
+            <strong>File Articles of Organization <span class="check-tag tag-next">NEXT</span></strong>
+            File with Colorado Secretary of State online. Fee: $50. URL: <span style="color:#9B59B6;">sos.state.co.us</span> → Business → File Documents. Takes 24-48hrs.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-todo">○</span>
+          <div class="check-text">
+            <strong>Obtain EIN (Employer Identification Number) <span class="check-tag tag-pending">PENDING</span></strong>
+            Apply free at IRS.gov after LLC is formed. Takes 5 minutes online. Required for bank account + taxes.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-todo">○</span>
+          <div class="check-text">
+            <strong>Open Business Bank Account <span class="check-tag tag-pending">PENDING</span></strong>
+            Separate personal + business finances. Mercury Bank (mercury.com) — free, no fees, built for startups/LLCs. Requires EIN + LLC docs.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-todo">○</span>
+          <div class="check-text">
+            <strong>Create Operating Agreement <span class="check-tag tag-pending">PENDING</span></strong>
+            Colorado doesn't require this publicly but it protects you. Single-member LLC operating agreement template available free at LegalZoom or Clerky. Documents ownership + management rules.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-todo">○</span>
+          <div class="check-text">
+            <strong>Registered Agent <span class="check-tag tag-pending">PENDING</span></strong>
+            Required in Colorado. Can be yourself (if you have a CO physical address) or use Northwest Registered Agent (~$125/yr). They forward legal documents.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-todo">○</span>
+          <div class="check-text">
+            <strong>Annual Report Filing <span class="check-tag tag-pending">RECURRING</span></strong>
+            Colorado LLCs file an annual report. Fee: $10. Due each year by the end of the month the LLC was formed. Set a calendar reminder.
+          </div>
+        </li>
+        <li>
+          <span class="check-icon check-todo">○</span>
+          <div class="check-text">
+            <strong>Business License (if needed) <span class="check-tag tag-pending">REVIEW</span></strong>
+            Financial services / investment advice requires licensing. If ChenzO is purely a software/technology company (not giving individual investment advice), standard business license only. Consult a CO business attorney for compliance clarity.
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- REVENUE STREAMS -->
+    <section>
+      <div class="section-title">Revenue Streams Tracker</div>
+      <p style="font-size:10px;color:#444;margin-bottom:16px;">Each stream is either active, building, or planned. Update manually or via dashboard automation once income flows.</p>
+
+      <div id="revenue-streams-list">
+        <div class="revenue-stream">
+          <div class="rs-left">
+            <div class="rs-name">DASHBOARD SaaS / SUBSCRIPTIONS</div>
+            <div class="rs-desc">Paid access to ChenzO investment dashboard — monthly fee for live data, AI alerts, bot signals</div>
+          </div>
+          <div class="rs-right">
+            <div class="rs-revenue" id="rev-saas">$0</div>
+            <span class="rs-status rs-building">BUILDING</span>
+          </div>
+        </div>
+        <div class="revenue-stream">
+          <div class="rs-left">
+            <div class="rs-name">WEEKLY MARKET CONFLUENCE NEWSLETTER</div>
+            <div class="rs-desc">Sunday macro + signal brief — Substack/Beehiiv paid tier. Target: 100 subscribers × $10/mo = $1,000/mo</div>
+          </div>
+          <div class="rs-right">
+            <div class="rs-revenue" id="rev-newsletter">$0</div>
+            <span class="rs-status rs-planning">PLANNING</span>
+          </div>
+        </div>
+        <div class="revenue-stream">
+          <div class="rs-left">
+            <div class="rs-name">BOT TRADING INCOME (PIONEX)</div>
+            <div class="rs-desc">Live Pionex DCA/Grid bots running on gold + BTC. Compounding trading profits.</div>
+          </div>
+          <div class="rs-right">
+            <div class="rs-revenue" id="rev-bots">$0</div>
+            <span class="rs-status rs-building">BUILDING</span>
+          </div>
+        </div>
+        <div class="revenue-stream">
+          <div class="rs-left">
+            <div class="rs-name">AI-GENERATED YOUTUBE SHORTS</div>
+            <div class="rs-desc">Weekly market cycle videos — AI-scripted, auto-edited. AdSense + sponsorship. Target: 1K subs in 6 months.</div>
+          </div>
+          <div class="rs-right">
+            <div class="rs-revenue" id="rev-youtube">$0</div>
+            <span class="rs-status rs-planning">PLANNING</span>
+          </div>
+        </div>
+        <div class="revenue-stream">
+          <div class="rs-left">
+            <div class="rs-name">T-BILL INTEREST INCOME</div>
+            <div class="rs-desc">3-month T-bill ladder rollovers. Risk-free income on cash reserves. ~5%/yr on parked capital.</div>
+          </div>
+          <div class="rs-right">
+            <div class="rs-revenue" id="rev-tbills">5.2%</div>
+            <span class="rs-status rs-active">ACTIVE</span>
+          </div>
+        </div>
+        <div class="revenue-stream">
+          <div class="rs-left">
+            <div class="rs-name">EBOOKS / GUIDES</div>
+            <div class="rs-desc">AI-generated investment guides — Wyckoff cycles, BTC timing, macro playbooks. Gumroad/Lemon Squeezy. One-time purchases, zero marginal cost.</div>
+          </div>
+          <div class="rs-right">
+            <div class="rs-revenue" id="rev-ebooks">$0</div>
+            <span class="rs-status rs-planning">PLANNING</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 16px;background:#080008;border:1px solid rgba(155,89,182,0.2);font-size:10px;color:#666;line-height:1.6;">
+        <strong style="color:#9B59B6;">Total Monthly Revenue: <span id="biz-total-rev">$0</span></strong> ·
+        Phase 1 Target: $2,000/mo · Phase 2: $4,000/mo · Phase 3: $6,000/mo → FREEDOM
+      </div>
+    </section>
+
+    <!-- INCOME SCALING ROADMAP -->
+    <section>
+      <div class="section-title" style="color:#FFD700;">Income Scaling Roadmap</div>
+      <div class="scaling-track">
+        <div class="scaling-tier current" style="border-color:rgba(255,71,87,0.4);">
+          <div class="tier-header">
+            <span class="tier-label" style="color:#FF4757;">PHASE 0 — RECOUP</span>
+            <span class="tier-amount" style="color:#FF4757;" id="scale-phase0-pct">0%</span>
+          </div>
+          <div class="tier-bar-track"><div class="tier-bar-fill" id="scale-bar-0" style="width:0%;background:#FF4757;"></div></div>
+          <div class="tier-meaning">Pay back the $2,000 invested. Get to break-even. This is the only goal right now. Every dollar earned counts.</div>
+        </div>
+        <div class="scaling-tier future">
+          <div class="tier-header">
+            <span class="tier-label" style="color:#FFD700;">PHASE 1 — $2,000/mo</span>
+            <span class="tier-amount" style="color:#FFD700;">—</span>
+          </div>
+          <div class="tier-bar-track"><div class="tier-bar-fill" style="width:0%;background:#FFD700;"></div></div>
+          <div class="tier-meaning">First consistent passive income month. Covers basic living costs. Proves the system works. Bot income + newsletter + T-bills combined.</div>
+        </div>
+        <div class="scaling-tier future">
+          <div class="tier-header">
+            <span class="tier-label" style="color:#9B59B6;">PHASE 2 — $4,000/mo</span>
+            <span class="tier-amount" style="color:#9B59B6;">—</span>
+          </div>
+          <div class="tier-bar-track"><div class="tier-bar-fill" style="width:0%;background:#9B59B6;"></div></div>
+          <div class="tier-meaning">Double income. Buy land fund begins. Start accumulating hard property capital. Low-cost country move becomes viable.</div>
+        </div>
+        <div class="scaling-tier future">
+          <div class="tier-header">
+            <span class="tier-label" style="color:#39ff14;">PHASE 3 — $6,000/mo → FREEDOM</span>
+            <span class="tier-amount" style="color:#39ff14;">—</span>
+          </div>
+          <div class="tier-bar-track"><div class="tier-bar-fill" style="width:0%;background:#39ff14;"></div></div>
+          <div class="tier-meaning">Full autonomy. Move anywhere. Focus exclusively on compounding. Land + BTC + business self-sustaining. Pre-singularity positioning complete.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI TOOLS STACK -->
+    <section>
+      <div class="section-title">AI Tools Stack — ChenzO's Brain</div>
+      <div class="grid-2">
+        <div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#4A9EFF;box-shadow:0 0 5px #4A9EFF;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Claude (Anthropic) — PRIMARY BUILDER</div>
+              <div class="ai-purpose">Dashboard architecture, code generation, strategic planning. Runs via Claude Code. Model: claude-sonnet-4-6.</div>
+            </div>
+          </div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#FF6B35;box-shadow:0 0 5px #FF6B35;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Grok (xAI) — RED TEAM + STRATEGY</div>
+              <div class="ai-purpose">Contrarian analysis, confluence cross-check, market regime verification. API key pending setup.</div>
+            </div>
+          </div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#39ff14;box-shadow:0 0 5px #39ff14;"></div>
+            <div class="ai-info">
+              <div class="ai-name">OpenAI GPT — CONTENT + ANALYSIS</div>
+              <div class="ai-purpose">Newsletter content generation, YouTube script writing, ebook drafting. API key pending setup.</div>
+            </div>
+          </div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#FFD700;box-shadow:0 0 5px #FFD700;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Lindy AI — AUTOMATION + ALERTS</div>
+              <div class="ai-purpose">SMS alerts on confluence signals. Automated task running. Webhook integration with dashboard. ACTIVE.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#9B59B6;box-shadow:0 0 5px #9B59B6;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Ollama (Local) — OFFLINE BRAIN</div>
+              <div class="ai-purpose">Privacy-first local AI on A9 computer. Processes mindmap uploads, sensitive portfolio data, offline analysis. Setup pending A9 wiring.</div>
+            </div>
+          </div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#FF4757;box-shadow:0 0 5px #FF4757;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Gemini (Google) — MARKET RESEARCH</div>
+              <div class="ai-purpose">Web search synthesis, news analysis, macro context. Free tier available. API key pending setup.</div>
+            </div>
+          </div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#00D2FF;box-shadow:0 0 5px #00D2FF;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Perplexity — REAL-TIME RESEARCH</div>
+              <div class="ai-purpose">Live web search with citations. Good for earnings reports, contract announcements, geopolitical events. API key pending.</div>
+            </div>
+          </div>
+          <div class="ai-tool">
+            <div class="ai-dot" style="background:#555;"></div>
+            <div class="ai-info">
+              <div class="ai-name">Origin AI — PORTFOLIO MANAGER</div>
+              <div class="ai-purpose">Portfolio aggregation across Robinhood + crypto. Connect to dashboard for rebalancing analysis. Integration pending.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRIORITY ACTION LIST -->
+    <section>
+      <div class="section-title" style="color:#FFD700;">Priority Actions — Next 30 Days</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:12px;padding:10px 14px;background:#080008;border:1px solid #1a001a;border-left:3px solid #FFD700;">
+          <span style="font-family:'Orbitron',monospace;font-size:10px;color:#FFD700;width:30px;flex-shrink:0;">01</span>
+          <div><strong style="display:block;color:#ccc;font-size:11px;margin-bottom:2px;">Re-setup all AI API keys correctly via GitHub Secrets</strong><span style="font-size:10px;color:#555;">The security-flagged keys need to be rotated and re-entered. Follow SECRETS_SETUP.md guide. This unlocks the full AI confluence system.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:10px 14px;background:#080008;border:1px solid #1a001a;border-left:3px solid #9B59B6;">
+          <span style="font-family:'Orbitron',monospace;font-size:10px;color:#9B59B6;width:30px;flex-shrink:0;">02</span>
+          <div><strong style="display:block;color:#ccc;font-size:11px;margin-bottom:2px;">File Colorado LLC Articles of Organization</strong><span style="font-size:10px;color:#555;">$50 at sos.state.co.us. Takes 10 minutes. Makes ChenzO real and legally protected. Do this week.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:10px 14px;background:#080008;border:1px solid #1a001a;border-left:3px solid #4A9EFF;">
+          <span style="font-family:'Orbitron',monospace;font-size:10px;color:#4A9EFF;width:30px;flex-shrink:0;">03</span>
+          <div><strong style="display:block;color:#ccc;font-size:11px;margin-bottom:2px;">Connect Pionex bot live data to dashboard</strong><span style="font-size:10px;color:#555;">Wire Pionex API to bots.html. Make real PnL visible. This turns the dashboard from a reader into a tracker with skin in the game.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:10px 14px;background:#080008;border:1px solid #1a001a;border-left:3px solid #39ff14;">
+          <span style="font-family:'Orbitron',monospace;font-size:10px;color:#39ff14;width:30px;flex-shrink:0;">04</span>
+          <div><strong style="display:block;color:#ccc;font-size:11px;margin-bottom:2px;">Set up A9 computer + install Ollama</strong><span style="font-size:10px;color:#555;">Wire desks/cables. Install Ollama (ollama.com). Run: ollama pull llama3 (7B model, runs offline). Load mindmap JSON files as context. Privacy-first AI brain.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;padding:10px 14px;background:#080008;border:1px solid #1a001a;border-left:3px solid #FFD700;">
+          <span style="font-family:'Orbitron',monospace;font-size:10px;color:#FFD700;width:30px;flex-shrink:0;">05</span>
+          <div><strong style="display:block;color:#ccc;font-size:11px;margin-bottom:2px;">Launch newsletter on Substack (free, start collecting subscribers)</strong><span style="font-size:10px;color:#555;">First issue: Sunday weekly macro brief. Already generating this data automatically. Just needs publishing. Free to start.</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+
+  <footer style="border-top:1px solid #1a001a;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 CHENZZO LLC · COLORADO · POWERED BY ENDGAME DASHBOARD</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Singularity countdown
+    const target = new Date('2030-01-01T00:00:00Z');
+    const start  = new Date('2026-03-01T00:00:00Z');
+    const now    = new Date();
+    const remaining = Math.max(0, Math.floor((target - now) / 86400000));
+    const elapsed   = Math.floor((now - start) / 86400000);
+    const totalDays = Math.floor((target - start) / 86400000);
+    const pctElapsed = Math.min(100, ((elapsed / totalDays) * 100)).toFixed(1);
+
+    const daysEl = document.getElementById('biz-days-remaining');
+    if (daysEl) {
+      daysEl.textContent = remaining.toLocaleString();
+      daysEl.style.color = remaining < 500 ? '#FF4757' : remaining < 1000 ? '#f59e0b' : '#39ff14';
+    }
+
+    // Load revenue data from data.json bot_opportunities
+    fetch('./data/data.json', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => {
+        const gate = d.decision_gate || {};
+        const pos = gate.risk_posture || '—';
+        const posEl = document.getElementById('biz-formation-status');
+        // Formation status stays manual — just make it look live
+      })
+      .catch(() => {});
+  });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

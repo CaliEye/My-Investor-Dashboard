@@ -118,7 +118,10 @@
 <body class="macro-page bg-gray-900 text-white font-inter">
   <div class="code-rain"></div>
   <nav class="endgame-nav">
-    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;">
+      <a class="nav-brand" href="index.html" style="margin-bottom:1px;">ENDGAME</a>
+      <div id="nav-singularity" style="font-size:9px;color:#9b59b6;letter-spacing:0.08em;font-family:monospace;white-space:nowrap;">SINGULARITY: —</div>
+    </div>
     <div class="nav-links">
       <a href="index.html" class="active">SUMMARY</a>
       <a href="warroom.html">WAR ROOM</a>
@@ -132,6 +135,7 @@
       <a href="portfolio.html">PORTFOLIO</a>
       <a href="insights.html">INSIGHTS</a>
       <a href="links.html">LINKS</a>
+      <a href="chenzzo.html">CHENZZO</a>
       <a href="mindmap.html">MINDMAP</a>
       <a href="my charts.html">CHARTS</a>
     </div>
@@ -146,6 +150,14 @@
 
   <!-- Market State Hero — populated by renderMarketHero() -->
   <section id="market-hero" class="market-hero" style="display:none;"></section>
+
+  <!-- Wyckoff Alert Strip — only visible when active alerts exist -->
+  <div id="wyckoff-alert-strip" style="display:none;background:#0d1117;border-bottom:1px solid #b8860b;padding:6px 24px;font-size:11px;font-family:monospace;letter-spacing:0.05em;">
+    <span style="color:#FFD700;font-weight:bold;">WYCKOFF ALERT</span>
+    <span id="wyckoff-strip-content" style="color:#f0e68c;margin-left:12px;"></span>
+    <a href="metals.html" style="color:#FFD700;margin-left:16px;text-decoration:underline;font-size:10px;">VIEW METALS</a>
+    <a href="defense.html" style="color:#4A9EFF;margin-left:8px;text-decoration:underline;font-size:10px;">VIEW DEFENSE</a>
+  </div>
 
   <main class="p-6 max-w-7xl mx-auto">
     <!-- Priority-First Decision Deck -->
@@ -1317,6 +1329,14 @@
       const daysEl = document.getElementById('mission-days-left');
       if (daysEl) daysEl.textContent = `${daysLeft.toLocaleString()} days`;
 
+      // Singularity countdown in nav top-left
+      const navCountdown = document.getElementById('nav-singularity');
+      if (navCountdown) {
+        const color = daysLeft < 500 ? '#FF4757' : daysLeft < 1000 ? '#FFD166' : '#9b59b6';
+        navCountdown.style.color = color;
+        navCountdown.textContent = `SINGULARITY: ${daysLeft.toLocaleString()}d / ${progressPct.toFixed(1)}%`;
+      }
+
       const bar = document.getElementById('endgame-progress-bar');
       if (bar) bar.style.width = `${progressPct.toFixed(1)}%`;
 
@@ -1565,7 +1585,25 @@
         updateLiveRiskTicker(d);
         updateRiskGauges(d);
         updateConnectionStatus();
-        
+
+        // Wyckoff alert strip
+        const wyckoff = d.wyckoff || {};
+        const alerts = wyckoff.active_alerts || [];
+        const strip = document.getElementById('wyckoff-alert-strip');
+        const stripContent = document.getElementById('wyckoff-strip-content');
+        if (strip && stripContent && alerts.length > 0) {
+          strip.style.display = 'flex';
+          strip.style.alignItems = 'center';
+          const topAlerts = alerts.slice(0, 3).map(a => {
+            const tag = a.alert_type ? ` [${a.alert_type}]` : '';
+            return `${(a.key || '').toUpperCase()}: ${a.phase}${tag} ${a.confidence}%`;
+          });
+          stripContent.textContent = topAlerts.join('  |  ');
+          if (alerts.length > 3) {
+            stripContent.textContent += `  +${alerts.length - 3} more`;
+          }
+        }
+
       } catch (error) {
         console.error('Error loading data:', error);
         systemHealth.dataConnection = false;

@@ -544,5 +544,25 @@
         "rsi_label_weekly": "OVERBOUGHT"
       }
     }
+  },
+  "wyckoff": {
+    "last_updated": null,
+    "alert_count": 0,
+    "active_alerts": [],
+    "assets": {
+      "btc": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "eth": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "gold": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "silver": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "spx": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "tech": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "bonds": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "oil": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "defense": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "lmt": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "rtx": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "noc": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false},
+      "miners": {"phase": "UNKNOWN", "confidence": 0, "spring": false, "utad": false, "vol_ratio": 1.0, "rsi": 50, "alert": false}
+    }
   }
 }

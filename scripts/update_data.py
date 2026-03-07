@@ -45,7 +45,15 @@ FRED_SERIES = {
     "unemployment": "UNRATE",
     "fed_funds_rate": "FEDFUNDS",
     "cpi_index": "CPIAUCSL",
+    "nfp": "PAYEMS",
 }
+
+# Import Wyckoff detector if available
+try:
+    from wyckoff_detector import run_all as wyckoff_run_all
+    WYCKOFF_ENABLED = True
+except ImportError:
+    WYCKOFF_ENABLED = False
 
 
 def read_existing_data():
@@ -474,12 +482,44 @@ def fetch_macro_market_inputs(existing_macro):
     try:
         cpi_yoy, cpi_date = fetch_cpi_yoy()
         macro["cpi"] = f"{cpi_yoy:.1f}%"
+        macro["cpi_yoy"] = round(cpi_yoy, 2)
         date_label = f" ({cpi_date})" if cpi_date else ""
         macro["cpi_context"] = (
             f"Latest official CPI YoY{date_label} — above target"
             if cpi_yoy >= 2.5 else
             f"Latest official CPI YoY{date_label} — near target"
         )
+    except Exception:
+        pass
+
+    try:
+        nfp_raw, nfp_date = fetch_latest_fred_value(FRED_SERIES["nfp"])
+        # PAYEMS is total nonfarm payrolls in thousands; we need the month change
+        # Fetch two latest values to compute MoM change
+        nfp_url = "https://fred.stlouisfed.org/graph/fredgraph.csv"
+        nfp_response = requests.get(nfp_url, params={"id": FRED_SERIES["nfp"]}, timeout=10)
+        nfp_response.raise_for_status()
+        nfp_rows = [r for r in DictReader(StringIO(nfp_response.text))
+                    if r.get(FRED_SERIES["nfp"]) not in (None, "", ".")]
+        if len(nfp_rows) >= 2:
+            latest_nfp = to_float(nfp_rows[-1][FRED_SERIES["nfp"]], default=0.0)
+            prior_nfp = to_float(nfp_rows[-2][FRED_SERIES["nfp"]], default=0.0)
+            nfp_change = (latest_nfp - prior_nfp) * 1000  # Convert thousands to actual jobs
+            macro["nfp_change"] = round(nfp_change)
+            macro["nfp_date"] = nfp_rows[-1].get("DATE", nfp_date)
+            macro["nfp_context"] = (
+                f"NFP ({nfp_rows[-1].get('DATE', nfp_date)}): {nfp_change:+,.0f} jobs — strong labor"
+                if nfp_change > 150000 else
+                f"NFP ({nfp_rows[-1].get('DATE', nfp_date)}): {nfp_change:+,.0f} jobs — labor softening"
+                if nfp_change < 100000 else
+                f"NFP ({nfp_rows[-1].get('DATE', nfp_date)}): {nfp_change:+,.0f} jobs — moderate growth"
+            )
+    except Exception:
+        pass
+
+    try:
+        unrate_raw, unrate_date2 = fetch_latest_fred_value(FRED_SERIES["unemployment"])
+        macro["unemployment_rate"] = round(unrate_raw, 1)
     except Exception:
         pass
 
@@ -940,6 +980,15 @@ def main():
     data["sectors"] = fetch_sector_data(data)
     data["bot_opportunities"] = compute_bot_opportunities(data)
     data["data_stale"] = False  # Freshly written — cleared on every successful update
+
+    # Wyckoff phase detection — runs last so it can read updated macro context
+    if WYCKOFF_ENABLED:
+        try:
+            data["wyckoff"] = wyckoff_run_all(existing_wyckoff=data.get("wyckoff"))
+            alert_count = data["wyckoff"].get("alert_count", 0)
+            print(f"Wyckoff: {alert_count} active alert(s) detected")
+        except Exception as e:
+            print(f"Wyckoff detection failed (non-fatal): {e}")
 
     # Derive top-level bias from decision gate posture so it never stays stale
     gate = data.get("decision_gate", {})

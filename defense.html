@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DEFENSE COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #4A9EFF; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(74,158,255,0.25); }
+    .card.accent { border-color: rgba(74,158,255,0.4); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #4A9EFF; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #4A9EFF; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #001a2a; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .driver-item { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #0a0a0a; font-size: 0.78rem; }
+    .driver-dot { width: 5px; height: 5px; border-radius: 50%; background: #4A9EFF; margin-top: 0.45rem; flex-shrink: 0; box-shadow: 0 0 5px #4A9EFF; }
+    .threat-dot { background: #FF4757; box-shadow: 0 0 5px #FF4757; }
+
+    /* ── Drill-down tab system ── */
+    .drill-tab-bar { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid #001a2a; }
+    .drill-tab-btn {
+      font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 2px;
+      padding: 8px 16px; background: #000509; border: 1px solid #001a2a;
+      border-bottom: none; color: #444; cursor: pointer; text-transform: uppercase;
+      transition: all 0.2s; position: relative; top: 1px;
+    }
+    .drill-tab-btn:hover { color: #4A9EFF; border-color: rgba(74,158,255,0.3); }
+    .drill-tab-btn.active { color: #4A9EFF; border-color: #4A9EFF; background: #000d1a; }
+    .drill-panel { background: #000509; border: 1px solid #001a2a; border-top: none; padding: 20px; display: none; }
+    .drill-panel.active { display: block; }
+    .drill-loading { color: #333; font-size: 11px; padding: 20px 0; font-style: italic; }
+    .wyckoff-badge {
+      display: inline-block; font-family: 'Orbitron', monospace; font-size: 8px;
+      letter-spacing: 2px; padding: 3px 8px; border-radius: 2px; margin-top: 8px;
+    }
+    .wyckoff-ACCUMULATION { color: #39ff14; border: 1px solid rgba(57,255,20,0.4); background: rgba(57,255,20,0.06); }
+    .wyckoff-DISTRIBUTION { color: #FF4757; border: 1px solid rgba(255,71,87,0.4); background: rgba(255,71,87,0.06); }
+    .wyckoff-MARKUP  { color: #00D2FF; border: 1px solid rgba(0,210,255,0.4); background: rgba(0,210,255,0.06); }
+    .wyckoff-MARKDOWN { color: #FF4757; border: 1px solid rgba(255,71,87,0.3); background: rgba(255,71,87,0.04); }
+    .wyckoff-RANGING { color: #555; border: 1px solid #222; background: transparent; }
+    .wyckoff-alert-banner { background: rgba(57,255,20,0.05); border: 1px solid rgba(57,255,20,0.3); padding: 10px 14px; margin-bottom: 12px; font-size: 10px; line-height: 1.6; color: #39ff14; font-family: 'JetBrains Mono', monospace; }
+    .wyckoff-alert-banner.dist { border-color: rgba(255,71,87,0.3); color: #FF4757; background: rgba(255,71,87,0.05); }
+    .geo-event { padding: 10px 14px; border-left: 3px solid #4A9EFF; background: #000d1a; margin-bottom: 8px; font-size: 11px; line-height: 1.5; }
+    .geo-event.critical { border-left-color: #FF4757; }
+    .geo-event.neutral { border-left-color: #555; }
+    .contract-badge { display: inline-block; font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 1px; padding: 2px 8px; border-radius: 2px; }
+    .confluence-opp { background: #000509; border: 1px solid #001a2a; padding: 14px; margin-bottom: 10px; border-left: 3px solid #4A9EFF; }
+    .confluence-opp.short { border-left-color: #FF4757; }
+    .conf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .conf-asset { font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700; color: #fff; }
+    .conf-score { font-family: 'Orbitron', monospace; font-size: 12px; color: #4A9EFF; }
+    .conf-signal { font-size: 10px; color: #888; line-height: 1.5; }
+    .conf-bar { height: 2px; background: #001a2a; margin-top: 8px; }
+    .conf-bar-fill { height: 100%; background: #4A9EFF; }
+  </style>
+</head>
+<body class="defense-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+      <a href="chenzzo.html">CHENZZO</a>
+    </div>
+    <span class="nav-label" style="color:#4A9EFF;">DEFENSE COMMAND</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">TECH</a>
+    <a href="energy.html">ENERGY</a>
+    <a href="bonds.html">BONDS</a>
+    <a href="metals.html">METALS</a>
+    <a href="defense.html" class="active">DEFENSE</a>
+    <a href="realestate.html">REAL ESTATE</a>
+    <a href="passiveincome.html">PASSIVE INCOME</a>
+  </div>
+
+  <!-- SECTOR HERO -->
+  <div class="sector-hero" style="--sector-accent:#4A9EFF;">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Defense Sector</div>
+        <div class="sector-price" style="color:#4A9EFF;text-shadow:0 0 24px #4A9EFF;" id="defense-hero-price">$—</div>
+        <div class="sector-change">
+          ITA ETF · <span id="defense-hero-change" style="color:#39ff14;">+0.0%</span> today
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Cycle Phase</div>
+        <div class="sector-cycle-value" id="defense-hero-cycle">BULL PHASE</div>
+        <div class="sector-cycle-context" id="defense-hero-ctx">Defense budgets expanding globally post-Ukraine. NATO 2% GDP commitment. Record backlogs at LMT/RTX/NOC. Geopolitical risk premium elevated.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Geopolitical Risk</div>
+        <div class="sector-risk-value" id="defense-hero-risk" style="color:#f59e0b;">ELEVATED</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">GLOBAL</div>
+      </div>
+    </div>
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">ITA ETF</div>
+        <div class="sector-metric-value" id="defense-ita-price" style="color:#4A9EFF;">—</div>
+        <div class="sector-metric-sub" id="defense-ita-change">LIVE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">LMT Price</div>
+        <div class="sector-metric-value" id="defense-lmt-price" style="color:#ccc;">—</div>
+        <div class="sector-metric-sub">LOCKHEED MARTIN</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">RTX Price</div>
+        <div class="sector-metric-value" id="defense-rtx-price" style="color:#ccc;">—</div>
+        <div class="sector-metric-sub">RAYTHEON TECH</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">NOC Price</div>
+        <div class="sector-metric-value" id="defense-noc-price" style="color:#ccc;">—</div>
+        <div class="sector-metric-sub">NORTHROP GRUMMAN</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Wyckoff Phase</div>
+        <div class="sector-metric-value" id="defense-wyckoff" style="color:#4A9EFF;font-size:0.8rem;">—</div>
+        <div class="sector-metric-sub" id="defense-wyckoff-conf">ITA SECTOR</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Defense Budget</div>
+        <div class="sector-metric-value" style="color:#39ff14;font-size:0.8rem;">EXPANDING</div>
+        <div class="sector-metric-sub">NATO CYCLE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Sector Dividend</div>
+        <div class="sector-metric-value" style="color:#FFD700;">~2.5%</div>
+        <div class="sector-metric-sub">ITA AVG YIELD</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ACTIVE CONFLUENCE OPPORTUNITIES -->
+    <section>
+      <div class="section-title">Active Confluence Signals</div>
+      <div id="defense-confluence-opps">
+        <div style="color:#333;font-size:11px;font-style:italic;">Loading signals...</div>
+      </div>
+    </section>
+
+    <!-- Bot Opportunities -->
+    <section>
+      <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+      <div id="bot-opp-container" data-sector="defense"></div>
+    </section>
+
+    <!-- DRILL-DOWN TABS -->
+    <section>
+      <div class="section-title">Stock Intelligence — Drill-Down</div>
+      <div style="font-size:10px;color:#444;margin-bottom:12px;font-style:italic;">
+        Click any stock to load live analysis + Wyckoff phase. If a major contract loss fires, the AI will surface it here.
+      </div>
+
+      <div class="drill-tab-bar">
+        <button class="drill-tab-btn active" data-tab="lmt" onclick="openDrillTab('lmt', this)">LMT</button>
+        <button class="drill-tab-btn" data-tab="rtx" onclick="openDrillTab('rtx', this)">RTX</button>
+        <button class="drill-tab-btn" data-tab="noc" onclick="openDrillTab('noc', this)">NOC</button>
+        <button class="drill-tab-btn" data-tab="sector" onclick="openDrillTab('sector', this)">SECTOR / ITA</button>
+      </div>
+
+      <div id="panel-lmt" class="drill-panel active">
+        <div class="drill-loading">Loading LMT intelligence...</div>
+      </div>
+      <div id="panel-rtx" class="drill-panel">
+        <div class="drill-loading">Click RTX to load analysis.</div>
+      </div>
+      <div id="panel-noc" class="drill-panel">
+        <div class="drill-loading">Click NOC to load analysis.</div>
+      </div>
+      <div id="panel-sector" class="drill-panel">
+        <div class="drill-loading">Click SECTOR to load ITA analysis.</div>
+      </div>
+    </section>
+
+    <!-- KEY METRICS -->
+    <section>
+      <div class="section-title">Key Metrics</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">ITA ETF Price</div>
+          <div class="card-value" id="defense-ita-card">—</div>
+          <div class="card-sub" id="defense-ita-change-card">Daily change loading...</div>
+        </div>
+        <div class="card">
+          <div class="card-label">US Defense Budget</div>
+          <div class="card-value" style="font-size:18px;color:#39ff14;">$886B</div>
+          <div class="card-sub">FY2024 NDAA. Largest in history. NATO allies adding ~$100B+.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">LMT Backlog</div>
+          <div class="card-value" style="font-size:16px;color:#4A9EFF;">$160B+</div>
+          <div class="card-sub">Multi-year order visibility. F-35 program + hypersonics pipeline.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Geopolitical Triggers</div>
+          <div class="card-value" style="font-size:14px;color:#f59e0b;">3 ACTIVE</div>
+          <div class="card-sub">Ukraine war, Middle East escalation, Taiwan Strait tension = demand floor.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Sector RSI</div>
+          <div class="card-value" id="defense-sector-rsi" style="font-size:24px;color:#4A9EFF;">—</div>
+          <div class="card-sub" id="defense-sector-rsi-label">ITA momentum signal</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Dividend Yield</div>
+          <div class="card-value" style="font-size:22px;color:#FFD700;">2-3%</div>
+          <div class="card-sub">LMT: 2.8% · RTX: 2.3% · NOC: 1.9% — compounding + buybacks.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GEOPOLITICAL TRIGGERS -->
+    <section>
+      <div class="section-title" style="color:#FF4757;">Geopolitical Triggers — Defense Demand Drivers</div>
+      <div id="geo-triggers-list">
+        <div class="geo-event">
+          <strong style="color:#4A9EFF;">UKRAINE WAR</strong> — Ongoing. NATO replenishment + new orders accelerating. Artillery, missiles, air defense all in deficit. LMT + RTX primary beneficiaries.
+        </div>
+        <div class="geo-event critical">
+          <strong style="color:#FF4757;">MIDDLE EAST ESCALATION</strong> — Iron Dome, interceptors, smart munitions in high demand. RTX Patriot systems + GD Stryker. Watch: oil spike + defense budget expansion news as entry confluence.
+        </div>
+        <div class="geo-event">
+          <strong style="color:#4A9EFF;">TAIWAN / CHINA</strong> — Long-term structural demand driver. F-35 sales, submarine programs, hypersonic race. NOC B-21 Raider primary. 5-10yr demand secured.
+        </div>
+        <div class="geo-event neutral">
+          <strong style="color:#888;">SPACE / CYBER</strong> — Emerging budget line. NOC + LMT + L3Harris winning satellite contracts. Lower-profile but growing.
+        </div>
+      </div>
+    </section>
+
+    <!-- DRIVERS & THREATS -->
+    <section>
+      <div class="section-title">Key Drivers &amp; Threats</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#4A9EFF;letter-spacing:3px;margin-bottom:0.75rem;">BULL DRIVERS</div>
+          <div class="driver-item"><div class="driver-dot"></div><span>NATO 2% GDP defense spending mandate — structural budget increase cycle</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Multi-year backlogs — LMT $160B+, RTX $200B+ order pipeline — revenue visibility</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Ukraine replenishment creating emergency procurement cycles</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Hypersonic arms race — US + China + Russia — massive R&D + production contracts</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Strong dividends + buyback programs — shareholder return even in neutral markets</span></div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF4757;letter-spacing:3px;margin-bottom:0.75rem;">THREATS &amp; RISKS</div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Budget sequestration / debt ceiling crisis — government spending freeze</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Peace dividend — conflict resolution = demand drop (low probability near-term)</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Program cancellations — F-35 issues, cost overruns = contract penalties</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Sector rotation away from defense if rates fall + risk-on tech rally</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · DEFENSE COMMAND</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+  const _loaded = { lmt: false, rtx: false, noc: false, sector: false };
+  let _dashData = null;
+
+  async function getDashData() {
+    if (_dashData) return _dashData;
+    try { const r = await fetch('./data/data.json',{cache:'no-store'}); _dashData = await r.json(); return _dashData; }
+    catch(e) { return {}; }
+  }
+
+  function openDrillTab(stock, btn) {
+    document.querySelectorAll('.drill-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.drill-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + stock).classList.add('active');
+    if (!_loaded[stock]) { _loaded[stock] = true; loadDrillPanel(stock); }
+  }
+
+  const DEFENSE_META = {
+    lmt:    { label: 'Lockheed Martin (LMT)', color: '#4A9EFF', key: 'lmt',
+              desc: 'World\'s largest defense contractor. F-35 (40% revenue), Missiles & Fire Control, Rotary & Mission Systems. Record backlog $160B+.',
+              entry: 'RSI daily < 45 + defense budget expansion news + ITA sector RSI < 50 = 3-signal DCA entry.',
+              watch: 'Watch for contract loss headlines — LMT price drop on bad news = opportunity if backlog intact. Dividend: 2.8%.' },
+    rtx:    { label: 'RTX Corporation (RTX)', color: '#00D2FF', key: 'rtx',
+              desc: 'Raytheon missiles + Pratt & Whitney engines. Patriot missile system = Ukraine + Middle East demand driver. Huge commercial aviation exposure (P&W).',
+              entry: 'RSI < 42 + Middle East escalation news + sector confirmation. High defense AND commercial exposure.',
+              watch: 'P&W engine recall risk (GTF geared turbofan issues) = aviation drag. Defense side strong. Watch split.' },
+    noc:    { label: 'Northrop Grumman (NOC)', color: '#9B59B6', key: 'noc',
+              desc: 'B-21 Raider stealth bomber program — most advanced in history. Space + cyber + ICBM programs. Lower-profile but irreplaceable contracts.',
+              entry: 'RSI < 40 + B-21 program milestone news + budget confirmation. Longer hold thesis (B-21 production ramp 5-10yr).',
+              watch: 'Less dividend-focused than LMT/RTX. Capital appreciation play. Watch for Space Force budget news.' },
+    sector: { label: 'Defense Sector / ITA ETF', color: '#4A9EFF', key: 'defense',
+              desc: 'iShares U.S. Aerospace & Defense ETF. Diversified exposure: LMT, RTX, NOC, BA, GD, L3Harris. Tracks the whole sector.',
+              entry: 'ITA RSI < 45 + 2+ geopolitical escalation events + US defense budget expansion = 3-confluence buy.',
+              watch: 'Best entry point: geopolitical fear spike causes temporary sell-off (flight to safety). Buy the dip into defense.' },
+  };
+
+  async function loadDrillPanel(tab) {
+    const panel = document.getElementById('panel-' + tab);
+    const d = await getDashData();
+    const wy = (d.wyckoff?.assets || {})[DEFENSE_META[tab].key] || {};
+    const meta = DEFENSE_META[tab];
+
+    const phase = wy.phase || '—';
+    const conf  = wy.confidence || 0;
+    const rsi   = wy.rsi || '—';
+    const vr    = wy.vol_ratio || '—';
+    const spring = wy.spring_detected;
+    const utad   = wy.utad_detected;
+
+    let alertHtml = '';
+    if (spring) alertHtml = `<div class="wyckoff-alert-banner">⚡ SPRING DETECTED on ${meta.label} — Potential markup imminent. Confluence entry signal building.</div>`;
+    else if (utad) alertHtml = `<div class="wyckoff-alert-banner dist">⚠ UTAD DETECTED on ${meta.label} — Distribution near highs. Consider reducing exposure or hedging.</div>`;
+
+    const phaseColor = phase === 'ACCUMULATION' ? '#39ff14' : phase === 'DISTRIBUTION' ? '#FF4757' : phase === 'MARKUP' ? '#00D2FF' : phase === 'MARKDOWN' ? '#FF4757' : '#555';
+    const wyClass = `wyckoff-${phase}`;
+
+    panel.innerHTML = `
+      ${alertHtml}
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:${meta.color};">${meta.label}</div>
+        <span class="wyckoff-badge ${wyClass}">${phase} ${conf ? conf + '%' : ''}</span>
+      </div>
+      <p style="font-size:11px;color:#888;line-height:1.6;margin-bottom:16px;">${meta.desc}</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
+        <div style="background:#000509;border:1px solid #001a2a;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">WYCKOFF PHASE</div>
+          <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:${phaseColor};">${phase}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">Confidence: ${conf}%</div>
+        </div>
+        <div style="background:#000509;border:1px solid #001a2a;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">RSI DAILY</div>
+          <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:${rsi < 35 ? '#39ff14' : rsi < 50 ? '#ffe066' : rsi > 70 ? '#FF4757' : '#ccc'};">${rsi}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">${rsi < 35 ? 'Oversold' : rsi < 45 ? 'Weakening' : rsi > 70 ? 'Overbought' : 'Neutral'}</div>
+        </div>
+        <div style="background:#000509;border:1px solid #001a2a;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">VOL RATIO D/S</div>
+          <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:${vr > 1.1 ? '#39ff14' : vr < 0.9 ? '#FF4757' : '#ccc'};">${typeof vr === 'number' ? vr.toFixed(2) + 'x' : vr}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">${vr > 1.1 ? 'Demand' : vr < 0.9 ? 'Supply' : 'Balanced'}</div>
+        </div>
+        <div style="background:#000509;border:1px solid #001a2a;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">AI SIGNAL</div>
+          <div style="font-size:10px;color:#ccc;line-height:1.8;">
+            ${spring ? '<span style="color:#39ff14;">⚡ Spring</span><br>' : ''}
+            ${utad ? '<span style="color:#FF4757;">⚠ UTAD</span><br>' : ''}
+            ${wy.trending_up ? '↑ Trending Up' : wy.trending_down ? '↓ Trending Down' : '→ Ranging'}
+          </div>
+        </div>
+      </div>
+      <div style="background:#000509;border:1px solid #001a2a;padding:12px;margin-bottom:12px;">
+        <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">ENTRY SIGNAL</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5;">${meta.entry}</div>
+      </div>
+      <div style="background:#000509;border:1px solid #001a2a;padding:12px;">
+        <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">WATCH / RISK NOTES</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5;">${meta.watch}</div>
+      </div>`;
+  }
+
+  // ── Hero data binding ──────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', async () => {
+    const d = await getDashData();
+    const ai = d.asset_intelligence?.assets || {};
+    const wyAssets = d.wyckoff?.assets || {};
+    const itaWy = wyAssets.defense || {};
+
+    const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+    const fmtPct = v => v != null ? (v > 0 ? '+' : '') + v + '%' : '—';
+    const rsiColor = r => r < 35 ? '#39ff14' : r < 50 ? '#ffe066' : r > 70 ? '#FF4757' : '#4A9EFF';
+
+    // Wyckoff phase on hero
+    if (itaWy.phase) {
+      const pc = { ACCUMULATION: '#39ff14', DISTRIBUTION: '#FF4757', MARKUP: '#00D2FF', MARKDOWN: '#FF4757', RANGING: '#555' };
+      setEl('defense-wyckoff', itaWy.phase, pc[itaWy.phase] || '#4A9EFF');
+      setEl('defense-wyckoff-conf', `ITA · ${itaWy.confidence || 0}% CONF`);
+    }
+
+    // Confluence alerts from wyckoff
+    const alerts = d.wyckoff?.active_alerts || [];
+    const defAlerts = alerts.filter(a => ['defense','lmt','rtx','noc'].includes(a.asset_key));
+    const oppEl = document.getElementById('defense-confluence-opps');
+    if (defAlerts.length > 0) {
+      oppEl.innerHTML = defAlerts.map(a => {
+        const isShort = a.alert_type === 'DISTRIBUTION' || a.alert_type === 'UTAD';
+        const col = isShort ? '#FF4757' : '#4A9EFF';
+        return `<div class="confluence-opp ${isShort ? 'short' : ''}">
+          <div class="conf-header"><span class="conf-asset">${a.asset}</span><span class="conf-score" style="color:${col};">${a.alert_type} · ${a.confidence}%</span></div>
+          <div class="conf-signal">${a.message}</div>
+          <div class="conf-bar"><div class="conf-bar-fill" style="width:${a.confidence}%;background:${col};"></div></div>
+        </div>`;
+      }).join('');
+    } else {
+      oppEl.innerHTML = '<div style="color:#333;font-size:11px;font-style:italic;padding:8px 0;">No high-confidence defense alerts currently. All quiet — monitoring geopolitical triggers in background.</div>';
+    }
+
+    // Load LMT tab immediately
+    loadDrillPanel('lmt');
+  });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

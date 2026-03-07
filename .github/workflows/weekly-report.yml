@@ -1,0 +1,42 @@
+name: Weekly Market Report
+
+on:
+  schedule:
+    - cron: '0 6 * * 0'  # Every Sunday at 6am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-weekly-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance requests
+
+      - name: Generate weekly market report
+        run: |
+          python scripts/generate_weekly_report.py
+
+      - name: Commit and push weekly report
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Weekly Report Bot"
+          git add reports/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Weekly market brief - $(date -u +"%Y-%m-%d")"
+            git push
+          fi

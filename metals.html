@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>METALS COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --sector-accent: #FFD700; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 20px; border-radius: 3px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(255,215,0,0.25); }
+    .card.accent { border-color: rgba(255,215,0,0.4); }
+    .card-label { font-family: 'Orbitron',monospace; font-size: 9px; letter-spacing: 3px; color: #444; text-transform: uppercase; margin-bottom: 8px; }
+    .card-value { font-family: 'Orbitron',monospace; font-size: 28px; font-weight: 900; color: #FFD700; line-height: 1; }
+    .card-sub { font-size: 11px; color: #555; margin-top: 6px; font-style: italic; }
+    .section-title { font-family: 'Orbitron',monospace; font-size: 10px; font-weight: 700; letter-spacing: 4px; color: #FFD700; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid #1a1400; }
+    section { padding: 28px 0; border-bottom: 1px solid #0a0a0a; }
+    .driver-item { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #0a0a0a; font-size: 0.78rem; }
+    .driver-dot { width: 5px; height: 5px; border-radius: 50%; background: #FFD700; margin-top: 0.45rem; flex-shrink: 0; box-shadow: 0 0 5px #FFD700; }
+    .threat-dot { background: #FF4757; box-shadow: 0 0 5px #FF4757; }
+
+    /* ── Drill-down tab system ── */
+    .drill-section { margin-top: 8px; }
+    .drill-tab-bar {
+      display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0;
+      border-bottom: 1px solid #1a1400;
+      padding-bottom: 0;
+    }
+    .drill-tab-btn {
+      font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 2px;
+      padding: 8px 16px; background: #050500; border: 1px solid #1a1400;
+      border-bottom: none; color: #444; cursor: pointer;
+      text-transform: uppercase; transition: all 0.2s;
+      position: relative; top: 1px;
+    }
+    .drill-tab-btn:hover { color: #FFD700; border-color: rgba(255,215,0,0.3); }
+    .drill-tab-btn.active { color: #FFD700; border-color: #FFD700; background: #0a0800; }
+    .drill-panel {
+      background: #050500; border: 1px solid #1a1400;
+      border-top: none; padding: 20px; display: none;
+    }
+    .drill-panel.active { display: block; }
+    .drill-loading { color: #333; font-size: 11px; padding: 20px 0; font-style: italic; }
+    .metal-stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #0a0a00; font-size: 11px; }
+    .metal-stat-label { color: #555; }
+    .metal-stat-value { color: #ccc; font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700; }
+    .wyckoff-badge {
+      display: inline-block; font-family: 'Orbitron', monospace; font-size: 8px;
+      letter-spacing: 2px; padding: 3px 8px; border-radius: 2px; margin-top: 8px;
+    }
+    .wyckoff-ACCUMULATION { color: #39ff14; border: 1px solid rgba(57,255,20,0.4); background: rgba(57,255,20,0.06); }
+    .wyckoff-DISTRIBUTION { color: #FF4757; border: 1px solid rgba(255,71,87,0.4); background: rgba(255,71,87,0.06); }
+    .wyckoff-MARKUP      { color: #00D2FF; border: 1px solid rgba(0,210,255,0.4); background: rgba(0,210,255,0.06); }
+    .wyckoff-MARKDOWN    { color: #FF4757; border: 1px solid rgba(255,71,87,0.3); background: rgba(255,71,87,0.04); }
+    .wyckoff-RANGING     { color: #555; border: 1px solid #222; background: transparent; }
+    .wyckoff-alert-banner {
+      background: rgba(57,255,20,0.05); border: 1px solid rgba(57,255,20,0.3);
+      padding: 10px 14px; margin-bottom: 12px; font-size: 10px; line-height: 1.6;
+      color: #39ff14; font-family: 'JetBrains Mono', monospace;
+    }
+    .wyckoff-alert-banner.dist { border-color: rgba(255,71,87,0.3); color: #FF4757; background: rgba(255,71,87,0.05); }
+    .confluence-opp {
+      background: #050500; border: 1px solid #1a1400; padding: 14px;
+      margin-bottom: 10px; border-left: 3px solid #FFD700;
+    }
+    .confluence-opp.short { border-left-color: #FF4757; }
+    .conf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .conf-asset { font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700; color: #fff; }
+    .conf-score { font-family: 'Orbitron', monospace; font-size: 12px; color: #FFD700; }
+    .conf-score.short { color: #FF4757; }
+    .conf-signal { font-size: 10px; color: #888; line-height: 1.5; }
+    .conf-bar { height: 2px; background: #0a0a00; margin-top: 8px; }
+    .conf-bar-fill { height: 100%; background: #FFD700; }
+  </style>
+</head>
+<body class="metals-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html" class="active">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+      <a href="chenzzo.html">CHENZZO</a>
+    </div>
+    <span class="nav-label" style="color:#FFD700;">METALS COMMAND</span>
+  </nav>
+
+  <div class="sectors-subnav">
+    <a href="macro.html">MACRO</a>
+    <a href="crypto.html">CRYPTO</a>
+    <a href="tech.html">TECH</a>
+    <a href="energy.html">ENERGY</a>
+    <a href="bonds.html">BONDS</a>
+    <a href="metals.html" class="active">METALS</a>
+    <a href="defense.html">DEFENSE</a>
+    <a href="realestate.html">REAL ESTATE</a>
+    <a href="passiveincome.html">PASSIVE INCOME</a>
+  </div>
+
+  <!-- SECTOR HERO -->
+  <div class="sector-hero">
+    <div class="sector-hero-top">
+      <div class="sector-title-block">
+        <div class="sector-name">Precious Metals</div>
+        <div class="sector-price" style="color:#FFD700;text-shadow:0 0 24px #FFD700;" id="metals-hero-price">$—</div>
+        <div class="sector-change">
+          GLD ETF · <span id="metals-hero-change" style="color:#39ff14;">+0.0%</span> today
+        </div>
+      </div>
+      <div class="sector-cycle-block">
+        <div class="sector-cycle-label">Cycle Phase</div>
+        <div class="sector-cycle-value" id="metals-hero-cycle">BULL RUN</div>
+        <div class="sector-cycle-context" id="metals-hero-ctx">QT + geopolitical risk + dollar weakness = structural tailwind. Gold leading. Silver lagging — catch-up play building.</div>
+      </div>
+      <div class="sector-risk-block">
+        <div class="sector-risk-label">Risk Level</div>
+        <div class="sector-risk-value" id="metals-hero-risk" style="color:#ffe066;">45</div>
+        <div style="font-size:0.5rem;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;">/100</div>
+      </div>
+    </div>
+    <div class="sector-metrics-strip">
+      <div class="sector-metric">
+        <div class="sector-metric-label">Gold / GLD</div>
+        <div class="sector-metric-value" id="metals-gold-price" style="color:#FFD700;">—</div>
+        <div class="sector-metric-sub" id="metals-gold-change">LIVE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Silver / SLV</div>
+        <div class="sector-metric-value" id="metals-silver-price" style="color:#ccc;">—</div>
+        <div class="sector-metric-sub" id="metals-silver-change">LIVE</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Gold RSI Daily</div>
+        <div class="sector-metric-value" id="metals-gold-rsi" style="color:#ffe066;">—</div>
+        <div class="sector-metric-sub" id="metals-gold-rsi-label">SIGNAL</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Gold Trend</div>
+        <div class="sector-metric-value" id="metals-gold-trend" style="color:#39ff14;">↑ Up</div>
+        <div class="sector-metric-sub">WEEKLY</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Wyckoff Phase</div>
+        <div class="sector-metric-value" id="metals-wyckoff-phase" style="color:#ffe066;font-size:0.8rem;">MARKUP</div>
+        <div class="sector-metric-sub" id="metals-wyckoff-conf">GOLD</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Gold / Silver Ratio</div>
+        <div class="sector-metric-value" id="metals-gs-ratio" style="color:#00D2FF;">—</div>
+        <div class="sector-metric-sub">HIGH = SILVER CHEAP</div>
+      </div>
+      <div class="sector-metric">
+        <div class="sector-metric-label">Antimony</div>
+        <div class="sector-metric-value" style="color:#9B59B6;font-size:0.75rem;">STRATEGIC</div>
+        <div class="sector-metric-sub">REMX PROXY</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ACTIVE CONFLUENCE OPPORTUNITIES -->
+    <section>
+      <div class="section-title">Active Confluence Opportunities</div>
+      <div id="metals-confluence-opps">
+        <div style="color:#333;font-size:11px;font-style:italic;">Loading signals...</div>
+      </div>
+    </section>
+
+    <!-- Bot Opportunity Section -->
+    <section>
+      <div class="bot-opp-header">Bot &amp; Investment Opportunities</div>
+      <div id="bot-opp-container" data-sector="metals"></div>
+    </section>
+
+    <!-- DRILL-DOWN ASSET TABS -->
+    <section class="drill-section">
+      <div class="section-title">Asset Intelligence — Drill-Down</div>
+      <div style="font-size:10px;color:#444;margin-bottom:12px;font-style:italic;">
+        Click any metal to load live analysis. Only loads when you need it — no background noise.
+      </div>
+
+      <div class="drill-tab-bar">
+        <button class="drill-tab-btn active" data-tab="gold" onclick="openDrillTab('gold', this)">GOLD</button>
+        <button class="drill-tab-btn" data-tab="silver" onclick="openDrillTab('silver', this)">SILVER</button>
+        <button class="drill-tab-btn" data-tab="antimony" onclick="openDrillTab('antimony', this)">ANTIMONY</button>
+        <button class="drill-tab-btn" data-tab="miners" onclick="openDrillTab('miners', this)">MINERS / GDX</button>
+      </div>
+
+      <div id="panel-gold" class="drill-panel active">
+        <div class="drill-loading">Loading gold intelligence...</div>
+      </div>
+      <div id="panel-silver" class="drill-panel">
+        <div class="drill-loading">Click SILVER to load analysis.</div>
+      </div>
+      <div id="panel-antimony" class="drill-panel">
+        <div class="drill-loading">Click ANTIMONY to load analysis.</div>
+      </div>
+      <div id="panel-miners" class="drill-panel">
+        <div class="drill-loading">Click MINERS to load analysis.</div>
+      </div>
+    </section>
+
+    <!-- KEY METRICS -->
+    <section>
+      <div class="section-title">Key Metrics</div>
+      <div class="grid-3">
+        <div class="card accent">
+          <div class="card-label">GLD ETF Price</div>
+          <div class="card-value" id="metals-gld-card">—</div>
+          <div class="card-sub" id="metals-gld-change-card">Daily change loading...</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Central Bank Demand</div>
+          <div class="card-value" style="font-size:16px;color:#39ff14;">RECORD HIGH</div>
+          <div class="card-sub">CB buying > 1000 tonnes/yr since 2022. Structural floor.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Real Rates</div>
+          <div class="card-value" style="font-size:16px;color:#ffe066;" id="metals-real-rates">~1.5%</div>
+          <div class="card-sub">10Y yield minus CPI. Declining real rates = gold tailwind.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Gold/Silver Ratio</div>
+          <div class="card-value" style="font-size:22px;color:#00D2FF;" id="metals-gs-card">—</div>
+          <div class="card-sub">Above 80 = silver historically cheap vs gold (mean reversion play).</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Silver Industrial</div>
+          <div class="card-value" style="font-size:16px;color:#ffe066;">SOLAR + EV</div>
+          <div class="card-sub">Solar panels use 20g silver each. EV growth = industrial demand surge.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Antimony Status</div>
+          <div class="card-value" style="font-size:14px;color:#9B59B6;">STRATEGIC</div>
+          <div class="card-sub">China controls 50%+ supply. Defense + battery + flame retardant demand. Supply squeeze ongoing.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DRIVERS & THREATS -->
+    <section>
+      <div class="section-title">Key Drivers &amp; Threats</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FFD700;letter-spacing:3px;margin-bottom:0.75rem;">BULL DRIVERS</div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Central bank gold buying at record pace — floor support permanent</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Dollar weakness (DXY declining) = gold inverse correlation tailwind</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Real rates declining as Fed eases — gold bull historically confirmed</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Geopolitical risk premium — Middle East + Ukraine + Taiwan = safe haven bid</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Silver solar + EV demand structural surge — industrial deficit possible</span></div>
+          <div class="driver-item"><div class="driver-dot"></div><span>Antimony supply crisis — China export restrictions = strategic premium</span></div>
+        </div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.55rem;color:#FF4757;letter-spacing:3px;margin-bottom:0.75rem;">THREATS &amp; RISKS</div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Dollar strength reversal — DXY spike crushes gold (inverse correlation)</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Fed hawkishness resurgence — real rate rise = gold headwind</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Peace dividend risk — geopolitical resolution crushes safe haven premium</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Silver overbought risk — industrial demand disruption in recession</span></div>
+          <div class="driver-item"><div class="driver-dot threat-dot"></div><span>Miner cost inflation — higher energy/labor costs squeeze margins despite gold price</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANTIMONY INTEL -->
+    <section>
+      <div class="section-title" style="color:#9B59B6;">Antimony — Strategic Sleeper Play</div>
+      <div class="grid-2">
+        <div class="card" style="border-color:rgba(155,89,182,0.3);">
+          <div class="card-label">Why Antimony Matters</div>
+          <div class="card-value" style="font-size:13px;color:#9B59B6;line-height:1.4;">SUPPLY CRISIS</div>
+          <div class="card-sub">China controls ~50% of global antimony production and banned exports in 2024. Used in: military bullets, night-vision, flame retardants, batteries, semiconductors. No easy substitute exists.</div>
+        </div>
+        <div class="card" style="border-color:rgba(155,89,182,0.3);">
+          <div class="card-label">Investment Angle</div>
+          <div class="card-value" style="font-size:14px;color:#9B59B6;line-height:1.4;">REMX ETF PROXY</div>
+          <div class="card-sub">No direct antimony ETF. REMX (VanEck Rare Earth/Strategic Metals) is the best proxy. Also watch: military/defense supply chain exposure. Long-term 3-5yr hold thesis. Position when REMX pulls back to RSI 35-40 zone.</div>
+        </div>
+        <div class="card" style="border-color:rgba(155,89,182,0.2);">
+          <div class="card-label">Demand Drivers</div>
+          <div class="card-value" style="font-size:11px;color:#ccc;line-height:1.8;">
+            Military: Lead-antimony alloy in bullets/artillery<br>
+            Defense: Night-vision + infrared tech<br>
+            Solar: Flame retardant in panels<br>
+            Grid storage: Antimony-flow batteries (emerging)
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(155,89,182,0.2);">
+          <div class="card-label">Confluence Entry Signal</div>
+          <div class="card-value" style="font-size:14px;color:#9B59B6;">REMX RSI &lt; 40</div>
+          <div class="card-sub">Wait for REMX pullback to RSI below 40 + global defense spending upgrade news + China export restriction escalation. 3-signal confluence before entry.</div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+
+  <footer style="border-top:1px solid #0d0d0d;padding:2rem 24px;text-align:center;">
+    <p style="font-family:'Orbitron',monospace;font-size:0.5rem;color:#333;letter-spacing:3px;">&copy; 2026 ENDGAME DASHBOARD · METALS COMMAND</p>
+  </footer>
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+  // ── Lazy-load drill-down tab system ────────────────────────────────────────
+  const _loaded = { gold: false, silver: false, antimony: false, miners: false };
+  let _dashData = null;
+
+  async function getDashData() {
+    if (_dashData) return _dashData;
+    try {
+      const res = await fetch('./data/data.json', { cache: 'no-store' });
+      _dashData = await res.json();
+      return _dashData;
+    } catch(e) { return {}; }
+  }
+
+  function openDrillTab(metal, btn) {
+    document.querySelectorAll('.drill-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.drill-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + metal).classList.add('active');
+    if (!_loaded[metal]) {
+      _loaded[metal] = true;
+      loadDrillPanel(metal);
+    }
+  }
+
+  const METAL_STATIC = {
+    gold:     { label: 'Gold / GLD', symbol: 'GLD',  color: '#FFD700', key: 'gold',
+                desc: 'Primary safe-haven and inflation hedge. Macro tailwind from QT + CB buying + geopolitical risk premium.',
+                entry: 'Pull back to SMA20 or RSI < 45 on daily chart. Target: GLD ETF.',
+                watch: '$2,800/oz resistance. Dollar index DXY < 100 = bullish setup.' },
+    silver:   { label: 'Silver / SLV', symbol: 'SLV', color: '#ccc', key: 'silver',
+                desc: 'Industrial + monetary hybrid. Solar demand + EV manufacturing creating structural deficit. Gold/silver ratio above 80 = silver historically undervalued.',
+                entry: 'RSI daily < 40 + Gold/Silver ratio > 85 + gold trending up = 3-signal confluence. Target SLV or physical.',
+                watch: 'Gold must lead. Silver follows. $30/oz is psychological resistance.' },
+    antimony: { label: 'Antimony / REMX', symbol: 'REMX', color: '#9B59B6', key: 'antimony',
+                desc: 'Strategic critical mineral. China export ban 2024. Defense + solar + grid battery demand. Supply crisis ongoing with no easy substitutes.',
+                entry: 'REMX RSI < 40 + China export news escalation + defense budget expansion. Long-term hold 3-5yr.',
+                watch: 'No direct price feed. REMX proxy. Defense sector budget cycle is the key signal.' },
+    miners:   { label: 'Gold Miners / GDX', symbol: 'GDX', color: '#FFA500', key: 'miners',
+                desc: 'Leveraged play on gold. When gold rises 10%, miners often rise 20-30%. Higher risk — operating costs, management, jurisdiction risk.',
+                entry: 'GDX RSI < 40 + gold in uptrend + production reports positive. 3x leverage to gold price.',
+                watch: 'Energy costs are key input. Oil rising = miner margin compression even if gold rises.' },
+  };
+
+  async function loadDrillPanel(metal) {
+    const panel = document.getElementById('panel-' + metal);
+    const d = await getDashData();
+    const wyckoff = d.wyckoff || {};
+    const wyAssets = wyckoff.assets || {};
+    const meta = METAL_STATIC[metal];
+    const wy = wyAssets[meta.key] || {};
+
+    const phase = wy.phase || '—';
+    const conf  = wy.confidence || 0;
+    const rsi   = wy.rsi || '—';
+    const vr    = wy.vol_ratio || '—';
+    const spring = wy.spring_detected;
+    const utad   = wy.utad_detected;
+
+    let alertHtml = '';
+    if (spring) {
+      alertHtml = `<div class="wyckoff-alert-banner">⚡ SPRING DETECTED — Price tested below support and recovered. Smart money defended the low. Potential markup imminent.</div>`;
+    } else if (utad) {
+      alertHtml = `<div class="wyckoff-alert-banner dist">⚠ UTAD DETECTED — Price pierced above resistance and fell back. Supply absorbing demand. Watch for breakdown.</div>`;
+    }
+
+    const wyClass = phase !== '—' ? `wyckoff-${phase}` : 'wyckoff-RANGING';
+    const phaseColor = phase === 'ACCUMULATION' ? '#39ff14' : phase === 'DISTRIBUTION' ? '#FF4757' : phase === 'MARKUP' ? '#00D2FF' : phase === 'MARKDOWN' ? '#FF4757' : '#555';
+
+    panel.innerHTML = `
+      ${alertHtml}
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:${meta.color};">${meta.label}</div>
+        <span class="wyckoff-badge ${wyClass}">${phase} ${conf ? conf + '%' : ''}</span>
+      </div>
+      <p style="font-size:11px;color:#888;line-height:1.6;margin-bottom:16px;">${meta.desc}</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
+        <div style="background:#0a0a00;border:1px solid #1a1400;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">WYCKOFF PHASE</div>
+          <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:${phaseColor};">${phase}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">Confidence: ${conf}%</div>
+        </div>
+        <div style="background:#0a0a00;border:1px solid #1a1400;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">RSI DAILY</div>
+          <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:${rsi < 35 ? '#39ff14' : rsi < 50 ? '#ffe066' : rsi > 70 ? '#FF4757' : '#ccc'};">${rsi}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">${rsi < 35 ? 'Oversold' : rsi < 45 ? 'Weakening' : rsi > 70 ? 'Overbought' : 'Neutral'}</div>
+        </div>
+        <div style="background:#0a0a00;border:1px solid #1a1400;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">VOL RATIO D/S</div>
+          <div style="font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:${vr > 1.1 ? '#39ff14' : vr < 0.9 ? '#FF4757' : '#ccc'};">${typeof vr === 'number' ? vr.toFixed(2) + 'x' : vr}</div>
+          <div style="font-size:10px;color:#555;margin-top:4px;">${vr > 1.1 ? 'Demand dominant' : vr < 0.9 ? 'Supply dominant' : 'Balanced'}</div>
+        </div>
+        <div style="background:#0a0a00;border:1px solid #1a1400;padding:12px;">
+          <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">SIGNALS</div>
+          <div style="font-size:10px;color:#ccc;line-height:1.8;">
+            ${spring ? '<span style="color:#39ff14;">⚡ Spring</span><br>' : ''}
+            ${utad ? '<span style="color:#FF4757;">⚠ UTAD</span><br>' : ''}
+            ${wy.trending_up ? '↑ Trending Up' : wy.trending_down ? '↓ Trending Down' : '→ Ranging'}
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#050500;border:1px solid #1a1400;padding:12px;margin-bottom:12px;">
+        <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">ENTRY SIGNAL</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5;">${meta.entry}</div>
+      </div>
+      <div style="background:#050500;border:1px solid #1a1400;padding:12px;">
+        <div style="font-size:8px;font-family:'Orbitron',monospace;letter-spacing:2px;color:#444;margin-bottom:6px;">KEY LEVELS TO WATCH</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5;">${meta.watch}</div>
+      </div>`;
+  }
+
+  // ── Hero data binding ──────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', async () => {
+    const d = await getDashData();
+    const s = d.sectors?.metals || {};
+    const ai = d.asset_intelligence?.assets || {};
+    const goldAi = ai.gold || {};
+    const wyckoff = d.wyckoff?.assets || {};
+    const wyGold = wyckoff.gold || {};
+
+    const riskColor = r => r < 40 ? '#39ff14' : r < 60 ? '#ffe066' : r < 75 ? '#f59e0b' : '#FF4757';
+    const rsiColor  = r => r < 30 ? '#39ff14' : r < 45 ? '#ffe066' : r < 55 ? '#888' : r < 70 ? '#f59e0b' : '#FF4757';
+    const fmtPct    = v => v != null ? (v > 0 ? '+' : '') + v + '%' : '—';
+    const setEl = (id, v, c) => { const e = document.getElementById(id); if (e && v != null) { e.textContent = v; if (c) e.style.color = c; } };
+
+    if (s.price_formatted) setEl('metals-hero-price', s.price_formatted);
+    if (s.change_pct_day != null) setEl('metals-hero-change', fmtPct(s.change_pct_day), s.change_pct_day >= 0 ? '#39ff14' : '#FF4757');
+    if (s.cycle) setEl('metals-hero-cycle', s.cycle.toUpperCase());
+    if (s.cycle_context) setEl('metals-hero-ctx', s.cycle_context);
+    if (s.risk != null) setEl('metals-hero-risk', s.risk, riskColor(s.risk));
+
+    // Live prices from asset intelligence
+    if (goldAi.price_formatted || s.price_formatted) setEl('metals-gold-price', goldAi.price_formatted || s.price_formatted);
+    if (goldAi.rsi_daily) { setEl('metals-gold-rsi', goldAi.rsi_daily, rsiColor(goldAi.rsi_daily)); setEl('metals-gold-rsi-label', goldAi.rsi_label_daily || ''); }
+    const trendW = goldAi.trend_weekly || s.trend_weekly;
+    if (trendW) setEl('metals-gold-trend', trendW === 'Up' ? '↑ Up' : trendW === 'Down' ? '↓ Down' : '→ Flat', trendW === 'Up' ? '#39ff14' : trendW === 'Down' ? '#FF4757' : '#888');
+
+    // Wyckoff hero display
+    if (wyGold.phase) {
+      const phaseColors = { ACCUMULATION: '#39ff14', DISTRIBUTION: '#FF4757', MARKUP: '#00D2FF', MARKDOWN: '#FF4757', RANGING: '#555' };
+      setEl('metals-wyckoff-phase', wyGold.phase, phaseColors[wyGold.phase] || '#ffe066');
+      setEl('metals-wyckoff-conf', `GOLD · ${wyGold.confidence || 0}% CONF`);
+    }
+
+    // Gold/Silver ratio
+    const goldPriceRaw = goldAi.price || s.price || 0;
+    const silverAi = ai.silver || {};
+    const silverPriceRaw = silverAi.price || 0;
+    if (goldPriceRaw > 0 && silverPriceRaw > 0) {
+      const ratio = (goldPriceRaw / silverPriceRaw).toFixed(1);
+      setEl('metals-gs-ratio', ratio, parseFloat(ratio) > 80 ? '#ffe066' : '#00D2FF');
+      setEl('metals-gs-card', ratio);
+    }
+
+    // Real rates estimate
+    const macro = d.macro || {};
+    if (macro.us10y_yield && macro.cpi_yoy) {
+      const realRate = (parseFloat(macro.us10y_yield) - parseFloat(macro.cpi_yoy)).toFixed(2);
+      setEl('metals-real-rates', `~${realRate}%`, parseFloat(realRate) < 1 ? '#39ff14' : '#ffe066');
+    }
+
+    // Confluence opportunities from wyckoff active_alerts
+    const alerts = d.wyckoff?.active_alerts || [];
+    const metalAlerts = alerts.filter(a => ['gold','silver','antimony','miners'].includes(a.asset_key));
+    const oppContainer = document.getElementById('metals-confluence-opps');
+    if (metalAlerts.length > 0) {
+      oppContainer.innerHTML = metalAlerts.map(a => {
+        const isShort = a.alert_type === 'DISTRIBUTION' || a.alert_type === 'UTAD';
+        const color = isShort ? '#FF4757' : '#FFD700';
+        return `<div class="confluence-opp ${isShort ? 'short' : ''}" style="border-left-color:${color}">
+          <div class="conf-header">
+            <span class="conf-asset">${a.asset}</span>
+            <span class="conf-score ${isShort ? 'short' : ''}" style="color:${color};">${a.alert_type} · ${a.confidence}%</span>
+          </div>
+          <div class="conf-signal">${a.message}</div>
+          <div class="conf-bar"><div class="conf-bar-fill" style="width:${a.confidence}%;background:${color};"></div></div>
+        </div>`;
+      }).join('');
+    } else {
+      oppContainer.innerHTML = '<div style="color:#333;font-size:11px;font-style:italic;padding:8px 0;">No high-confidence metal alerts currently. All quiet — monitoring.</div>';
+    }
+
+    // Load gold tab immediately (it's the default active tab)
+    loadDrillPanel('gold');
+  });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>
