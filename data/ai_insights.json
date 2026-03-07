@@ -1,32 +1,32 @@
 {
-  "updated_utc": "2026-03-07T00:34:17.205800+00:00",
-  "regime": "Bear Market",
+  "updated_utc": "2026-03-07T06:15:06.632705+00:00",
+  "regime": "Late Cycle Bullish",
   "top_triggers": [
-    "Fed tightening",
-    "DXY strength",
-    "Crypto market cap decline"
+    "Fed balance sheet contracting",
+    "DXY at 99.0",
+    "S&P 500 breadth deteriorating"
   ],
-  "invalidation": "BTC price recovery and stabilization",
-  "contextual_guidance": "Given the bearish market and lack of recent commands, consider reducing exposure to high-risk assets. Monitor the Fed's actions and the strength of the DXY for potential market shifts.",
-  "grok_counter": "The strongest counter-argument this week is the potential for a surprise uptick in institutional adoption, as recent reports suggest major financial firms are quietly accumulating BTC amid regulatory clarity. The crowd might be missing subtle signals of ETF approvals or macroeconomic shifts favoring risk assets, which could flip sentiment rapidly.",
+  "invalidation": "DXY falling below 98.0",
+  "contextual_guidance": "Given the lack of recent portfolio actions, consider diversifying into risk assets due to reduced pressure from the dollar. Monitor the S&P 500 breadth for potential market downturn signals.",
+  "grok_counter": "The strongest counter-argument this week is the potential for a sudden regulatory crackdown, especially with whispers of stricter U.S. policies on crypto taxation and compliance gaining traction. The crowd might be overlooking how quickly sentiment can shift if major exchanges or institutions face legal hurdles, triggering a sharp sell-off despite the bullish consensus.",
   "confidence_score": 5,
   "btc_price_snapshot": "N/A",
   "fear_greed_snapshot": 50,
   "next_update": "6 hours",
   "confluence": {
-    "score": 5,
-    "dominant_signal": "neutral",
-    "agreement_pct": 40,
+    "score": 7,
+    "dominant_signal": "bullish",
+    "agreement_pct": 75,
     "sources": [
       {
-        "signal": "bearish",
+        "signal": "bullish",
         "strength": 8,
         "source": "ChatGPT"
       },
       {
         "signal": "neutral",
         "strength": 5,
-        "note": "RSI neutral at 50.8",
+        "note": "RSI neutral at 46.4",
         "source": "Alpha Vantage"
       },
       {
@@ -36,10 +36,10 @@
         "source": "Polygon"
       }
     ],
-    "note": "1B/1Be/1N sources"
+    "note": "2B/0Be/1N sources"
   },
   "market_data": {
-    "btc_price": 68343.95,
+    "btc_price": 68114.84,
     "btc_change_5d": 0.0,
     "spy_price": 6740.0,
     "spy_change_5d": 0.0,
@@ -49,7 +49,7 @@
   "technical_analysis": {
     "signal": "neutral",
     "strength": 5,
-    "note": "RSI neutral at 50.8",
+    "note": "RSI neutral at 46.4",
     "source": "Alpha Vantage"
   },
   "sentiment_analysis": {
@@ -60,11 +60,11 @@
   },
   "investor_behavior_intelligence": {
     "phase": "crisis",
-    "phase_confidence": "low",
+    "phase_confidence": "moderate",
     "state_metrics": {
       "fear_greed": 28.0,
       "btc_change_5d_pct": 0.0,
-      "confluence_score": 5
+      "confluence_score": 7
     },
     "crisis": {
       "typical_investor_behavior": [
@@ -96,9 +96,9 @@
     "predictive": {
       "horizon": "1-4 weeks",
       "scenario_probabilities_pct": {
-        "bearish_continuation": 31.8,
-        "bullish_reversal": 36.4,
-        "range_mean_reversion": 31.8
+        "bearish_continuation": 20.8,
+        "bullish_reversal": 50.0,
+        "range_mean_reversion": 29.2
       },
       "drivers": [
         "Confluence dominant signal + score",
@@ -107,7 +107,7 @@
       ]
     },
     "prescriptive": {
-      "primary_action": "Low conviction: preserve optionality, focus on prep and watchlists.",
+      "primary_action": "Moderate conviction: keep smaller sizing, demand cross-asset confirmation.",
       "position_sizing_rule": "Scale 25/25/50 only after confluence gate and invalidation clarity.",
       "risk_controls": [
         "No all-in entries during crisis/euphoria transitions",
@@ -399,7 +399,7 @@
       "Failed breakouts often mean-revert sharply in crowded regimes",
       "Multi-timeframe alignment increases setup reliability"
     ],
-    "near_term_structural_read": "Mixed structure; prioritize trigger-based execution over prediction.",
+    "near_term_structural_read": "Upside continuation risk is elevated if breadth confirms.",
     "execution_protocol": "Require structure break + confluence + invalidation before size escalation."
   }
 }
