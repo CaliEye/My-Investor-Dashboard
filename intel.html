@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INTELLIGENCE COMMAND — ENDGAME</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/matrix.css"/>
+  <link rel="stylesheet" href="css/cinematic-hud.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    :root { --accent: #00FF78; --accent-dim: #006A2E; --warn: #FFD166; --danger: #FF4757; --cyber: #00D2FF; --purple: #9B59B6; }
+    body { background: #000; color: #ccc; font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+    .page-header { padding: 28px 24px 0; max-width: 1400px; margin: 0 auto; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; }
+
+    /* OODA Command Strip */
+    .ooda-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #0a0f0a;
+      border: 1px solid #1a3a1a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .ooda-cell {
+      background: #050a05;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .ooda-label { font-family: 'Orbitron',monospace; font-size: 8px; letter-spacing: 4px; color: #333; margin-bottom: 6px; }
+    .ooda-value { font-family: 'Orbitron',monospace; font-size: 1.1rem; font-weight: 900; color: var(--accent); }
+    .ooda-sub { font-size: 0.6rem; color: #444; margin-top: 4px; }
+
+    /* Regime Score Arc */
+    .regime-hero {
+      background: linear-gradient(135deg, #050a05 0%, #0a1a0a 100%);
+      border: 1px solid #1a3a1a;
+      border-radius: 4px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .score-ring {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border: 3px solid #1a3a1a;
+      background: #020802;
+      flex-shrink: 0;
+    }
+    .score-number { font-family: 'Orbitron',monospace; font-size: 2rem; font-weight: 900; line-height: 1; }
+    .score-label  { font-size: 0.5rem; letter-spacing: 2px; color: #444; margin-top: 4px; font-family: 'Orbitron',monospace; }
+
+    .regime-details { }
+    .regime-name { font-family: 'Orbitron',monospace; font-size: 1.3rem; font-weight: 900; margin-bottom: 6px; }
+    .action-brief { font-size: 0.78rem; color: #aaa; line-height: 1.6; margin-bottom: 8px; }
+    .signal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .signal-tag  { font-size: 0.55rem; padding: 3px 8px; border-radius: 2px; font-family: 'Orbitron',monospace; letter-spacing: 1px; }
+    .tag-bull { background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.3); color: #39ff14; }
+    .tag-bear { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); color: #FF4757; }
+
+    /* Military Risk Level */
+    .mil-level-bar {
+      display: flex; gap: 4px; align-items: stretch;
+    }
+    .mil-cell {
+      flex: 1; padding: 8px 4px; text-align: center;
+      font-family: 'Orbitron',monospace; font-size: 0.5rem; letter-spacing: 1px;
+      border: 1px solid #111; border-radius: 2px; color: #333; background: #050505;
+    }
+    .mil-cell.active { border-color: currentColor; background: rgba(currentColor, 0.1); }
+
+    /* Intel Cards */
+    .intel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .intel-card {
+      background: #050a05;
+      border: 1px solid #1a1a1a;
+      border-radius: 3px;
+      padding: 16px;
+    }
+    .intel-card:hover { border-color: rgba(0,255,120,0.2); }
+    .intel-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .intel-card-title { font-family: 'Orbitron',monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+    .intel-source-badge { font-size: 0.5rem; font-family: 'Orbitron',monospace; padding: 2px 6px; border-radius: 2px; }
+    .badge-ok { background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.3); color: #39ff14; }
+    .badge-fail { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); color: #FF4757; }
+    .badge-pending { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #f59e0b; }
+
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid #0d0d0d; }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-name { font-size: 0.65rem; color: #666; }
+    .metric-val  { font-size: 0.8rem; font-family: 'Orbitron',monospace; font-weight: 700; }
+
+    /* Action Order */
+    .action-order {
+      background: #030803;
+      border: 1px solid #1a3a1a;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .order-title { font-family: 'Orbitron',monospace; font-size: 0.6rem; letter-spacing: 4px; color: var(--accent); margin-bottom: 16px; }
+    .order-section { margin-bottom: 14px; }
+    .order-section-label { font-family: 'Orbitron',monospace; font-size: 0.55rem; letter-spacing: 3px; color: #333; margin-bottom: 6px; }
+    .order-text { font-size: 0.75rem; color: #bbb; line-height: 1.7; }
+    .order-item { display: flex; gap: 8px; align-items: flex-start; padding: 4px 0; }
+    .order-bullet { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .roe-item { font-size: 0.65rem; color: #555; padding: 3px 0; border-bottom: 1px solid #0a0a0a; }
+    .roe-item:last-child { border: none; }
+
+    /* Position Sizing Panel */
+    .sizing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .sizing-card {
+      background: #050505;
+      border: 1px solid #111;
+      border-radius: 3px;
+      padding: 14px;
+    }
+    .sizing-asset { font-family: 'Orbitron',monospace; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px; }
+    .sizing-big { font-family: 'Orbitron',monospace; font-size: 1.4rem; font-weight: 900; color: var(--accent); }
+    .sizing-sub { font-size: 0.6rem; color: #444; margin-top: 2px; }
+    .verdict-strong { color: #39ff14; }
+    .verdict-valid { color: #00D2FF; }
+    .verdict-marginal { color: #FFD166; }
+    .verdict-none { color: #FF4757; }
+
+    /* Stop Loss Levels */
+    .stop-levels { display: flex; gap: 6px; margin-top: 8px; }
+    .stop-pill { flex: 1; text-align: center; padding: 4px; border-radius: 2px; font-size: 0.55rem; font-family: 'Orbitron',monospace; }
+    .stop-soft { background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.3); color: #FFD166; }
+    .stop-firm { background: rgba(255,140,0,0.1); border: 1px solid rgba(255,140,0,0.3); color: #FF8C00; }
+    .stop-max  { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); color: #FF4757; }
+
+    /* Manual Feed Input */
+    .manual-feed-zone {
+      background: #030803;
+      border: 1px dashed #1a3a1a;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .manual-feed-title { font-family: 'Orbitron',monospace; font-size: 0.6rem; letter-spacing: 4px; color: var(--cyber); margin-bottom: 12px; }
+    .feed-list { display: grid; gap: 8px; }
+    .feed-item { display: flex; gap: 12px; align-items: center; padding: 8px 12px; background: #050a05; border: 1px solid #0d0d0d; border-radius: 2px; }
+    .feed-bias-bull { color: #39ff14; font-size: 0.6rem; font-family: 'Orbitron',monospace; min-width: 35px; }
+    .feed-bias-bear { color: #FF4757; font-size: 0.6rem; font-family: 'Orbitron',monospace; min-width: 35px; }
+    .feed-name { font-size: 0.6rem; color: #888; min-width: 100px; }
+    .feed-signal { font-size: 0.7rem; color: #ccc; flex: 1; }
+    .feed-conf { font-size: 0.6rem; color: #444; }
+
+    /* Polymarket odds */
+    .odds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .odds-card { background: #060606; border: 1px solid #111; border-radius: 3px; padding: 12px; }
+    .odds-title { font-size: 0.65rem; color: #777; margin-bottom: 6px; line-height: 1.4; }
+    .odds-prob { font-family: 'Orbitron',monospace; font-size: 1.6rem; font-weight: 900; }
+    .odds-source { font-size: 0.5rem; color: #333; margin-top: 4px; font-family: 'Orbitron',monospace; letter-spacing: 2px; }
+
+    /* Whale / On-chain */
+    .onchain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+    .onchain-card { background: #060606; border: 1px solid #111; border-radius: 3px; padding: 10px; text-align: center; }
+    .onchain-label { font-size: 0.55rem; color: #444; letter-spacing: 2px; font-family: 'Orbitron',monospace; margin-bottom: 6px; }
+    .onchain-val { font-family: 'Orbitron',monospace; font-size: 0.9rem; font-weight: 700; }
+
+    .section-title { font-family: 'Orbitron',monospace; font-size: 0.6rem; font-weight: 700; letter-spacing: 4px; color: var(--accent); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #0a1a0a; }
+    section { padding: 20px 0; }
+
+    @media (max-width: 768px) {
+      .ooda-strip { grid-template-columns: repeat(2, 1fr); }
+      .regime-hero { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="intel-page">
+  <div class="code-rain"></div>
+
+  <nav class="endgame-nav">
+    <a class="nav-brand" href="index.html">ENDGAME</a>
+    <div class="nav-links">
+      <a href="index.html">SUMMARY</a>
+      <a href="warroom.html">WAR ROOM</a>
+      <a href="macro.html">MACRO</a>
+      <a href="crypto.html">CRYPTO</a>
+      <a href="tech.html">SECTORS</a>
+      <a href="bots.html">BOTS</a>
+      <a href="sentiment.html">SENTIMENT</a>
+      <a href="scenario.html">SCENARIOS</a>
+      <a href="goals.html">GOALS</a>
+      <a href="portfolio.html">PORTFOLIO</a>
+      <a href="insights.html">INSIGHTS</a>
+      <a href="intel.html" class="active">INTEL</a>
+      <a href="links.html">LINKS</a>
+      <a href="chenzzo.html">CHENZZO</a>
+      <a href="mindmap.html">MINDMAP</a>
+      <a href="my charts.html">CHARTS</a>
+    </div>
+    <span class="nav-label" style="color:var(--accent);">INTELLIGENCE COMMAND</span>
+  </nav>
+
+  <div class="page-header">
+    <h1 style="font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:var(--accent);letter-spacing:6px;margin-bottom:4px;">INTELLIGENCE COMMAND</h1>
+    <p style="font-size:0.65rem;color:#444;letter-spacing:2px;margin-bottom:20px;">OODA LOOP · MILITARY RISK · KELLY CRITERION · POLYMARKET · FEDWATCH · ON-CHAIN</p>
+  </div>
+
+  <div class="container">
+
+    <!-- OODA STATUS STRIP -->
+    <div class="ooda-strip">
+      <div class="ooda-cell">
+        <div class="ooda-label">OBSERVE</div>
+        <div class="ooda-value" id="ooda-sources">—/—</div>
+        <div class="ooda-sub">Intel sources active</div>
+      </div>
+      <div class="ooda-cell">
+        <div class="ooda-label">ORIENT</div>
+        <div class="ooda-value" id="ooda-regime">—</div>
+        <div class="ooda-sub">Current regime</div>
+      </div>
+      <div class="ooda-cell">
+        <div class="ooda-label">DECIDE</div>
+        <div class="ooda-value" id="ooda-pivot">STABLE</div>
+        <div class="ooda-sub">Pivot status</div>
+      </div>
+      <div class="ooda-cell">
+        <div class="ooda-label">ACT</div>
+        <div class="ooda-value" id="ooda-posture">—</div>
+        <div class="ooda-sub">Deployment posture</div>
+      </div>
+    </div>
+
+    <!-- REGIME HERO -->
+    <div class="regime-hero">
+      <div class="score-ring">
+        <div class="score-number" id="regime-score" style="color:var(--accent);">—</div>
+        <div class="score-label">/100 SCORE</div>
+      </div>
+      <div class="regime-details">
+        <div class="regime-name" id="regime-name" style="color:var(--accent);">LOADING REGIME...</div>
+        <div class="action-brief" id="action-brief">Calculating optimal posture from all intelligence sources...</div>
+        <div class="signal-tags" id="signal-tags"></div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.55rem;letter-spacing:2px;color:#333;margin-bottom:8px;">MILITARY LEVEL</div>
+        <div class="mil-level-bar" id="mil-level-bar">
+          <div class="mil-cell" id="ml-1" style="color:#39ff14;">L1</div>
+          <div class="mil-cell" id="ml-2" style="color:#00D2FF;">L2</div>
+          <div class="mil-cell" id="ml-3" style="color:#FFD166;">L3</div>
+          <div class="mil-cell" id="ml-4" style="color:#FF8C00;">L4</div>
+          <div class="mil-cell" id="ml-5" style="color:#FF4757;">L5</div>
+        </div>
+        <div style="font-size:0.6rem;color:#444;margin-top:8px;" id="mil-label">—</div>
+        <div style="font-size:0.55rem;color:#2a2a2a;margin-top:4px;" id="regime-updated">—</div>
+      </div>
+    </div>
+
+    <!-- COMMANDER'S ACTION ORDER -->
+    <div class="action-order">
+      <div class="order-title">// COMMANDER'S ACTION ORDER — OODA ACT PHASE</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <div class="order-section">
+            <div class="order-section-label">SITUATION</div>
+            <div class="order-text" id="order-situation">Loading intelligence assessment...</div>
+          </div>
+          <div class="order-section">
+            <div class="order-section-label">MISSION</div>
+            <div class="order-text" id="order-mission" style="color:var(--accent);font-weight:700;">—</div>
+          </div>
+          <div class="order-section">
+            <div class="order-section-label">EXECUTION</div>
+            <div id="order-execution"></div>
+          </div>
+        </div>
+        <div>
+          <div class="order-section">
+            <div class="order-section-label">RULES OF ENGAGEMENT</div>
+            <div id="order-roe"></div>
+          </div>
+          <div class="order-section" style="margin-top:16px;">
+            <div class="order-section-label">COMMANDER'S INTENT</div>
+            <div class="order-text" id="order-intent" style="color:var(--cyber);">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSITION SIZING -->
+    <section>
+      <div class="section-title">Kelly Criterion · Position Sizing</div>
+      <div class="sizing-grid" id="sizing-grid">
+        <div class="sizing-card" style="border-color:#1a3a1a;">
+          <div class="sizing-asset" style="color:#FFD166;">CONFIGURE BASE CAPITAL</div>
+          <div style="font-size:0.65rem;color:#555;line-height:1.7;">
+            Update <code style="color:#00D2FF;">scripts/position_sizer.py</code><br>
+            Set <code style="color:#00D2FF;">base_capital = YOUR_AMOUNT</code><br>
+            Re-run CI to populate live sizing.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTELLIGENCE SOURCES GRID -->
+    <section>
+      <div class="section-title">Live Intelligence Sources</div>
+      <div class="intel-grid">
+
+        <!-- CME FedWatch -->
+        <div class="intel-card">
+          <div class="intel-card-header">
+            <div class="intel-card-title">CME FEDWATCH</div>
+            <span class="intel-source-badge badge-pending" id="fedwatch-badge">LOADING</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Rate CUT probability</span>
+            <span class="metric-val" id="fw-cut" style="color:#39ff14;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Rate HOLD probability</span>
+            <span class="metric-val" id="fw-hold" style="color:#FFD166;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Next FOMC meeting</span>
+            <span class="metric-val" id="fw-meeting" style="color:#ccc;font-size:0.7rem;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Current rate range</span>
+            <span class="metric-val" id="fw-rate" style="color:#ccc;font-size:0.7rem;">—</span>
+          </div>
+        </div>
+
+        <!-- Polymarket -->
+        <div class="intel-card">
+          <div class="intel-card-header">
+            <div class="intel-card-title">POLYMARKET ODDS</div>
+            <span class="intel-source-badge badge-pending" id="poly-badge">LOADING</span>
+          </div>
+          <div class="odds-grid" id="poly-markets">
+            <div class="odds-card">
+              <div class="odds-title">Fed Pause Probability</div>
+              <div class="odds-prob" id="poly-fed" style="color:#39ff14;">—</div>
+              <div class="odds-source">POLYMARKET</div>
+            </div>
+            <div class="odds-card">
+              <div class="odds-title">BTC Above $80k</div>
+              <div class="odds-prob" id="poly-btc" style="color:#f59e0b;">—</div>
+              <div class="odds-source">POLYMARKET</div>
+            </div>
+            <div class="odds-card">
+              <div class="odds-title">Recession Probability</div>
+              <div class="odds-prob" id="poly-rec" style="color:#FF4757;">—</div>
+              <div class="odds-source">POLYMARKET</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Treasury Yields -->
+        <div class="intel-card">
+          <div class="intel-card-header">
+            <div class="intel-card-title">TREASURY YIELDS</div>
+            <span class="intel-source-badge badge-pending" id="treasury-badge">LOADING</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">3-Month T-Bill</span>
+            <span class="metric-val" id="ty-3m" style="color:#39ff14;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">2-Year</span>
+            <span class="metric-val" id="ty-2y" style="color:#FFD166;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">10-Year</span>
+            <span class="metric-val" id="ty-10y" style="color:#FFD166;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">30-Year</span>
+            <span class="metric-val" id="ty-30y" style="color:#ccc;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Yield Curve 2s10s</span>
+            <span class="metric-val" id="ty-curve" style="color:#ccc;">—</span>
+          </div>
+        </div>
+
+        <!-- Fear & Greed -->
+        <div class="intel-card">
+          <div class="intel-card-header">
+            <div class="intel-card-title">FEAR &amp; GREED</div>
+            <span class="intel-source-badge badge-pending" id="fg-badge">LOADING</span>
+          </div>
+          <div style="text-align:center;padding:12px 0;">
+            <div style="font-family:'Orbitron',monospace;font-size:3rem;font-weight:900;line-height:1;" id="fg-value">—</div>
+            <div style="font-size:0.7rem;letter-spacing:2px;font-family:'Orbitron',monospace;margin-top:6px;" id="fg-label">—</div>
+            <div style="margin-top:12px;background:#0d0d0d;border-radius:2px;height:6px;overflow:hidden;">
+              <div id="fg-bar" style="height:6px;width:0%;background:linear-gradient(90deg,#FF4757,#FFD166,#39ff14);transition:width 1s ease;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.5rem;color:#333;margin-top:4px;">
+              <span>EXTREME FEAR</span><span>EXTREME GREED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BTC On-Chain -->
+        <div class="intel-card">
+          <div class="intel-card-header">
+            <div class="intel-card-title">BTC ON-CHAIN</div>
+            <span class="intel-source-badge badge-pending" id="onchain-badge">LOADING</span>
+          </div>
+          <div class="onchain-grid">
+            <div class="onchain-card">
+              <div class="onchain-label">HASH RATE</div>
+              <div class="onchain-val" id="oc-hashrate" style="color:#00D2FF;">—</div>
+            </div>
+            <div class="onchain-card">
+              <div class="onchain-label">MINER REV</div>
+              <div class="onchain-val" id="oc-miners" style="color:#39ff14;">—</div>
+            </div>
+            <div class="onchain-card">
+              <div class="onchain-label">MEMPOOL</div>
+              <div class="onchain-val" id="oc-mempool" style="color:#FFD166;">—</div>
+            </div>
+            <div class="onchain-card">
+              <div class="onchain-label">MINER SIGNAL</div>
+              <div class="onchain-val" id="oc-signal" style="color:#ccc;font-size:0.6rem;">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BTC Dominance + Market Cap -->
+        <div class="intel-card">
+          <div class="intel-card-header">
+            <div class="intel-card-title">CRYPTO STRUCTURE</div>
+            <span class="intel-source-badge badge-pending" id="cg-badge">LOADING</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">BTC Dominance</span>
+            <span class="metric-val" id="cg-dom" style="color:#f59e0b;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">ETH Dominance</span>
+            <span class="metric-val" id="cg-eth-dom" style="color:#627EEA;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Total Market Cap</span>
+            <span class="metric-val" id="cg-mcap" style="color:#ccc;font-size:0.7rem;">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">24h Change</span>
+            <span class="metric-val" id="cg-change">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">Dominance Signal</span>
+            <span class="metric-val" id="cg-dom-signal" style="color:#ccc;font-size:0.6rem;">—</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MANUAL INTELLIGENCE FEEDS -->
+    <section>
+      <div class="section-title">Manual Intelligence Feeds — TradingView Pro · Bitcoin Live · Paid Sources</div>
+      <div class="manual-feed-zone">
+        <div class="manual-feed-title">// MANUAL INTEL FEEDS</div>
+        <div id="manual-feed-content">
+          <div style="font-size:0.65rem;color:#333;line-height:1.8;margin-bottom:12px;">
+            Wire your paid sites here. Create <code style="color:#00D2FF;">data/intel_manual_feed.json</code> and paste signal summaries from TradingView Pro, Bitcoin Live, or any source. The pivot engine scores them automatically.
+          </div>
+          <div style="font-size:0.6rem;color:#2a2a2a;margin-bottom:12px;">
+            Format: <code style="color:#444;">{"sources":[{"name":"Bitcoin Live","signal":"RSI hidden divergence","bias":"bull","confidence":75,"date":"2026-03-07"}]}</code>
+          </div>
+          <div class="feed-list" id="feed-list">
+            <div style="font-size:0.65rem;color:#2a2a2a;text-align:center;padding:12px;">No manual feeds configured yet.</div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:12px;">
+            <div style="font-size:0.6rem;color:#333;">Bull signals: <span id="feed-bull" style="color:#39ff14;">0</span></div>
+            <div style="font-size:0.6rem;color:#333;">Bear signals: <span id="feed-bear" style="color:#FF4757;">0</span></div>
+            <div style="font-size:0.6rem;color:#333;">Net signal: <span id="feed-net" style="color:#FFD166;">NEUTRAL</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGIME SIGNALS LOG -->
+    <section>
+      <div class="section-title">All Active Signals — Regime Evidence Board</div>
+      <div id="signals-board" style="display:grid;gap:4px;"></div>
+    </section>
+
+    <!-- PIVOT HISTORY -->
+    <section>
+      <div class="section-title">Pivot History — OODA Decide Log</div>
+      <div id="pivot-history" style="display:grid;gap:8px;">
+        <div style="font-size:0.65rem;color:#2a2a2a;text-align:center;padding:12px;">No pivots fired yet. System monitoring.</div>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+
+  <script src="js/live-refresh.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const $ = id => document.getElementById(id);
+    const fmt = (v, suffix='') => v != null ? `${v}${suffix}` : '—';
+    const fmtPct = v => v != null ? `${v}%` : '—';
+    const fmtColor = (v, good, warn, bad) => v == null ? '#888' : v >= good ? '#39ff14' : v >= warn ? '#FFD166' : '#FF4757';
+
+    // ── Load pivot_status.json ──────────────────────────────────────
+    async function loadPivot() {
+      try {
+        const res = await fetch('./data/pivot_status.json', { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch(e) { return null; }
+    }
+
+    // ── Load intel.json ─────────────────────────────────────────────
+    async function loadIntel() {
+      try {
+        const res = await fetch('./data/intel.json', { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch(e) { return null; }
+    }
+
+    // ── Load position_sizing.json ───────────────────────────────────
+    async function loadSizing() {
+      try {
+        const res = await fetch('./data/position_sizing.json', { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch(e) { return null; }
+    }
+
+    // ── Load pivot history ──────────────────────────────────────────
+    async function loadPivotHistory() {
+      try {
+        const res = await fetch('./logs/pivot_history.json', { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch(e) { return null; }
+    }
+
+    const [pivot, intel, sizing, history] = await Promise.all([
+      loadPivot(), loadIntel(), loadSizing(), loadPivotHistory()
+    ]);
+
+    // ── OODA Strip ──────────────────────────────────────────────────
+    if (intel) {
+      $('ooda-sources').textContent = `${intel.sources_ok}/${intel.sources_total}`;
+    }
+    if (pivot) {
+      $('ooda-regime').textContent = (pivot.regime || 'UNKNOWN').replace(/_/g,' ');
+      $('ooda-regime').style.color = pivot.color || '#FFD166';
+      $('ooda-posture').textContent = pivot.posture || '—';
+      $('ooda-posture').style.color = pivot.color || '#FFD166';
+
+      if (pivot.pivot?.pivot_fired) {
+        $('ooda-pivot').textContent = 'PIVOT!';
+        $('ooda-pivot').style.color = '#FF4757';
+      } else {
+        $('ooda-pivot').textContent = 'STABLE';
+        $('ooda-pivot').style.color = '#39ff14';
+      }
+
+      // Regime Hero
+      $('regime-score').textContent = pivot.composite_score ?? '—';
+      $('regime-score').style.color = pivot.color || '#FFD166';
+      $('regime-name').textContent = (pivot.regime || '—').replace(/_/g,' ');
+      $('regime-name').style.color = pivot.color || '#FFD166';
+      $('action-brief').textContent = pivot.action_brief || '—';
+
+      if (pivot.last_updated) {
+        const d = new Date(pivot.last_updated);
+        $('regime-updated').textContent = `Updated: ${d.toLocaleString()}`;
+      }
+
+      // Signal tags
+      const tagsEl = $('signal-tags');
+      const allSigs = pivot.all_signals || [];
+      allSigs.slice(0, 8).forEach(sig => {
+        const isBull = /(buy|bull|oversold|fear|accum|cut|tailwind|pause|weak dollar)/i.test(sig);
+        const tag = document.createElement('span');
+        tag.className = `signal-tag ${isBull ? 'tag-bull' : 'tag-bear'}`;
+        tag.textContent = sig.length > 55 ? sig.slice(0, 52) + '…' : sig;
+        tagsEl.appendChild(tag);
+      });
+
+      // Military level
+      const milRisk = sizing?.military_risk;
+      if (milRisk) {
+        const lv = milRisk.level;
+        for (let i = 1; i <= 5; i++) {
+          const el = $(`ml-${i}`);
+          if (el) {
+            el.style.opacity = i === lv ? '1' : '0.2';
+            el.style.fontWeight = i === lv ? '900' : '400';
+            if (i === lv) el.style.borderColor = milRisk.color;
+          }
+        }
+        $('mil-label').textContent = `L${lv}: ${milRisk.label}`;
+        $('mil-label').style.color = milRisk.color;
+      }
+
+      // Action Order
+      const ao = pivot.action_order;
+      if (ao) {
+        $('order-situation').textContent = ao.situation || '—';
+        $('order-mission').textContent = ao.mission || '—';
+        $('order-intent').textContent = ao.commander_intent || '—';
+
+        const execEl = $('order-execution');
+        (ao.execution || []).forEach(step => {
+          const div = document.createElement('div');
+          div.className = 'order-item';
+          div.innerHTML = `<span class="order-bullet">▸</span><span class="order-text">${step}</span>`;
+          execEl.appendChild(div);
+        });
+
+        const roeEl = $('order-roe');
+        (ao.rules_of_engagement || []).forEach(rule => {
+          const div = document.createElement('div');
+          div.className = 'roe-item';
+          div.textContent = rule;
+          roeEl.appendChild(div);
+        });
+      }
+
+      // Signals board
+      const board = $('signals-board');
+      allSigs.forEach(sig => {
+        const isBull = /(buy|bull|oversold|fear|accum|cut|tailwind|pause)/i.test(sig);
+        const div = document.createElement('div');
+        div.style.cssText = `display:flex;gap:8px;align-items:center;padding:5px 10px;background:#050505;border-left:2px solid ${isBull ? '#39ff14' : '#FF4757'};font-size:0.65rem;color:#888;`;
+        div.innerHTML = `<span style="color:${isBull ? '#39ff14' : '#FF4757'};font-size:0.5rem;">●</span>${sig}`;
+        board.appendChild(div);
+      });
+    }
+
+    // ── Position Sizing ─────────────────────────────────────────────
+    if (sizing?.positions) {
+      const grid = $('sizing-grid');
+      grid.innerHTML = '';
+      const assetColors = { btc:'#f7931a', eth:'#627EEA', gold:'#FFD700', qqq:'#00D2FF' };
+      Object.entries(sizing.positions).forEach(([key, pos]) => {
+        const color = assetColors[key] || '#00FF78';
+        const verdictClass = pos.verdict?.includes('STRONG') ? 'verdict-strong' : pos.verdict?.includes('VALID') ? 'verdict-valid' : pos.verdict?.includes('MARGINAL') ? 'verdict-marginal' : 'verdict-none';
+        const stops = pos.stops || {};
+        const card = document.createElement('div');
+        card.className = 'sizing-card';
+        card.style.borderColor = `${color}33`;
+        card.innerHTML = `
+          <div class="sizing-asset" style="color:${color}">${key.toUpperCase()} · ${pos.asset?.toUpperCase() || ''}</div>
+          <div class="sizing-big">$${(pos.recommended_usd||0).toLocaleString('en-US',{maximumFractionDigits:0})}</div>
+          <div class="sizing-sub">${pos.pct_of_capital?.toFixed(1)||0}% of capital · ${pos.recommended_units?.toFixed(6)||0} units</div>
+          <div class="sizing-sub" style="margin-top:4px;">Win prob: ${((pos.win_probability||0)*100).toFixed(0)}% · Edge: ${pos.kelly_edge?.toFixed(3)||'—'}</div>
+          <div class="${verdictClass}" style="font-family:'Orbitron',monospace;font-size:0.5rem;margin-top:6px;letter-spacing:2px;">${pos.verdict||'—'}</div>
+          <div class="stop-levels">
+            <div class="stop-pill stop-soft">SOFT<br>${stops.soft_stop_pct?.toFixed(1)||'—'}%</div>
+            <div class="stop-pill stop-firm">FIRM<br>${stops.firm_stop_pct?.toFixed(1)||'—'}%</div>
+            <div class="stop-pill stop-max">MAX<br>${stops.max_stop_pct?.toFixed(1)||'—'}%</div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    // ── Intel Sources ───────────────────────────────────────────────
+    if (intel) {
+      // FedWatch
+      const fw = intel.fedwatch || {};
+      $('fw-cut').textContent = fmtPct(fw.cut_probability);
+      $('fw-hold').textContent = fmtPct(fw.hold_probability);
+      $('fw-meeting').textContent = fw.next_meeting || '—';
+      $('fw-rate').textContent = fw.current_rate_range || '—';
+      const fwBadge = $('fedwatch-badge');
+      if (fw.status === 'ok') { fwBadge.textContent = 'LIVE'; fwBadge.className = 'intel-source-badge badge-ok'; }
+      else { fwBadge.textContent = 'FAILED'; fwBadge.className = 'intel-source-badge badge-fail'; }
+
+      // Polymarket
+      const pm = intel.polymarket || {};
+      $('poly-fed').textContent = fmtPct(pm.fed_pause_probability);
+      $('poly-btc').textContent = fmtPct(pm.btc_above_80k_probability);
+      $('poly-rec').textContent = fmtPct(pm.recession_probability);
+      const pmBadge = $('poly-badge');
+      if (pm.status === 'ok') { pmBadge.textContent = 'LIVE'; pmBadge.className = 'intel-source-badge badge-ok'; }
+      else { pmBadge.textContent = 'FAILED'; pmBadge.className = 'intel-source-badge badge-fail'; }
+
+      // Treasury
+      const ty = intel.treasury || {};
+      const yields = ty.yields || {};
+      $('ty-3m').textContent = yields['3m'] ? `${yields['3m']}%` : '—';
+      $('ty-2y').textContent = yields['2y'] ? `${yields['2y']}%` : '—';
+      $('ty-10y').textContent = yields['10y'] ? `${yields['10y']}%` : '—';
+      $('ty-30y').textContent = yields['30y'] ? `${yields['30y']}%` : '—';
+      const curveSpread = ty.yield_curve_spread_2s10s;
+      $('ty-curve').textContent = curveSpread != null ? `${curveSpread > 0 ? '+' : ''}${curveSpread} bps` : '—';
+      $('ty-curve').style.color = ty.yield_curve_signal === 'INVERTED' ? '#FF4757' : ty.yield_curve_signal === 'FLAT' ? '#FFD166' : '#39ff14';
+      const tyBadge = $('treasury-badge');
+      if (ty.status === 'ok') { tyBadge.textContent = 'LIVE'; tyBadge.className = 'intel-source-badge badge-ok'; }
+      else { tyBadge.textContent = 'FAILED'; tyBadge.className = 'intel-source-badge badge-fail'; }
+
+      // Fear & Greed
+      const fg = intel.fear_greed || {};
+      const fgVal = fg.value;
+      if (fgVal != null) {
+        $('fg-value').textContent = fgVal;
+        $('fg-value').style.color = fgVal < 25 ? '#FF4757' : fgVal < 45 ? '#FF8C00' : fgVal < 55 ? '#FFD166' : fgVal < 75 ? '#00D2FF' : '#39ff14';
+        $('fg-label').textContent = fg.label || '—';
+        $('fg-bar').style.width = `${fgVal}%`;
+        const fgBadge = $('fg-badge');
+        fgBadge.textContent = 'LIVE'; fgBadge.className = 'intel-source-badge badge-ok';
+      }
+
+      // On-chain
+      const oc = intel.btc_onchain || {};
+      $('oc-hashrate').textContent = oc.hash_rate_th ? `${(oc.hash_rate_th/1e9).toFixed(0)} EH/s` : '—';
+      $('oc-miners').textContent = oc.miners_revenue_usd ? `$${(oc.miners_revenue_usd/1e6).toFixed(1)}M` : '—';
+      $('oc-mempool').textContent = oc.mempool_size ? `${(oc.mempool_size/1e6).toFixed(1)}MB` : '—';
+      $('oc-signal').textContent = oc.miner_revenue_signal || '—';
+      $('oc-signal').style.color = oc.miner_revenue_signal === 'CAPITULATION_RISK' ? '#FF4757' : '#39ff14';
+      const ocBadge = $('onchain-badge');
+      if (oc.status === 'ok') { ocBadge.textContent = 'LIVE'; ocBadge.className = 'intel-source-badge badge-ok'; }
+      else { ocBadge.textContent = 'FAILED'; ocBadge.className = 'intel-source-badge badge-fail'; }
+
+      // CoinGecko
+      const cg = intel.coingecko || {};
+      $('cg-dom').textContent = cg.btc_dominance ? `${cg.btc_dominance}%` : '—';
+      $('cg-eth-dom').textContent = cg.eth_dominance ? `${cg.eth_dominance}%` : '—';
+      const mcap = cg.total_market_cap_usd;
+      $('cg-mcap').textContent = mcap ? `$${(mcap/1e12).toFixed(2)}T` : '—';
+      const change = cg.market_cap_change_24h;
+      $('cg-change').textContent = change != null ? `${change > 0 ? '+' : ''}${change}%` : '—';
+      $('cg-change').style.color = change > 0 ? '#39ff14' : '#FF4757';
+      $('cg-dom-signal').textContent = cg.btc_dominance_signal || '—';
+      const cgBadge = $('cg-badge');
+      if (cg.status === 'ok') { cgBadge.textContent = 'LIVE'; cgBadge.className = 'intel-source-badge badge-ok'; }
+      else { cgBadge.textContent = 'FAILED'; cgBadge.className = 'intel-source-badge badge-fail'; }
+
+      // Manual feeds
+      const mf = intel.manual_feeds || {};
+      if (mf.feeds?.length) {
+        const feedList = $('feed-list');
+        feedList.innerHTML = '';
+        mf.feeds.forEach(f => {
+          const div = document.createElement('div');
+          div.className = 'feed-item';
+          div.innerHTML = `
+            <span class="${f.bias === 'bull' ? 'feed-bias-bull' : 'feed-bias-bear'}">${f.bias?.toUpperCase() || 'N/A'}</span>
+            <span class="feed-name">${f.name}</span>
+            <span class="feed-signal">${f.signal}</span>
+            <span class="feed-conf">${f.confidence||0}%</span>`;
+          feedList.appendChild(div);
+        });
+        $('feed-bull').textContent = mf.bull_count || 0;
+        $('feed-bear').textContent = mf.bear_count || 0;
+        $('feed-net').textContent = mf.net_signal || 'NEUTRAL';
+        const netColors = {'STRONG_BULL':'#39ff14','LEAN_BULL':'#00D2FF','NEUTRAL':'#FFD166','LEAN_BEAR':'#FF8C00','STRONG_BEAR':'#FF4757'};
+        $('feed-net').style.color = netColors[mf.net_signal] || '#FFD166';
+      }
+    }
+
+    // ── Pivot History ───────────────────────────────────────────────
+    if (history?.pivots?.length) {
+      const ph = $('pivot-history');
+      ph.innerHTML = '';
+      history.pivots.slice(0, 10).forEach(pv => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex;gap:12px;align-items:center;padding:8px 12px;background:#050505;border:1px solid #0d0d0d;border-radius:2px;font-size:0.65rem;';
+        const dirColor = pv.direction === 'BULL' ? '#39ff14' : '#FF4757';
+        div.innerHTML = `
+          <span style="color:${dirColor};font-family:'Orbitron',monospace;font-size:0.55rem;min-width:50px;">${pv.direction}</span>
+          <span style="color:#888;min-width:120px;">${pv.pivot_type?.replace(/_/g,' ')}</span>
+          <span style="color:#555;">${pv.from_posture} → </span>
+          <span style="color:${dirColor};font-weight:700;">${pv.to_posture}</span>
+          <span style="color:#333;flex:1;text-align:right;">${new Date(pv.fired_utc).toLocaleString()}</span>`;
+        ph.appendChild(div);
+      });
+    }
+  });
+  </script>
+  <script src="js/matrix.js"></script>
+  <script src="js/cinematic-background.js"></script>
+  <script src="js/transitions.js"></script>
+</body>
+</html>

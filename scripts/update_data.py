@@ -69,6 +69,20 @@ try:
 except ImportError:
     ALERTS_ENABLED = False
 
+# Import Intel Aggregator if available
+try:
+    from intel_aggregator import run_all as intel_run_all
+    INTEL_ENABLED = True
+except ImportError:
+    INTEL_ENABLED = False
+
+# Import Pivot Engine if available
+try:
+    from pivot_engine import run_all as pivot_run_all
+    PIVOT_ENABLED = True
+except ImportError:
+    PIVOT_ENABLED = False
+
 
 def read_existing_data():
     if DATA_FILE.exists():
@@ -1031,6 +1045,35 @@ def main():
             print(f"Alerts: {alerts_result.get('alert_count', 0)} active alert(s)")
         except Exception as e:
             print(f"Alert engine failed (non-fatal): {e}")
+
+    # Intel Aggregator — fetch all external intelligence sources (FedWatch, Polymarket, on-chain, etc.)
+    if INTEL_ENABLED:
+        try:
+            intel_result = intel_run_all(existing_intel=data.get("intel"))
+            ok = intel_result.get("sources_ok", 0)
+            total = intel_result.get("sources_total", 0)
+            data["intel_last_updated"] = intel_result.get("last_updated")
+            data["intel_sources_ok"] = ok
+            data["intel_sources_total"] = total
+            # Store quick-access summary fields
+            data["fear_greed"] = intel_result.get("fear_greed_value")
+            data["btc_dominance"] = intel_result.get("btc_dominance")
+            data["cut_probability"] = intel_result.get("cut_probability")
+            print(f"Intel: {ok}/{total} sources OK")
+        except Exception as e:
+            print(f"Intel aggregator failed (non-fatal): {e}")
+
+    # Pivot Engine — OODA regime scoring + pivot detection
+    if PIVOT_ENABLED:
+        try:
+            pivot_result = pivot_run_all(existing_pivot=data.get("pivot_status"))
+            data["pivot_status"] = pivot_result
+            data["regime"] = pivot_result.get("regime")
+            data["regime_score"] = pivot_result.get("composite_score")
+            data["ooda_posture"] = pivot_result.get("posture")
+            print(f"Pivot: regime={pivot_result.get('regime')} score={pivot_result.get('composite_score')}")
+        except Exception as e:
+            print(f"Pivot engine failed (non-fatal): {e}")
 
     # Derive top-level bias from decision gate posture so it never stays stale
     gate = data.get("decision_gate", {})

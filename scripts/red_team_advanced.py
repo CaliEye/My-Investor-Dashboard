@@ -29,6 +29,7 @@ from pathlib import Path
 
 REPO_ROOT   = Path(__file__).resolve().parent.parent
 DATA_FILE   = REPO_ROOT / "data" / "data.json"
+INTEL_FILE  = REPO_ROOT / "data" / "intel.json"
 REPORT_FILE = REPO_ROOT / "logs" / "red_team_advanced_report.json"
 LOG_FILE    = REPO_ROOT / "logs" / "red_team_advanced.log"
 
@@ -50,6 +51,13 @@ def _load_data():
     if not DATA_FILE.exists():
         return {}
     with DATA_FILE.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _load_intel():
+    if not INTEL_FILE.exists():
+        return {}
+    with INTEL_FILE.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -498,7 +506,257 @@ def check_wyckoff_consistency():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 7. System Uptime / CI Health Check
+# 7. Hedge Fund 13F Intelligence Check
+# ─────────────────────────────────────────────────────────────────────────────
+
+def check_hedge_fund_signals():
+    """
+    Reads hedge fund positioning data from intel.json (sourced from SEC EDGAR 13F filings).
+    Flags divergences between hedge fund conviction and our current posture.
+
+    Tracked funds: Bridgewater, Point72, Two Sigma, D.E. Shaw
+    Key: If all major HFs are reducing equity exposure → DEFENSIVE signal confirmed.
+         If HFs are loading gold/bonds → safe haven rotation in play.
+    """
+    checks = []
+    intel = _load_intel()
+
+    if not intel:
+        checks.append(_result(
+            "hf_intel_available", False, "LOW",
+            "intel.json not found — run intel_aggregator.py first (fires on next CI run)",
+            ["intel_aggregator.py must run at least once to populate intel.json"],
+        ))
+        return checks
+
+    hf = intel.get("hedge_fund_signals", {})
+    if hf.get("status") != "ok":
+        checks.append(_result(
+            "hf_data_status", False, "LOW",
+            f"Hedge fund data status: {hf.get('status', 'missing')} — {hf.get('error', 'no error detail')}",
+            ["SEC EDGAR 13F fetch may have failed or is rate-limited — data is 45-day delayed by design"],
+        ))
+        return checks
+
+    holdings = hf.get("holdings", [])
+    overall_sentiment = hf.get("overall_sentiment", "NEUTRAL")
+    bull_count = hf.get("hf_bull_count", 0)
+    bear_count = hf.get("hf_bear_count", 0)
+    total_funds = len({h.get("fund") for h in holdings})
+
+    checks.append(_result(
+        "hf_data_coverage",
+        total_funds >= 2,
+        "LOW" if total_funds < 2 else "INFO",
+        f"Hedge fund 13F coverage: {total_funds} funds tracked, {len(holdings)} total positions. "
+        f"Sentiment: {overall_sentiment} ({bull_count} bullish / {bear_count} bearish)",
+        ["Only 1 fund tracked — EDGAR fetch may be partially failing"] if total_funds < 2 else [],
+    ))
+
+    # Flag if HF sentiment contradicts our current gate posture
+    d = _load_data()
+    gate_posture = d.get("decision_gate", {}).get("risk_posture", "UNKNOWN")
+    regime_posture = d.get("ooda_posture", "UNKNOWN")
+
+    hf_bearish = overall_sentiment in ("BEARISH", "VERY_BEARISH")
+    hf_bullish = overall_sentiment in ("BULLISH", "VERY_BULLISH")
+    gate_risk_on = gate_posture == "RISK-ON"
+    gate_defensive = gate_posture in ("DEFENSIVE", "WATCH-ONLY")
+
+    if hf_bearish and gate_risk_on:
+        checks.append(_result(
+            "hf_gate_divergence_warning",
+            False, "HIGH",
+            f"DIVERGENCE: Hedge funds are {overall_sentiment} but gate is {gate_posture}. "
+            f"Smart money is reducing risk while our system says RISK-ON. "
+            f"This is a significant red flag — consider overriding to WATCH-ONLY.",
+            ["HF 13F divergence from gate posture is a major warning signal",
+             "Smart money reduces 45 days BEFORE retail notices the top",
+             "Recommend: manually review HF positioning and tighten gate threshold"],
+        ))
+    elif hf_bullish and gate_defensive:
+        checks.append(_result(
+            "hf_gate_divergence_opportunity",
+            True, "INFO",
+            f"HF ALIGNMENT: Hedge funds are {overall_sentiment} while gate is {gate_posture}. "
+            f"Smart money loading while our system stays cautious — watch for gate flip to RISK-ON.",
+            [],
+        ))
+    else:
+        checks.append(_result(
+            "hf_gate_alignment",
+            True, "INFO",
+            f"HF sentiment ({overall_sentiment}) broadly aligned with gate ({gate_posture}). "
+            f"No divergence signal.",
+            [],
+        ))
+
+    # Check for concentration risk: if HFs are piling into the same asset we hold
+    btc_hf_interest = [h for h in holdings if "BTC" in str(h.get("ticker", "")).upper()
+                       or "COIN" in str(h.get("ticker", "")).upper()
+                       or "IBIT" in str(h.get("ticker", "")).upper()
+                       or "GBTC" in str(h.get("ticker", "")).upper()]
+    if btc_hf_interest:
+        checks.append(_result(
+            "hf_btc_interest",
+            True, "INFO",
+            f"BTC-related hedge fund positions: {len(btc_hf_interest)} holdings "
+            f"({[h.get('ticker') for h in btc_hf_interest[:5]]}). "
+            f"Institutional BTC adoption confirmed via 13F filings.",
+            [],
+        ))
+
+    # Check for defensive rotation: bonds/gold accumulation by HFs
+    defensive_tickers = {"GLD", "IAU", "TLT", "IEF", "SHY", "BND", "AGG", "SGOL", "PHYS"}
+    defensive_hf = [h for h in holdings if str(h.get("ticker", "")).upper() in defensive_tickers]
+    if len(defensive_hf) >= 3:
+        checks.append(_result(
+            "hf_defensive_rotation",
+            False, "HIGH",
+            f"HEDGE FUND DEFENSIVE ROTATION: {len(defensive_hf)} positions in bonds/gold ETFs "
+            f"({[h.get('ticker') for h in defensive_hf[:5]]}). "
+            f"Smart money moving to safe havens — consider matching this posture.",
+            ["HF safe-haven accumulation is a leading indicator of equity risk-off",
+             "Review: are we positioned in gold/TLT as well?",
+             "Cross-check Wyckoff ACCUMULATION signal for GLD/TLT"],
+        ))
+
+    return checks
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 8. Whale On-Chain Signal Check
+# ─────────────────────────────────────────────────────────────────────────────
+
+def check_whale_onchain():
+    """
+    Reads BTC on-chain data from intel.json (sourced from Blockchain.info).
+    Whale behavior is tracked through: exchange flows, miner selling, hash rate.
+
+    Key signals:
+      Hash rate drop  → Miners may be capitulating (sell pressure incoming)
+      Exchange inflow → Whales moving BTC to exchange = selling intent
+      Miner revenue drop → Stress on miners → potential forced selling
+      Mempool spike  → Unusual transaction activity (could be whale consolidation)
+    """
+    checks = []
+    intel = _load_intel()
+
+    if not intel:
+        return checks   # Already flagged in hedge fund check above
+
+    onchain = intel.get("btc_onchain", {})
+    if onchain.get("status") != "ok":
+        checks.append(_result(
+            "onchain_data_status", False, "LOW",
+            f"BTC on-chain data status: {onchain.get('status', 'missing')} — "
+            f"{onchain.get('error', 'no error detail')}",
+            ["Blockchain.info API may be unavailable — on-chain check skipped"],
+        ))
+        return checks
+
+    hash_rate = onchain.get("hash_rate_th", 0)           # TH/s
+    miner_revenue = onchain.get("miner_revenue_usd", 0)  # USD/day
+    mempool_size = onchain.get("mempool_size", 0)         # Bytes
+    n_transactions = onchain.get("n_transactions_24h", 0)
+
+    # Hash rate health check — sudden drops > 10% signal miner stress
+    hash_rate_7d_avg = onchain.get("hash_rate_7d_avg_th", hash_rate)
+    hash_rate_drop_pct = 0.0
+    if hash_rate_7d_avg and hash_rate_7d_avg > 0:
+        hash_rate_drop_pct = ((hash_rate_7d_avg - hash_rate) / hash_rate_7d_avg) * 100
+
+    checks.append(_result(
+        "onchain_hash_rate_health",
+        hash_rate_drop_pct < 10,
+        "HIGH" if hash_rate_drop_pct >= 15 else ("MEDIUM" if hash_rate_drop_pct >= 10 else "INFO"),
+        f"BTC hash rate: {hash_rate / 1e6:.1f} EH/s | 7d avg: {hash_rate_7d_avg / 1e6:.1f} EH/s | "
+        f"Delta: {-hash_rate_drop_pct:.1f}%",
+        ["Hash rate drop > 10%: miner capitulation risk — watch for BTC sell pressure",
+         "Large miners may dump coins to cover electricity costs during hash rate decline"] if hash_rate_drop_pct >= 10 else [],
+    ))
+
+    # Miner revenue health — very low revenue = miner stress = selling pressure
+    d = _load_data()
+    btc_price = float(d.get("crypto", {}).get("btc_usd", 80000) or 80000)
+    # Healthy miner revenue is roughly 900+ BTC/day equivalent at current price
+    # Red flag: revenue < $15M/day means miners are under severe stress
+    miner_revenue_m = miner_revenue / 1_000_000 if miner_revenue else 0
+    checks.append(_result(
+        "onchain_miner_revenue",
+        miner_revenue_m >= 15,
+        "HIGH" if miner_revenue_m < 10 else ("MEDIUM" if miner_revenue_m < 15 else "INFO"),
+        f"Miner revenue: ${miner_revenue_m:.1f}M/day",
+        ["Low miner revenue signals financial stress — forced selling risk",
+         "Sub-$10M/day miner revenue historically precedes capitulation bottoms"] if miner_revenue_m < 15 else [],
+    ))
+
+    # Mempool congestion — very high or very low mempool is signal
+    mempool_mb = mempool_size / 1_000_000 if mempool_size else 0
+    high_mempool = mempool_mb > 200  # > 200MB = network very congested (whale activity spike)
+    low_mempool = mempool_mb < 1    # < 1MB = very quiet (potential accumulation or low activity)
+    checks.append(_result(
+        "onchain_mempool_activity",
+        not high_mempool,
+        "MEDIUM" if high_mempool else "INFO",
+        f"Mempool size: {mempool_mb:.1f} MB | 24h transactions: {n_transactions:,}",
+        ["High mempool congestion: unusual whale transaction activity detected",
+         "Large block of transactions can indicate whale consolidation or distribution moves"] if high_mempool else
+        (["Very low mempool: market is quiet — could indicate accumulation phase or reduced whale activity"] if low_mempool else []),
+    ))
+
+    # Cross-check: compare on-chain signal with current Wyckoff phase
+    wy_btc = d.get("wyckoff", {}).get("assets", {}).get("btc", {})
+    btc_phase = wy_btc.get("phase", "UNKNOWN")
+    vol_ratio = wy_btc.get("vol_ratio", 1.0)
+
+    if btc_phase == "DISTRIBUTION" and hash_rate_drop_pct > 8:
+        checks.append(_result(
+            "onchain_wyckoff_distribution_confluence",
+            False, "HIGH",
+            f"WHALE DISTRIBUTION CONFLUENCE: Wyckoff phase={btc_phase} + Hash rate declining {hash_rate_drop_pct:.1f}% "
+            f"+ vol_ratio={vol_ratio:.2f}. Multi-signal DISTRIBUTION warning — do NOT initiate new longs.",
+            ["On-chain + Wyckoff double confirmation of distribution",
+             "This is the strongest sell signal combination the dashboard can generate",
+             "Recommended action: review all BTC positions, tighten stops to Soft stop level"],
+        ))
+    elif btc_phase == "ACCUMULATION" and hash_rate_drop_pct < 3 and miner_revenue_m > 20:
+        checks.append(_result(
+            "onchain_wyckoff_accumulation_confluence",
+            True, "INFO",
+            f"ACCUMULATION HEALTH: Wyckoff={btc_phase}, hash rate stable, miner revenue healthy ${miner_revenue_m:.1f}M/day. "
+            f"Network fundamentals support accumulation phase — bullish on-chain backdrop.",
+            [],
+        ))
+
+    # Exchange flow inference from fear_greed + onchain combo
+    fear_greed = intel.get("fear_greed_value", 50)
+    if fear_greed and fear_greed > 75 and btc_price > 0:
+        checks.append(_result(
+            "onchain_extreme_greed_warning",
+            False, "MEDIUM",
+            f"EXTREME GREED ALERT: Fear & Greed = {fear_greed} (Extreme Greed). "
+            f"Historically, extreme greed + high price = whale distribution into retail FOMO. "
+            f"Exchange inflows likely elevated. Watch for price rejection candles.",
+            ["Extreme greed signals retail FOMO peak — smart money exits into this",
+             "Cross-check with Wyckoff UTAD pattern (Upper Trading Area Distribution)",
+             "Consider tightening stops by one level (Soft → Firm)"],
+        ))
+    elif fear_greed and fear_greed < 20:
+        checks.append(_result(
+            "onchain_extreme_fear_opportunity",
+            True, "INFO",
+            f"EXTREME FEAR: Fear & Greed = {fear_greed}. Historically, extreme fear = "
+            f"whale accumulation zone. Smart money buys when retail panics. "
+            f"Cross-check for Wyckoff Spring before acting.",
+            [],
+        ))
+
+    return checks
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 9. System Uptime / CI Health Check
 # ─────────────────────────────────────────────────────────────────────────────
 
 def check_system_health():
@@ -543,13 +801,15 @@ def run_all_checks():
     all_results = []
 
     suites = [
-        ("Data Integrity",       check_data_integrity),
-        ("Confluence Gate",      test_confluence_gate),
-        ("Whale Simulation",     simulate_whale_scenarios),
-        ("Security Scan",        check_security),
-        ("Portfolio Protection", simulate_portfolio_protection),
-        ("Wyckoff Consistency",  check_wyckoff_consistency),
-        ("System Health",        check_system_health),
+        ("Data Integrity",         check_data_integrity),
+        ("Confluence Gate",        test_confluence_gate),
+        ("Whale Simulation",       simulate_whale_scenarios),
+        ("Security Scan",          check_security),
+        ("Portfolio Protection",   simulate_portfolio_protection),
+        ("Wyckoff Consistency",    check_wyckoff_consistency),
+        ("Hedge Fund 13F Intel",   check_hedge_fund_signals),
+        ("Whale On-Chain",         check_whale_onchain),
+        ("System Health",          check_system_health),
     ]
 
     suite_summaries = []

@@ -1,0 +1,53 @@
+{
+  "_comment": "Manual intelligence feed — paste signal summaries from paid sites (TradingView Pro, Bitcoin Live, etc.) here. The intel_aggregator.py reads this file automatically each CI run.",
+  "_instructions": [
+    "1. Open your paid intel source (TradingView Pro, Bitcoin Live, etc.)",
+    "2. Paste the key signal as a short note in 'signal' field below",
+    "3. Set 'bullish': true or false based on the signal direction",
+    "4. Set 'confidence': 0-100 based on how strong the signal is",
+    "5. Update 'date' to today's date (YYYY-MM-DD)",
+    "6. Save this file — intel.html will pick it up on the next CI run (or refresh)",
+    "7. Old entries are auto-ignored after 7 days (based on the date field)"
+  ],
+  "feeds": [
+    {
+      "source": "TradingView Pro",
+      "label": "BTC Weekly Chart",
+      "signal": "BTC holding above 200-week SMA — bull market structure intact",
+      "ticker": "BTCUSDT",
+      "bullish": true,
+      "confidence": 75,
+      "timeframe": "weekly",
+      "date": "2026-03-07",
+      "notes": "Example entry — replace with real signal from TradingView Pro"
+    },
+    {
+      "source": "Bitcoin Live",
+      "label": "BTC On-Chain",
+      "signal": "Exchange outflows accelerating — accumulation phase detected",
+      "ticker": "BTC",
+      "bullish": true,
+      "confidence": 70,
+      "timeframe": "daily",
+      "date": "2026-03-07",
+      "notes": "Example entry — replace with real signal from Bitcoin Live"
+    },
+    {
+      "source": "TradingView Pro",
+      "label": "SPX Daily",
+      "signal": "SPX breaking below 50-day SMA — watch for follow-through",
+      "ticker": "SPY",
+      "bullish": false,
+      "confidence": 60,
+      "timeframe": "daily",
+      "date": "2026-03-07",
+      "notes": "Example entry — replace with real signal"
+    }
+  ],
+  "meta": {
+    "last_updated_by": "manual",
+    "version": "1.0",
+    "max_age_days": 7,
+    "sources_tracked": ["TradingView Pro", "Bitcoin Live", "Glassnode", "CryptoQuant", "Messari", "Custom"]
+  }
+}
