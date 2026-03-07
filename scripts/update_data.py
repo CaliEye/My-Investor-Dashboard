@@ -55,6 +55,20 @@ try:
 except ImportError:
     WYCKOFF_ENABLED = False
 
+# Import Technical Indicators engine if available
+try:
+    from technical_indicators import run_all as indicators_run_all
+    INDICATORS_ENABLED = True
+except ImportError:
+    INDICATORS_ENABLED = False
+
+# Import Alert Engine if available
+try:
+    from alert_engine import run_all as alerts_run_all
+    ALERTS_ENABLED = True
+except ImportError:
+    ALERTS_ENABLED = False
+
 
 def read_existing_data():
     if DATA_FILE.exists():
@@ -981,7 +995,7 @@ def main():
     data["bot_opportunities"] = compute_bot_opportunities(data)
     data["data_stale"] = False  # Freshly written — cleared on every successful update
 
-    # Wyckoff phase detection — runs last so it can read updated macro context
+    # Wyckoff phase detection
     if WYCKOFF_ENABLED:
         try:
             data["wyckoff"] = wyckoff_run_all(existing_wyckoff=data.get("wyckoff"))
@@ -989,6 +1003,34 @@ def main():
             print(f"Wyckoff: {alert_count} active alert(s) detected")
         except Exception as e:
             print(f"Wyckoff detection failed (non-fatal): {e}")
+
+    # Technical Indicators suite — silent background layer for AI brains
+    if INDICATORS_ENABLED:
+        try:
+            indicators_result = indicators_run_all(existing_indicators=data.get("indicators", {}).get("assets"))
+            # Write indicators to separate file to avoid bloating data.json
+            indicators_file = DATA_FILE.parent / "indicators.json"
+            with indicators_file.open("w", encoding="utf-8") as f:
+                import json as _json
+                _json.dump(indicators_result, f, indent=2)
+            # Store summary only in data.json
+            asset_count = len([a for a in indicators_result.get("assets", {}).values() if not a.get("error")])
+            data["indicators_last_updated"] = indicators_result.get("last_updated")
+            data["indicators_asset_count"] = asset_count
+            print(f"Indicators: {asset_count} assets processed")
+        except Exception as e:
+            print(f"Indicators failed (non-fatal): {e}")
+
+    # Alert Engine — confluence-scored alerts from indicators + wyckoff + macro
+    if ALERTS_ENABLED:
+        try:
+            # Write data.json first (partial) so alert_engine can read it
+            alerts_result = alerts_run_all(existing_alerts=data.get("active_alerts", []))
+            data["active_alerts"] = alerts_result.get("active_alerts", [])
+            data["alert_count"] = alerts_result.get("alert_count", 0)
+            print(f"Alerts: {alerts_result.get('alert_count', 0)} active alert(s)")
+        except Exception as e:
+            print(f"Alert engine failed (non-fatal): {e}")
 
     # Derive top-level bias from decision gate posture so it never stays stale
     gate = data.get("decision_gate", {})

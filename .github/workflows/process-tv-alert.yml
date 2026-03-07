@@ -1,0 +1,61 @@
+name: Process TradingView Alert
+
+on:
+  repository_dispatch:
+    types: [tradingview_alert]
+  workflow_dispatch:
+    inputs:
+      test_payload:
+        description: 'Test JSON payload'
+        required: false
+        default: '{"ticker":"BTCUSDT","price":67000,"alert_name":"RSI Weekly Oversold","interval":"1D"}'
+
+permissions:
+  contents: write
+
+jobs:
+  process-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance requests
+
+      - name: Process TradingView alert
+        run: |
+          python -c "
+          import json, sys, os
+          sys.path.insert(0, 'scripts')
+          from tradingview_webhook import process_incoming_alert
+
+          # Get payload from dispatch or test input
+          payload_str = os.environ.get('TV_PAYLOAD', '${{ github.event.client_payload.alert || inputs.test_payload }}')
+          try:
+              payload = json.loads(payload_str)
+          except:
+              payload = {'ticker': 'UNKNOWN', 'alert_name': 'parse_error', 'source': 'tradingview'}
+
+          result = process_incoming_alert(payload)
+          print(f'Alert processed: {result[\"status\"]}')
+          print(json.dumps(result['alert'], indent=2))
+          "
+
+      - name: Commit alert to feed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Alert Bot"
+          git add data/tv_alerts_feed.json logs/ || true
+          if git diff --staged --quiet; then
+            echo "No new alerts to commit"
+          else
+            git commit -m "TradingView alert received - $(date -u +"%Y-%m-%d %H:%M UTC")"
+            git push
+          fi
